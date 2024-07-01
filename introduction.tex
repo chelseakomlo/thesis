@@ -16,6 +16,15 @@ material~\cite{Pedersen91,GennaroJKR07,KomloG20,Groth21,GurkanJMMST21,BonehS2020
 This key material may then be used for other threshold schemes,
 such as evaluating a PRF in a threshold manner~\cite{JareckiKR18}.
 
+Threshold schemes are an appealing primitive due to their ability to ensure robustness in the case of failure,
+and to distribute trust among many parties.
+In particular,
+the security of the scheme assumes $t-1$ players are corrupted,
+and so can deviate arbitrarily from the protocol.
+The security of the scheme ensures that in spite of a subset of corrupted players,
+the scheme can provide important properties such as robustness,
+unforgeability,
+or indistiguishability from some target distribution.
 
 \paragraph{Motivation.}
 Interest in threshold schemes is growing in practice.
@@ -23,7 +32,7 @@ For example,
 NIST will soon issue a call for threshold schemes ranging from distributed key
 generation to threshold zero-knowledge proofs~\cite{NIST22,NIST23}.
 Another example is the FROST Schnorr threshold signature scheme~\cite{KomloG20,BellareCKMTZ22},
-for which an IRTF draft exists~\cite{Connolly22}.
+for which an IRTF RFC exists~\cite{Connolly22}.
 
 However,
 significant challenges arise when using threshold schemes in practice,
