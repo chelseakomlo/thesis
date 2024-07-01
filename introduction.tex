@@ -4,9 +4,79 @@
 \chapter{Introduction}
 %======================================================================
 
-TODO
+Threshold schemes are a critical cryptographic primitive that allows a set of
+$n$ total parties and at least a threshold $t$ of parties to collaborate to
+perform some function.
+This function depends on the use case.
+For example,
+the parties might perform threshold signing~\cite{KomloG20,BellareCKMTZ22,Lindell22},
+outputting a signature at the end of the protocol.
+Alternatively, participants might participate to jointly generate asymmetric key
+material~\cite{Pedersen91,GennaroJKR07,KomloG20,Groth21,GurkanJMMST21,BonehS2020,NejiBR16,Lindell22,DasYXMKR21,BachoL22,AbrahamJMMS2022}.
+This key material may then be used for other threshold schemes,
+such as evaluating a PRF in a threshold manner~\cite{JareckiKR18}.
+
+
+\paragraph{Motivation.}
+Interest in threshold schemes is growing in practice.
+For example,
+NIST will soon issue a call for threshold schemes ranging from distributed key
+generation to threshold zero-knowledge proofs~\cite{NIST22,NIST23}.
+Another example is the FROST Schnorr threshold signature scheme~\cite{KomloG20,BellareCKMTZ22},
+for which an IRTF draft exists~\cite{Connolly22}.
+
+However,
+significant challenges arise when using threshold schemes in practice,
+such as gracefully handling failure cases,
+performing multi-party operations at scale,
+and operating in a setting where signers are not guaranteed to always be online.
+Furthermore,
+multi-party, multi-round schemes such as threshold signatures introduce
+significant complexity and performance costs over single-party signature
+schemes.
+For this reason,
+schemes that are simple to implement, provide defense-in-depth measures, and incur low round complexity are attractive in practice.
+However, such schemes are difficult to prove secure using standard security assumptions.
+For example, for discrete logarithm-based threshold signatures,
+the most efficient two-round schemes require the one-more discrete logarithm
+assumption to demonstrate unforgeability~\cite{KomloG20,BellareCKMTZ22},
+whereas less-efficient three-round schemes can be proven secure using the
+discrete logarithm assumption directly~\cite{CritesKM2023,BellareCKMTZ22,Lindell22}.
+
+\paragraph{Problem to Overcome.}
+While threshold schemes offer benefits such as redundancy and increasing the
+cost to a potential adversary,
+the downside to threshold schemes in practice is their complexity and
+performance overhead.
+Multi-round, multi-entity protocols incur additional performance and complexity challenges beyond the single-signer setting.
+These challenges are compounded when considering real-world failures,
+such as network failures and timeouts.
+As such, even though efficient threshold signatures incur stronger security
+assumptions,
+these tradeoffs are often practically worthwhile when considering the positive tradeoffs in reduced complexity and increased performance.
+
+With the goals of efficiency, simplicity, and security in mind,
+in this work,
+we investigate how to design efficient threshold schemes,
+and propose a range of constructions that provide improved efficiency over
+prior works in the literature.
+In particular,
+the research question we wish to address is as follows:
 
 \section{Thesis Statement}
+
+This thesis establishes the following:
+
+\begin{quote}
+  \it
+It is possible to construct efficient threshold key generation and signature schemes that are practically useful,
+with reasonable security assumptions.
+By practical utility,
+we refer to the properties that implementations often require;
+such as the simplicity of the scheme,
+low number of communication rounds among parties,
+and computational and bandwidth efficiency.
+\end{quote}
 
 \section{Contributions}
 
