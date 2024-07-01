@@ -1,0 +1,401 @@
+%\newcommand{\chelsea}[1]{ { \color{violet}  Chelsea: #1 } }
+%\newcommand{\ian}[1]{ { \color{purple}  Ian: #1 } }
+%\newcommand{\douglas}[1]{ { \color{blue}  Douglas: #1 } }
+
+%\newcommand{\chelsea}[1]{   }
+%\newcommand{\ian}[1]{  }
+
+
+% advantage functions
+\newcommand{\advant}[2]{\ensuremath{\textsf{\upshape Adv}^{\textrm{\upshape #1}}_{#2}}}
+
+
+
+% VSS advantage functions
+\newcommand{\advantsecrecy}{\advant{sec}}
+
+\newcommand{\UnforgExp}{\ensuremath{\textsf{Exp}^{\textrm{uf}}}}
+\newcommand{\UniqExp}{\ensuremath{\textsf{Exp}^{\textrm{uq}}}}
+\newcommand{\VerifExp}{\ensuremath{\textsf{Exp}^{\textrm{verf}}}}
+\newcommand{\PseudoExp}{\ensuremath{\textsf{Exp}^{\textrm{psdr}}}}
+\newcommand{\VerDetExp}{\ensuremath{\textsf{Exp}^{\textrm{verd}}}}
+
+% AVSS advantage functions
+\newcommand{\advantaggsecrecy}{\advant{asec}}
+\newcommand{\advantpsdvrf}{\advant{pr\hbox{-}vrf}}
+\newcommand{\advantuqvrf}{\advant{uq\hbox{-}vrf}}
+\newcommand{\AggSecrecyExp}{\ensuremath{\textsf{Exp}^{\textrm{asec}}}}
+
+
+
+% DKG advantage functions
+\newcommand{\StrongRobustnessExp}{\ensuremath{\textsf{Exp}^{\textrm{str-rbst}}}}
+\newcommand{\advantstrrobust}{\advant{str-rbst}}
+\newcommand{\WeakRobustnessExp}{\ensuremath{\textsf{Exp}^{\textrm{wk-rbst}}}}
+\newcommand{\advantwkrobust}{\advant{wk-rbst}}
+\newcommand{\ZKExp}{\ensuremath{\textsf{Exp}^{\textrm{zk}}}}
+\newcommand{\advantzk}{\advant{zk}}
+\newcommand{\IndistinguishabilityExp}{\ensuremath{\textsf{Exp}^{\textrm{ind}}}}
+\newcommand{\advantind}{\advant{ind}}
+
+
+% Other name options
+% Glitter
+% FLame
+% Ember
+% Flash
+% Flicker
+% Boreal
+% Shimmer
+% Flurry
+%Tinsel
+% Tundra
+% Dusk
+% Mittens
+% Winter
+% Aura
+% bright
+% shine
+
+% name macros
+\newcommand{\glitter}{Arctic\xspace}
+\newcommand{\glitterm}{\mathsf{Arctic}}
+
+\newcommand{\pedpop}{\mathsf{PedPop}}
+
+\newcommand{\oracle}{\BigO}
+
+\newcommand{\defn}[1]{{\bf {#1}}}
+
+\newcommand\supth{\ensuremath{^{\textrm{\scriptsize th}}}}
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\newcommand{\bigabs}[1]{\bigl| #1 \bigr|}
+\newcommand{\iseq}{\stackrel{?}{=}}
+\newcommand{\zo}{\{ 0, 1\}}
+\newcommand{\set}[1]{[#1]}
+\newcommand{\deq}{:=}
+
+\newcommand{\parse}{\mathsf{parse\ }}
+\newcommand{\id}{\mathsf{id}}
+\newcommand{\digest}{\mathsf{digest}}
+
+
+% Sample Spaces
+\newcommand{\secretspace}{\hat{S}}
+\newcommand{\publicspace}{\hat{P}}
+\newcommand{\MM}{\mathcal{M}}
+
+% games
+\newcommand{\BigO}{\mathcal{O}}
+\newcommand{\G}{\mathbb{G}}
+\newcommand{\GG}{\G}
+\newcommand{\gpar}{\mathcal{G}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\main}{\mathsc{main}}
+\newcommand{\secp}{\lambda}
+\newcommand{\usecp}{1^{\secp}}
+\newcommand{\rgets}{\mathrel{\mathpalette\rgetscmd\relax}}
+\newcommand{\rgetscmd}{\ooalign{$\leftarrow$\cr
+    \hidewidth\raisebox{1.2\height}{\scalebox{0.5}{\ \rm \$}}\hidewidth\cr}}
+\newcommand{\random}{\overset{\$}{\leftarrow}}
+\newcommand{\pr}{\text{Pr}}
+\newcommand{\distinguisher}{\mathcal{E}}
+\newcommand{\adv}{\mathcal{A}}
+\newcommand{\bdv}{\mathcal{B}}
+\newcommand{\cdv}{\mathcal{C}}
+\newcommand{\ddv}{\mathcal{D}}
+\newcommand{\badv}{\bdv}
+\newcommand{\negl}{\nu}
+\newcommand{\Exp}{\textsf{Exp}}
+\newcommand{\InfSecrecyExp}{\ensuremath{\textsf{Exp}^{\textrm{sec}}}} % todo this seems like it can be removed
+\newcommand{\AgVSSCorrectnessExp}{\ensuremath{\textsf{Exp}^{\textrm{corr}}}}
+\newcommand{\UnrecoverabilityExp}{\ensuremath{\textsf{Exp}^{\textrm{rec}}}} % TODO this can be removed
+\newcommand{\BindingExp}{\ensuremath{\textsf{Exp}^{\textrm{bind}}}}
+
+\newcommand{\transcript}{\mathsf{transcript}}
+\newcommand{\abort}{\mathsf{abort}}
+\newcommand{\fail}{\mathsf{fail}}
+\newcommand{\status}{\mathsf{status}}
+\newcommand{\accept}{\mathsf{accept}}
+
+\newcommand{\Ind}{W}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\Hrho}{\mathsf{H}_{\rho}}
+\newcommand{\Hcom}{\mathsf{H}_{w}}
+\newcommand{\Hcheck}{\mathsf{H}_c}
+\newcommand{\Qrho}{\mathsf{Q}_{\rho}}
+\newcommand{\Qcom}{\mathsf{Q}_{w}}
+\newcommand{\Qcheck}{\mathsf{Q}_c}
+
+\newcommand{\pstate}{\mathsf{state}}
+\newcommand{\party}{\pstate}
+\newcommand{\honest}{\mathsf{honest}}
+\newcommand{\corrupt}{\mathsf{corrupt}}
+\newcommand{\failed}{\mathsf{failed}}
+
+
+% secret sharing
+\newcommand{\vess}{\pckeystyle{S}}
+\newcommand{\vfunc}{\pckeystyle{SecretToPublic}}
+\newcommand{\getshare}{\oracle^{\mathsf{Share}}}
+\newcommand{\Ogettweak}{\oracle^{\gettweak}}
+\newcommand{\recvshare}{\oracle^{\mathsf{RecvShare}}}
+\newcommand{\counter}{\pckeystyle{k}}
+\newcommand{\rocounter}{\pckeystyle{k_r}}
+\newcommand{\acounter}{\pckeystyle{k_a}}
+\newcommand{\roundcounter}{\pckeystyle{rc}}
+\newcommand{\shamir}{\mathsf{Shamir}}
+\newcommand{\avss}{\pckeystyle{A}}
+\newcommand{\issuechal}{\pckeystyle{issuechal}}
+\newcommand{\issueshares}{\pckeystyle{Share}}
+\newcommand{\recover}{\pckeystyle{Recover}}
+\newcommand{\aggregatepriv}{\pckeystyle{AggPriv}}
+\newcommand{\aggregatepub}{\pckeystyle{AggPub}}
+\newcommand{\gettweak}{\pckeystyle{Tweak}}
+\newcommand{\recoveryset}{\mathsf{M}}
+\newcommand{\secretset}{\mathsf{N}}
+\newcommand{\pubaggregateset}{\textit{O}}
+\newcommand{\privaggregateset}{\textit{P}}
+\newcommand{\tweak}{v}
+\newcommand{\auxdistr}{\mathsf{AX}}
+\newcommand{\auxstring}{\mathsf{aux}}
+\newcommand{\chalauxstring}{\hat{\mathsf{aux}}}
+\newcommand{\commitrand}{\pckeystyle{CommitRand}}
+\newcommand{\commitrandchal}{\pckeystyle{CommitRandChal}}
+\newcommand{\verify}{\pckeystyle{Verify}}
+\newcommand{\verifytranscript}{\pckeystyle{VerifyTranscript}}
+\newcommand{\derivepshare}{\pckeystyle{GetPub}}
+\newcommand{\verifycomm}{\pckeystyle{VerifyComm}}
+\newcommand{\verifykeypair}{\pckeystyle{Verify}}
+
+\newcommand{\vsscommit}{\textit{D}}
+\newcommand{\avsscommit}{\textit{C}}
+\newcommand{\vsscommitone}{\vsscommit}
+%\newcommand{\vsscommittwo}{\vec{\textsf{E}}}
+
+% CPRF
+\newcommand{\witness}{\beta}
+\newcommand{\commitment}{\mathsf{D}}
+\newcommand{\commitmentone}{\commitment}
+\newcommand{\commitmenttwo}{\mathsf{D}^{(2)}}
+\newcommand{\checksum}{\gamma}
+\newcommand{\comm}{\mathsf{com}}
+%\newcommand{\cprffunc}{\mathsf{f}}
+\newcommand{\alabel}{\mathsf{label}}
+\newcommand{\target}{\mathsf{target}}
+\newcommand{\badevent}{\textsf{bad}}
+\newcommand{\badquery}{\textsf{badquery}}
+\newcommand{\Ofunc}{\pckeystyle{Ofunc}}
+
+% Commitment Scheme
+\newcommand{\cscheme}{\Sigma}
+
+% DKG
+\newcommand{\dkg}{\pckeystyle{D}}
+\newcommand{\threshsig}{\pckeystyle{TS}}
+\newcommand{\dthreshsig}{\pckeystyle{DT}}
+\newcommand{\schnorr}{\pckeystyle{Schnorr}}
+\newcommand{\numrounds}{r}
+\newcommand{\tsigmsg}{\rho^{(k)}}
+\newcommand{\tsigmsgin}{\rho^{(i)}}
+\newcommand{\tsigmsgprime}{\rho^{(k)*}}
+\newcommand{\setup}{\pckeystyle{Setup}}
+\newcommand{\keygen}{\pckeystyle{KeyGen}}
+\newcommand{\sign}{\pckeystyle{Sign}}
+\newcommand{\combine}{\pckeystyle{Combine}}
+\newcommand{\combinepub}{\pckeystyle{Agg}}
+\newcommand{\combinepriv}{\pckeystyle{CombineEval}}
+\newcommand{\Setup}{\setup}
+\newcommand{\KeyGen}{\keygen}
+\newcommand{\Sign}{\sign}
+\newcommand{\Verify}{\verify}
+\newcommand{\aux}{\mathsf{aux}}
+
+\newcommand{\GJKRAttack}{Key\hbox{-}Influence\xspace} % naming for GJKR attack
+\newcommand{\GJKRConstruction}{GJKR\xspace} % naming for GJKR construction
+\newcommand{\FeldVariant}{Feldman's VSS\xspace}
+
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Zq}{\Z_q}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Zp}{\Zq}
+%\newcommand{\pk}{\mathit{pk}}
+\newcommand{\PK}{\pk}
+%\newcommand{\sk}{\mathit{sk}}
+\newcommand{\SK}{\sk}
+\newcommand{\secret}{s}
+
+% Threshold notation
+\newcommand{\share}{\ensuremath{\phi}}
+%\newcommand{\shareone}{\textit{w}}
+%\newcommand{\sharetwo}{\textit{y}}
+%\newcommand{\pshare}{\textit{W}}
+%\newcommand{\ashare}{\hat{\textit{w}}}
+%\newcommand{\aggsk}{\hat{\secret}}
+
+%\newcommand{\lagrange}{\lambda}
+%\newcommand{\lagrangeA}{\lambda^{A}}
+%\newcommand{\DKG}{\mathsf{DKG}}
+\newcommand{\SIM}{\mathsf{SIM}}
+\newcommand{\simid}{\tau}
+
+% games
+\newcommand{\algcom}{\em\ \ /\!/ \  }
+
+
+\newcommand{\simkeygen}{\pckeystyle{SimRound}}
+\newcommand{\simfin}{\pckeystyle{SimFinalize}}
+
+\newcommand{\params}{\textrm{pp}}
+
+
+\newcommand{\targetkeygen}{\pckeystyle{TK}}
+
+
+\newcommand{\msg}{\pckeystyle{m}}
+\newcommand{\coalition}{C}
+\newcommand{\signmsg}{\rho}
+
+
+\newcommand{\oraclekg}{\oracle^{\dkgkeygen_r}}
+\newcommand{\oraclefinalize}{\oracle^{\finalize}}
+
+
+
+% new secrecy game
+%\newcommand{\maxsessions}{\ell}
+\newcommand{\maxfails}{m}
+\newcommand{\maxsessions}{\gamma}
+\newcommand{\numfails}{u}
+\newcommand{\challengespace}{\pckeystyle{V}}
+\newcommand{\sessioncounter}{c}
+\newcommand{\advstate}{\mathsf{st}_A}
+
+\newcommand{\RO}{\pckeystyle{RO}}
+\newcommand{\Hash}{\pckeystyle{H}}
+\newcommand{\rototal}{q_r}
+\newcommand{\numsignq}{q_s}
+\newcommand{\qchal}{q_3}
+\newcommand{\htwototal}{q_2}
+\newcommand{\honetotal}{q_1}
+\newcommand{\hgenerictotal}{q_h}
+\newcommand{\HashOne}{\pckeystyle{H}_1}
+\newcommand{\HashTwo}{\pckeystyle{H}_3}
+\newcommand{\HashThree}{\pckeystyle{H}_2}
+%\newcommand{\HashThree}{\pckeystyle{H}_3}
+%\newcommand{\HashFour}{\pckeystyle{H}_4}
+%\newcommand{\HashFive}{\pckeystyle{H}_5}
+\newcommand{\HashFunctionFamily}{\pckeystyle{HF}}
+
+\newcommand{\total}{\mathsf{\ell}}
+\newcommand{\simtotal}{{\mathsf{\ell}'}}
+
+% DFROST
+\newcommand{\skparty}{\mathsf{sk}}
+\newcommand{\pkparty}{\mathsf{pk}}
+\newcommand{\skgroup}{\mathsf{sk}}
+\newcommand{\pkgroup}{\mathsf{pk}}
+\newcommand{\sksign}{\mathsf{sk}^{(2)}}
+\newcommand{\pksign}{\mathsf{pk}^{(2)}}
+\newcommand{\skrand}{\mathsf{sk}^{(1)}}
+\newcommand{\partyid}{k}
+\newcommand{\ssid}{\mathsf{eid}}
+\newcommand{\resp}{z}
+
+\newcommand{\ZKPOK}{\mathsf{ZKPOK}}
+\newcommand{\DLEQ}{\mathsf{DLEQ}}
+\newcommand{\DYPRF}{\mathsf{VRF}^\dagger}
+\newcommand{\VRF}{\mathsf{VRF}}
+\newcommand{\polycomm}{B}
+\newcommand{\vrfin}{w}
+\newcommand{\vrfprivout}{d}
+\newcommand{\vrfpubout}{D}
+\newcommand{\prove}{\mathsf{Prove}}
+%\newcommand{\evaluate}{\mathsf{PartialEval}}
+\newcommand{\generate}{\mathsf{Gen}}
+
+
+% Shamir secret sharing
+\newcommand{\IssueShares}{\mathsf{Share}}
+\newcommand{\Recover}{\mathsf{Recover}}
+\newcommand{\tss}{\mathcal{SS}}
+\newcommand{\GroupGen}{\mathsf{GroupGen}}
+\newcommand{\pp}{\mathsf{par}}
+\newcommand{\thresh}{t}
+\newcommand{\minsigners}{\mu}
+\newcommand{\minparticipants}{\mu}
+\newcommand{\tcor}{t-1}
+
+% OMDL
+\newcommand{\odlsol}{\oracle^{\mathit{aomdl}}}
+\newcommand{\odlssol}{\oracle^{\mathit{aomdl}'}}
+\newcommand{\ExpAOMDL}{\textsf{Exp}^{\textrm{aomdl}}}
+\newcommand{\advantaomdl}{\advant{aomdl}}
+
+% Forking
+\newcommand{\genfork}{\mathsf{Fork}}
+\newcommand{\modgenfork}{\mathsf{Fork}_m}
+\newcommand{\IG}{\mathsf{IG}}
+\newcommand{\forkhashes}{\ensuremath{r}}
+
+\newcommand{\zkpone}{\pi^{(d)}}
+\newcommand{\zkptwo}{\pi^{(e)}}
+
+
+
+
+\newcommand{\QMsg}{\mathsf{Q_m}}
+\newcommand{\QVRF}{\mathsf{Q_v}}
+\newcommand{\QQueries}{\mathsf{Q_q}}
+\newcommand{\QOne}{\mathsf{Q_1}}
+\newcommand{\QTwo}{\mathsf{Q_3}}
+\newcommand{\QThree}{\mathsf{Q_2}}
+\newcommand{\QFour}{\mathsf{Q_y}}
+\newcommand{\QFive}{\mathsf{Q_5}}
+
+\newcommand{\bfb}{\textbf{b}}
+
+\newcommand{\NonDeterministicEvent}{\mathsf{NonDeterministicEvent}}
+\newcommand{\BadHashEvent}{\mathsf{BadHashEvent}}
+\newcommand{\badhashevent}{\BadHashEvent}
+\newcommand{\BadHashEventOne}{\BadHashEvent_1}
+\newcommand{\BadHashEventTwo}{\BadHashEvent_2}
+\newcommand{\BadHashEventThree}{\BadHashEvent_3}
+\newcommand{\BadEvent}{\mathsf{BadEvent}}
+\newcommand{\BadEventOne}{\mathsf{BadEvent}_1}
+\newcommand{\BadEventTwo}{\mathsf{BadEvent}_2}
+\newcommand{\BadEventThree}{\mathsf{BadEvent}_3}
+\newcommand{\BadEventFour}{\mathsf{BadEvent}_4}
+\newcommand{\BadEventFive}{\mathsf{BadEvent}_5}
+\newcommand{\BadEventSix}{\mathsf{BadEvent}_6}
+
+\newcommand{\partysecret}{\beta}
+\newcommand{\partycomitment}{B}
+
+\newcommand{\VSS}{\mathsf{VSS}}
+\newcommand{\dvrf}{\mathsf{VPSS}}
+\newcommand{\vrfprivdomain}{\mathcal{P}}
+\newcommand{\vrfpubdomain}{\mathcal{O}}
+\newcommand{\DVRFOnem}{\shinem}
+\newcommand{\DVRFOne}{\shine}
+\newcommand{\shine}{Shine\xspace}
+\newcommand{\shinem}{\mathsf{Shine}\xspace}
+\newcommand{\ADSS}{\mathsf{ADSS}}
+
+% new proof
+\newcommand{\OChal}{\oracle^{\Hash}}
+\newcommand{\OSign}{\oracle^{\sign}}
+\newcommand{\dlogchal}{X}
+\newcommand{\cramerpoly}{L'}
+\newcommand{\dlchal}{Y}
+\newcommand{\dlsol}{y}
+
+\newcommand{\dcvrfmap}{\Psi}
+\newcommand{\identityG}{I_{\GG}}
+
+\newcommand{\numsets}{\delta}
+\newcommand{\SIMEval}{\mathsf{SimGen}}
+
+\newcommand{\targetshinekey}{\hat{\phi}}
