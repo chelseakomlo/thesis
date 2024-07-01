@@ -13,7 +13,7 @@
         \vspace*{1.0cm}
 
         \Huge
-        {\bf University of Waterloo E-Thesis Template for \LaTeX }
+        {\bf Practical Distributed Key Generation and Signatures}
 
         \vspace*{1.0cm}
 
@@ -23,18 +23,18 @@
         \vspace*{1.0cm}
 
         \Large
-        Pat Neugraad \\
+        Chelsea Komlo \\
 
         \vspace*{3.0cm}
 
         \normalsize
         A thesis \\
-        presented to the University of Waterloo \\ 
+        presented to the University of Waterloo \\
         in fulfillment of the \\
         thesis requirement for the degree of \\
         Doctor of Philosophy \\
         in \\
-        Philosophy of Zoology \\
+        Computer Science \\
 
         \vspace*{2.0cm}
 
@@ -42,7 +42,7 @@
 
         \vspace*{1.0cm}
 
-        \copyright\ Pat Neugraad 2023 \\
+        \copyright\ Chelsea Komlo 2024 \\
         \end{center}
 \end{titlepage}
 
@@ -53,7 +53,7 @@
 \cleardoublepage % Ends the current page and causes all figures and tables that have so far appeared in the input to be printed.
 % In a two-sided printing style, it also makes the next page a right-hand (odd-numbered) page, producing a blank page if necessary.
 \phantomsection    % allows hyperref to link to the correct page
- 
+
 % E X A M I N I N G   C O M M I T T E E (Required for Ph.D. theses only)
 % Remove or comment out the lines below to remove this page
 \addcontentsline{toc}{chapter}{Examining Committee}
@@ -61,47 +61,41 @@
   \noindent
 The following served on the Examining Committee for this thesis. The decision of the Examining Committee is by majority vote.
   \bigskip
-  
+
   \noindent
 \begin{tabbing}
 Internal-External Member: \=  \kill % using longest text to define tab length
-External Examiner: \>  Bruce Bruce \\ 
+External Examiner: \>  Bruce Bruce \\
 \> Professor, Dept. of Philosophy of Zoology, University of Wallamaloo \\
-\end{tabbing} 
-  \bigskip
-  
-  \noindent
-\begin{tabbing}
-Internal-External Member: \=  \kill % using longest text to define tab length
-Supervisor(s): \> Ann Elk \\
-\> Professor, Dept. of Zoology, University of Waterloo \\
-\> Andrea Anaconda \\
-\> Professor Emeritus, Dept. of Zoology, University of Waterloo \\
 \end{tabbing}
   \bigskip
-  
+
+  \noindent
+\begin{tabbing}
+Internal-External Member: \=  \kill % using longest text to define tab length
+Supervisor(s): \> Ian Goldberg\\
+\> Professor, Dept. of Computer Science, University of Waterloo \\
+\> Douglas Stebila \\
+\> Professor, Dept. of Combinatorics and Optimization, University of Waterloo \\
+\end{tabbing}
+  \bigskip
+
   \noindent
   \begin{tabbing}
 Internal-External Member: \=  \kill % using longest text to define tab length
-Internal Member: \> Pamela Python \\
-\> Professor, Dept. of Zoology, University of Waterloo \\
+Internal Member: \> Mohammad Hajiabadi \\
+\> Professor, Dept. of Combinatorics and Optimization, University of Waterloo \\
 \end{tabbing}
   \bigskip
-  
+
   \noindent
 \begin{tabbing}
 Internal-External Member: \=  \kill % using longest text to define tab length
-Internal-External Member: \> Meta Meta \\
-\> Professor, Dept. of Philosophy, University of Waterloo \\
+Internal-External Member: \> Florian Kerschbaum \\
+\> Professor, Dept. of Computer Science, University of Waterloo \\
 \end{tabbing}
   \bigskip
-  
-  \noindent
-\begin{tabbing}
-Internal-External Member: \=  \kill % using longest text to define tab length
-Other Member(s): \> Leeping Fang \\
-\> Professor, Dept. of Fine Art, University of Waterloo \\
-\end{tabbing}
+
 
 \cleardoublepage
 \phantomsection    % allows hyperref to link to the correct page
@@ -113,16 +107,31 @@ Other Member(s): \> Leeping Fang \\
  \addcontentsline{toc}{chapter}{Author's Declaration}
  \begin{center}\textbf{Author's Declaration}\end{center}
 
- % Author's Declaration Option ONE - line 118:  
+ % Author's Declaration Option ONE - line 118:
  \noindent
 I hereby declare that I am the sole author of this thesis. This is a true copy of the thesis, including any required final revisions, as accepted by my examiners.
   % Author's Declaration Option TWO - line 121. Updated August 21st, 2023. Use the following declaration text if appropriate by removing the percent character and space at the beginning of line 121, and add a percent symbol and space at line 118 to change Author's Declaration Option ONE to a remark that is not printed.
- \noindent  
+ \noindent
 % This thesis consists of material all of which I authored or co-authored: see Statement of Contributions included in the thesis. This is a true copy of the thesis, including any required final revisions, as accepted by my examiners.
   \bigskip
-  
+
   \noindent
 I understand that my thesis may be made electronically available to the public.
+
+
+ \addcontentsline{toc}{chapter}{Statement of Contributions}
+ \begin{center}\textbf{Author's Declaration}\end{center}
+
+ % Author's Declaration Option ONE - line 118:
+ \noindent
+The contributions of TODO,
+were previously published in collaboratoin with Ian Goldberg~\cite{}.
+The reminder of this dissertation consists of newly written material.
+All of the work appearing herein was conducted under the supervision of Ian Goldberg and Douglas Stebila.
+
+
+ \noindent
+
 
 \cleardoublepage
 \phantomsection    % allows hyperref to link to the correct page
@@ -132,21 +141,51 @@ I understand that my thesis may be made electronically available to the public.
 \addcontentsline{toc}{chapter}{Abstract}
 \begin{center}\textbf{Abstract}\end{center}
 
-This is the abstract.
+  Threshold schemes are a critical cryptographic primitive that allows a set of $n$ total parties and at least a threshold of minimum at least $t$ of parties to collaborate to perform some function.
+  This function depends on the particular use case.
+  Threshold schemes allow for improved robustness in the case of failure,
+  and distribute trust among many parties.
+  In particular,
+  the security of the scheme assumes $t-1$ players are corrupted,
+  and so can deviate arbitrarily from the protocol.
+  The security of the scheme ensures that in spite of a subset of corrupted players,
+  the scheme can provide important properties such as robustness,
+  unforgeability,
+  or indistiguishability from some target distribution.
 
-Vulputate minim vel consequat praesent at vel iusto et, ex delenit, esse euismod luptatum augue ut sit et eu vel augue autem feugiat, quis ad dolore. Nulla vel, laoreet lobortis te commodo elit qui aliquam enim ex iriure ea ullamcorper nostrud lorem, lorem laoreet eu ex ut vel in zzril wisi quis. Nisl in autem praesent dignissim, sit vel aliquam at te, vero dolor molestie consequat.
+  In this work,
+  we examine the special cases of \emph{distributed key generation} and \emph{threshold signing}.
+  In particular,
+  we present constructions that optimize for considerations that are important to implementations in practice.
+  Such considerations include
+  simplicity,
+  network round efficiency,
+  computational and bandwidth efficiency.
+  and minimization of broadcast channels.
 
-Tation iriure sed wisi feugait odio dolore illum duis in accumsan velit illum consequat consequat ipsum molestie duis duis ut ullamcorper. Duis exerci odio blandit vero dolore eros odio amet et nisl in nostrud consequat iusto eum suscipit autem vero. Iusto dolore exerci, ut erat ex, magna in facilisis duis amet feugait augue accumsan zzril delenit aliquip dignissim at. Nisl molestie nibh, vulputate feugait nibh luptatum ea delenit nostrud dolore minim veniam odio volutpat delenit nulla accumsan eum vero ullamcorper eum. Augue velit veniam, dolor, exerci ea feugiat nulla molestie, veniam nonummy nulla dolore tincidunt, consectetuer dolore nulla ipsum commodo.
+  Firstly,
+  we present FROST,
+  a Flexibile Found-Optimized Schnorr Threshold signature scheme.
+  FROST improves upon prior threshold Schnorr signature schemes in that signatures can be generated with only two network rounds among participants,
+  while remaining secure against concurrent adversaries.
+  We show that FROST is secure under the Algebraic One-More Discrete Logarithm (AOMDL) assumption in the Random Oracle Model (ROM).
 
-At nostrud lorem, lorem laoreet eu ex ut vel in zzril wisi. Suscipit consequat in autem praesent dignissim, sit vel aliquam at te, vero dolor molestie consequat eros tation facilisi diam dolor. Odio luptatum dolor in facilisis et facilisi et adipiscing suscipit eu iusto praesent enim, euismod consectetuer feugait duis. Odio veniam et iriure ad qui nonummy aliquip at qui augue quis vel diam, nulla. Autem exerci tation iusto, hendrerit et, tation esse consequat ut velit te dignissim eu esse eros facilisis lobortis, lobortis hendrerit esse dignissim nisl. Nibh nulla minim vel consequat praesent at vel iusto et, ex delenit, esse euismod luptatum.
+  Secondly,
+  we present STORM,
+  a simplified three-round distributed key generation protocol (DKG).
+  STORM presents a simplified alternative to prior DKGs with a similar security model assuming the Discrete Logarithm Problem (DLP) is hard,
+  and provides a generic construction that may be applicable beyond discrete-logarithm assumptions.
 
-Ut eum vero ullamcorper eum ad velit veniam, dolor, exerci ea feugiat nulla molestie, veniam nonummy nulla. Elit tincidunt, consectetuer dolore nulla ipsum commodo, ut, at qui blandit suscipit accumsan feugiat vel praesent. In dolor, ea elit suscipit nisl blandit hendrerit zzril. Sit enim, et dolore blandit illum enim duis feugiat velit consequat iriure sed wisi feugait odio dolore illum duis. Et accumsan velit illum consequat consequat ipsum molestie duis duis ut ullamcorper nulla exerci odio blandit vero dolore eros odio amet et.
+  Finally,
+  we present Arctic,
+  a two-round deterministic threshold Schnorr signature scheme.
+  Arctic allows signers to remain stateless,
+  with the exception of persisting state of their long-lived signing keys.
+  Arctic requires a slightly weaker trust model in that it assumes the majority of signers are honest,
+  but shows improved efficiency over alternative deterministic threshold Schnorr signature schemes for small signing coalitions (less than 25 signers).
+  We show that Arctic is secure assuming DLP in the ROM.
 
-In augue quis vel diam, nulla dolore exerci tation iusto, hendrerit et, tation esse consequat ut velit. Duis dignissim eu esse eros facilisis lobortis, lobortis hendrerit esse dignissim nisl illum nulla minim vel consequat praesent at vel iusto et, ex delenit, esse euismod. Nulla augue ut sit et eu vel augue autem feugiat, quis ad dolore te vel, laoreet lobortis te commodo elit qui aliquam enim ex iriure. Ut ullamcorper nostrud lorem, lorem laoreet eu ex ut vel in zzril wisi quis consequat in autem praesent dignissim, sit vel. Dolore at te, vero dolor molestie consequat eros tation facilisi diam. Feugait augue luptatum dolor in facilisis et facilisi et adipiscing suscipit eu iusto praesent enim, euismod consectetuer feugait duis vulputate veniam et.
 
-Ad eros odio amet et nisl in nostrud consequat iusto eum suscipit autem vero enim dolore exerci, ut. Esse ex, magna in facilisis duis amet feugait augue accumsan zzril. Lobortis aliquip dignissim at, in molestie nibh, vulputate feugait nibh luptatum ea delenit nostrud dolore minim veniam odio. Euismod delenit nulla accumsan eum vero ullamcorper eum ad velit veniam. Quis, exerci ea feugiat nulla molestie, veniam nonummy nulla. Elit tincidunt, consectetuer dolore nulla ipsum commodo, ut, at qui blandit suscipit accumsan feugiat vel praesent.
-
-Dolor zzril wisi quis consequat in autem praesent dignissim, sit vel aliquam at te, vero. Duis molestie consequat eros tation facilisi diam dolor augue. Dolore dolor in facilisis et facilisi et adipiscing suscipit eu iusto praesent enim, euismod consectetuer feugait duis vulputate.
 
 \cleardoublepage
 \phantomsection    % allows hyperref to link to the correct page
