@@ -1,0 +1,217 @@
+\chapter{Background}
+
+\section{Notation} \label{notation}
+
+We represent a security parameter as $\lambda \in \mathbb{Z}$.
+We denote the assignment of an element $y$ to the value $x$ as $y \gets x$,
+and sampling an element from some set $S$ uniformly at random as $x \rgets S$.
+For a randomized algorithm $\mathit{A}$, we write $x \rgets \mathit{A}()$ to indicate the random variable $x$ that is output from the execution of $\mathit{A}$.
+We say that $f$ is a negligible function of $\lambda$ if it holds that
+$\lim_{\lambda \to \infty} f(\lambda) \lambda^c = 0$,
+for all $ c > 0$~\cite{BonehS2020}.
+
+Let $\GG$ be a cyclic group of prime order $q$, and $\Zq$ be the field of integers modulo $q$.
+Let $g$ be a generator of $\GG$.
+We use $\set{n}$ to represent the set $\{1,\ldots,n \}$,
+and represent integer vectors in bold-face font.
+
+\paragraph{Polynomial Interpolation}
+A polynomial $f(x) = a_0 + a_1 x + a_2 x^2 + \ldots + a_{\tcor} x^{\tcor}$
+of degree $\tcor$ over a field $\F$ can be interpolated by $\thresh$ points.
+Let $\eta \subseteq \set{n}$ be the list of $\thresh$ distinct indices
+corresponding to the $x$-coordinates $x_i \in \F, i \in \eta$, of these points.
+Then the Lagrange polynomial $L_i(x)$ has the form:
+
+\begin{equation}\label{eqn:lagrange}
+L_i(x) = \prod_{j \in \eta; j \neq i } \frac{x-x_j}{x_i - x_j}
+\end{equation}
+
+Given a set of $\thresh$ points $(x_i, f(x_i))_{i \in [\thresh]}$, any point $f(x_\ell)$ on the polynomial $f$ can be determined by Lagrange interpolation as follows:
+
+\[ f(x_\ell) = \sum_{k \in \eta} f(x_k) \cdot L_k(x_\ell) \]
+
+\paragraph{Game-Based Security.}
+An experiment (or game) $\textsf{Exp}_{\adv, \mathcal{C}}^{\mathsf{sec}}$ is
+played with respect to a security notion $\mathsf{sec}$,
+an adversary $\adv$ modeled by a probabilistic (randomized) algorithm,
+and a cryptographic primitive $\mathcal{C}$.
+The experiment is initialized within a main procedure,
+whose output is the output of the game.
+The goal of $\adv$ is to win the game,
+the conditions under which is defined within the experiment.
+The probability of $\adv$'s success thus defines how secure $\mathcal{C}$ is with respect to the security notion $\mathsf{sec}$.
+
+\paragraph{PPT Adversaries.}
+We say that an adversary $\adv$ is probabilistic polynomial-time (PPT) if it is run on
+random coins and its execution is performed in time that is polynomial relative to the size of its input.
+In other words,
+for every input $x \in \zo^n$,
+$\adv(x)$ terminates within at most $f(n)$ steps,
+for some polynomial $f$.
+
+\section{Assumptions} \label{assumptions}
+
+\paragraph{Discrete Logarithm (DL) Assumption.}
+A PPT adversary is given a value $X \in \GG$ such that $X=g^x$ without knowing the value of $x$.
+The challenge to the adversary is to output $x$.
+
+We say that the DL assumption holds if the advantage to a PPT adversary in
+successfully producing such an $x$ is a negligible function of $\lambda$.
+
+\paragraph{Computational Diffie-Hellman Assumption (CDH).}
+The Computational Diffie-Hellman Assumption (CDH) can be described as follows.
+A PPT adversary is given the following values:
+
+\[
+  (g, g^a, g^b)
+\]
+
+The challenge to the adversary is then to compute $g^{ab}$.
+The CDH assumption holds if the advantage to any PPT adversary in successfully
+doing so is a negligible function of $\lambda$.
+
+\paragraph{One-More Discrete Logarithm Assumption (OMDL).}
+The One-More Discrete Logarithm (OMDL) assumption~\cite{BellareNPS03,BauerFP21} extends
+the DL assumption, which is non-interactive, into an interactive assumption.
+I show the OMDL assumption along with the DL assumption in Figure~\ref{fig:dl-omdl}.
+
+In particular,
+a PPT adversary is given $\ell+1$ discrete logarithm challenges $(X_0, \ldots, X_\ell) \in \GG^{\ell+1}$
+with respect to a generator $g \in \GG$.
+It is also given access to a discrete logarithm oracle,
+that when queried on an arbitrary group element $X' \in \GG$,
+returns the discrete logarithm of that value.
+The adversary is said to win the OMDL game if it makes $\ell$ or fewer queries
+to the discrete logarithm oracle,
+and produces correct solutions $(x_0, \ldots, x_\ell)$ to its $\ell+1$ challenges such that $X_i = g^{x_i}$,
+$i \in \{ 0, \ldots, \ell\}$.
+
+The OMDL assumption holds if the advantage to any PPT adversary in winning the
+OMDL game is a negligible function of $\lambda$.
+
+\paragraph{Algebraic One-More Discrete Logarithm Assumption (AOMDL).}
+The algebraic one-more discrete logarithm assumption (AOMDL) was formalized by Jonas, Ruffing, and Seurin~\cite{NickRS21}.
+We highlight differences with the OMDL assumption in Figure~\ref{fig:dl-omdl}.
+Note that while the OMDL assumption is not falsifiable
+(because the adversary is allowed to query for the discrete logarithm of any arbitrary group element).
+the AOMDL assumption is falsifiable.
+This is because the input to the discrete logarithm oracle is a linear combination of all challenges issued to the adversary,
+so it is guaranteed that the environment runs in polynomial time with respect to a PPT adversary.
+Hence, the AOMDL assumption is a strictly weaker assumption than standard OMDL.
+
+An adversary in the AOMDL game is initialized in exactly the same manner as an OMDL adversary,
+with the same winning condition.
+The only distinction between the games is the inputs to the discrete logarithm oracle.
+In the AOMDL setting, the adversary provides a vector $(\alpha, \beta_0 \ldots, \beta_\ell)$ of coefficients to the discrete logarithm oracle.
+The oracle then responds with the integer linear combination of these coefficients with respect to the
+discrete logarithm of the set of challenges $(X_0, \ldots, X_\ell)$.
+Informally, an AOMDL adversary can be used to win the OMDL game,
+therefore implying that if OMDL is hard, then AOMDL is hard.
+
+The AOMDL assumption holds if the advantage to any PPT adversary in winning the
+AOMDL game is a negligible function of $\lambda$.
+
+\paragraph{Algebraic Group Model (AGM).}
+Introduced by Fuchsbauer, Kiltz, and Loss~\cite{FuchsbauerKL18},
+the Algebraic Group Model (AGM) gives an idealized representation of a group,
+by requiring the adversary to act algebraically.
+In other words,
+when an adversary outputs a group element $X \in \GG$ to the environment,
+it additionally is required to output its representation with respect to all
+other group elements the adversary has seen thus far.
+In other words, the adversary must output a coefficient vector $\textbf{v} = (\alpha, b_1, b_2, \ldots)$,
+such that $X = g^\alpha A_1^{b_1} A_2^{b_2} \ldots$.
+
+
+\paragraph{Knowledge of Exponent Assumption (KoE).}
+
+The Knowledge of Exponent (KoE) assumption~\cite{Damgard91,BellareP04} is an unfalsifiable assumption.
+In short,
+the assumption says that for an adversary that is given input $(g, h=g^s, q)$,
+if the adversary outputs a value $(C, Y) \in \GG^2$ such that $C^s = Y$,
+then there exists an extractor algorithm that given $(g, h=g^s, q)$,
+%the adversary's state and $(C, Y) \in \GG^2$,
+the extractor can output $x$ such that $C = g^x$ (and, consequently $Y = C^x$).
+Intuitively, KoE assumes that in order to output such a $(C, Y)$,
+the adversary must know $x$.
+
+
+\section{Schnorr Signatures} \label{schnorr-sigs}
+
+\section{Dodis-Yampolskiy VRF} \label{dy-vrf}
+
+\section{Non-Interactive Key Exchange (NIKE)} \label{nike}
+
+\section{Threshold Secret Sharing Schemes} \label{tss}
+
+\begin{definition}{Threshold Secret Sharing}
+A $(n, \thresh)$-threshold secret sharing scheme $\tss$ is the tuple of
+  algorithms   $\tss=(\Setup, \IssueShares, \Recover)$, such that:
+  \begin{itemize}[itemsep=1mm]
+    \item[-]  $\Setup(1^\secp) \rightarrow \pp$: On input the security parameter,
+      output public parameters $\pp$ which are given implicitly as input to all other algorithms.
+
+    \item $\IssueShares(\secp, s, n, \thresh) \rightarrow (\{ (1, \share_1), \ldots, (n, \share_n)\})$:
+      A probabilistic algorithm performed that accepts as input
+      the security parameter $\secp$,
+      the secret $s$,
+      the number of participants $n$, and the threshold $\thresh$,
+      where $n$ and $t$ are positive integers, and $n \geq \thresh$.
+      Outputs the list of shares $\{ (1, \share_1), \ldots, (n, \share_n) \}$.
+
+    \item $\Recover(\thresh, \{ (i, \share_i)\}_{ i \in \S}) \rightarrow \bot / \sk$:
+      A deterministic algorithm that accepts a threshold $\thresh$ and a set of shares $\{(i, \share_i) \}_{i \in \S}$,
+      output $\bot$ if $\S \not\subseteq \set{n}$ or if $\lvert \S \rvert < \thresh$.
+      Otherwise, recover $\sk$ using the set of shares.
+
+    \item For correctness, for all security parameters $\secpar$ and $n, \thresh, \S$,
+      such that $n \geq \thresh$,
+      $\thresh \geq 1$,
+      $\S \subseteq \set{n}$,
+      and $\lvert \S \rvert \geq \thresh$,
+      the following must hold:
+    \begin{align*}
+      & \tss.\Recover(\thresh, \{ (i, \share_i)\}_{ i \in \S}) = s,
+      \text{ where }   \\
+      & \tss.\IssueShares(\secpar, s, n, \thresh) \rightarrow ( \{ (i, \share_i) \}_{i \in \set{n}})
+    \end{align*}
+\end{itemize}
+\end{definition}
+
+We now define Shamir secret sharing as one concrete instantiation of a threshold secret sharing scheme.
+
+\begin{definition}[Shamir secret sharing~\cite{Shamir79}] \label{defn:shamir}
+Shamir secret sharing $\shamir$ is concrete instance of a threshold secret sharing scheme that consists of the following algorithms:
+
+\begin{itemize}
+    \item[-]  $\Setup(1^\secp) \rightarrow \pp$: On input the security parameter,
+      run $(\Gr, p, g) \gets \GroupGen(1^\secp)$.
+      Output public parameters $\pp = (\Gr, p, g)$ which are given implicitly as input to all other algorithms.
+
+    \item $\shamir.\IssueShares(s, n, \thresh) \rightarrow \{ (1, \share_1), \ldots, (n, \share_n)\}$:
+      On input a secret $s$,
+      the number of participants $n$,
+      and a threshold $\thresh$, perform the following.
+      First, define a polynomial $f(Z) = s + a_1 + a_2 Z^2 + \cdots + a_{\tcor} Z^{\tcor}$ by sampling $\tcor$ coefficients at random $(a_1, \ldots, a_{\tcor}) \randpick \Z_p$.
+      Then, set each participant's share $\share_i, i \in \set{n}$, to be the evaluation of $f(i)$:
+    \begin{equation*} \label{eq:issueshares}
+        \share_i \gets s + \sum_{j \in \set{\tcor}} a_j i^j
+    \end{equation*}
+
+    Output $\{(i, \share_i) \}_{i \in \set{n}}$.
+
+  \item $\shamir.\Recover(\thresh, \{ (i, \share_i)\}_{ i \in \S}) \rightarrow \bot / \sk$:
+    On input a threshold $\thresh$ and a set of shares $\{(i, \share_i) \}_{i \in \S}$,
+    output $\bot$ if $\S \not\subseteq \set{n}$ or if $\lvert \S \rvert < \thresh$.
+    Otherwise, recover $s$ as follows:
+    \begin{equation*} \label{eq:recovershares}
+      s \gets \sum_{i \in \S} \lambda_i \share_i
+    \end{equation*}
+    where the Lagrange coefficient for participant $i$ in the set $\S$ is defined by
+\[ \lambda_i = \prod_{j \in \S, j\neq i} \frac{j}{i - j} \]
+\end{itemize}
+\end{definition}
+
+\section{Verifiable Secret Sharing} \label{verifiable-tss}
+
+\section{Pseudorandom Secret Sharing} \label{pseudorandom-tss}

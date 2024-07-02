@@ -89,11 +89,13 @@
 \newcommand{\BigO}{\mathcal{O}}
 \newcommand{\G}{\mathbb{G}}
 \newcommand{\GG}{\G}
+\newcommand{\Gr}{\G}
 \newcommand{\gpar}{\mathcal{G}}
 \newcommand{\F}{\mathbb{F}}
 \newcommand{\main}{\mathsc{main}}
 \newcommand{\secp}{\lambda}
 \newcommand{\usecp}{1^{\secp}}
+\newcommand{\randpick}{\rgets}
 \newcommand{\rgets}{\mathrel{\mathpalette\rgetscmd\relax}}
 \newcommand{\rgetscmd}{\ooalign{$\leftarrow$\cr
     \hidewidth\raisebox{1.2\height}{\scalebox{0.5}{\ \rm \$}}\hidewidth\cr}}
@@ -137,23 +139,23 @@
 
 
 % secret sharing
-\newcommand{\vess}{\pckeystyle{S}}
-\newcommand{\vfunc}{\pckeystyle{SecretToPublic}}
+\newcommand{\vess}{\mathsf{S}}
+\newcommand{\vfunc}{\mathsf{SecretToPublic}}
 \newcommand{\getshare}{\oracle^{\mathsf{Share}}}
 \newcommand{\Ogettweak}{\oracle^{\gettweak}}
 \newcommand{\recvshare}{\oracle^{\mathsf{RecvShare}}}
-\newcommand{\counter}{\pckeystyle{k}}
-\newcommand{\rocounter}{\pckeystyle{k_r}}
-\newcommand{\acounter}{\pckeystyle{k_a}}
-\newcommand{\roundcounter}{\pckeystyle{rc}}
+\newcommand{\counter}{\mathsf{k}}
+\newcommand{\rocounter}{\mathsf{k_r}}
+\newcommand{\acounter}{\mathsf{k_a}}
+\newcommand{\roundcounter}{\mathsf{rc}}
 \newcommand{\shamir}{\mathsf{Shamir}}
-\newcommand{\avss}{\pckeystyle{A}}
-\newcommand{\issuechal}{\pckeystyle{issuechal}}
-\newcommand{\issueshares}{\pckeystyle{Share}}
-\newcommand{\recover}{\pckeystyle{Recover}}
-\newcommand{\aggregatepriv}{\pckeystyle{AggPriv}}
-\newcommand{\aggregatepub}{\pckeystyle{AggPub}}
-\newcommand{\gettweak}{\pckeystyle{Tweak}}
+\newcommand{\avss}{\mathsf{A}}
+\newcommand{\issuechal}{\mathsf{issuechal}}
+\newcommand{\issueshares}{\mathsf{Share}}
+\newcommand{\recover}{\mathsf{Recover}}
+\newcommand{\aggregatepriv}{\mathsf{AggPriv}}
+\newcommand{\aggregatepub}{\mathsf{AggPub}}
+\newcommand{\gettweak}{\mathsf{Tweak}}
 \newcommand{\recoveryset}{\mathsf{M}}
 \newcommand{\secretset}{\mathsf{N}}
 \newcommand{\pubaggregateset}{\textit{O}}
@@ -162,13 +164,13 @@
 \newcommand{\auxdistr}{\mathsf{AX}}
 \newcommand{\auxstring}{\mathsf{aux}}
 \newcommand{\chalauxstring}{\hat{\mathsf{aux}}}
-\newcommand{\commitrand}{\pckeystyle{CommitRand}}
-\newcommand{\commitrandchal}{\pckeystyle{CommitRandChal}}
-\newcommand{\verify}{\pckeystyle{Verify}}
-\newcommand{\verifytranscript}{\pckeystyle{VerifyTranscript}}
-\newcommand{\derivepshare}{\pckeystyle{GetPub}}
-\newcommand{\verifycomm}{\pckeystyle{VerifyComm}}
-\newcommand{\verifykeypair}{\pckeystyle{Verify}}
+\newcommand{\commitrand}{\mathsf{CommitRand}}
+\newcommand{\commitrandchal}{\mathsf{CommitRandChal}}
+\newcommand{\verify}{\mathsf{Verify}}
+\newcommand{\verifytranscript}{\mathsf{VerifyTranscript}}
+\newcommand{\derivepshare}{\mathsf{GetPub}}
+\newcommand{\verifycomm}{\mathsf{VerifyComm}}
+\newcommand{\verifykeypair}{\mathsf{Verify}}
 
 \newcommand{\vsscommit}{\textit{D}}
 \newcommand{\avsscommit}{\textit{C}}
@@ -187,26 +189,26 @@
 \newcommand{\target}{\mathsf{target}}
 \newcommand{\badevent}{\textsf{bad}}
 \newcommand{\badquery}{\textsf{badquery}}
-\newcommand{\Ofunc}{\pckeystyle{Ofunc}}
+\newcommand{\Ofunc}{\mathsf{Ofunc}}
 
 % Commitment Scheme
 \newcommand{\cscheme}{\Sigma}
 
 % DKG
-\newcommand{\dkg}{\pckeystyle{D}}
-\newcommand{\threshsig}{\pckeystyle{TS}}
-\newcommand{\dthreshsig}{\pckeystyle{DT}}
-\newcommand{\schnorr}{\pckeystyle{Schnorr}}
+\newcommand{\dkg}{\mathsf{D}}
+\newcommand{\threshsig}{\mathsf{TS}}
+\newcommand{\dthreshsig}{\mathsf{DT}}
+\newcommand{\schnorr}{\mathsf{Schnorr}}
 \newcommand{\numrounds}{r}
 \newcommand{\tsigmsg}{\rho^{(k)}}
 \newcommand{\tsigmsgin}{\rho^{(i)}}
 \newcommand{\tsigmsgprime}{\rho^{(k)*}}
-\newcommand{\setup}{\pckeystyle{Setup}}
-\newcommand{\keygen}{\pckeystyle{KeyGen}}
-\newcommand{\sign}{\pckeystyle{Sign}}
-\newcommand{\combine}{\pckeystyle{Combine}}
-\newcommand{\combinepub}{\pckeystyle{Agg}}
-\newcommand{\combinepriv}{\pckeystyle{CombineEval}}
+\newcommand{\setup}{\mathsf{Setup}}
+\newcommand{\keygen}{\mathsf{KeyGen}}
+\newcommand{\sign}{\mathsf{Sign}}
+\newcommand{\combine}{\mathsf{Combine}}
+\newcommand{\combinepub}{\mathsf{Agg}}
+\newcommand{\combinepriv}{\mathsf{CombineEval}}
 \newcommand{\Setup}{\setup}
 \newcommand{\KeyGen}{\keygen}
 \newcommand{\Sign}{\sign}
@@ -221,11 +223,13 @@
 \newcommand{\Zq}{\Z_q}
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\Zp}{\Zq}
-%\newcommand{\pk}{\mathit{pk}}
+\newcommand{\pk}{\mathit{pk}}
 \newcommand{\PK}{\pk}
-%\newcommand{\sk}{\mathit{sk}}
+\newcommand{\sk}{\mathit{sk}}
 \newcommand{\SK}{\sk}
 \newcommand{\secret}{s}
+
+\newcommand{\secpar}{\lambda}
 
 % Threshold notation
 \newcommand{\share}{\ensuremath{\phi}}
@@ -245,16 +249,16 @@
 \newcommand{\algcom}{\em\ \ /\!/ \  }
 
 
-\newcommand{\simkeygen}{\pckeystyle{SimRound}}
-\newcommand{\simfin}{\pckeystyle{SimFinalize}}
+\newcommand{\simkeygen}{\mathsf{SimRound}}
+\newcommand{\simfin}{\mathsf{SimFinalize}}
 
 \newcommand{\params}{\textrm{pp}}
 
 
-\newcommand{\targetkeygen}{\pckeystyle{TK}}
+\newcommand{\targetkeygen}{\mathsf{TK}}
 
 
-\newcommand{\msg}{\pckeystyle{m}}
+\newcommand{\msg}{\mathsf{m}}
 \newcommand{\coalition}{C}
 \newcommand{\signmsg}{\rho}
 
@@ -269,25 +273,25 @@
 \newcommand{\maxfails}{m}
 \newcommand{\maxsessions}{\gamma}
 \newcommand{\numfails}{u}
-\newcommand{\challengespace}{\pckeystyle{V}}
+\newcommand{\challengespace}{\mathsf{V}}
 \newcommand{\sessioncounter}{c}
 \newcommand{\advstate}{\mathsf{st}_A}
 
-\newcommand{\RO}{\pckeystyle{RO}}
-\newcommand{\Hash}{\pckeystyle{H}}
+\newcommand{\RO}{\mathsf{RO}}
+\newcommand{\Hash}{\mathsf{H}}
 \newcommand{\rototal}{q_r}
 \newcommand{\numsignq}{q_s}
 \newcommand{\qchal}{q_3}
 \newcommand{\htwototal}{q_2}
 \newcommand{\honetotal}{q_1}
 \newcommand{\hgenerictotal}{q_h}
-\newcommand{\HashOne}{\pckeystyle{H}_1}
-\newcommand{\HashTwo}{\pckeystyle{H}_3}
-\newcommand{\HashThree}{\pckeystyle{H}_2}
-%\newcommand{\HashThree}{\pckeystyle{H}_3}
-%\newcommand{\HashFour}{\pckeystyle{H}_4}
-%\newcommand{\HashFive}{\pckeystyle{H}_5}
-\newcommand{\HashFunctionFamily}{\pckeystyle{HF}}
+\newcommand{\HashOne}{\mathsf{H}_1}
+\newcommand{\HashTwo}{\mathsf{H}_3}
+\newcommand{\HashThree}{\mathsf{H}_2}
+%\newcommand{\HashThree}{\mathsf{H}_3}
+%\newcommand{\HashFour}{\mathsf{H}_4}
+%\newcommand{\HashFive}{\mathsf{H}_5}
+\newcommand{\HashFunctionFamily}{\mathsf{HF}}
 
 \newcommand{\total}{\mathsf{\ell}}
 \newcommand{\simtotal}{{\mathsf{\ell}'}}
