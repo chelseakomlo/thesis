@@ -194,6 +194,36 @@ the adversary must know $x$.
 
 \section{Schnorr Signatures} \label{schnorr-sigs}
 
+A Schnorr signature is a Sigma protocol zero-knowledge proof of knowledge of the discrete logarithm of the public key $\pk$, made non-interactive and bound to the message $m$ by the Fiat-Shamir transform~\cite{FiatS86}.
+Schnorr signatures are secure under the discrete logarithm assumption in the random oracle model~\cite{PointchevalS00}.
+
+
+\begin{definition}[Schnorr Signatures~\cite{Schnorr91}] \label{defn:schnorr}
+The Schnorr signature scheme consists of polynomial-time algorithms $(\Setup, \KeyGen, \Sign, \Verify)$, defined as follows:
+
+  \begin{itemize}
+
+    \item $\Setup(1^\secp) \rightarrow \pp$:
+    On input a security parameter $1^\secp$, run $(\Gr, p, g) \gets \GroupGen(\usecp)$ and select a hash function $\Hash: \{0,1\}^* \rightarrow \Z_p$. Output public parameters $\pp \gets ((\Gr, p, g), \Hash)$ (which are given implicitly as input to all other algorithms).
+
+  \item $\KeyGen() \rightarrow (\pk, \sk)$:
+  Sample a secret key $\sk \randpick \Z_p$ and compute the public key as $\pk \gets g^x$.
+    Output key pair $(\pk, \sk) \gets (\pk, \sk)$.
+
+  \item $\Sign(\sk, m) \rightarrow \sigma$:
+    On input a secret key $\sk = x$ and a message $m$, sample a nonce $r \randpick \Z_p$. Then, compute a
+    nonce commitment $R \gets g^r$, the challenge $c \gets \Hash(\pk, m, R)$, and the
+    response $z \gets r + cx$. Output a signature $\sigma \gets (R,z)$.
+
+  \item $\Verify(\pk, m, \sigma) \rightarrow 0/1$:
+  On input a public key $\pk = \pk$,
+    a message $m$, and a purported signature $\sigma = (R, z)$, compute $c
+    \leftarrow \Hash(\pk, m, R)$ and output $1$ (accept) if $R \cdot \pk^c = g^z$; else, output $0$ (reject).
+
+\end{itemize}
+\end{definition}
+
+
 \section{Dodis-Yampolskiy VRF} \label{dy-vrf}
 
 \section{Non-Interactive Key Exchange (NIKE)} \label{nike}
