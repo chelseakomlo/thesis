@@ -72,6 +72,29 @@
 %\newcommand{\texorpdfstring}[2]{#1} % does nothing, but defines the command
 % Anything defined here may be redefined by packages added below...
 
+
+\usepackage[
+%lambda, % or n
+%advantage,
+%operators,
+%sets,
+%adversary,
+%landau,
+%probability,
+%notions,
+%logic,
+%ff,
+%mm,
+%primitives,
+%events,
+%complexity,
+%oracles,
+%asymptotics,
+%keys
+]{cryptocode}
+
+\usepackage{mathtools}
+
 % This package allows if-then-else control structures.
 \usepackage{ifthen}
 \newboolean{PrintVersion}
@@ -80,8 +103,9 @@
 
 %\usepackage{nomencl} % For a nomenclature (optional; available from ctan.org)
 \usepackage{amsmath,amssymb,amstext} % Lots of math symbols and environments
-\usepackage[pdftex]{graphicx} % For including graphics N.B. pdftex graphics driver
+%\usepackage[pdftex]{graphicx} % For including graphics N.B. pdftex graphics driver
 
+\usepackage{amsfonts,amsmath,amssymb}
 \include{macros}
 
 \newtheorem{definition}{Definition}[section]
