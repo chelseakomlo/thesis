@@ -108,7 +108,10 @@ for some polynomial $f$.
 \section{Assumptions} \label{assumptions}
 
 \paragraph{Discrete Logarithm (DL) Assumption.}
-A PPT adversary is given a value $X \in \GG$ such that $X=g^x$ without knowing the value of $x$.
+I show the DL assumption along with the DL assumption in Figure~\ref{fig:dl-omdl},
+but give an intuition here.
+To begin,
+a PPT adversary is given a value $X \in \GG$ such that $X=g^x$ without knowing the value of $x$.
 The challenge to the adversary is to output $x$.
 
 We say that the DL assumption holds if the advantage to a PPT adversary in
@@ -192,7 +195,80 @@ Intuitively, KoE assumes that in order to output such a $(C, Y)$,
 the adversary must know $x$.
 
 
-\section{Schnorr Signatures} \label{schnorr-sigs}
+\section{Digital Signatures and Schnorr Signatures} \label{schnorr-sigs}
+
+\subsection{Digital Signatures}
+
+\begin{definition}[Digitial Signatures] \label{defn:ds}
+A digitial signature scheme consists of polynomial-time algorithms $(\Setup, \KeyGen, \Sign, \Verify)$, defined as follows:
+
+  \begin{itemize}
+
+    \item $\Setup(1^\secp) \rightarrow \pp$:
+    On input a security parameter $1^\secp$, this algorithm outputs public parameters $\pp$ (which are given implicitly as input to all other algorithms).
+
+  \item $\KeyGen() \rightarrow (\pk, \sk)$:
+  This probabilistic algorithm outputs a public key $\pk$ and secret key $\sk$.
+
+  \item $\Sign(\sk, m) \rightarrow \sigma$:
+    On input a secret key $\sk$ and a message $m$, this algorithm outputs a signature $\sigma$.
+
+  \item $\Verify(\pk, m, \sigma) \rightarrow 0/1$:
+  On input a public key $\pk$,
+    a message $m$, and a purported signature $\sigma$, this deterministic algorithm outputs $1$ (accept) if $\sigma$ is a valid signature on $m$ under $\pk$; else, it outputs $0$ (reject).
+
+\end{itemize}
+\end{definition}
+
+% standard EUF-CMA
+\begin{figure}[t]
+	\centering
+	%\begin{linedgamespec}
+	\begin{pchstack}[boxed,space=1em]
+		\begin{pcvstack}[space=1em]
+			\procedure{$\main$ $\G^{\eufcma}_{\A,\dsig}(\kappa)$}{
+				\pp \leftarrow \ParGen(1^\kappa) \\
+				Q_m \gets \emptyset \\
+				(\pk, \sk) \randpick \KeyGen()\\
+				(m^*, \sigma^*) \randpick \A^{\BigO^{\Sign}}(\pk)\\
+				\pcreturn 0~\pcif m^* \in Q_m \\
+				\pcind \vee \Verify(\pk, m^*, \sigma^*) \neq 1 \\
+				\pcreturn 1
+			}
+		\end{pcvstack}
+		\begin{pcvstack}[space=1em]
+			\procedure{$\BigO^{\Sign}(m)$}{
+				Q_m \gets Q_m \cup \{m\} \\
+				\sigma \gets \Sign(\sk, m) \\
+				\pcreturn \sigma
+			}
+		\end{pcvstack}
+	\end{pchstack}
+	%\end{linedgamespec}
+	\caption{The EUF-CMA security game for a digital signature scheme $\dsig$.  The public parameters $\pp$ are implicitly given as input to all algorithms.}
+	\hrulefill
+	\label{fig:euf-cma}
+\end{figure}
+
+\noindent A digital signature scheme must be \emph{correct}.  It is said to be \emph{secure} if it is existentially unforgeable under
+chosen-message attacks (EUF-CMA).
+
+\begin{definition}[Correctness]
+A digital signature scheme $(\Setup, \KeyGen, \Sign, \allowbreak \Verify)$ is \emph{correct} if for all security parameters $\secp \in \mathbb{N}$, all key pairs $(\pk, \sk) \in [\KeyGen()]$, and all messages $m$, we have:
+\[ \Pr[ \Verify(\pk, m, \Sign(\sk, m)) = 1 ] = 1 \]
+\end{definition}
+
+\begin{definition}[EUF-CMA]\label{defn:euf-cma}
+Let the advantage of an adversary $\A$ playing the Existential Unforgeability under Chosen-Message Attack (EUF-CMA) game,
+$\G^{\suf}$, as defined in Figure~\ref{fig:euf-cma}, be as follows:
+%
+\[
+  \advant{$\suf$}{\A,\dsig}(\secp) = \bigabs{\Pr[\G^{\suf}_{\A,\dsig}(\secp) = 1]}
+\]
+A digital signature scheme $\dsig = (\Setup, \KeyGen, \Sign, \allowbreak \Verify)$ is \emph{existentially unforgeable under chosen-message attacks} if for all PPT adversaries $\A$, $\advant{$\suf$}{\A,\dsig}(\secp)$ is negligible.
+\end{definition}
+
+\subsection{Schnorr Signatures}
 
 A Schnorr signature is a Sigma protocol zero-knowledge proof of knowledge of the discrete logarithm of the public key $\pk$, made non-interactive and bound to the message $m$ by the Fiat-Shamir transform~\cite{FiatS86}.
 Schnorr signatures are secure under the discrete logarithm assumption in the random oracle model~\cite{PointchevalS00}.
@@ -233,8 +309,8 @@ The Schnorr signature scheme consists of polynomial-time algorithms $(\Setup, \K
 \begin{definition}{Threshold Secret Sharing}
 A $(n, \thresh)$-threshold secret sharing scheme $\tss$ is the tuple of
   algorithms   $\tss=(\Setup, \IssueShares, \Recover)$, such that:
-  \begin{itemize}[itemsep=1mm]
-    \item[-]  $\Setup(1^\secp) \rightarrow \pp$: On input the security parameter,
+  \begin{itemize}
+    \item  $\Setup(1^\secp) \rightarrow \pp$: On input the security parameter,
       output public parameters $\pp$ which are given implicitly as input to all other algorithms.
 
     \item $\IssueShares(\secp, s, n, \thresh) \rightarrow (\{ (1, \share_1), \ldots, (n, \share_n)\})$:
@@ -245,32 +321,39 @@ A $(n, \thresh)$-threshold secret sharing scheme $\tss$ is the tuple of
       where $n$ and $t$ are positive integers, and $n \geq \thresh$.
       Outputs the list of shares $\{ (1, \share_1), \ldots, (n, \share_n) \}$.
 
-    \item $\Recover(\thresh, \{ (i, \share_i)\}_{ i \in \S}) \rightarrow \bot / \sk$:
-      A deterministic algorithm that accepts a threshold $\thresh$ and a set of shares $\{(i, \share_i) \}_{i \in \S}$,
-      output $\bot$ if $\S \not\subseteq \set{n}$ or if $\lvert \S \rvert < \thresh$.
+    \item $\Recover(\thresh, \{ (i, \share_i)\}_{ i \in \coalition}) \rightarrow \sk/\fail$:
+      A deterministic algorithm that accepts a threshold $\thresh$ and a set of shares $\{(i, \share_i) \}_{i \in \coalition}$,
+      output $\fail$ if $\coalition \not\subseteq \set{n}$ or if $\lvert \coalition \rvert < \thresh$.
       Otherwise, recover $\sk$ using the set of shares.
 
-    \item For correctness, for all security parameters $\secpar$ and $n, \thresh, \S$,
+    \item For correctness, for all security parameters $\secpar$ and $n, \thresh, \coalition$,
       such that $n \geq \thresh$,
       $\thresh \geq 1$,
-      $\S \subseteq \set{n}$,
-      and $\lvert \S \rvert \geq \thresh$,
+      $\coalition \subseteq \set{n}$,
+      and $\lvert \coalition \rvert \geq \thresh$,
       the following must hold:
     \begin{align*}
-      & \tss.\Recover(\thresh, \{ (i, \share_i)\}_{ i \in \S}) = s,
+      & \tss.\Recover(\thresh, \{ (i, \share_i)\}_{ i \in \coalition}) = s,
       \text{ where }   \\
       & \tss.\IssueShares(\secpar, s, n, \thresh) \rightarrow ( \{ (i, \share_i) \}_{i \in \set{n}})
     \end{align*}
 \end{itemize}
 \end{definition}
 
+\begin{remark}[Required number of shares for recovery]
+Because $\recover$ requires a set of size at least $t$,
+the definition implicitly ensures that the algorithm receives a sufficient
+number of shares for recovery.
+\end{remark}
+
+\subsubsection{Shamir Secret Sharing}
 We now define Shamir secret sharing as one concrete instantiation of a threshold secret sharing scheme.
 
 \begin{definition}[Shamir secret sharing~\cite{Shamir79}] \label{defn:shamir}
 Shamir secret sharing $\shamir$ is concrete instance of a threshold secret sharing scheme that consists of the following algorithms:
 
 \begin{itemize}
-    \item[-]  $\Setup(1^\secp) \rightarrow \pp$: On input the security parameter,
+    \item  $\Setup(1^\secp) \rightarrow \pp$: On input the security parameter,
       run $(\Gr, p, g) \gets \GroupGen(1^\secp)$.
       Output public parameters $\pp = (\Gr, p, g)$ which are given implicitly as input to all other algorithms.
 
@@ -286,18 +369,138 @@ Shamir secret sharing $\shamir$ is concrete instance of a threshold secret shari
 
     Output $\{(i, \share_i) \}_{i \in \set{n}}$.
 
-  \item $\shamir.\Recover(\thresh, \{ (i, \share_i)\}_{ i \in \S}) \rightarrow \bot / \sk$:
-    On input a threshold $\thresh$ and a set of shares $\{(i, \share_i) \}_{i \in \S}$,
-    output $\bot$ if $\S \not\subseteq \set{n}$ or if $\lvert \S \rvert < \thresh$.
+  \item $\shamir.\Recover(\thresh, \{ (i, \share_i)\}_{ i \in \coalition}) \rightarrow \sk/\fail$:
+    On input a threshold $\thresh$ and a set of shares $\{(i, \share_i) \}_{i \in \coalition}$,
+    output $\fail$ if $\coalition \not\subseteq \set{n}$ or if $\lvert \coalition \rvert < \thresh$.
     Otherwise, recover $s$ as follows:
     \begin{equation*} \label{eq:recovershares}
-      s \gets \sum_{i \in \S} \lambda_i \share_i
+      s \gets \sum_{i \in \coalition} \lambda_i \share_i
     \end{equation*}
-    where the Lagrange coefficient for participant $i$ in the set $\S$ is defined by
-\[ \lambda_i = \prod_{j \in \S, j\neq i} \frac{j}{i - j} \]
+    where the Lagrange coefficient for participant $i$ in the set $\coalition$ is defined by
+\[ \lambda_i = \prod_{j \in \coalition, j\neq i} \frac{j}{i - j} \]
 \end{itemize}
 \end{definition}
 
 \section{Verifiable Secret Sharing} \label{verifiable-tss}
+
+\emph{Verifiable Secret Sharing} (VSS) allows a dealer to share a secret $s$ in such a way that
+participants can ensure that combining their shares allows for recovery of a secret that corresponds to a public commitment to $s$, without learning $s$ in the process.
+%
+%As such, VSS schemes are akin to public-key schemes, and rely on distinct secret and public domains,
+%where both $s$ and participant shares are in the secret domain, and commitments to these shares and $s$ are in the public domain.
+Participants verify that their shares can correctly recover $s$ using this commitment.
+While prior definitions of VSS schemes~\cite{KatzLindell2014} define algorithms to issue and verify shares, and recover the secret,
+we additionally define an algorithm to derive shares in a public domain.
+This notion has been employed implicitly in prior DKGs~\cite{KomloG20}, and we formalize this construct here.
+
+\begin{definition} \label{defn:vss}
+  A \defn{Verifiable Secret Sharing (VSS) scheme} $\vess$ is the tuple
+  $(\Setup, \issueshares, \recover, \verify, \derivepshare)$
+  and parameterized by a one-way map $\vfunc : \secretspace \rightarrow \publicspace$ that maps elements in the secret domain $\secretspace$ to the public domain $\publicspace$,
+  where
+  \begin{itemize}
+    \item $\Setup(1^\secp) \rightarrow \pp$:
+    On input a security parameter $1^\secp$, this algorithm outputs public parameters $\pp$ (which are given implicitly as input to all other algorithms).
+    \item $\IssueShares(\secret, n, t) \rightarrow (\{ (1, \share_1), \ldots, (n, \share_n)\}, \vsscommit)$:
+      A probabilistic algorithm performed by a dealer that accepts as input
+      the secret $\secret \in \secretspace$ from the secret domain $\secretspace$,
+      the number of participants $n$, and the threshold $t$,
+      where $n$ and $t$ are positive integers, and $n \geq t$.
+      Outputs the list of shares $\{ (1, \share_1), \ldots, (n, \share_n) \}$
+      and commitment $\vsscommit$.
+    \item $\verify(i, \share_i, \vsscommit) \rightarrow \zo$:
+      A deterministic algorithm performed by a recipient of a share that accepts
+      an identifier $i$,
+      a share $\share_i$,
+      and a commitment $\vsscommit$.
+      Outputs $1$ if the share is valid with respect to $\vsscommit$, otherwise outputs $0$.
+    \item $\recover(t, \recoveryset) \rightarrow \secret/\fail$:
+      A deterministic algorithm that accepts a recovery set $\recoveryset = \{ (j, \share_j)\}_{j \in C}$,
+      where $C$ is a set of participant identifiers such that $\lvert C \rvert \geq t$.
+      Employ $\recoveryset$ to obtain $s$,
+      or output $\fail$ in the case of failure.
+    \item $\derivepshare(i, \vsscommit) \rightarrow \pshare_i$:
+      A deterministic algorithm that accepts an identifier $i$ and a commitment $\vsscommit$.
+      Outputs a share in the public domain $\pshare_i$ associated with identifier $i$.
+  \end{itemize}
+\end{definition}
+
+For correctness, for all security parameters $\lambda$,
+for all $s \in \secretspace$, and $n, t, C$,
+such that $n \geq t$, $t \geq 1$, $C \subseteq \set{n}$, and $\lvert C \rvert \geq t$,
+the following must hold:
+    \begin{align*}
+      & \vess.\verify(i, \share_i, \vsscommit) = 1 \text{ for all } i \in \set{n},  \text{ and } \\
+      & \vess.\derivepshare(i, \vsscommit) = \vess.\vfunc(\share_i) \text{ for all } i \in \set{n}, \text{ and}  \\
+      & \vess.\recover(t, \recoveryset) = \secret,
+      \text{ where }   \\
+      & \vess.\issueshares(\lambda, \secret, n, t) \rightarrow ( \{ (i, \share_i) \}_{i \in \set{n}}, \vsscommit) \text{ and } \recoveryset = \{ (i, \share_i)\}_{i \in C}
+    \end{align*}
+
+\subsubsection{Feldman's VSS}
+\label{feldman-vss}
+
+As a concrete VSS in the discrete logarithm setting,
+Feldman's Verifiable Secret Sharing~\cite{Feldman87} is an important building block.
+Feldman's VSS itself is an augmentation to Shamir's secret
+sharing~\cite{Shamir79}, allowing participants to verify the correctness of
+their in zero knowledge, by committing to the polynomial ``in the exponent.''
+Here, the map $\vess.\vfunc$ is simply $a \mapsto g^a$,
+where $g$ is the generator of the group $\GG$, and
+$a \in \Zq$.
+
+We now define the scheme more precisely.
+
+\begin{itemize}
+    \item $\IssueShares(\lambda, s, n, t) \rightarrow (\{ (1,\share_1), \ldots, (n,\share_n)\}, \vsscommit)$.
+      Accepts as input the security parameter $\lambda$,
+      a secret $s \in \Zq$,
+      the number of participants $n \in \mathbb{N}$,
+      and the threshold $t \in \mathbb{N}$ such that $1 \leq t \leq n$.
+      Perform the following steps:
+    \begin{enumerate}
+        \item  Sample $t-1$ coefficients at random: $(a_1, \ldots, a_{t-1}) \rgets \Zq^{t-1}$.
+        \item Using $s$ as the constant term and $a_1, \ldots, a_{t-1}$ as the remaining coefficients, define the $(t-1)$-degree polynomial $f(x) = s + \sum_{i=1}^{t-1} a_i x^i$.
+        \item Generate $n$ shares $\share_j \in \Zq $ by deriving $ \share_j \gets f(j),\ j \in \set{n} $.
+        \item Define $A_0 = g^s$ and $A_i = g^{a_i}$, for $i \in \set{t-1}$.
+        \item Define the VSS commitment $\vsscommit$ as the vector of commitments to the coefficients of $f$: $\vsscommit \gets ( A_0, \ldots, A_{t-1} )$.
+        \item Output $(\{(i, \share_i) \}_{i \in \set{n}}, \vsscommit)$, where each $i$ represents the identifier of the recipient of $\share_i$.
+    \end{enumerate}
+
+    \item $\verify(i, \share_i, \vsscommit) \rightarrow \zo$:
+      Accepts as input a participant identifier $i \in \set{n}$,
+      the share $\share_i$ that belongs to participant $i$,
+      and a VSS commitment $\vsscommit$ that is a tuple of group elements, such that $\lvert \vsscommit \rvert = t$.
+      Verifies that $(i,\share_i)$ is a valid point on $f$ as follows:
+    \begin{enumerate}
+        \item Parse $\langle A_0, \ldots, A_{t-1} \rangle \gets \vsscommit$.
+        \item Output 1 if Equation~\ref{eq:vss-verify} holds; otherwise, output $0$.
+          \begin{equation} \label{eq:vss-verify}
+            g^{\share_i} \iseq \prod_{k=0}^{t-1} A_k^{i^k}
+          \end{equation}
+    \end{enumerate}
+
+  \item $\recover(t, \recoveryset) \rightarrow s/\fail$:
+    Accepts as input the threshold $t$,
+    a recovery set $\recoveryset = \{ (j, \share_j) \}_{j \in C}$ consisting of secret shares for a coalition $C \subseteq \set{n}$
+    where $\lvert C \rvert \geq t$.
+    If $\lvert C \rvert < t$,
+    output $\fail$.
+    Using the inputs, perform the following steps:
+    \begin{enumerate}
+      \item Derive Lagrange coefficients for each identifier $\{ L_j(0)\}_{j \in C}$.
+        %\ian{Even if $|K| > t$?  What if the shares are inconsistent?}
+        % CK: I added verification as a step, which prohibits this case. Same in the definition.
+        \item Derive $\secret = \sum_{j \in C} \share_j \cdot L_j(0)$.
+        \item Output $\secret$.
+    \end{enumerate}
+
+    \item $\derivepshare(i, \vsscommit) \rightarrow \pshare_i$:
+      Accepts as input a participant identifier $i$ and a VSS commitment.
+      Outputs $\pshare_i = g^{f(i)}$ by computing
+      $\pshare_i \gets \prod_{k=0}^{|\vsscommit|-1} A_k^{i^k}$.
+\end{itemize}
+
+
 
 \section{Pseudorandom Secret Sharing} \label{pseudorandom-tss}
