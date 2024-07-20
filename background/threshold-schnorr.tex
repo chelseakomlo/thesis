@@ -1,0 +1,272 @@
+\section{Threshold Signatures}
+\label{threshold-sig-background}
+
+This chapter defines threshold signature schemes.
+Portions of this chapter are adapted from previous work by Crites et al.~\cite{TODO}.
+
+To simplify notation, the syntax assumes a centralized key generation algorithm to generate the joint public key representing all $n$ signers and the shares of the corresponding secret key.
+However, a distributed key generation (DKG) protocol may replace this trusted dealer.
+
+
+\begin{definition} \label{def:threshold-sig}
+  A \defn{threshold signature scheme} $\threshsig$ whose signing protocol consists of \numrounds~rounds is a tuple of the following algorithms
+  $\threshsig = (\Setup, \KeyGen, \allowbreak (\Sign_1, \ldots, \Sign_\numrounds ), \allowbreak \Combine, \allowbreak \Verify, \Recover)$, defined as follows:
+
+
+\begin{itemize}
+
+  \item $\Setup(\usecp) \rightarrow \pp$: Takes as input a security parameter and outputs public parameters $\pp$ (which are given implicitly as input to all other algorithms).
+
+  \item $\KeyGen(n,\thresh) \rightarrow (\aggpk, \{ \aggpk_i \}_{i \in \set{n}}, \{ \sk_i \}_{i \in \set{n}})$:
+    A probabilistic algorithm that takes as input the number of signers $n$ and the threshold $\thresh$ and outputs the public key $\aggpk$ representing the set of $n$
+signers and the set $\{ \aggpk_i \}_{i \in \set{n}}$ of public keys for each signer,
+    such that $\aggpk_i \in \pubkeydomain$ and $\aggpk \in \pubkeydomain$,
+    where $\pubkeydomain$ is the domain of public keys for $\threshsig$.
+    The algorithm also outputs set $\{ \sk_i \}_{i \in \set{n}}$ of secret shares corresponding to a secret key $\sk$,
+    where $\sk_i \in \seckeydomain$ and $\sk \in \seckeydomain$,
+    such that $\seckeydomain$ is the domain of secret keys for $\threshsig$.
+    Each $\sk_i$ is given to participant $i$, for $i \in \set{n}$.
+    It is assumed that participant $i$ is sent its respective share $\sk_i$ privately.
+
+  \item $(\Sign_1, \ldots, \Sign_\numrounds) \rightarrow \{\msg_{ 1, i}, \ldots, \msg_{\numrounds, i} \}_{i \in \S}$: A set of probabilistic algorithms where each subsequent algorithm represents a single stage in an interactive signing protocol, performed by each signing party in a signing set $\S \subseteq \set{n}, |\S| \geq \thresh$, with respect to a message $m$, defined as follows:
+  \begin{align}\label{eqn:protocol-messages}
+    \begin{split}
+    (\msg_{1,i}, \state_{1,i}) &\gets \Sign_1(i, \sk_i, \S, m)   \\
+    (\msg_{2,i}, \state_{2,i}) &\gets \Sign_2(\state_{1,i}, \PM_{1})   \\
+    \vdots \\
+    \msg_{\numrounds, i} &\gets \Sign_\numrounds(\state_{\numrounds-1,i}, \PM_{\numrounds-1}) \\
+    \end{split}
+  \end{align}
+    where $\msg_{ 1, i}, \ldots, \msg_{\numrounds, i}$ are protocol messages for each signing round,
+     $\PM$ is a set of protocol messages, and
+  $\state_{j,i}$ is the state of signing party $i$ in $\S$ in round $j$.
+  The signing set $\S$ and message $m$ are shown here as inputs to the first round,
+  but they may be deferred to subsequent rounds,
+  depending on the scheme.
+
+\item $\Combine(\S, m, \PM_1, \PM_2, \dots, \PM_\numrounds) \rightarrow (m, \sigma)$:
+  A deterministic algorithm that takes as input the signing set $\S$, the message $m$, and a set of protocol messages
+  $\PM_1, \PM_2, \dots, \PM_\numrounds$ from all $\numrounds$ signing rounds
+  and outputs a signature $\sigma$. (Note that this algorithm is separate from the signing rounds and may be performed by one of the signers or an external party.)
+
+  \item $\Verify(\threshpk, m, \sigma) \rightarrow 0/1$: A deterministic algorithm that takes as input the public key $\threshpk$, a message $m$, and a purported signature $\sigma$ and outputs $1$ (accept) if the signature verifies; else, it outputs $0$ (reject).
+
+  \item $\Recover(\thresh, \{ (i, \sk_i)\}_{ i \in \S}) \rightarrow \bot / \sk$:
+    A deterministic algorithm that takes as input a threshold $\thresh$ and a set of secret key shares $\{(i, \sk_i) \}_{i \in \S}$.
+    If $\S \not\subseteq \set{n}$ or $\lvert \S \rvert < \thresh$,
+    it outputs $\bot$; else, it recovers $\sk$ using the set of shares.
+\end{itemize}
+\end{definition}
+
+\begin{remark}
+The syntax assumes that the signing set $\S$, message $m$, and secret key share $\sk_i$ are given as input in the first round of signing.
+  However, constructions may defer these values to later rounds of signing,
+  if the proof of security so allows.
+\end{remark}
+
+\begin{remark}[On the Inclusion of an Explicit Recovery Algorithm]
+  We define a threshold signature scheme with an explicit recovery algorithm.
+  While this recovery algorithm is defined explicitly for centralized and decentralized threshold secret sharing schemes~\cite{BonehS2020,GennaroJKR07},
+  its use for threshold signatures is often implicit.
+  We define this recovery algorithm explicitly,
+  and later employ it to prove our results.
+\end{remark}
+
+\paragraph{Correctness.}
+A threshold signature scheme is \emph{correct} if for all security parameters $\secp$, all allowable $1 \leq \thresh \leq n$,
+all $\S \subseteq [n]$ such that $| \S | \geq \thresh$,
+all messages $m$ and
+for $(\aggpk, \{ \aggpk_i \}_{i \in \set{n}}, \{ \sk_i \}_{i \in \set{n}}) \allowbreak \randpick \KeyGen(n, \allowbreak \thresh)$,
+the $\Recover$ algorithm outputs $\sk$ and the experiment in (\ref{eqn:protocol-messages}) returns signature shares that, when combined with all other shares, produce a signature $\sigma$
+such that $\Verify(\pk, m, \sigma) = 1$.
+
+\subsection{Static Security}
+
+\begin{figure}[!htb]
+	\begin{pchstack}[boxed]
+		\begin{pcvstack}
+      \procedure{$\main$ $\G^{\scriptsize{\protect\fbox{$\mathsf{adp}$}\hbox{-}\suf}}_{\A,\threshsig}(\secp, n, \tcor, \tcornew)$}{
+		%\protect\dashbox[3.5cm][c]{$\G^{\aduf}_{\A,\threshsig}(\secp, \hmulp)$}}{
+			\sessions \gets \emptyset \\
+			\pp \leftarrow  \ParGen(\usecp) \\
+      			%Q \gets \emptyset \pccomment{set of queried messages} \\ Liz: Do all or none?
+ 	    		(\corrupt, \state_\A) \randpick \A(\pp, n, \tcor, \tcornew)   \\
+			\pcreturn \bot~\pcif \corrupt \not\subset [n] \vee |\corrupt| > \tcornew \\
+			%\text{\algcom or \dbox{$\vert \corrupt \rvert \geq t/2$ (Theorem~\ref{thm:OMDL+ROM})} } \\
+        			\honest \gets \set{n} \setminus \corrupt  \\
+			%\state_{k,\ssid} \gets ( )  \text{\algcom state vectors for honest signers} \\
+			% CK- these are created as the output from Sign
+       			(\threshpk, \{ \aggpk_i, \sk_i \}_{i \in \set{n}}) \randpick  \KeyGen(n,\thresh) \\
+        			\mathsf{input} \gets (\threshpk, \{ \aggpk_i \}_{i \in \set{n}},  \{\sk_j \}_{j \in \corrupt}, \state_\A) \\
+              		%\fbox{ $(m^*, \sig^*) \randpick \A^{\BigO^{\Sign, \Sign', \Sign''}}(\mathsf{input}) $}\\
+              		(m^*, \sig^*) \randpick \A^{\BigO^{\tiny{\Sign_1, \Sign_2, \dots, \Sign_\numrounds, \fbox{$\Corrupt$}}}}(\mathsf{input}) \\
+      \pcreturn 1~\pcif m^* \notin Q_m \\
+      ~~~\wedge  \Verify(\threshpk, m^*, \sig^*) = 1\\
+			\pcreturn 0
+		}
+   		\pcvspace
+		\procedure{$\Init(\ssid, k, \S, m)$}{
+		\pcif \ssid \notin \sessions \\
+		~~~\pcreturn \bot~\pcif \S \not\subseteq [n] \vee |\S| \neq \thresh\\
+		~~~~\vee k \notin \honest \cap \S \\
+		~~~\sessions \gets \sessions \cup \{\ssid\} \\
+		~~~\S \gets \S[\ssid];~m \gets m[\ssid] \\
+		~~~Q_m \gets Q_m \cup \{m[\ssid]\} \\
+		\pcreturn \bot~\pcif k \notin \honest \cap \S[\ssid] \\
+		~~~\vee \round[\ssid, k] \neq \bot
+		}
+		\pcvspace
+    		\fbox{ \procedure{$\BigO^{\Corrupt}(k)$}{
+       			\pcreturn \bot~\pcif k \not\in \honest \\
+            ~~~\vee |\corrupt| > \hmulp \cdot \tcornew \\
+        			\corrupt \gets \corrupt \cup \{ k \} \\
+			\honest \gets \honest~\backslash~\{ k \} \\
+        			\pcreturn (\sk_k, \{ \state[\ssid', k] \}_{\ssid' \in \sessions})
+			} }
+		\end{pcvstack}
+    		\pchspace
+		\begin{pcvstack}
+			\procedure{$\BigO^{\Sign_1}(\ssid, k, \S, m)$}{
+       	 			%\pccomment{$k$ denotes an honest participant identifier} \\
+				\pcreturn \bot~\pcif \bot \gets \Init(\ssid, k, \S, m) \\
+				%\S \gets \signers[\ssid];~m \gets m[\ssid] \\
+				(\PM_1[\ssid, k], \state_1[\ssid, k]) \\
+				~~~~~~~~~~~\gets  \Sign_1(k, \sk_k, \S[\ssid], m[\ssid]) \\
+				%\PM_1[\ssid, k] \gets \PM_1;~\state_1[\ssid, k] \gets \state_1 \\
+				\PM_{1, k} \gets \PM_1[\ssid, k];~\round[\ssid, k] \gets 1 \\
+        \pcreturn \PM_{1, k}
+			}
+    		\pcvspace
+    		\procedure{$\BigO^{\Sign_2}(\ssid, k, \PM_1)$}{
+			\pcreturn \bot~\pcif \ssid \notin \sessions \\
+			~~~\vee k \notin \honest \cap \S[\ssid] \vee \round[\ssid, k] \neq 1 \\
+			\pcparse \{\PM_{1,i}\}_{i \in \S} \gets \PM_1 \\
+			\pcreturn \bot~\pcif \PM_{1, k} \neq \PM_1[\ssid, k] \\
+			%\state_1 \gets \state_1[\ssid, k] \\
+				(\PM_2[\ssid, k], \state_2[\ssid, k]) \\
+				~~~~~~~~~~~\gets  \Sign_2(\state_1[\ssid, k], \PM_1) \\
+				%\PM_2[\ssid, k] \gets \PM_2;~\state_2[\ssid, k] \gets \state_2 \\
+				\PM_{2, k} \gets \PM_2[\ssid, k];~\round[\ssid, k] \gets 2 \\
+       		 	\pcreturn \PM_{2,k}
+		}
+		\vdots
+		\procedure{$\BigO^{\Sign_\numrounds}(\ssid, k, \PM_{\numrounds-1})$}{
+			\pcreturn \bot~\pcif \ssid \notin \sessions \\
+			~~~\vee k \notin \honest \cap \S[\ssid] \vee \round[\ssid, k] \neq \numrounds-1 \\
+			\pcparse \{\PM_{\numrounds-1,i}\}_{i \in \S} \gets \PM_{\numrounds-1} \\
+			\pcreturn \bot~\pcif \PM_{\numrounds-1, k} \neq \PM_{\numrounds-1}[\ssid, k] \\
+			%\state_2 \gets \state_2[\ssid, k] \\
+				\PM_\numrounds[\ssid, k] \gets  \Sign_\numrounds(\state_{\numrounds-1}[\ssid, k], \PM_{\numrounds-1}) \\
+				%\PM_3[\ssid, k] \gets \PM_3;~
+				\PM_{\numrounds, k} \gets \PM_\numrounds[\ssid, k];~\round[\ssid, k] \gets \numrounds \\
+       		 	\pcreturn \PM_{\numrounds, k}
+		}
+		\end{pcvstack}
+	\end{pchstack}
+\caption{Static and adaptive unforgeability games for a threshold signature scheme with $\numrounds$ signing rounds.  The public parameters $\pp$ are implicitly given as input to all algorithms, and $\PM_1, \PM_2, \dots, \PM_\numrounds$ represent protocol messages defined within the construction.
+The static game contains all but the boxes, and the adaptive game adds the boxes.
+$\tcornew$ specifies the number of signers that the adversary may corrupt,
+and $\tcor$ the reconstruction threshold,
+such that $\tcornew \leq \tcor \leq n$.}
+\label{fig:euf-cma-threshold}
+\hrulefill
+\end{figure}
+
+
+
+Most threshold signature schemes in the literature are proven in the \emph{static} security model,
+which captures a limited adversary that can only corrupt parties at the onset of the protocol.
+We provide a game-based definition in \ref{fig:euf-cma-threshold}, inspired by the definitions in \cite{CritesKM23,LibertJY16}.
+The static security game contains all but the boxes and is analogous to existential unforgeability under chosen message attack (EUF-CMA)~\cite{GoldwasserMR88} for standard, single-party signature schemes.
+
+
+In the static unforgeability game,
+the environment accepts a security parameter $\secp$,
+total number of players $n$, a reconstruction threshold $\tcor$,
+and a corruption threshold $\tcornew$ as input,
+such that $\tcornew < t \leq n$.
+%The number of parties that the adversary corrupts must stay within the bound $\hmulp \cdot \tcor$.
+%Typically, a static adversary corrupts a full $\tcor$ (i.e., $\hmulp = 1$) signers out of at least $\thresh$ signers in a session.
+
+The environment generates public parameters $\pp$
+and initializes the adversary with $(\pp, n, \tcor)$.
+The adversary chooses a set of corrupted parties $\corrupt$,
+and the challenger sets the honest parties $\honest \gets [n] \setminus \corrupt$.
+The challenger then runs $\KeyGen$ to derive the joint public key $\aggpk$ representing all $n$ signers, the individual public key shares $\{ \aggpk_i \}_{i \in \set{n}}$, and the secret key shares $ \{ \sk_i \}_{i \in \set{n}}$.
+It returns $\aggpk$, $\{ \aggpk_i \}_{i \in \set{n}}$, and the set of corrupt signing shares $ \{ \sk_j \}_{j \in \corrupt}$ to the adversary.
+
+
+After key generation has concluded,
+the adversary can then query signing oracles $\BigO^{\Sign_1}, \ldots, \BigO^{\Sign_\numrounds}$ for honest signers to engage in subsequent signing rounds, across different sessions.
+The environment performs various checks during the signing rounds to ensure each participant being called is in fact uncorrupted,
+is in the correct signing round,
+and that their protocol message in each round is faithfully carried to the next.
+Each of these checks is carried out with respect to the signing session identifier, denoted by $\ssid$.
+%
+The adversary wins if it can produce a valid forgery $\sigma^* = (R^*, z^*)$ with
+respect to the joint public key $\aggpk$ on a message $m^*$ that has not been previously queried.
+%
+We model the adversary as \emph{rushing},
+as it may wait to produce its outputs after having seen honest protocol messages in each round.
+The adversary is allowed to be \emph{concurrent},
+as it may open simultaneous signing sessions at once
+or choose not to complete a signing session.
+We model concurrency explicitly in our definition to ensure that our notion of security protects against practical attacks which can occur under a concurrent adversary~\cite{BenhamoudaLLOR20}.
+
+\begin{definition}[Static Security]
+Let the advantage of an adversary $\A$ playing the static security game
+$\G^{\uf}_{\A,\threshsig}(\secp, n, \tcor, \hmulp)$, as defined in Figure~\ref{fig:euf-cma-threshold}, be as follows:
+%
+\[
+  \advant{$\uf$}{\A,\threshsig}(\secp, n, \tcor, \tcornew) = \bigabs{\Pr[\G^{\uf}_{\A,\threshsig}(\secp, n, \tcor, \tcornew) = 1]}
+\]
+
+A threshold signature scheme $\threshsig$ is \emph{statically secure} if for all PPT adversaries $\A$,
+$\advant{$\uf$}{\A}(\secp, n, \tcor,\tcornew)$ is negligible,
+for $(n, \tcor, \tcornew) \in \mathbb{N}, \tcor \leq n$, $\tcornew < \tcor$.
+\end{definition}
+
+
+\subsection{Adaptive Security}
+
+In this work, we are interested in the notion of \emph{adaptive} security.
+We provide a game-based definition of adaptive security in \ref{fig:euf-cma-threshold},
+containing the boxes.
+
+%As in static security, the adversary can corrupt a \emph{full} $\tcor$ out of $\thresh$ parties, and it is assumed that there is at least one honest signer.
+In the adaptive setting, the adversary is given the added capability to corrupt parties \emph{at any point during the protocol}, based on all protocol messages it has seen.
+This is in contrast to the static setting, where the adversary must declare the set of corrupt parties at the onset of the protocol, before any messages have been sent.
+Adaptive corruption means the adversary receives not only the honest party's secret key, but also its \emph{state across all signing sessions.}
+
+At any time throughout the experiment, the adversary may query $\BigO^{\Corrupt}$ to corrupt
+up to $\tcornew$ honest signers,
+obtaining \emph{both} their secret key and as well as state across all signing sessions.
+As such,
+in the adaptive setting,
+the adversary is not restricted to choosing its set of
+corrupt participants $\corrupt$ only at the beginning of the game,
+and learns additional information throughout the game (e.g., the signing state for each corrupted participant).
+
+
+
+
+
+\begin{definition}[Adaptive Security]
+Let the advantage of an adversary $\A$ playing the adaptive security game
+$\G^{\aduf}_{\A,\threshsig}(\secp, n, \tcor, \tcornew)$, as defined in Figure~\ref{fig:euf-cma-threshold}, be as follows:
+%
+\[
+  \advant{adp-sec}{\A,\threshsig}(\secp, n, \tcor, \tcornew) = \bigabs{\Pr[\G^{\aduf}_{\A,\threshsig}(\secp, n, \tcor, \tcornew) = 1]}
+\]
+
+A threshold signature scheme $\threshsig$ is \emph{adaptively secure} if for all PPT adversaries $\A$,
+$\advant{adp-sec}{\A}(\secp, n, \tcor, \tcornew) $ is negligible,
+for $(n, \tcor, \tcornew)  \in \mathbb{N}, \tcor \leq  n, \tcornew < \tcor$.
+\end{definition}
+
+\begin{definition}[Full Adaptive Security]
+We say that a threshold signature scheme $\threshsig$ achieves \emph{full adaptive security} if the
+corruption threshold $\tcornew$ in $\G^{\aduf}_{\A,\threshsig}(\secp, n, \tcor, \tcornew)$ is equal to the reconstruction threshold;
+i.e., $\tcornew = \tcor$.
+\end{definition}
+

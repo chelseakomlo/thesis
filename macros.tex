@@ -144,6 +144,7 @@
 \newcommand{\Qcheck}{\mathsf{Q}_c}
 
 \newcommand{\pstate}{\mathsf{state}}
+\newcommand{\state}{\pstate}
 \newcommand{\party}{\pstate}
 \newcommand{\honest}{\mathsf{honest}}
 \newcommand{\corrupt}{\mathsf{corrupt}}
@@ -216,10 +217,13 @@
 \newcommand{\tsigmsgin}{\rho^{(i)}}
 \newcommand{\tsigmsgprime}{\rho^{(k)*}}
 \newcommand{\setup}{\mathsf{Setup}}
+\newcommand{\Init}{\mathsf{Init}}
 \newcommand{\ParGen}{\mathsf{ParGen}}
 \newcommand{\keygen}{\mathsf{KeyGen}}
 \newcommand{\sign}{\mathsf{Sign}}
+\newcommand{\Corrupt}{\mathsf{Corrupt}}
 \newcommand{\combine}{\mathsf{Combine}}
+\newcommand{\Combine}{\combine}
 \newcommand{\combinepub}{\mathsf{Agg}}
 \newcommand{\combinepriv}{\mathsf{CombineEval}}
 \newcommand{\Setup}{\setup}
@@ -237,6 +241,8 @@
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\Zp}{\Zq}
 \newcommand{\pk}{\mathit{pk}}
+\newcommand{\aggpk}{\pk}
+\newcommand{\threshpk}{\pk}
 \newcommand{\PK}{\pk}
 \newcommand{\sk}{\mathit{sk}}
 \newcommand{\SK}{\sk}
@@ -419,3 +425,22 @@
 \newcommand{\SIMEval}{\mathsf{SimGen}}
 
 \newcommand{\targetshinekey}{\hat{\phi}}
+
+
+
+\newcommand{\bmsg}{\pckeystyle{bmsg}}
+\newcommand{\pmsg}{\pckeystyle{pmsg}}
+\newcommand{\invecp}{\mathsf{inp}}
+\newcommand{\invecb}{\mathsf{inb}}
+\newcommand{\outvecp}{\mathsf{outp}}
+
+\newcommand{\pubkeydomain}{\mathcal{D}_2}
+\newcommand{\seckeydomain}{\mathcal{D}_1}
+\newcommand{\PM}{\mathcal{PM}}
+\newcommand{\sessions}{\mathcal{ID}}
+\newcommand{\tcornew}{t_c}
+\newcommand{\sig}{\sigma}
+\newcommand{\hmulp}{\mathsf{frac}} % used for corruption threshold in game
+\newcommand{\uf}{\mathsf{UF}}
+\newcommand{\aduf}{\mathsf{adp\hbox{-}UF}}
+\newcommand{\round}{\mathsf{rnd}} % CK- I think we should be able to remove this...

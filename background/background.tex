@@ -1,206 +1,17 @@
 \chapter{Background}
 
-\begin{figure*}[t]
-\begin{pchstack}[boxed,center,space=1em]
+\section{General Background}
 
-\begin{pchstack}
-  \procedure{$\main$ $\mathcal{G}^{\dl}_{\A}(\secp)$}{
-  (\Gr, p , g) \randpick \GroupGen(\usecp) \\
-  x \randpick \Zq;~X \gets g^{x} \\
-  x' \randpick \A((\Gr, p , g), X) \\
-	\pcif x' = x \\
-	\pcind \pcreturn 1\\
-	\pcreturn 0
-  }
-\end{pchstack}
-
-\begin{pchstack}
-  \vline
-      \pchspace
-  \procedure{$\main$ $\G^{\ell\hbox{-}\colorbox{gray}{$\mathsf{a}$}\omdl}_{\A}(\secp)$ }{
-  (\Gr, p , g) \randpick \GroupGen(\usecp) \\
-  Q \gets \emptyset \\
-  q \gets 0 \\
-  \pcfor i \in [0..\ell] \pcdo \\
-  \pcind x_i \randpick \Zq;~X_i \gets g^{x_i} \\
-  \pcind Q[X_i] = x_i \\
-  \vec{x} \gets (x_0, \ldots, x_\ell) \\
-  \vec{X} \gets (X_0, X_1, \dots, X_{\ell}) \\
-  \vec{x'} \gets \A^{\BigO^{\dl}}((\Gr, p, g), \vec{X})  \\
-  	\pcif \vec{x'} = \vec{x}~\wedge~q < \ell \\
-	\pcind \pcreturn 1\\
-	\pcreturn 0
-  }
-  \pchspace
-  \procedure{$\BigO^{\dl}(X, \colorbox{gray}{$\alpha, \{\beta_i\}_{i=0}^{\ell}$} )$\  }{
-    \pccomment{\colorbox{gray}{$X = g^{\alpha} \prod_{i=0}^{\ell} X_i^{\beta_i}$}} \\
-  q \gets q + 1 \\
-  %\colorbox{light-gray}{$\pcreturn \bot\ \pcif Q[X] = \bot$} \\
-  \colorbox{gray}{$x \gets \alpha + \sum_{i=0}^{\ell} x_i \beta_i$} \\
-  \colorbox{gray}{$\pcreturn x$} \\
-  x \gets \mathsf{dlog}(X) \\
-  \pcreturn x
-  }
-\end{pchstack}
-
-\end{pchstack}
-    \caption{The Discrete Logarithm (DL), One-More Discrete Logarithm (OMDL), and Algebraic One-More Discrete Logarithm (AOMDL) games.
-    $\Gr$ is a cyclic group with prime order $q$ and generator $g$.
-    $\mathsf{dlog}$ is an algorithm that finds the discrete logarithm relation of the input $X$ and $g$.
-    The differences between the OMDL and AOMDL games are highlighted in gray;
-    the key distinction is that in the AOMDL game,
-    the adversary can only query for linear combinations of its challenge group elements;
-    in the OMDL game, the environment must return the discrete logarithm of an
-    arbitrary group element.}
-    \label{fig:dl-omdl}
-\end{figure*}
+\input{background/notation.tex}
+\input{background/assumptions.tex}
 
 
-\section{Notation} \label{notation}
+\subsection{Digital Signatures and Schnorr Signatures} \label{schnorr-sigs}
 
-We represent a security parameter as $\lambda \in \mathbb{Z}$.
-We denote the assignment of an element $y$ to the value $x$ as $y \gets x$,
-and sampling an element from some set $S$ uniformly at random as $x \rgets S$.
-For a randomized algorithm $\mathit{A}$, we write $x \rgets \mathit{A}()$ to indicate the random variable $x$ that is output from the execution of $\mathit{A}$.
-We say that $f$ is a negligible function of $\lambda$ if it holds that
-$\lim_{\lambda \to \infty} f(\lambda) \lambda^c = 0$,
-for all $ c > 0$~\cite{BonehS2020}.
-
-Let $\GG$ be a cyclic group of prime order $q$, and $\Zq$ be the field of integers modulo $q$.
-Let $g$ be a generator of $\GG$.
-We use $\set{n}$ to represent the set $\{1,\ldots,n \}$,
-and represent integer vectors in bold-face font.
-
-\paragraph{Polynomial Interpolation}
-A polynomial $f(x) = a_0 + a_1 x + a_2 x^2 + \ldots + a_{\tcor} x^{\tcor}$
-of degree $\tcor$ over a field $\F$ can be interpolated by $\thresh$ points.
-Let $\eta \subseteq \set{n}$ be the list of $\thresh$ distinct indices
-corresponding to the $x$-coordinates $x_i \in \F, i \in \eta$, of these points.
-Then the Lagrange polynomial $L_i(x)$ has the form:
-
-\begin{equation}\label{eqn:lagrange}
-L_i(x) = \prod_{j \in \eta; j \neq i } \frac{x-x_j}{x_i - x_j}
-\end{equation}
-
-Given a set of $\thresh$ points $(x_i, f(x_i))_{i \in [\thresh]}$, any point $f(x_\ell)$ on the polynomial $f$ can be determined by Lagrange interpolation as follows:
-
-\[ f(x_\ell) = \sum_{k \in \eta} f(x_k) \cdot L_k(x_\ell) \]
-
-\paragraph{Game-Based Security.}
-An experiment (or game) $\textsf{Exp}_{\adv, \mathcal{C}}^{\mathsf{sec}}$ is
-played with respect to a security notion $\mathsf{sec}$,
-an adversary $\adv$ modeled by a probabilistic (randomized) algorithm,
-and a cryptographic primitive $\mathcal{C}$.
-The experiment is initialized within a main procedure,
-whose output is the output of the game.
-The goal of $\adv$ is to win the game,
-the conditions under which is defined within the experiment.
-The probability of $\adv$'s success thus defines how secure $\mathcal{C}$ is with respect to the security notion $\mathsf{sec}$.
-
-\paragraph{PPT Adversaries.}
-We say that an adversary $\adv$ is probabilistic polynomial-time (PPT) if it is run on
-random coins and its execution is performed in time that is polynomial relative to the size of its input.
-In other words,
-for every input $x \in \zo^n$,
-$\adv(x)$ terminates within at most $f(n)$ steps,
-for some polynomial $f$.
-
-\section{Assumptions} \label{assumptions}
-
-\paragraph{Discrete Logarithm (DL) Assumption.}
-I show the DL assumption along with the DL assumption in Figure~\ref{fig:dl-omdl},
-but give an intuition here.
-To begin,
-a PPT adversary is given a value $X \in \GG$ such that $X=g^x$ without knowing the value of $x$.
-The challenge to the adversary is to output $x$.
-
-We say that the DL assumption holds if the advantage to a PPT adversary in
-successfully producing such an $x$ is a negligible function of $\lambda$.
-
-\paragraph{Computational Diffie-Hellman Assumption (CDH).}
-The Computational Diffie-Hellman Assumption (CDH) can be described as follows.
-A PPT adversary is given the following values:
-
-\[
-  (g, g^a, g^b)
-\]
-
-The challenge to the adversary is then to compute $g^{ab}$.
-The CDH assumption holds if the advantage to any PPT adversary in successfully
-doing so is a negligible function of $\lambda$.
-
-\paragraph{One-More Discrete Logarithm Assumption (OMDL).}
-The One-More Discrete Logarithm (OMDL) assumption~\cite{BellareNPS03,BauerFP21} extends
-the DL assumption, which is non-interactive, into an interactive assumption.
-I show the OMDL assumption along with the DL assumption in Figure~\ref{fig:dl-omdl}.
-
-In particular,
-a PPT adversary is given $\ell+1$ discrete logarithm challenges $(X_0, \ldots, X_\ell) \in \GG^{\ell+1}$
-with respect to a generator $g \in \GG$.
-It is also given access to a discrete logarithm oracle,
-that when queried on an arbitrary group element $X' \in \GG$,
-returns the discrete logarithm of that value.
-The adversary is said to win the OMDL game if it makes $\ell$ or fewer queries
-to the discrete logarithm oracle,
-and produces correct solutions $(x_0, \ldots, x_\ell)$ to its $\ell+1$ challenges such that $X_i = g^{x_i}$,
-$i \in \{ 0, \ldots, \ell\}$.
-
-The OMDL assumption holds if the advantage to any PPT adversary in winning the
-OMDL game is a negligible function of $\lambda$.
-
-\paragraph{Algebraic One-More Discrete Logarithm Assumption (AOMDL).}
-The algebraic one-more discrete logarithm assumption (AOMDL) was formalized by Jonas, Ruffing, and Seurin~\cite{NickRS21}.
-We highlight differences with the OMDL assumption in Figure~\ref{fig:dl-omdl}.
-Note that while the OMDL assumption is not falsifiable
-(because the adversary is allowed to query for the discrete logarithm of any arbitrary group element).
-the AOMDL assumption is falsifiable.
-This is because the input to the discrete logarithm oracle is a linear combination of all challenges issued to the adversary,
-so it is guaranteed that the environment runs in polynomial time with respect to a PPT adversary.
-Hence, the AOMDL assumption is a strictly weaker assumption than standard OMDL.
-
-An adversary in the AOMDL game is initialized in exactly the same manner as an OMDL adversary,
-with the same winning condition.
-The only distinction between the games is the inputs to the discrete logarithm oracle.
-In the AOMDL setting, the adversary provides a vector $(\alpha, \beta_0 \ldots, \beta_\ell)$ of coefficients to the discrete logarithm oracle.
-The oracle then responds with the integer linear combination of these coefficients with respect to the
-discrete logarithm of the set of challenges $(X_0, \ldots, X_\ell)$.
-Informally, an AOMDL adversary can be used to win the OMDL game,
-therefore implying that if OMDL is hard, then AOMDL is hard.
-
-The AOMDL assumption holds if the advantage to any PPT adversary in winning the
-AOMDL game is a negligible function of $\lambda$.
-
-\paragraph{Algebraic Group Model (AGM).}
-Introduced by Fuchsbauer, Kiltz, and Loss~\cite{FuchsbauerKL18},
-the Algebraic Group Model (AGM) gives an idealized representation of a group,
-by requiring the adversary to act algebraically.
-In other words,
-when an adversary outputs a group element $X \in \GG$ to the environment,
-it additionally is required to output its representation with respect to all
-other group elements the adversary has seen thus far.
-In other words, the adversary must output a coefficient vector $\textbf{v} = (\alpha, b_1, b_2, \ldots)$,
-such that $X = g^\alpha A_1^{b_1} A_2^{b_2} \ldots$.
-
-
-\paragraph{Knowledge of Exponent Assumption (KoE).}
-
-The Knowledge of Exponent (KoE) assumption~\cite{Damgard91,BellareP04} is an unfalsifiable assumption.
-In short,
-the assumption says that for an adversary that is given input $(g, h=g^s, q)$,
-if the adversary outputs a value $(C, Y) \in \GG^2$ such that $C^s = Y$,
-then there exists an extractor algorithm that given $(g, h=g^s, q)$,
-%the adversary's state and $(C, Y) \in \GG^2$,
-the extractor can output $x$ such that $C = g^x$ (and, consequently $Y = C^x$).
-Intuitively, KoE assumes that in order to output such a $(C, Y)$,
-the adversary must know $x$.
-
-
-\section{Digital Signatures and Schnorr Signatures} \label{schnorr-sigs}
-
-\subsection{Digital Signatures}
+\subsubsection{Digital Signatures}
 
 \begin{definition}[Digitial Signatures] \label{defn:ds}
-A digitial signature scheme consists of polynomial-time algorithms $(\Setup, \KeyGen, \Sign, \Verify)$, defined as follows:
+A digital signature scheme consists of polynomial-time algorithms $(\Setup, \KeyGen, \Sign, \Verify)$, defined as follows:
 
   \begin{itemize}
 
@@ -301,9 +112,9 @@ The Schnorr signature scheme consists of polynomial-time algorithms $(\Setup, \K
 
 
 
-\section{Non-Interactive Key Exchange (NIKE)} \label{nike}
+\subsection{Non-Interactive Key Exchange (NIKE)} \label{nike}
 
-\section{Threshold Secret Sharing Schemes} \label{tss}
+\subsection{Threshold Secret Sharing Schemes} \label{tss}
 
 \begin{definition}{Threshold Secret Sharing}
 A $(n, \thresh)$-threshold secret sharing scheme $\tss$ is the tuple of
@@ -380,7 +191,7 @@ Shamir secret sharing $\shamir$ is concrete instance of a threshold secret shari
 \end{itemize}
 \end{definition}
 
-\section{Verifiable Secret Sharing} \label{verifiable-tss}
+\subsection{Verifiable Secret Sharing} \label{verifiable-tss}
 
 \emph{Verifiable Secret Sharing} (VSS) allows a dealer to share a secret $s$ in such a way that
 participants can ensure that combining their shares allows for recovery of a secret that corresponds to a public commitment to $s$, without learning $s$ in the process.
@@ -502,15 +313,12 @@ We now define the scheme more precisely.
 
 
 
-\section{A Verifiable Random Function without Pairings}
+\subsection{A Verifiable Random Function without Pairings}
 
 We now describe a verifiable random function that is pairing-free.
 We build upon the VRF defined by Dodis-Yampolskiy VRF~\cite{DodisY05},
 but where the proving mechanism is performed using discrete logarithm proofs of equality (DLEQ),
 which are pairing-free.
-
-
-\subsection{Verifiable Random Functions}
 
 We first begin by defining verifiable random functions more generally.
 A verifiable random function (VRF) is a keyed PRF,
@@ -605,7 +413,7 @@ We define these notions next.
 \end{definition}
 
 
-\subsection{A Verifiable Random Function without Pairings}
+\subsubsection{A Verifiable Random Function without Pairings}
 \label{sec:dyprf}
 
 We now give a variant of the Dodis-Yampolskiy VRF~\cite{DodisY05},
@@ -661,7 +469,7 @@ And so the following relations in Equations~\ref{eq:correct-one} and~\ref{eq:cor
   \end{split}
 \end{align}
 
-\subsubsection{Security.}
+\paragraph{Security.}
 Recall that for a VRF to be secure,
 it must be unique, verifiable, and pseudorandom~\cite{DodisY05}.
 The pseudorandomness of $\DYPRF$ in the non-pairing setting is given by Dodis and Yampolskiy~\cite{DodisY05},
@@ -669,7 +477,7 @@ and assumes the Diffie-Hellman inversion (DHI) assumption.
 Because DLEQ proofs are complete and sound,
 then $\DYPRF$ is also unique and verifiable.
 
-\subsubsection{Chaum-Pedersen Discrete-Log Equality Proofs}
+\subsection{Chaum-Pedersen Discrete-Log Equality Proofs}
 \label{sec:dleq}
 
 We now describe how to generate proofs of discrete log equality between two
@@ -728,3 +536,62 @@ DLEQ proofs are special-sound and honest-verifier zero-knowledge~\cite{BonehS202
 
 
 
+\subsection{Network Communication Channels}
+\label{prelim:network}
+
+Underlying any multi-party scheme is the requirement that participants send and receive messages over a network channel.
+We now describe these channels and assumptions.
+
+\paragraph{Synchronicity.}
+In a synchronous model of communication,
+we assume all honest parties wait to proceed to a subsequent round until
+they have received the expected inputs from all other participants from a prior round.
+Additionally,
+we assume that the network is reliable,
+and is guaranteed to deliver all messages to the intended recipients within a fixed amount of time known to all parties.
+
+\paragraph{Broadcast channels.}
+A broadcast channel sends one message to all other players,
+Messages sent and received over a broadcast channel are denoted as $\invecb_i$, which is
+the set of broadcast messages that is received as input for the $i\supth$ protocol round.
+$\invecb_i$ consists of broadcast messages $\bmsg_1, \ldots, \bmsg_n$,
+sent by participants $1, \ldots,n$.
+Participant $k$ is the sender of a broadcast message $\bmsg_k$,
+and all other participants are the receivers of this message.
+
+Broadcast channels have the following properties:
+\begin{enumerate}
+  \item \textit{Consistent.} Each participant has the same view of the message sent over the channel.
+  \item \textit{Authenticated.} Players know that the message was in fact
+  sent by the claimed sender. In practice, this requirement is often fulfilled by a PKI.
+  \item \textit{Reliable Delivery.} Player $i$ knows that the message it sent was in fact received by the intended participants.
+  \item \textit{Unordered.} The channel does \emph{not} guarantee ordering of messages.
+\end{enumerate}
+
+\paragraph{Peer-to-peer channels.}
+Messages sent and received over this channel are denoted as $\invecp_i$ and $\outvecp_i$,
+$\invecp_i$ is the vector of peer-to-peer messages that is received as input for protocol round $i$,
+and $\outvecp_i$ is the vector of peer-to-peer messages that is output at the end of network round $i$.
+$\invecp_i$ and $\outvecp_i$ consist of peer-to-peer messages which we denote as $\pmsg_{i,j}$,
+where here, participant $i$ is the sender and participant $j$ is the receiver.
+
+Peer-to-peer channels are authenticated, reliable, and unordered.
+Additionally, peer-to-peer channels are \emph{confidential}; i.e.,
+only participants $i$ and $j$ are allowed to know the contents of $\pmsg_{i,j}$.
+
+\subsection{Additional Roles and Adversaries.}
+
+\paragraph{Rushing Adversary.}
+A \defn{rushing adversary} is one that ``speaks last'';
+i.e., it waits to receive inputs from honest participants before publishing its own.
+Importantly, a rushing adversary may be able to choose its input \emph{adaptively} after observing inputs from all other participants.
+Security definitions consider such an adversary,
+by allowing the adversary to query for honest participants' contributions in a round before publishing its own.
+
+\paragraph{Coordinator Role.}
+In lieu of a broadcast channel,
+an entity that plays the role of a coordinator may instead be used.
+In this setting,
+the coordinator would be trusted to reliably route messages,
+but in the case that the coordinator is malicious,
+the coordinator is only capable of performing denial of service attacks.

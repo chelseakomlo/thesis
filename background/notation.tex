@@ -1,0 +1,49 @@
+\subsection{Notation} \label{notation}
+
+We represent a security parameter as $\lambda \in \mathbb{Z}$.
+We denote the assignment of an element $y$ to the value $x$ as $y \gets x$,
+and sampling an element from some set $S$ uniformly at random as $x \rgets S$.
+For a randomized algorithm $\mathit{A}$, we write $x \rgets \mathit{A}()$ to indicate the random variable $x$ that is output from the execution of $\mathit{A}$.
+We say that $f$ is a negligible function of $\lambda$ if it holds that
+$\lim_{\lambda \to \infty} f(\lambda) \lambda^c = 0$,
+for all $ c > 0$~\cite{BonehS2020}.
+
+Let $\GG$ be a cyclic group of prime order $q$, and $\Zq$ be the field of integers modulo $q$.
+Let $g$ be a generator of $\GG$.
+We use $\set{n}$ to represent the set $\{1,\ldots,n \}$,
+and represent integer vectors in bold-face font.
+
+\paragraph{Polynomial Interpolation}
+A polynomial $f(x) = a_0 + a_1 x + a_2 x^2 + \ldots + a_{\tcor} x^{\tcor}$
+of degree $\tcor$ over a field $\F$ can be interpolated by $\thresh$ points.
+Let $\eta \subseteq \set{n}$ be the list of $\thresh$ distinct indices
+corresponding to the $x$-coordinates $x_i \in \F, i \in \eta$, of these points.
+Then the Lagrange polynomial $L_i(x)$ has the form:
+
+\begin{equation}\label{eqn:lagrange}
+L_i(x) = \prod_{j \in \eta; j \neq i } \frac{x-x_j}{x_i - x_j}
+\end{equation}
+
+Given a set of $\thresh$ points $(x_i, f(x_i))_{i \in [\thresh]}$, any point $f(x_\ell)$ on the polynomial $f$ can be determined by Lagrange interpolation as follows:
+
+\[ f(x_\ell) = \sum_{k \in \eta} f(x_k) \cdot L_k(x_\ell) \]
+
+\paragraph{Game-Based Security.}
+An experiment (or game) $\textsf{Exp}_{\adv, \mathcal{C}}^{\mathsf{sec}}$ is
+played with respect to a security notion $\mathsf{sec}$,
+an adversary $\adv$ modeled by a probabilistic (randomized) algorithm,
+and a cryptographic primitive $\mathcal{C}$.
+The experiment is initialized within a main procedure,
+whose output is the output of the game.
+The goal of $\adv$ is to win the game,
+the conditions under which is defined within the experiment.
+The probability of $\adv$'s success thus defines how secure $\mathcal{C}$ is with respect to the security notion $\mathsf{sec}$.
+
+\paragraph{PPT Adversaries.}
+We say that an adversary $\adv$ is probabilistic polynomial-time (PPT) if it is run on
+random coins and its execution is performed in time that is polynomial relative to the size of its input.
+In other words,
+for every input $x \in \zo^n$,
+$\adv(x)$ terminates within at most $f(n)$ steps,
+for some polynomial $f$.
+

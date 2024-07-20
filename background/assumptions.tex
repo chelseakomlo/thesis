@@ -1,0 +1,145 @@
+\subsection{Assumptions} \label{assumptions}
+
+\begin{figure*}[t]
+\begin{pchstack}[boxed,center,space=1em]
+
+\begin{pchstack}
+  \procedure{$\main$ $\mathcal{G}^{\dl}_{\A}(\secp)$}{
+  (\Gr, p , g) \randpick \GroupGen(\usecp) \\
+  x \randpick \Zq;~X \gets g^{x} \\
+  x' \randpick \A((\Gr, p , g), X) \\
+	\pcif x' = x \\
+	\pcind \pcreturn 1\\
+	\pcreturn 0
+  }
+\end{pchstack}
+
+\begin{pchstack}
+  \vline
+      \pchspace
+  \procedure{$\main$ $\G^{\ell\hbox{-}\colorbox{gray}{$\mathsf{a}$}\omdl}_{\A}(\secp)$ }{
+  (\Gr, p , g) \randpick \GroupGen(\usecp) \\
+  Q \gets \emptyset \\
+  q \gets 0 \\
+  \pcfor i \in [0..\ell] \pcdo \\
+  \pcind x_i \randpick \Zq;~X_i \gets g^{x_i} \\
+  \pcind Q[X_i] = x_i \\
+  \vec{x} \gets (x_0, \ldots, x_\ell) \\
+  \vec{X} \gets (X_0, X_1, \dots, X_{\ell}) \\
+  \vec{x'} \gets \A^{\BigO^{\dl}}((\Gr, p, g), \vec{X})  \\
+  	\pcif \vec{x'} = \vec{x}~\wedge~q < \ell \\
+	\pcind \pcreturn 1\\
+	\pcreturn 0
+  }
+  \pchspace
+  \procedure{$\BigO^{\dl}(X, \colorbox{gray}{$\alpha, \{\beta_i\}_{i=0}^{\ell}$} )$\  }{
+    \pccomment{\colorbox{gray}{$X = g^{\alpha} \prod_{i=0}^{\ell} X_i^{\beta_i}$}} \\
+  q \gets q + 1 \\
+  %\colorbox{light-gray}{$\pcreturn \bot\ \pcif Q[X] = \bot$} \\
+  \colorbox{gray}{$x \gets \alpha + \sum_{i=0}^{\ell} x_i \beta_i$} \\
+  \colorbox{gray}{$\pcreturn x$} \\
+  x \gets \mathsf{dlog}(X) \\
+  \pcreturn x
+  }
+\end{pchstack}
+
+\end{pchstack}
+    \caption{The Discrete Logarithm (DL), One-More Discrete Logarithm (OMDL), and Algebraic One-More Discrete Logarithm (AOMDL) games.
+    $\Gr$ is a cyclic group with prime order $q$ and generator $g$.
+    $\mathsf{dlog}$ is an algorithm that finds the discrete logarithm relation of the input $X$ and $g$.
+    The differences between the OMDL and AOMDL games are highlighted in gray;
+    the key distinction is that in the AOMDL game,
+    the adversary can only query for linear combinations of its challenge group elements;
+    in the OMDL game, the environment must return the discrete logarithm of an
+    arbitrary group element.}
+    \label{fig:dl-omdl}
+\end{figure*}
+
+\paragraph{Discrete Logarithm (DL) Assumption.}
+I show the DL assumption along with the DL assumption in Figure~\ref{fig:dl-omdl},
+but give an intuition here.
+To begin,
+a PPT adversary is given a value $X \in \GG$ such that $X=g^x$ without knowing the value of $x$.
+The challenge to the adversary is to output $x$.
+
+We say that the DL assumption holds if the advantage to a PPT adversary in
+successfully producing such an $x$ is a negligible function of $\lambda$.
+
+\paragraph{Computational Diffie-Hellman Assumption (CDH).}
+The Computational Diffie-Hellman Assumption (CDH) can be described as follows.
+A PPT adversary is given the following values:
+
+\[
+  (g, g^a, g^b)
+\]
+
+The challenge to the adversary is then to compute $g^{ab}$.
+The CDH assumption holds if the advantage to any PPT adversary in successfully
+doing so is a negligible function of $\lambda$.
+
+\paragraph{One-More Discrete Logarithm Assumption (OMDL).}
+The One-More Discrete Logarithm (OMDL) assumption~\cite{BellareNPS03,BauerFP21} extends
+the DL assumption, which is non-interactive, into an interactive assumption.
+I show the OMDL assumption along with the DL assumption in Figure~\ref{fig:dl-omdl}.
+
+In particular,
+a PPT adversary is given $\ell+1$ discrete logarithm challenges $(X_0, \ldots, X_\ell) \in \GG^{\ell+1}$
+with respect to a generator $g \in \GG$.
+It is also given access to a discrete logarithm oracle,
+that when queried on an arbitrary group element $X' \in \GG$,
+returns the discrete logarithm of that value.
+The adversary is said to win the OMDL game if it makes $\ell$ or fewer queries
+to the discrete logarithm oracle,
+and produces correct solutions $(x_0, \ldots, x_\ell)$ to its $\ell+1$ challenges such that $X_i = g^{x_i}$,
+$i \in \{ 0, \ldots, \ell\}$.
+
+The OMDL assumption holds if the advantage to any PPT adversary in winning the
+OMDL game is a negligible function of $\lambda$.
+
+\paragraph{Algebraic One-More Discrete Logarithm Assumption (AOMDL).}
+The algebraic one-more discrete logarithm assumption (AOMDL) was formalized by Jonas, Ruffing, and Seurin~\cite{NickRS21}.
+We highlight differences with the OMDL assumption in Figure~\ref{fig:dl-omdl}.
+Note that while the OMDL assumption is not falsifiable
+(because the adversary is allowed to query for the discrete logarithm of any arbitrary group element).
+the AOMDL assumption is falsifiable.
+This is because the input to the discrete logarithm oracle is a linear combination of all challenges issued to the adversary,
+so it is guaranteed that the environment runs in polynomial time with respect to a PPT adversary.
+Hence, the AOMDL assumption is a strictly weaker assumption than standard OMDL.
+
+An adversary in the AOMDL game is initialized in exactly the same manner as an OMDL adversary,
+with the same winning condition.
+The only distinction between the games is the inputs to the discrete logarithm oracle.
+In the AOMDL setting, the adversary provides a vector $(\alpha, \beta_0 \ldots, \beta_\ell)$ of coefficients to the discrete logarithm oracle.
+The oracle then responds with the integer linear combination of these coefficients with respect to the
+discrete logarithm of the set of challenges $(X_0, \ldots, X_\ell)$.
+Informally, an AOMDL adversary can be used to win the OMDL game,
+therefore implying that if OMDL is hard, then AOMDL is hard.
+
+The AOMDL assumption holds if the advantage to any PPT adversary in winning the
+AOMDL game is a negligible function of $\lambda$.
+
+\paragraph{Algebraic Group Model (AGM).}
+Introduced by Fuchsbauer, Kiltz, and Loss~\cite{FuchsbauerKL18},
+the Algebraic Group Model (AGM) gives an idealized representation of a group,
+by requiring the adversary to act algebraically.
+In other words,
+when an adversary outputs a group element $X \in \GG$ to the environment,
+it additionally is required to output its representation with respect to all
+other group elements the adversary has seen thus far.
+In other words, the adversary must output a coefficient vector $\textbf{v} = (\alpha, b_1, b_2, \ldots)$,
+such that $X = g^\alpha A_1^{b_1} A_2^{b_2} \ldots$.
+
+
+\paragraph{Knowledge of Exponent Assumption (KoE).}
+
+The Knowledge of Exponent (KoE) assumption~\cite{Damgard91,BellareP04} is an unfalsifiable assumption.
+In short,
+the assumption says that for an adversary that is given input $(g, h=g^s, q)$,
+if the adversary outputs a value $(C, Y) \in \GG^2$ such that $C^s = Y$,
+then there exists an extractor algorithm that given $(g, h=g^s, q)$,
+%the adversary's state and $(C, Y) \in \GG^2$,
+the extractor can output $x$ such that $C = g^x$ (and, consequently $Y = C^x$).
+Intuitively, KoE assumes that in order to output such a $(C, Y)$,
+the adversary must know $x$.
+
+
