@@ -1,0 +1,173 @@
+\section{Distributed Key Generation and FROST Signatures}
+
+\subsection{$\pedpop$: Key Generation for FROST}
+
+In addition to presenting the FROST threshold signature scheme,
+this chapter presents
+a simplified two-round DKG that builds on Schnorr signatures and Pedersen's VSS.
+In later work,
+this DKG was given the name $\pedpop$,
+which I will also use to refer to this scheme.
+
+$\pedpop$ is a two-round distributed key generation scheme shown in Figure~\ref{fg:pedpop},
+Each participant performs the role of a dealer,
+by generating secret shares and a commitment via Pedersen's VSS
+with respect to a randomly sampled secret.
+Then,
+each participant sends the shares to their respective participant (saving one
+share for itself),
+and sends the commitment to all participants.
+Additionally,
+each participant sends a proof of knowledge (specifically, a
+Schnorr signature) that demonstrates knowledge of the secret that is shared. In
+doing so, $\pedpop$ protects against rogue key attacks~\cite{RistenpartY07}.
+Without this proof of knowledge,
+a rushing adversary (i.e., one that can speak last) could perform a rogue key
+attack by picking  heir public key with respect to any other participant's public key,
+effectively cancelling out key material or forcing the group public key to hit some target
+value.
+
+
+
+\begin{figure*}[!ht]
+  \begin{framed}
+
+    \begin{flushleft}
+    \textbf{Round 1}
+\begin{description}
+  \item[1.] Every participant $P_i$ samples $t$ random values
+        $(a_{i0}, \dots, a_{i(t-1))}) \rgets \mathbb{Z}_q$, and uses these values as
+        coefficients to define a degree $t-1$ polynomial $f_i(x) =
+        \sum_{j=0}^{t-1} a_{ij} x^j$.
+      \item[2.] Every $P_i$ computes a proof of knowledge to the
+        corresponding secret $a_{i0}$ by calculating
+        $\sigma_i = (R_i, \mu_i)$,
+        such that
+        $k \rgets \mathbb{Z}_q$, $R_i = g^k$,
+        $c_i = H(i, \Phi, g^{a_{i0}}, R_i)$,
+        $\mu_i = k + a_{i0}\cdot c_i$,
+        with $\Phi$ being a context string to prevent
+        replay attacks.
+      \item[3.] Every participant $P_i$ computes a public commitment
+        $\Vec{C_i} = \langle \phi_{i0}, \dots, \phi_{i(t-1)} \rangle$, where $\phi_{ij}
+          = g^{a_{ij}}$, $0 \leq j \leq t-1$
+      \item[4.] Every $P_i$ broadcasts $\Vec{C_i}, \sigma_i$ to all other
+        participants.
+      \item[5.] Upon receiving $\Vec{C_\ell}, \sigma_\ell$ from
+        participants $1 \leq \ell \leq n, \ell \neq i$, participant $P_i$ verifies
+        $\sigma_\ell = (R_\ell, \mu_\ell)$, aborting on failure, by
+        checking
+          \(R_\ell \stackrel{?}{=} g^{\mu_\ell} \cdot
+           \phi_{\ell0}^{-c_\ell}\), where
+          \(c_\ell = H\left(\ell, \Phi, \phi_{\ell 0}, R_\ell \right)\).
+
+        Upon success, participants delete $\{ \sigma_\ell : 1 \le \ell \le n \} $.
+\end{description}
+
+    \smallskip
+
+    \textbf{Round 2}
+    \begin{description}
+      \item[1.] Each $P_i$ securely sends to each other
+      participant $P_\ell$
+        a secret share $(\ell, f_i(\ell))$, deleting $f_i$ and each share
+        afterward except for $(i, f_i(i))$, which they keep for themselves.
+      \item[2.] Each $P_i$ verifies their shares by calculating:
+          $g^{f_\ell(i)} \iseq \prod_{k=0}^{t-1} \phi_{\ell k}^{i^k}$, aborting if the check fails.
+
+      \item[3.] Each $P_i$ calculates their long-lived private
+        signing share by computing $s_i = \sum_{\ell=1}^n f_\ell(i)$, stores
+        $s_i$ securely, and deletes each $f_\ell(i)$.
+      \item[4.] Each $P_i$ calculates their public verification
+        share $Y_i = g^{s_i}$, and the group's public key
+        $Y = \prod_{j=1}^n \phi_{j0}$.
+        Any participant can compute the public verification share of
+        any other participant by calculating
+        \( \displaystyle
+        Y_i = \prod_{j=1}^n \prod_{k=0}^{t-1} \phi_{jk}^{i^k }
+        \).
+
+    \end{description}
+    \end{flushleft}
+  \end{framed}
+    \caption{\textbf{KeyGen.} A distributed
+    key generation (DKG) protocol $\pedpop$ that builds upon
+    the DKG by Pedersen~\cite{Pedersen91}. Our variant includes a protection
+    against rogue key attacks by requiring each participant to prove knowledge
+    of their secret value commits, and requires aborting on misbehaviour.}
+  \label{fg:pedpop}
+\end{figure*}
+
+
+\subsection{The FROST Signature Scheme}
+
+\begin{figure*}[!htb]
+	%\begin{linedgamespec}
+	\begin{pchstack}[boxed,center,space=1em]
+		\begin{pcvstack}[space=1em]
+			\procedure{$\Setup(\usecp)$}{
+				(\Gr, q, g) \leftarrow \GroupGen(\usecp) \\
+				\text{\algcom Select two hash functions} \\
+				\HashNon, \HashSig : \{0,1\}^* \rightarrow \Z_p \\
+				\pp \gets ((\Gr, q, g), \HashNon, \HashSig) \\
+				\pcreturn \pp
+			}
+			\procedure{${\KeyGen}(n, t)$}{
+        \text{\algcom Shown in the centralized setting,} \\
+        \text{\algcom but a DKG can likewise be used.} \\
+        \sk \randpick \Z_p; \threshpk \gets g^{\sk} \\
+        \{(i, \sk_i) \}_{i \in \set{n}} \randpick \tss.\IssueShares(\sk, n, t) \\
+        \text{\algcom Shamir secret sharing of $\sk$} \\
+        \pcfor i \in \set{n}~\aggpk_i \gets g^{\sk_i}\\
+        \pcreturn (\threshpk, \{ \aggpk_i \}_{i \in \set{n}},  \{ \sk_i\}_{i \in \set{n}})
+			}
+			\procedure{$\Sign()$}{
+        \text{\algcom Local signer has index $k$} \\
+				d_k, e_k \randpick \Z_p^2 \\
+        D_k \gets g^{d_k};\ E_k \gets g^{e_k};\\
+				\state_k \gets (D_k, d_k, E_k, e_k) \\
+        \rho_k \gets (D_k, E_k) \\
+				\pcreturn (\rho_k, \state_k)
+			}
+		\end{pcvstack}
+		\begin{pcvstack}[space=1em]
+			\procedure{$\Sign'(\state_k, \sk_k,  m, \{ \rho_i \}_{i \in \S})$}{
+        \text{\algcom $\Sign'$ must be called at most once per $\state_k$} \\
+        \text{parse}~(  D_k, d_k, E_k, e_k )  \gets \state_k \\
+        \text{parse}~ \{ D_i, E_i \}_{i \in S} \gets \{ \rho_i \}_{i \in \S}\\
+        \pcreturn \bot\ \pcif (D_k, E_k) \not\in \{ D_i,E_i \}_{i \in S} \\
+        \pcfor i \in \S \pcdo \\
+        \pcind a_i \gets \HashNon(k, \threshpk, m, \{ (i, D_i, E_i)\}_{i \in \S}) \\
+        \aggR \gets \prod_{i \in \S} D_i \cdot {E_i}^{a_i}\\
+        c \gets \HashSig(\threshpk, m, \aggR) \\
+				z_k \gets d_k + e_k a_k + c \lambda_k \sk_k\\
+				\text{\algcom $\lagrange_k$ is the $k^{th}$ Lagrange coefficient for $\S$}\\
+				\rho'_k \gets z_k \\
+				\pcreturn \rho'_k
+			}
+			\procedure{$\Combine(\{(\rho_i, \rho_i')\}_{i \in \S})$}{
+        \text{parse}~(D_i, E_i) \gets \rho_i, z_i \gets \rho'_i, i \in \S\\
+        \aggR \gets \prod_{i \in \S} D_i\cdot{E_i}^{a_i};~z \gets \sum_{i \in \S} z_i \\
+				\sigma \gets (\aggR, z)\\
+        \pcreturn \sigma
+			}
+			\procedure{$\Verify(\threshpk, m, \sigma)$}{
+				\text{parse}~(\aggR,z) \gets \sigma\\
+				c \gets \HashSig(\threshpk, m, \aggR)\\
+				\pcif \aggR \cdot \threshpk^c = g^z \\
+				\pcind \pcreturn 1\\
+				\pcreturn 0
+			}
+		\end{pcvstack}
+	\end{pchstack}
+	%\end{linedgamespec}
+	\caption{The FROST threshold signature scheme.
+  The public parameters $\pp$ are implicitly given as input to all algorithms and protocols.
+  FROST assumes an external mechanism to choose the set $\S \subseteq \{1, \ldots, n \}$ of signers, where $t \leq \abs{\S} \leq n$.
+  $\S$ is required to be ordered to ensure consistency.
+  Verification is identical to (single-party) Schnorr signatures.}
+\label{fig:frost}
+\end{figure*}
+
+
+
