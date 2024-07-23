@@ -1,0 +1,99 @@
+
+Threshold signature schemes are a cryptographic primitive to facilitate joint
+ownership over a private key by a set of participants,
+such that a threshold number of participants must cooperate to issue a
+signature that can be verified by a single public key.
+Threshold signatures are useful
+across a range of settings that require a distributed
+root of trust among a set of equally trusted parties.
+
+Similarly to signing operations in a single-party setting, some implementations
+of threshold signature schemes require performing signing operations at
+scale and under heavy load.
+For example, threshold signatures can be used by a set of signers
+to authenticate financial transactions in
+cryptocurrencies~\cite{securing-bitcoin},
+or to sign a
+network consensus produced by a set of trusted authorities~\cite{pir-tor}.
+In both of these examples, as the number of signing parties or signing
+operations increases, the number of communication rounds between participants required
+to produce the joint signature becomes a performance bottleneck, in addition to
+the increased load experienced by each signer.
+This problem is further exacerbated
+when signers utilize network-limited devices or unreliable networks for
+transmission, or protocols that wish to allow signers to participate in signing
+operations asynchronously.
+As such, optimizing the
+network overhead of signing operations is highly beneficial to real-world
+applications of threshold signatures.
+
+Today in the literature, the best threshold signature schemes are those that
+rely on pairing-based
+cryptography~\cite{Boneh2004,BDDMNG:CompactMultiSignatures}, and can perform
+signing operations in a single round among participants. However, relying on
+pairing-based signature schemes is undesirable for some implementations in
+practice, such as those that do not wish to introduce a new
+cryptographic assumption, or that wish to maintain backwards compatibility with
+an existing signature scheme such as Schnorr signatures.
+Surprisingly, today's best non-pairing-based threshold signature
+constructions that produce Schnorr signatures with unlimited
+concurrency~\cite{Stinson:2001:PSD,distributed-keygen-revisited} require at
+least three rounds of
+communication during signing operations, whereas constructions with fewer
+network rounds~\cite{distributed-keygen-revisited} must limit signing
+concurrency to protect against a forgery attack~\cite{Drijvers2019OnTS}.
+
+In this work, we present FROST,
+a Flexible
+Round-Optimized Schnorr Threshold
+signature scheme\footnote{Signatures generated using the FROST protocol can also be
+referred to as ''FROSTy signatures''.} that addresses the need for efficient
+threshold signing operations while improving upon the state of the art to
+ensure strong security properties \emph{without} limiting the parallelism of
+signing operations.
+FROST can be used as either a two-round protocol where signers send
+and receive two messages in total, or optimized to a (non-broadcast)
+single-round signing protocol with a pre-processing stage.
+FROST achieves improved efficiency in the optimistic
+case that no participant misbehaves.
+However, in the case where a misbehaving participant contributes malformed
+values during the protocol, honest parties can identify and exclude the
+misbehaving participant, and re-run the protocol.
+
+The flexible design of FROST lends itself to supporting a number of practical
+use cases for threshold signing. Because the preprocessing round can be
+performed separately from the signing round, signing operations can be performed
+\emph{asynchronously};
+once the preprocessing round is complete, signers only need to receive and eventually reply with a single message to create a signature.
+Further, while some threshold schemes in the literature require all
+participants to be active during signing
+operations~\cite{distributed-keygen-revisited, fast-threshold-ecdsa}, and refer
+to the threshold
+property of the protocol as merely a security property, FROST allows any
+threshold number of participants to produce valid signatures. Consequently,
+FROST can support use cases where a subset of participants (or participating
+devices) can remain offline, a property that is often desirable for
+security in practice.
+
+\medskip\noindent
+\textbf{Contributions.} In this chapter, we present the
+following contributions.
+\begin{itemize}
+  \item We review related threshold signature schemes and present a
+    detailed analysis of their performance and designs.
+  \item We present FROST, a Flexible Round-Optimized Schnorr Threshold signature
+    scheme.
+    FROST improves upon
+    the state of the art for Schnorr threshold signatures by defining a
+    signing protocol that can be optimized to a (non-broadcast) single-round
+    operation with a preprocessing stage.
+    Unlike many prior Schnorr threshold schemes, FROST remains secure against
+    known forgery attacks without limiting concurrency of signing operations.
+  \item We present the first proof of security and correctness for
+    an interactive two-round variant of FROST, building upon proofs of security for prior
+    related threshold schemes.
+    We then demonstrate how this proof extends to FROST in the single-rounnd
+    setting.
+  \item We review follow-up proofs of security that demonstrate unforgeability for FROST directly.
+\end{itemize}
+
