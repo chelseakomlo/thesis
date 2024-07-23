@@ -139,156 +139,30 @@ protocol.
 \subsection{Subsequent Work}
 
 Since the publication of FROST, many Schnorr-related schemes have been proposed.
-We now review this subsequent work.
+We now review several subsequent works.
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-Sparkle related work
-
-
-
-\paragraph{Threshold Schnorr Signatures.}
-Closest to the design of $\sparkleds$ is the MSDL scheme presented
-by Boneh, Drijvers, and Neven~\cite{BonehDN18},
-the three-round MuSig scheme by Maxwell, Poelstra, Seurin, and
-Wuille~\cite{MaxwellPSW19},
-and the $2$Schnorr scheme by Nicolosi, Krohn, Dodis, and Mazi{\`{e}}res~\cite{NicolosiKDM03}.
-However, MSDL and MuSig consider only
-the multi-signature setting ($n$-out-of-$n$),
-and $2$Schnorr considers only the $2$-out-of-$2$ setting.
-Note that when proving the security of multi-signatures, there is only one honest signer.
-
-Stinson and Strobl~\cite{StinsonR01} propose a threshold Schnorr signature scheme secure in the
-random oracle model under the discrete logarithm assumption. However,
-their scheme requires performing a three-round distributed key generation protocol (DKG)~\cite{GennaroJKR07} to generate the nonce for
-each signature, which adds considerable network overhead: at a minimum, it requires participants to perform four rounds in total.
-Furthermore, the proof of security assumes only a static adversary.
-
-Komlo and Goldberg \cite{KomloG20} present a two-round threshold Schnorr signature FROST.
-Unlike prior threshold Schnorr schemes in the literature~\cite{GennaroJKR03}, FROST is
-secure against a concurrent adversary and is not susceptible to ROS attacks~\cite{BenhamoudaLLOR22}.
-%that is allowed to open simultaneous signing sessions at once.
-%In other words, FROST is secure even against ROS attacks~\cite{BenhamoudaLLOR21}.
-%Additionally, FROST can be seen as a non-interactive threshold signature because the first round of signing can be preprocessed before the signing set and message are known.
 FROST2, proposed by Crites, Komlo, and Maller~\cite{CritesKM21} and refined by Bellare, Tessaro, and Zhu~\cite{BellareTZ22} and BCKMTZ~\cite{BellareCKMTZ22}, is an optimized version of FROST that reduces the number of exponentiations required for signing from $\thresh$ to one.
 A further optimization of FROST2, called FROST3, is introduced by RRJSS~\cite{RuffingRJSS22} and proven secure with a DKG by Chu, Gerhart, Ruffing, and Schr{\"{o}}der~\cite{ChuGRS23}.
-(See Table~\ref{table:efficiency} for a comparison of efficiency.)
-However,
-all three of FROST, FROST2, FROST3 are only proven statically secure, under the algebraic one-more discrete logarithm assumption (AOMDL) \cite{BellareCKMTZ22}.
-While $\sparkleds$ adds an additional round of communication,
-it requires only a single exponentiation per signer and is proven statically secure under standard assumptions, which are also criteria of interest in~\cite{NIST22, NIST23}.
-
-%(2) it only requires a constant number of exponentiations per signer, and (3) it is provably secure against a concurrent adversary in the adaptive setting.
-%CK- I took out (2) and (3) since this statement makes it sounds like neither FROST/FROST2 can achieve either 2 or 3. I think the most important and salient point here is sparkle is secure under standard assumptions.
-% Liz - The first statement is too weak so I removed it
+All three of FROST, FROST2, FROST3 are only proven statically secure, under the algebraic one-more discrete logarithm assumption (AOMDL) \cite{BellareCKMTZ22}.
 
 Lindell presents a three-round threshold Schnorr signature~\cite{Lindell22} with the goal of
 defining a scheme that is both secure against ROS attacks and
 secure in the random oracle model under the discrete logarithm assumption only.
-Security is modeled in the the universally composable framework (UC)~\cite{Canetti01} and therefore captures a concurrent adversary.
-However, the security proof assumes the adversary is static, and no claims are made regarding adaptive security.
-%Compared to the scheme by Lindell,
-$\sparkleds$ similarly relies on only the ROM and DL assumption for static security, but does not require the use of
-online-extractable zero-knowledge proofs~\cite{Fischlin05}, and hence is both
-significantly more efficient and a simpler design.
-\begin{comment}
-  % CK - not sure if we actually need this
-In estimating the cost of the online extractor, which in practice requires the
-Fischlin transform~\cite{Fischlin05}, we estimate that to achieve 128-bit
-security, generating a Fischlin proof requires the number of commitments $r$ to equal 16 and the length of
-the zero vector $b$ to equal $16$.
-\end{comment}
+Static security is modeled in the the universally composable framework (UC)~\cite{Canetti01} and therefore captures a concurrent adversary.
 
-Concurrent to this work,
+Sparkle~\cite{CritesKM23} is a three-round threshold Schnorr signature scheme
+that is proven secure under $\tcor$ adaptive corruptions.
+In order to achieve full adaptive security,
+the authors rely on a variant of the one-more discrete logarithm assumption (AOMDL) (i.e., interactive) in the AGM and ROM.
+When the adversary is limited to making $\tcor/2$ corruptions, however,
+it is possible to prove the adaptive security of Sparkle under only AOMDL in the ROM,
+by a reduction that rewinds.  Indeed, $\tcor/2$ corruptions is not covered by our second impossibility result.
+
 Makriyannis~\cite{Makriyannis22} defines a commit-reveal threshold
-Schnorr signature scheme similar to $\sparkleds$, called Classic S., and proves security with
+Schnorr signature scheme similar to Sparkle,
+called Classic S., and proves security with
 respect to an idealized notion of threshold signatures by CGGMP21~\cite{CanettiGGMP21}.
 They consider adaptive security but employ the guessing argument that incurs exponential tightness loss relative to the number of parties.
 
-\begin{figure}[t]
-	\centering
-%		\resizebox{\textwidth}{!}{
-		\begin{tabular}{ c | c | c | c | c | c | c | c | c }
-                   & \multicolumn{5}{c|}{} & \multicolumn{2}{c|}{} \\
-      Scheme        & \multicolumn{5}{c|}{$\Sign$} &
-      \multicolumn{2}{c|}{$\Combine$} \\
-             \midrule
-			%\cmidrule{2-3} \cmidrule{5-8} \cmidrule{9-10} \cmidrule{11-12}
-      &  \multicolumn{3}{c|}{{\small~Performance~}} &
-      \multicolumn{2}{c|}{{\small~Bandwidth~}} &
-      \multicolumn{2}{c|}{{\small~Performance~}} \\
-      &  rounds & exp & $\Hash$ &  $~\Gr~$ & $~\F$  & exp & $\Hash$
-		\\ \midrule
-      FROST \cite{KomloG20}        		  	&    $2$ 	& $t+2~$	    & $t+1$       &  $2$	  & $1$	    &  $t$	& $t$		 \\
-      FROST2 \cite{BellareCKMTZ22}      		&    $2$ 	& $3$	        & $2$         &  $2$	  & $1$	    &  $1$	& $1$	 \\
-      FROST3 \cite{RuffingRJSS22}      		&    $2$ 	& $3$	        & $2$         &  $2$	  & $1$	    &  $1$	& $1$	 \\
-      Classic S.~\cite{Makriyannis22}	        					       &    $3$ 	& $1$	        & $1$         &  $1$	  & $2$	    &  $0$	& $0$		 \\
-      %Zero S.~\cite{Makriyannis22}		& $3$	& 			&		&		&			& \\
-      Lindell22 \cite{Lindell22}~        &    $3$ 	& $11t + 1$   & $18t+10^7$ 	&  $11$		& $25$		&  $0$  & $0$		\\
-      \hline
-      \textbf{$\sparkleds$}         					       &    $3$ 	& $1$	        & $t + 2$         &  $1$	  & $2$	    &  $0$	& $0$		 \\ \midrule
-% SpeedyBSig
-%      \multicolumn{11}{l}{\textbf{Blind signatures}}   \\ \midrule
-%      %Abe~\cite{Abe01} & $X$ & $X$ & $X$   & - &  $X$ & $X$    &  $X$    & $X$  &  $X$      & $X$ \\
-%      TZ22~\cite{TessaroZ22} & $1$ & $2$ & $0$   & - &  $2$ & $11$    &  $4$    & $7$  &  $-$      & $4$ \\
-%      Our $\speedybsig$               & $1$ & $2$ & $0$   & - &  $2$ & $10$  &  $3$     & $6$  &  $-$   & $3$ \\
-      \bottomrule
-	\end{tabular}
-%}
-	\caption{Efficiency of Two- and Three-Round Threshold Schnorr Signature Schemes.
-	All output a standard Schnorr signature.
-	We only compare schemes that are secure against ROS attacks~\cite{DrijversEFKLNS19,BenhamoudaLLOR22}.
-		The number of network rounds between participants is given in the rounds column.
-  exp stands for the number of group exponentiations.
-  The total number of group and field elements sent by each signer is denoted by $\Gr$ and $\F$, respectively.
-  $\Hash$ denotes the total number of hashing operations performed.
-  The cost of signature verification is identical for each scheme, and is simply the cost of verifying a single Schnorr signature.
-  Estimates for Lindell22 are made with respect to a 128-bit security level for
-  Fischlin~\cite{Fischlin05}, where $r=8$ is the number of commitments for a
-  Fischlin proof and the length of the zero vector is $b=16$, such that
-  $b\cdot r=128$.
-	}\label{table:efficiency}
-	\hrulefill
-	\vspace{-0.5cm}
-\end{figure}
 
 
-\paragraph{Adaptive Security of Threshold Signatures.}
-While adaptive security for threshold schemes is a well-known topic in the
-literature,
-no proof of adaptive security without exponential tightness loss exists for
-a threshold Schnorr signature scheme that is secure against ROS attacks.
-%We now review several alternative signature schemes, for comparison.
-
-Generalized techniques for transforming statically secure threshold schemes into adaptively secure schemes have been defined in the literature~\cite{CanettiGJKR99, JareckiL00, LysyanskayaP01}.
-However, these techniques either require the reduction to guess the corrupted parties ahead of time,
-require secure erasures, or
-introduce prohibitive performance overhead by using a robust distributed key generation mechanism (DKG) for nonce generation or heavyweight tools, such as Paillier encryption.
-
-Almansa, Damg{\aa}rd, and Nielsen~\cite{AlmansaDN06} present a threshold RSA
-scheme with proactive and adaptive security, but these results do not translate to the discrete logarithm setting.
-Libert, Joye, and Yung~\cite{LibertJY16} propose a variant of the threshold
-BLS~\cite{Boldyreva03} scheme that is adaptively secure.
-However, it is incompatible with single-party BLS verification, an
-often-critical goal for threshold schemes in practice.
-Bacho and Loss~\cite{BachoL22} demonstrate the adaptive security of threshold
-BLS in Type I bilinear groups directly in the AGM from the $\thresh\hbox{-}\omdl$ assumption.
-Their reduction is tight.
-Interestingly, they demonstrate that the $\thresh\hbox{-}\omdl$ assumption is the minimum assumption under which threshold BLS can be proven adaptively secure.
-\liz{Check this, because I think we say something different in the impossibility paper.}
-
-A recent result by Das and Ren~\cite{DasR23} shows adaptive security of threshold BLS in Type III bilinear groups under the co-computational Diffie-Hellman assumption (co-CDH) and decisional Diffie-Hellman assumption (DDH) in the ROM.
-
-Makriyannis~\cite{Makriyannis22} introduces a threshold Schnorr signature scheme, Zero S., which relies on Pedersen commitments, Fischlin proofs of knowledge~\cite{Fischlin05},
-and an interactive protocol to identify misbehaving parties.
-Zero S. is proven adaptively secure in a straight-line manner with a reduction to DL but requires secure erasure of secret state.
-
-Twinkle, by BLTWZ~\cite{BachoLTWZ23}, is a family of three-round threshold signature schemes.
-The first, efficient construction is a distributed Chaum-Pedersen proof of equality of discrete logarithms $\pk = g^{\sk}$ and $\Hash(m)^{\sk}$~\cite{ChaumP92} (vs. a proof of knowledge of the discrete logarithm of $\pk = g^{\sk}$, as in Schnorr signatures).
-Thus, signatures are Chaum-Pedersen outputs $(\Hash(m)^{\sk}, c, z)$, where $(c, z)$ is a Schnorr signature.
-This scheme is proven fully adaptively secure under a one-more variant of the computational Diffie-Hellman assumption (OMCDH) in the ROM.
-The second, matrix construction is proven fully adaptively secure under the DDH assumption in the ROM.
-The techniques used for simulation do not allow pre-processing: the message and signing set must be given in the first round.
-Furthermore, neither scheme is compatible with Schnorr signatures.
-To date, ours is the only proof of adaptive security for any threshold Schnorr signature scheme.
