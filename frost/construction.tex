@@ -170,4 +170,134 @@ value.
 \end{figure*}
 
 
+We now introduce the signing protocol for FROST. This operation builds upon
+known techniques in the literature~\cite{schnorr-thresh-additive,
+distributed-keygen-revisited} by employing additive secret sharing and share
+conversion to non-interactively generate the nonce value for each
+signature.
+However, signing operations in FROST additionally leverage a binding
+technique to avoid known forgery attacks without limiting concurrency.
+We present FROST signing in two parts: a pre-processing phase and a
+single-round signing phase. However, these stages can be combined for a single
+two-round protocol if desired.
+
+As a reminder, the attack of
+Drijvers et al.~\cite{Drijvers2019OnTS} requires the adversary to either
+see the victim's $T$ commitment values
+before selecting their own commitment, or to adaptively choose the message to
+be signed, so that the adversary can manipulate the resulting challenge $c$
+for the set of participants performing a group signing operation.
+To prevent this attack without limiting concurrency,
+FROST ``binds'' each participant's response to a specific
+message as well as the set of participants and their commitments used for that
+particular signing operation. In doing so, combining responses
+over different messages or participant/commitment pairs results in an invalid
+signature, thwarting attacks such as those of Drijvers et al.
+
+\textbf{Preprocessing Stage.}
+We present in
+commitments at a time.
+In this setting, $\pi$ determines the number of
+nonces that are generated and their corresponding commitments that are
+published in a single preprocess step.
+Implementations that do not wish to cache commitments can instead
+use a two-round signing protocol, where participants publish a single
+commitment to each other in the first round.
+
+Each participant $P_i$ begins by generating a list of
+\emph{single-use} private nonce pairs and corresponding public commitment shares
+$\langle((d_{ij}, D_{ij} = g^{d_{ij}}), (e_{ij}, E_{ij} = g^{e_{ij}})) \rangle_{j=1}^\pi$,
+where
+$j$ is a counter that identifies the next nonce/commitment share pair available
+to use for signing.
+Each $P_i$ then publishes $(i, L_i)$, where $L_i$ is their list of
+commitment shares
+$L_i  = \langle(D_{ij}, E_{ij}) \rangle_{j=1}^\pi$. The location
+where participants publish these values can depend on the implementation
+(which we discuss further in Section~\ref{discussion}).
+The set of $(i, L_i)$ tuples are then stored by any entity that might perform
+the coordinator role during signing.
+
+\textbf{Signing Protocol.}
+At the beginning of the signing protocol in
+Figure~\ref{fg:single-sign-parallel},
+the coordinator selects $\alpha : t \leq \alpha \leq n$
+participants (possibly including itself) to participate in the signing.  Let
+$\coalition$ be the set of those $\alpha$ participants.
+The coordinator then selects the next available commitment $(D_i, E_i) : i \in S$,
+which are later used to generate a secret share to a random commitment $R$ for
+the signing group.\footnote{Each participant
+contributes to the group commitment $R$, which corresponds to the
+commitment $g^k$ to the nonce $k$
+in step 1 of the single-party Schnorr signature scheme in
+Section~\ref{schnorr-signature}.}
+
+The resulting secret nonce is
+$k = \sum_{i \in S} k_i$, where each $k_i = d_i + e_i \cdot \rho_i$
+(we next describe how participants calculate $\rho_i$),
+and $(d_i, e_i)$ correspond to the $(D_i = g^{d_i},
+E_i=g^{e_i})$ values published during the Preprocess stage.
+Recall from Section~\ref{background:additive} that if the $k_i$ are
+\emph{additive} shares of $k$, then the $\frac{k_i}{\lambda_i}$ are
+\emph{Shamir} shares of $k$, such that each $\lambda_i$ is the Lagrange
+coefficient for the $i\supth$ participant over the set $S$.
+
+After these steps,
+the coordinator then creates the set $B$, where
+$B$ is the ordered list of tuples $\langle(i, D_i, E_i)\rangle_{i \in S}$.
+The coordinator then sends $(m, B)$ to every $P_i, i \in S$.
+
+After receiving $(m, B)$ from the coordinator to initialize a signing operation,
+each participant checks that $m$ is a message they are willing to sign.
+Then, using $m$ and $B$,
+all participants derive the ``binding values'' $\rho_i, i \in S$ such that
+$\rho_i = H_1(i, m, B)$, where $H_1$ is a hash function whose outputs are in
+$\mathbb{Z}_q^*$.
+
+Each participant then
+computes the commitment $R_i$ for each participant in $S$ by
+deriving $R_i = D_i \cdot (E_i)^{\rho_i}$.
+Doing so binds the
+message, the set of signing participants, and each participant's commitment
+to each signature share.
+This binding technique thwarts the attack of Drijvers et al.\ described in
+Section~\ref{schnorr-attacks} as attackers cannot combine signature shares
+across disjoint signing operations or permute the set of signers or published
+commitments for each signer.
+
+The commitment for the set of signers
+is then simply $R = \prod_{i \in S} R_i$.
+As in single-party Schnorr signatures, each participant computes the challenge
+$c = H_2(R, Y, m)$.
+
+Each participant's response $z_i$ to the challenge
+can be computed using the single-use nonces $(d_i, e_i)$ and the
+long-term secret shares $s_i$, converted to additive form:
+\[
+  z_i = d_i + (e_i \cdot \rho_i) + \lambda_i \cdot s_i \cdot c
+\]
+
+The coordinator finally checks the consistency of each participant's reported
+$z_i$ with their commitment share $(D_i, E_i)$ and their public key share
+$Y_i$.
+If every participant issued a correct $z_i$, the group's response is
+$z = \sum_{i \in S} z_i$, and the group signature on $m$ is $\sigma=(R, z)$.
+This signature is
+verifiable to anyone performing a standard Schnorr verification operation
+with $Y$ as the public key (Section~\ref{schnorr-signature}).
+
+
+
+\textbf{Handling Ephemeral Outstanding Shares.} Because each nonce and
+commitment share generated during the preprocessing stage
+described in Figure~\ref{fg:signing-protocol-preprocess}
+must be used \emph{at most once},
+participants should delete these values after using them in a signing operation,
+as indicated in Step $5$ in Figure~\ref{fg:single-sign-parallel}.
+An accidentally reused $(d_{ij}, e_{ij})$ can lead to exposure of the participant's
+long-term secret $s_i$.
+
+However, if the coordinator chooses to re-use a commitment set $(D_i,
+E_i)$ during the signing protocol,  doing so simply results in
+the participant $P_i$ aborting the protocol, and consequently does not increase the power of the coordinator.
 
