@@ -1,0 +1,30 @@
+\section{Implementation and Operational Considerations}
+\label{discussion}
+
+We have implemented FROST in Rust, using Ristretto over
+curve25519~\cite{ristretto} for the
+group operations. Our source code can be found at
+\url{https://crysp.uwaterloo.ca/software/frost}.
+
+We now discuss two topics that may be of interest to implementors.
+
+\textbf{Publishing Commitments.} The preprocessing step
+for FROST in Section~\ref{frost-signing} requires some
+agreed-upon location for participants to publish their commitments to, such as
+a commitment server, which is trusted
+to provide the correct (i.e., valid and unused) commitment shares upon request.
+If malicious, it
+could perform a denial-of-service attack, or it could provide stale or malformed commitment values on behalf of
+honest participants.
+However, simply having access to
+the set of a participant's \emph{public} published commitments does not grant
+any additional powers.
+
+{\bf  Performing two-round FROST without central roles.}
+While the round complexity of FROST can be optimized using central roles such as the signature
+aggregator,
+some implementations may wish to remain completely decentralized. In this
+setting, participants can simply broadcast commitments to each other, and
+perform signing using a two-round setting (foregoing the preprocessing step) for
+further simplicity.
+

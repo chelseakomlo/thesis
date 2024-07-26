@@ -214,13 +214,12 @@ Each $P_i$ then publishes $(i, L_i)$, where $L_i$ is their list of
 commitment shares
 $L_i  = \langle(D_{ij}, E_{ij}) \rangle_{j=1}^\pi$. The location
 where participants publish these values can depend on the implementation
-(which we discuss further in Section~\ref{discussion}).
+(which we discuss further in Section~\ref{frost:discussion}).
 The set of $(i, L_i)$ tuples are then stored by any entity that might perform
 the coordinator role during signing.
 
 \textbf{Signing Protocol.}
-At the beginning of the signing protocol in
-Figure~\ref{fg:single-sign-parallel},
+At the beginning of the signing protocol in Figure~\ref{fig:frost},
 the coordinator selects $\alpha : t \leq \alpha \leq n$
 participants (possibly including itself) to participate in the signing.  Let
 $\coalition$ be the set of those $\alpha$ participants.
@@ -230,14 +229,14 @@ the signing group.\footnote{Each participant
 contributes to the group commitment $R$, which corresponds to the
 commitment $g^k$ to the nonce $k$
 in step 1 of the single-party Schnorr signature scheme in
-Section~\ref{schnorr-signature}.}
+Section~\ref{background:schnorr}.}
 
 The resulting secret nonce is
 $k = \sum_{i \in S} k_i$, where each $k_i = d_i + e_i \cdot \rho_i$
 (we next describe how participants calculate $\rho_i$),
 and $(d_i, e_i)$ correspond to the $(D_i = g^{d_i},
 E_i=g^{e_i})$ values published during the Preprocess stage.
-Recall from Section~\ref{background:additive} that if the $k_i$ are
+Recall that if the $k_i$ are
 \emph{additive} shares of $k$, then the $\frac{k_i}{\lambda_i}$ are
 \emph{Shamir} shares of $k$, such that each $\lambda_i$ is the Lagrange
 coefficient for the $i\supth$ participant over the set $S$.
@@ -284,16 +283,14 @@ If every participant issued a correct $z_i$, the group's response is
 $z = \sum_{i \in S} z_i$, and the group signature on $m$ is $\sigma=(R, z)$.
 This signature is
 verifiable to anyone performing a standard Schnorr verification operation
-with $Y$ as the public key (Section~\ref{schnorr-signature}).
+with $Y$ as the public key (Section~\ref{background:schnorr}).
 
 
 
 \textbf{Handling Ephemeral Outstanding Shares.} Because each nonce and
-commitment share generated during the preprocessing stage
-described in Figure~\ref{fg:signing-protocol-preprocess}
+commitment share generated during the first round of signing described in Figure~\ref{fig:frost}
 must be used \emph{at most once},
-participants should delete these values after using them in a signing operation,
-as indicated in Step $5$ in Figure~\ref{fg:single-sign-parallel}.
+participants should delete these values after using them in a signing operation,.
 An accidentally reused $(d_{ij}, e_{ij})$ can lead to exposure of the participant's
 long-term secret $s_i$.
 
