@@ -76,7 +76,7 @@ conversion. This DKG has been also applied in a Schnorr threshold
 scheme context to generate the random nonce for more efficient distributed key
 generation operations~\cite{kzen-schnorr} in combination with threshold Schnorr
 signing operations~\cite{StinsonR01}.
-In later work~\cite{one-round-ecdsa}, Gennaro and Goldfeder define an optimization
+In later work~\cite{GennaroG20}, Gennaro and Goldfeder define an optimization
 to a single-round ECDSA signing operation with a
 preprocessing stage, which assumes the protocol will abort in the case of
 failure or participant misbehaviour.
@@ -108,7 +108,7 @@ Further, their scheme requires all $n$ participants take part in signing
 operations, where the threshold $t$ is simply a security parameter.
 
 Similarly to FROST,
-Abidin, Aly, and Mustafa~\cite{schnorr-thresh-additive} present a design for
+Abidin, Aly, and Mustafa~\cite{AbidinAM20} present a design for
 authentication between devices,
 and use additive secret sharing to generate the nonce for Schnorr
 signatures in a threshold setting, a technique
