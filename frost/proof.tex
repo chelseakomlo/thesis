@@ -418,7 +418,7 @@ Due to the difficulty of simulating zero-knowledge proofs in parallel, for the
 purposes of proving the security of FROST, we will first prove
 security against an
 \emph{interactive} two-round variant of the FROST signing operation,
-which we call FROST-Interactive.  In Section~\ref{high-level-proofs},
+which we call FROST-Interactive.  In Section~\ref{frost:high-level-proofs},
 we discuss how the security for FROST-Interactive extends to plain
 FROST.
 
@@ -426,8 +426,7 @@ FROST.
 \label{frost-interactive-parallel}
 
 FROST-Interactive uses the same
-KeyGen protocol to generate long-lived keys as regular FROST, as further
-described in in Section~\ref{protocol-keygen}.
+KeyGen protocol to generate long-lived keys as plain FROST.
 We present an overview of the Preprocess step for FROST-Interactive in
 Figure~\ref{fg:interactive-protocol-preprocess}, and the signing step in
 Figure~\ref{fg:interactive-sign-parallel}.
@@ -619,11 +618,11 @@ $O(\pi n_p + n_s + n_h + 1)$ other minor operations, such as table lookups.
 
 \end{proof}
 
-\subsection{Extension of FROST-Interactive to FROST}
+\section{Extension of FROST-Interactive to FROST}
 
 In this section, we describe the changes we make to FROST-Interactive
 to remove one round of communication in each of the Preprocess and the Sign
-phases.  We argue in Section~\ref{security} why our changes do not harm the
+phases.  We argue in Section~\ref{frost:proof} why our changes do not harm the
 security of the protocol.
 
 \textbf{Removal of one-time verifiable random functions to generate $\rho_i$.}
