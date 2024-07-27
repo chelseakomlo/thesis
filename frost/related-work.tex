@@ -11,10 +11,10 @@ participants (at most $n-t$) contribute malformed shares.
 Conversely, designs that are not robust simply abort after detecting any
 participant misbehaviour.
 
-\textbf{Robust Threshold Schemes.} Stinson and Strobl~\cite{Stinson:2001:PSD}
+\textbf{Robust Threshold Schemes.} Stinson and Strobl~\cite{StinsonR01}
 present a threshold signature scheme
 producing Schnorr signatures, using the modification of Pedersen's DKG presented
-by Gennaro et al.~\cite{distributed-keygen} to generate
+by Gennaro et al.~\cite{GennaroJKR07} to generate
 both the secret key $s$ during key generation as well as
 the random nonce $k$ for each signing operation.
 This construction
@@ -25,15 +25,15 @@ and one
 round to distribute signature shares and compute the group signature.
 Each round requires participants to send values to every other participant.
 
-Gennaro et al.~\cite{distributed-keygen-revisited} present a threshold
+Gennaro et al.~\cite{GennaroJK02} present a threshold
 Schnorr signature protocol that uses a modification of Pedersen's
-DKG~\cite{pedersen:DKG} to generate both $s$ during key generation
+DKG~\cite{Pedersen91dkg} to generate both $s$ during key generation
 and the random nonce $k$ for signing operations. However, their construction
 requires \emph{all} $n$ signers to participate in signing, while the adversary
 is allowed to control up to the given threshold number of participants.
-Recall from Section~\ref{background:distributed-keygen} that Pedersen's DKG
-requires two rounds; this construction requires an additional round for signing
-operations when all participants are equally trusted. Each round requires that
+Pedersen's DKG requires two rounds among participants;
+and so this construction requires an additional round for signing.
+Each round requires that
 all participants send values to all other participants.
 The authors also discuss an optimization that leverages
 a \emph{signature aggregator} role, an entity trusted to
@@ -49,7 +49,7 @@ random nonces. The signers can then store these pre-processed values to later pe
 $\ell$ single-round signing operations.
 
 Our work builds upon the key generation stage of Gennaro et
-al.~\cite{distributed-keygen-revisited}; we use a variant of Pedersen's DKG for
+al.~\cite{GennaroJK02}; we use a variant of Pedersen's DKG for
 key generation with a requirement
 that in the case of misbehaviour, the protocol aborts and the cause investigated
 out of band.
@@ -64,18 +64,18 @@ However, such a tradeoff is practical to many real-world settings.
 Further, because FROST does not provide robustness, FROST is secure so long as
 the adversary controls fewer than the threshold $t$ participants,
 an improvement over robust designs, which can at best
-provide security for $t \le n/2$~\cite{distributed-keygen}.
+provide security for $t \le n/2$~\cite{GennaroJKR07}.
 
 \textbf{Non-Robust Threshold Schemes.} FROST is not unique in trading off
 favouring increased network efficiency over robustness.
-Gennaro and Goldfeder~\cite{gennaro-goldfeder-ecdsa} present a threshold ECDSA
+Gennaro and Goldfeder~\cite{GennaroG19} present a threshold ECDSA
 scheme that similarly requires aborting the protocol in the case of
 participant misbehaviour. Their signing construction uses a two-round DKG to generate
 the nonce required for the ECDSA signature, leveraging additive-to-multiplicative share
 conversion. This DKG has been also applied in a Schnorr threshold
 scheme context to generate the random nonce for more efficient distributed key
 generation operations~\cite{kzen-schnorr} in combination with threshold Schnorr
-signing operations~\cite{Stinson:2001:PSD}.
+signing operations~\cite{StinsonR01}.
 In later work~\cite{one-round-ecdsa}, Gennaro and Goldfeder define an optimization
 to a single-round ECDSA signing operation with a
 preprocessing stage, which assumes the protocol will abort in the case of
