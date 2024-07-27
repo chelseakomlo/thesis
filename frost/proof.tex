@@ -6,7 +6,7 @@ correctness and a high-level overview of our proof of security against
 chosen-message attacks for an adaptive version of FROST,
 with a heuristic assumption on how the proof of security applies to FROST directly.
 
-Note that subsequent works have given a direct proof for FROST~\cite{}.
+Note that subsequent works have given a direct proof for FROST~\cite{BellareCKMTZ22}.
 
 \subsection{Correctness}
 \label{frost:correctness}
@@ -50,7 +50,7 @@ that we call FROST-Interactive, and then demonstrate how the proof extends to
 plain FROST.
 
 We employ the generalized forking strategy used by Bellare and
-Neven~\cite{generalized-forking-lemma} to create a reduction to the security of
+Neven~\cite{BellareN06} to create a reduction to the security of
 the discrete logarithm problem (DLP) in $\mathbb{G}$.
 We prove security against the standard notion of existential unforgeability
 against chosen message
@@ -152,13 +152,13 @@ We now
 describe in greater detail $GF_\mathcal{A}$ and $C$, as
 these algorithms remain
 largely unchanged from their use by Bellare and
-Neven~\cite{generalized-forking-lemma}.
+Neven~\cite{BellareN06}.
 We describe the implementation of $\mathcal{A}$ in the proof directly.
 
 \subsubsection{Generalized Forking Algorithm and Lemma} \label{gfa}
 
 We build upon the Generalized Forking Algorithm and Lemma by Bellare and
-Neven~\cite{generalized-forking-lemma}, for both its simplicity and to ensure
+Neven~\cite{BellareN06}, for both its simplicity and to ensure
 that our proof can support concurrent executions of the signing protocol.
 In the Generalized Forking Algorithm, the rewinding of
 the adversary $\mathcal{A}$ is simulated by invoking $\mathcal{A}$ in
@@ -166,7 +166,7 @@ succession. In each invocation of $\mathcal{A}$, the same random tape $\beta$
 is supplied, as well as the same public key $Y$. However, each execution of
 $\mathcal{A}$ receives different outputs for a subset of random oracle queries.
 This approach is akin to the proof technique by  Pointcheval and
-Stern~\cite{security-args-schnorr} for plain Schnorr,
+Stern~\cite{PointchevalS96} for plain Schnorr,
 which requires running the adversary until
 a forgery is produced, and then ``rewinding'' the adversary back to a specific
 point in execution. However, the Generalized Forking Algorithm does not require
@@ -232,7 +232,7 @@ random oracle $H$. In order to  ``fork'' $\mathcal{A}$, $GF_\mathcal{A}$ will su
 same responses $h_1, \dots, h_{J-1}$, but will provide \emph{different}
 responses for  $h_J, \dots, h_{n_r}$. In doing so, $GF_\mathcal{A}$ simulates forking the
 adversary at a specific point when performing its attack similar to the proof
-model by Pointcheval and Stern~\cite{security-args-schnorr}, but without
+model by Pointcheval and Stern~\cite{PointchevalS96}, but without
 needing to rewind $\mathcal{A}$ to a specific point.
 
 After its second execution, $\mathcal{A}$ will return $(J', \sigma')$ or
@@ -247,7 +247,7 @@ of the challenge value $\omega$ (we provide more details on how to
 perform this operation below).
 
 \textbf{Generalized Forking Lemma.} We will now see how the generalized forking
-lemma presented by Bellare and Neven~\cite{generalized-forking-lemma}
+lemma presented by Bellare and Neven~\cite{BellareN06}
 determines the probability that $GF_\mathcal{A}$ will return a successful output.
 Let $acc$ be the accepting probability of $\mathcal{A}$, or the probability that
 $J \geq 1$, and let $h$ be the total number of possible outputs of $H$. Let $e'$
@@ -255,7 +255,7 @@ be the advantage of solving the discrete logarithm problem over some group
 $\mathbb{G}$. Recall that $n_r$ is the maximum number of random oracle outputs
 $\mathcal{A}$ may need to generate.
 
-\begin{lemma}{\textbf{Generalized Forking Lemma}~\cite{generalized-forking-lemma}}
+\begin{lemma}{\textbf{Generalized Forking Lemma}~\cite{BellareN06}}
   \label{generalized-forking-lemma}
     Let frk be defined by the following probability:
     \[
@@ -574,7 +574,7 @@ always compute $R$ before $\mathcal{F}$ can, and consequently can program the
 random oracle $H_2(R, Y, m)$ with perfect success.
 Conversely, a signing request by $\mathcal{A}$ in the simulation for plain
 Schnorr succeeds only with
-probability $1/(n_h + n_s + 1)$~\cite{generalized-forking-lemma}.
+probability $1/(n_h + n_s + 1)$~\cite{BellareN06}.
 
 
 
