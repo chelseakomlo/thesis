@@ -12,9 +12,9 @@ of threshold signature schemes require performing signing operations at
 scale and under heavy load.
 For example, threshold signatures can be used by a set of signers
 to authenticate financial transactions in
-cryptocurrencies~\cite{securing-bitcoin},
+cryptocurrencies~\cite{GoldfederGKBKFN19},
 or to sign a
-network consensus produced by a set of trusted authorities~\cite{pir-tor}.
+network consensus produced by a set of trusted authorities~\cite{MittalOTBG11}.
 In both of these examples, as the number of signing parties or signing
 operations increases, the number of communication rounds between participants required
 to produce the joint signature becomes a performance bottleneck, in addition to
@@ -29,7 +29,7 @@ applications of threshold signatures.
 
 Today in the literature, the best threshold signature schemes are those that
 rely on pairing-based
-cryptography~\cite{Boneh2004,BDDMNG:CompactMultiSignatures}, and can perform
+cryptography~\cite{BonehLS04,BDDMNG:CompactMultiSignatures}, and can perform
 signing operations in a single round among participants. However, relying on
 pairing-based signature schemes is undesirable for some implementations in
 practice, such as those that do not wish to introduce a new
@@ -37,11 +37,11 @@ cryptographic assumption, or that wish to maintain backwards compatibility with
 an existing signature scheme such as Schnorr signatures.
 Surprisingly, today's best non-pairing-based threshold signature
 constructions that produce Schnorr signatures with unlimited
-concurrency~\cite{Stinson:2001:PSD,distributed-keygen-revisited} require at
+concurrency~\cite{StinsonR01} require at
 least three rounds of
 communication during signing operations, whereas constructions with fewer
-network rounds~\cite{distributed-keygen-revisited} must limit signing
-concurrency to protect against a forgery attack~\cite{Drijvers2019OnTS}.
+network rounds~\cite{GennaroJKR03} must limit signing
+concurrency to protect against a forgery attack~\cite{DrijversEFKLNS19}.
 
 In this work, we present FROST,
 a Flexible
