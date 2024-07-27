@@ -171,8 +171,7 @@ value.
 
 
 We now introduce the signing protocol for FROST. This operation builds upon
-known techniques in the literature~\cite{schnorr-thresh-additive,
-distributed-keygen-revisited} by employing additive secret sharing and share
+known techniques in the literature~\cite{AbidinAM20,SchroderU17} by employing additive secret sharing and share
 conversion to non-interactively generate the nonce value for each
 signature.
 However, signing operations in FROST additionally leverage a binding
@@ -182,7 +181,7 @@ single-round signing phase. However, these stages can be combined for a single
 two-round protocol if desired.
 
 As a reminder, the attack of
-Drijvers et al.~\cite{Drijvers2019OnTS} requires the adversary to either
+Drijvers et al.~\cite{DrijversEFKLNS19} requires the adversary to either
 see the victim's $T$ commitment values
 before selecting their own commitment, or to adaptively choose the message to
 be signed, so that the adversary can manipulate the resulting challenge $c$
