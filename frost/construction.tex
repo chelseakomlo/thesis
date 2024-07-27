@@ -7,9 +7,9 @@ this chapter presents
 a simplified two-round DKG that builds on Schnorr signatures and Pedersen's VSS.
 In later work,
 this DKG was given the name $\pedpop$,
-which I will also use to refer to this scheme.
+which will also be used here.
 
-$\pedpop$ is a two-round distributed key generation scheme shown in Figure~\ref{fg:pedpop},
+$\pedpop$ is a two-round distributed key generation scheme shown in Figure~\ref{fg:pedpop}.
 Each participant performs the role of a dealer,
 by generating secret shares and a commitment via Pedersen's VSS
 with respect to a randomly sampled secret.
@@ -23,7 +23,7 @@ Schnorr signature) that demonstrates knowledge of the secret that is shared. In
 doing so, $\pedpop$ protects against rogue key attacks~\cite{RistenpartY07}.
 Without this proof of knowledge,
 a rushing adversary (i.e., one that can speak last) could perform a rogue key
-attack by picking  heir public key with respect to any other participant's public key,
+attack by picking  their public key with respect to any other participant's public key,
 effectively cancelling out key material or forcing the group public key to hit some target
 value.
 

@@ -138,8 +138,8 @@ protocol.
 
 \subsection{Subsequent Work}
 
-Since the publication of FROST, many Schnorr-related schemes have been proposed.
-We now review several subsequent works.
+Since the publication of FROST, several threshold Schnorr signature schemes have been proposed.
+We now review subsequent works.
 
 FROST2, proposed by Crites, Komlo, and Maller~\cite{CritesKM21} and refined by Bellare, Tessaro, and Zhu~\cite{BellareTZ22} and BCKMTZ~\cite{BellareCKMTZ22}, is an optimized version of FROST that reduces the number of exponentiations required for signing from $\thresh$ to one.
 A further optimization of FROST2, called FROST3, is introduced by RRJSS~\cite{RuffingRJSS22} and proven secure with a DKG by Chu, Gerhart, Ruffing, and Schr{\"{o}}der~\cite{ChuGRS23}.
@@ -156,7 +156,7 @@ In order to achieve full adaptive security,
 the authors rely on a variant of the one-more discrete logarithm assumption (AOMDL) (i.e., interactive) in the AGM and ROM.
 When the adversary is limited to making $\tcor/2$ corruptions, however,
 it is possible to prove the adaptive security of Sparkle under only AOMDL in the ROM,
-by a reduction that rewinds.  Indeed, $\tcor/2$ corruptions is not covered by our second impossibility result.
+by a reduction that rewinds.
 
 Makriyannis~\cite{Makriyannis22} defines a commit-reveal threshold
 Schnorr signature scheme similar to Sparkle,
