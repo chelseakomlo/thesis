@@ -1,0 +1,52 @@
+\begin{figure}[t]
+\begin{framed}
+
+\centerline{\textbf{Sign($m$) $\rightarrow (m, \sigma)$}}
+
+    \smallskip
+
+\begin{flushleft}
+
+
+\textbf{Round 1}
+\begin{description}
+  \item[1.] The coordinator selects a set $S$ of $t$ participants for the signing protocol, and
+    the next available commitments for each signing participant $(D_{ij}, E_{ij},
+    A_{ij}, B_{ij})$, and creates $B = \langle (i, D_{ij}, E_{ij})\rangle_{i \in S}$.
+    The coordinatotr then sends $(m, B)$ to each participant $P_i, i
+    \in S$.
+  \item[2.] After receiving $(m, B)$, each $P_i, i \in S$ first checks that $m$ is
+    a valid message, and validates every tuple $(i,D_{ij}, E_{ij}) \in B$ maps to the next
+    available $(D_{ij}, E_{ij}, A_{ij}, B_{ij})$, aborting if either check fails.
+  \item[3.] Each $P_i$ generates $\rho_i = a_{ij} + b_{ij} \cdot
+    H_{\rho}(m,B)$, securely deletes
+    $(a_{ij}, A_{ij})$ and $(b_{ij}, B_{ij})$ from their local storage,
+    and returns $\rho_i$ to the coordinator.
+\end{description}
+
+\textbf{Round 2}
+\begin{description}
+  \item[1.] After receiving each $\rho_\ell$, the coordinator then
+    distributes all $\rho_\ell, \ell \in S$ to each signing participant.
+  \item[2.] After receiving the list of $\rho_\ell$ values, each participant checks
+    the validity of each by verifying $ (g^{\rho_\ell} \stackrel{?}{=}
+    A_{\ell j}\cdot{B_{\ell j}}^{H_{\rho}(m, B)})$.
+  \item[3.] Each $P_i$ then derives $R = \prod_{\ell \in S} D_{\ell j} \cdot {E_{\ell j}}^{\rho_\ell}$, and
+    then $c = H_2(R, Y, m)$.
+  \item[4.] Each $P_i$ computes their response using their long-lived
+    secret share $s_i$
+    by computing $z_i = d_{ij} + (e_{ij} \cdot \rho_i) + \lambda_i \cdot s_i
+    \cdot c$, using $S$ to determine $\lambda_i$.
+  \item[5.] Each $P_i$ securely deletes $(d_{ij}, D_{ij})$ and $(e_{ij}, E_{ij})$
+    from their
+    local storage, and then returns $z_i$ to the coordinator.
+  \item[6.] The coordinator performs the identical verification, aggregation, and
+    publication of signature shares as in plain FROST.
+\end{description}
+
+\end{flushleft}
+  \end{framed}
+
+    \caption{FROST-Interactive Two-Round Signing Protocol}
+    \label{fg:interactive-sign-parallel}
+\end{figure}

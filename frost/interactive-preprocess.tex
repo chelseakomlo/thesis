@@ -1,0 +1,76 @@
+\begin{figure}[t]
+  \begin{framed}
+
+    \centerline{\textbf{Preprocess($\pi$) $\rightarrow (i, \langle(D_{ij}, E_{ij},
+    A_{ij}, B_{ij})\rangle_{j=1}^\pi) $}}
+
+\begin{flushleft}
+
+Each participant $P_i, i \in \{1, \dots, n\}$ performs this stage prior to signing.
+As before, $j$ is a
+counter for a nonce/commitment pair, and $\pi$ the number of commitments
+  generated.
+Let $H_3$ be a hash function whose input is a sequence of commitment values,
+and $H_4$ be one with inputs $(i, \Phi)$.
+
+\smallskip
+
+\textbf{Round 1}
+\begin{description}
+  \item[1.] Create empty list $L_i$. Then, for
+  $1 \leq j \leq \pi$, perform the following:
+  \begin{description}
+    \item[1.a] Generate nonces $d_{ij}, e_{ij}, a_{ij}, b_{ij} \random
+      \mathbb{Z}_q^*$, and
+    derive $(D_{ij}, E_{ij}, A_{ij}, B_{ij}) =
+    (g^{d_{ij}}, g^{e_{ij}}, g^{a_{ij}}, g^{b_{ij}})$.
+    \item[1.b] Generate nonces $k_{aij}, k_{bij} \random
+      \mathbb{Z}_q$, and
+      commitments $(R_{aij}, R_{bij}) =
+    (g^{k_{aij}}, g^{k_{bij}})$.
+    \item[1.c] Let $K_{ij} = (D_{ij}, E_{ij}, A_{ij}, B_{ij},
+      R_{aij}, R_{bij})$.
+    \item[1.d ]Append $(j, (D_{ij}, E_{ij}, A_{ij}, B_{ij}))$ to $L_i$, store
+      $((d_{ij}, D_{ij}), (e_{ij}, E_{ij}),$
+      $(a_{ij}, A_{ij}), (b_{ij}, B_{ij}))$ for later use in signing
+      operations.
+  \end{description}
+\item[2.] Let $K_i = H_3(K_{i1}, \dots, K_{i\pi})$; send $(i, K_i)$ to all
+  other participants.
+\end{description}
+
+\textbf{Round 2}
+\begin{description}
+    \item[1.] After receiving $(\ell, K_\ell)$ from all other participants,
+    generate a zero-knowledge proof of knowledge $\sigma_i$ for
+    $\langle a_{ij}, b_{ij}\rangle_{j=1}^\pi$ by performing:
+  \begin{description}
+    \item[1.a] Compute $\Phi = H_3(K_1, \dots, K_n)$ and $c_i = H_4(i, \Phi)$.
+    \item[1.b] Derive $\mu_{aij} = k_{aij} + a_{ij}\cdot c_{i}$ and
+                      $\mu_{bij} = k_{bij} + b_{ij}\cdot c_{i}$,
+                      $\forall j \in \{1,\dots,\pi\}$.
+    \item[1.c] Set $J_i = \langle \mu_{aij}, \mu_{bij}\rangle_{j=1}^\pi$.
+  \end{description}
+\item[2.]Send $(i, L_i, J_i)$ to all other participants.
+\item[3.] After receiving $(\ell, L_\ell, J_\ell)$ from each
+  participant, verify the proofs in $J_\ell$ using $L_\ell$. First,
+  compute $c_\ell = H_4(\ell, \Phi)$. Then, for each $j \in \{1,\dots,\pi\}$:
+  \begin{description}
+    \item[3.a] Check that $D_{\ell j}, E_{\ell j}, A_{\ell j}, B_{\ell j} \in \mathbb{G}^*$.
+    \item[3.b] Derive
+    $R_{a \ell j}' = g^{\mu_{a \ell j}} \cdot (A_{\ell j})^{-c_\ell}$ and
+    $R_{b \ell j}' = g^{\mu_{b \ell j}} \cdot (B_{\ell j})^{-c_\ell}$.
+    \item[3.c] Let $K'_{\ell j} = (D_{\ell j}, E_{\ell j}, A_{\ell j}, B_{\ell j},
+    R'_{a \ell j}, R'_{b \ell j})$.
+  \end{description}
+  \item[4] Let $K'_\ell  = H_3(K'_{\ell 1}, \dots, K'_{\ell \pi})$.
+  Check $K'_\ell \stackrel{?}{=} K_\ell$, aborting on failure.
+  \item[5.] Abort if any check failed. Otherwise,
+  store $(\ell, L_\ell)$ for use in signing operations.
+\end{description}
+\end{flushleft}
+\end{framed}
+
+    \caption{FROST-Interactive Two-Round Preprocessing Protocol}
+    \label{fg:interactive-protocol-preprocess}
+\end{figure}
