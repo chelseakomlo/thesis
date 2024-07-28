@@ -1,0 +1,98 @@
+\section{Related Work}
+\label{related}
+
+\noindent\textit{Synchronous VSS-Based Discrete-Logarithm Constructions.}
+Pedersen-DKG~\cite{Pedersen91dkg} is a two-round protocol among $n$ parties,
+such that each party plays the role of the dealer for Feldman Verifiable Secret Sharing (VSS)~\cite{Pedersen91}.
+Gennaro et al.~\cite{GennaroJKR07} describe an attack against Pedersen-DKG, which we refer to as the \GJKRAttack attack,
+that considers a \emph{rushing adversary}, who is allowed to speak last.
+In this attack,
+an adversary can influence the distribution of key material
+by adaptively choosing their contribution.
+While the authors later demonstrate unforgeability of a Schnorr threshold signature scheme with Pedersen-DKG employed for key generation~\cite{GennaroJK02},
+this proof of security does \emph{not} extend to other applications.
+%
+Gurkan et al.~\cite{GurkanJMMST21} show that Pedersen-DKG can be used securely in any setting where the cryptographic scheme is ``rekeyable''.
+In other words,
+if the scheme produces some cryptographic output
+$o_1$ (such as a ciphertext or signature) that is valid with respect to a secret key $\sk_1$,
+it is possible to obtain a second value $o_2 \gets f_1(o_1, \sk', \alpha)$,
+such that $o_2$ is valid with respect to a related secret key $\sk_2 \gets f_2(\sk_1, \sk', \alpha)$,
+where $\alpha$ is a side input and $f_1, f_2$ are efficient update functions.
+While some constructions such as BLS signatures~\cite{BonehLS04} do support rekeyability,
+others such as Schnorr signatures do not.
+
+Gennaro et al.~\cite{GennaroJKR07} present a construction secure against the
+\GJKRAttack attack
+that is (similar to our generic construction) three rounds in the optimistic setting,
+but it has higher round complexity when parties misbehave.
+While their description of their construction implies that a round to broadcast failure messages is optional,
+we observe that their construction is in fact insecure without this round.
+We discuss this attack and present  a secure variant in Appendix~\ref{app:gjkr}.
+While requiring higher round complexity,
+their construction offers strong robustness as players negotiate in the second
+and third round which qualified set of players to continue the protocol with.
+Our generic construction simply aborts the protocol,
+requiring the implementation to investigate the set of cheating players outside
+the protocol, a reasonable assumption in practice.
+
+Komlo and Goldberg~\cite{KomloG20} introduce a variant of Pedersen-DKG that we refer to as $\pedpop$,
+where the dealer additionally sends a Schnorr proof of possession to prevent rogue-key attacks.
+Bellare et al.~\cite{BellareCKMTZ22} present an alternative proof of security for $\pedpop$,
+in the context of the FROST threshold signature,
+but this proof does not extend to the use of $\pedpop$ in other settings.
+
+Lindell~\cite{Lindell22} introduced a DKG that builds
+upon Schnorr proofs of knowledge and online-extractable zero-knowledge proofs of knowledge.
+However, the protocol incurs computational costs due to the
+requirement of online extractors~\cite{Fischlin05}.
+Furthermore, the security of the scheme is only generally discussed without reference to a concrete notion of security.
+
+
+Many efficient pairing-based DKGs and secret-sharing primitives are described in the
+literature~\cite{GurkanJMMST21,Groth21,AbrahamJMMS2022,ZhangXHSZ22}.
+Further, concrete DKGs have been presented in the ECDSA and RSA
+settings~\cite{LindellN18,DamgardM10,FrankelMY98,CanettiGGMP20}.
+This work presents a generic construction that can be instantiated
+without pairings.
+
+
+\medskip
+
+\noindent\textit{Synchronous PVSS-Based Discrete-Logarithm Constructions.}
+Our generic constructions assume VSS as a building block,
+and consequently incur an extra round of communication.
+It is possible to instead use a publicly verifiable secret sharing scheme (PVSS),
+as is demonstrated by alternative DKGs in the literate
+publicly verifiable secret sharing scheme (PVSS)~\cite{Groth21,BonehS2020,CascudoDSV23}.
+
+However,
+PVSS schemes require that secret key material be encrypted to receivers' public keys,
+thereby requiring a complicated decryption step (because receivers must recover
+the field element, not just the corresponding group element as is the case in
+hybrid public-key encryption).
+For this reason,
+we define our construction to explicitly incur an additional network round.
+However, our construction could instead be adapted to use a PVSS and there by
+only two network rounds.
+
+
+\medskip
+
+\noindent\textit{Definitions of DKG Security.}
+Gurkan et al.~\cite{GurkanJMMST21} present a definition of DKG security, in which the DKG is secure if its use within some larger protocol
+does not weaken the security of the overall scheme from the centralized (single-party) setting.
+We build upon this notion by defining the security of a DKG with respect to a target key generation scheme.
+%
+Bacho and Loss~\cite{BachoL22}
+introduce the security notions of consistency and oracle-aided algebraic
+simulatability for a DKG.
+Their notion of consistency is encompassed by our notions of strong and weak robustness.
+Because their notion of oracle-aided simulatability assumes a discrete logarithm oracle, it is not applicable to schemes without such algebraic structure.
+%%
+Boneh and Shoup~\cite{BonehS2020} present a generic definition for the security
+of a distributed key generation protocol using a simulation-based approach,
+with respect to a target trusted secret sharing scheme.
+However, their definition is given in a UC-based approach,
+whereas we present security experiments using a game-based approach to
+explicitly define subtle details such as participation communication patterns and aborts.
