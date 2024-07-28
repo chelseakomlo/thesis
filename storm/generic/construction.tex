@@ -1,0 +1,283 @@
+\section{A Generic DKG Construction} \label{generic-construction}
+
+We now introduce a weakly robust generic construction that assumes an honest majority, shown in Figure~\ref{fg:generic-perfect}.
+We present a concrete constructions in Section~\ref{storm-gen}.
+
+\begin{figure}[p]
+    % chelsea- make full size for eprint
+\begin{pchstack}[boxed,center,space=1em]
+\begin{pcvstack}
+	%\pseudocode[codesize=\scriptsize]{
+\procedure[linenumbering]{$\dkgkeygen_0[\Hash](\lambda, n, t, i)$} {
+    (\secretone_i, A_i) \rgets \enike.\keygen(\lambda) \\
+    \mathsf{in} \gets (\lambda, \secretone_i, n, t) \\
+    \{ (j, \share_{ij}) \}_{j =1}^n, \vsscommit_i \rgets \avss[\Hash_1].\issueshares(\mathsf{in}) \\
+    \text{\algcom The \ENIKE secret key $\secretone_i$ is} \\
+    \text{\algcom secret-shared via the \AVSS.} \\
+    (\witness_i, \commitment_i) \rgets \enike.\keygen(\lambda) \\
+    %\text{\algcom Broadcast commitments} \\
+    \bmsg_{0,i} \gets (A_i, \commitment_i, \vsscommit_i) \\
+    \pcfor j \in \set{n}, j \neq i \pcdo \\
+    %\text{\algcom Send shares via} \\
+    %\text{\algcom peer-to-peer channel} \\
+    \pcind \pmsg_{0,ij} \gets (j, \share_{ij}) \\
+    \party_i \gets ( \witness_i, \share_{ii}, \vsscommit_i, \commitment_i  ) \\
+  \outvecp \gets \{ \pmsg_{0,ij} \}_{j \in \set{n},j\neq i} \\
+  \pcreturn (\party_i, \mathsf{out}_p,  \bmsg_{0,i})
+}
+\pcvspace
+\procedure[linenumbering]{$\dkgkeygen_1[\Hash](\party_i, \invecp_1, \invecb_1)$} {
+  \parse \{(i, \share_{ji}) \}_{j =1}^n \gets \invecp_1 \\
+  \parse \{ (A_j, \commitment_j, \vsscommit_j) \}_{j =1}^n \gets \invecb_1 \\
+  %
+  \pcfor j \in \set{n}, j \neq i \pcdo \\
+  \pcind \pcif \avss[\Hash_1].\verify(i, \share_{ji}, \vsscommit_j) \neq 1 \\
+  \pcind \textbf{or } \avss[\Hash_1].\derivepshare(0, \vsscommit_j) \neq A_j \\
+  \pcind \pcind \party_i.\status = \abort \\
+  \pcind \pcind \bmsg_{1,i} \gets \fail \\
+  %\text{\algcom If any verification check fails,} \\
+  %\text{\algcom abort} \\
+  \pcind \pcind \pcreturn (\party_i, \bot, \bmsg_{1,i}) \\
+  \party_i \gets \party_i \cup \{ (j, \share_{ji}) \}_{j \in \set{n}} \\
+  \bmsg_{1,i} \gets \accept \\
+  \pcreturn (\party_i, \bot, \bmsg_{1,i})
+}
+\pcvspace
+\procedure[linenumbering]{$\dkgkeygen_2[\Hash](\party_i, \emptyset, \invecb_2)$} {
+  \pcif \fail \in \invecb_2 \\
+    \pcind \party_i.\status = \abort \\
+    %\text{\algcom If any participant fails, abort} \\
+    \pcind \pcreturn (\party_i,\ \bot,\ \bot) \\
+  %
+  \bmsg_{2,i} \gets \witness_i \\
+  \pcreturn (\party_i,\ \bot,\ \bmsg_{2,i})
+}
+\end{pcvstack}
+\pchspace
+\begin{pcvstack}
+\procedure[linenumbering]{$\finalize[\Hash](\party_i, \emptyset, \invecb_3)$} {
+  \pcif \party_i.\status = \abort \\
+  \pcind \pcreturn (\bot, \bot,\bot), (\abort, \bot) \\
+  \parse \{ \witness_j \}_{j \in \set{n}, j \neq i} \gets \invecb_3 \\
+  \qual \gets \emptyset;\ \corrupt \gets \emptyset \\
+  \pcfor j \in \set{n}, j \neq i \pcdo  \\
+    \pcind \pcif \enike.\verifykeypair(\witness_j, \commitment_j) = 1  \\
+    \pcind \pcind \blinding_j \gets \enike.\getsharedkey(\witness_j, A_j) \\
+  \text{\algcom Qualified participants send} \\
+  \text{\algcom the correct opening $\witness_j$} \\
+    \pcind \pcind \qual \gets \qual \cup \{ j \} \\
+    \pcind \pcelse \corrupt \gets \corrupt \cup \{ j \} \\
+    \pcif \corrupt \neq \emptyset \\
+    \pcind \textbf{Broadcast } \{ \share_{ij} \}_{j \in \corrupt} \\
+    \text{\algcom Broadcast shares for corrupt} \\
+    \text{\algcom parties to all other participants} \\
+    \pcind \textbf{Receive } \{ \share_{kj} \}_{j \in \corrupt, k \in \qual} \\
+    \pcfor j \in \corrupt \pcdo \\
+    \pcind \secretone_j \gets \avss[\Hash_1].\recover(t, \{(k,\share_{jk}) \}_{k \in \qual} ) \\
+    \pcind \blinding_j \gets \enike.\getsharedkey(\secretone_j, \commitment_j)  \\
+    %
+    %\privaggregateset =  \{\share_{ji}\}_{j \in \set{n}} \\
+    %\pubaggregateset = \{\vsscommit_j\}_{j \in \set{n}} \\
+    %
+    \tweak \gets \avss[\Hash_1].\gettweak(\{\vsscommit_j\}_{j =1}^n,
+    \{\blinding_j \}_{j =1}^n ) \\
+    \sk_i \gets \avss[\Hash_1].\aggregatepriv(i,  \{\share_{ji}\}_{j \in \set{n}}, \tweak) \\
+    \avsscommit \gets \avss[\Hash_1].\aggregatepub(\{\vsscommit_j\}_{j \in \set{n}}, \tweak) \\
+    \pk \gets \avss[\Hash_1].\derivepshare(0, \avsscommit) \\
+    \text{\algcom Derive public keys for all} \\
+    \text{\algcom remaining participants} \\
+    \pcfor i \in \qual \pcdo \\
+    \pcind \pk_i = \avss[\Hash_1].\derivepshare(i, \avsscommit)  \\
+    \auxinfo \gets \{ \pk_i \}_{i \in \qual} \\
+    \pcreturn (\PK, \qual, \auxinfo), (\accept, \SK_i)
+    %
+}
+\end{pcvstack}
+\end{pchstack}
+    \caption{A generic DKG key generation protocol as defined in
+    Section~\ref{dkg-reqs},
+    initialized with a NIKE $\enike$ as defined in Section~\ref{enike},
+    an \AVSS $\avss$ as defined in Section~\ref{asym-vss},
+    and a hash function $\Hash$.
+    Each $\dkgkeygen_r$ operation is defined with respect to participant $i$.
+    The peer-to-peer channel inputs for round $r$ are $\invecp_r$ and outputs are $\outvecp_r$,
+    composed of the peer-to-peer messages $\pmsg_j$.
+    The broadcast channel inputs are $\invecb_r$
+    composed of the broadcast messages $\bmsg_j$,
+    sent by participant $j, j \in \set{n}$.
+    }
+  \label{fg:generic-perfect}
+\end{figure}
+
+Our generic construction employs the following building blocks:
+
+\begin{itemize}
+  \item A secure hash function $\Hash$, where $\Hash_1$ and $\Hash_2$ are domain-separated instances of $\Hash$, such that:
+\begin{itemize}
+  \item $\Hash_1: (\{\vsscommit_j \}_{j \in \set{n}}, \auxstring) \mapsto
+    \tweak$: Accepts as input a tuple, where the first element in the tuple is a set of $n$ \AVSS commitments ordered canonically,
+    and the second element is an auxiliary element $\auxstring$ as output by $\Hash_2$ below.
+    The output is the tweak employed by the \AVSS aggregation algorithm.
+  \item $\Hash_2: \{ \blinding_j \}_{j \in \set{n}} \mapsto \auxstring$: Accepts as input a set of $n$ elements,
+  and outputs an auxiliary element $\auxstring$.
+\end{itemize}
+  \item An aggregatable verifiable secret sharing scheme
+    $\avss[\Hash_1]~=~(\issueshares,\verify,\allowbreak\recover,\allowbreak\derivepshare, \aggregatepriv, \aggregatepub)$ that is zero-indexed.
+  \item A non-interactive key exchange (NIKE) $\enike~=~(\keygen,\verifykeypair,\getsharedkey)$.
+\end{itemize}
+
+The secret and public domains of the \AVSS and NIKE must be the same as that of the target key generation scheme,
+and the distribution over the secret domain for the NIKE must be the same as that of the target key generation scheme.
+Further, we assume that the NIKE outputs secret and public keys with strictly a one-to-one relation.
+
+In addition to these building blocks,
+our construction requires that these primitives are algebraically composable.
+Intuitively,
+the secret key output from $\enike.\keygen$ should be a valid secret that can be shared via $\avss.\issueshares$,
+and the \AVSS commitment should be verifiable with respect to the public \ENIKE key.
+Towards this latter point,
+we require Assumption~\ref{ass:avss-enike} to hold.
+
+\begin{assumption} \label{ass:avss-enike}
+  For any $(\sk, \pk) \rgets \enike.\keygen(\lambda)$,
+  and any $(n, t) \in \mathbb{N}$ such that $n \geq t$;
+  and any $C \subseteq \set{n}, \lvert C \rvert \geq t$,
+  Equation~\ref{eq:avss-enike-rel} holds:
+  \begin{align} \label{eq:avss-enike-rel}
+    \begin{split}
+      \enike.\verify(\sk, \pk) = 1, \text{ where} \\
+      (\{ (i, \share_i) \}_{i \in \set{n}}), \vsscommit) \rgets \avss[\Hash].\issueshares(\lambda, \sk, n, t) \text{ and } \\
+      \pk \gets \avss[\Hash_1].\derivepshare(0, \vsscommit) \text{ and } \\
+      \sk \gets \avss[\Hash_1].\recover(t, \{(i, \share_i) \}_{i \in C})
+    \end{split}
+  \end{align}
+\end{assumption}
+
+
+\subsubsection{Key Generation Protocol.}
+As shown in Figure~\ref{fg:generic-perfect}, the key generation protocol is
+completed in three network rounds in the optimistic setting and four network
+rounds in the worst-case setting.
+
+First, in $\dkgkeygen_0$, each participant $i$ performs $\enike.\keygen$ twice;
+first to generate a secret key $\secretone_i$ and its commitment $A_i$,
+and second to generate a random value $\witness_i$ and its commitment $\commitment_i$.
+%
+Then, each participant $i$ performs an \AVSS secret sharing of $\secretone_i$,
+outputting $n$ secret shares $\{ (j, \share_{ij}) \}_{j \in \set{n}}$,
+and an \AVSS commitment $\vsscommit_i$.
+Finally, each participant $i$ broadcasts its \ENIKE and \AVSS commitments to all other players via a broadcast message $\bmsg_{0,i}$.
+Additionally, each participant $i$ sends one secret share to every other player $j \neq i$ via a peer-to-peer message $\pmsg_{0,ij}$,
+keeping one share for itself.
+
+In $\dkgkeygen_1$,
+each participant $i$ receives shares $ \{(i, \share_{ji}) \}_{j \in \set{n}, j \neq i} $
+from all other players via the peer-to-peer channel input $\invecp_1$
+and commitments $\{ (A_j, \commitment_j, \vsscommit_j) \}_{j \in \set{n}, j \neq i} $
+from all other players via the broadcast channel input $\invecb_1$.
+Each participant then verifies the correctness of their received share with respect to its corresponding commitment.
+Additionally, each participant $i$ verifies that the secret committed to in $\vsscommit_i$ is the same secret committed to in $A_i$,
+by checking that $\avss.\derivepshare(0, \vsscommit_i) = A_i$.
+If any check fails, the participant will broadcast a $\fail$ message,
+and set their status to $\abort$.
+Any participant that sets their status to $\abort$ results in that participant terminating (immediately exiting) the protocol.
+Else, it will broadcast an $\accept$ message.
+
+In $\dkgkeygen_2$,
+participants receive as input status messages from all other participants via the broadcast channel input $\invecb_2$.
+If any participant received a $\fail$ message,
+that participant immediately exits $\dkgkeygen_2$
+after setting their status to $\abort$\footnote{Because the fail message is sent on a broadcast channel,
+if any participant receives a fail message, then all participants receive that message}.
+Otherwise, each participant $i$ broadcasts $\witness_i$ to all other participants (which is the opening
+to the commitment $\commitment_i$ sent in $\dkgkeygen_0$).
+
+Finally, in $\finalize$, each participant $i$ receives as input the openings $\{ \witness_j \}_{j \in \set{n}, j \neq i} $
+from all other participants via the broadcast channel $\invecb_3$.
+For the values they received from every other player $j \neq i$, they first verify the correctness of the opening $\witness_j$ with respect to $\commitment_j$.
+Depending on the output of this check, each participant $i$ does the following:
+
+\begin{itemize}
+  \item If the opening $\witness_j$ is valid,
+participant $i$ then derives the blinding factor $\blinding_j$ by performing $\blinding_j \gets \enike.\getsharedkey(\witness_j, A_j)$.
+  \item If the opening $\witness_j$ is invalid,
+the set of participants $\qual$ that followed the protocol honestly cooperate to derive the correct $\blinding_j$ for the cheating participants $\corrupt$.
+They do so by broadcasting their respective shares from the misbehaving parties,
+and then use the set of received shares to recover $\secretone_j$.
+
+Each remaining participant then performs $\enike.\getsharedkey(\secretone_j, \commitment_j)$,
+obtaining $\blinding_j$ as the result.
+Due to the assumption that at least $t$ honest participants exist in $\qual$,
+this step will always complete successfully.
+\end{itemize}
+
+Next, each participant derives $\tweak \gets \avss[\Hash_1].\gettweak(\pubaggregateset, \{\blinding_1, \ldots, \blinding_n \})$,
+where  $\pubaggregateset = \{\vsscommit_j \}_{j \in \set{n}}$ is the set of all \AVSS commitments for each participant.
+Each participant $i$ then performs $\avss.\aggregatepriv$ and $\avss.\aggregatepub$,
+using as input the set of all their received shares $\privaggregateset = \{\share_{ji} \}_{j \in \set{n}}$,
+the set of \AVSS commitments $\pubaggregateset$,
+and $\tweak$.
+Each participant $i$ employs the output of $\avss.\aggregatepriv$ and
+$\avss.\aggregatepub$ to determine their aggregated secret key share $\sk_i$ and commitment $\avsscommit$.
+The group public key $\PK$ is then derived using $\avsscommit$.
+Similarly, the set of each participant's individual public key $\PK_i$ is derived using $\avsscommit$,
+and then output as the auxiliary data.
+
+The tweak ensures that the resulting public key is unknown to
+an adversary at the time when it picks its contributions to the protocol. As
+such, at the beginning of the DKG, the adversary cannot adaptively pick its
+contributions so that the resulting public key can be influenced predictably.
+In other words, the adversary cannot force the resulting public key to ``hit''
+some desired outcome, such as being even or odd, for example.
+
+Participants complete $\finalize$ after setting their status to $\accept$ and
+updating their internal state.
+The public output at the end of $\dkgkeygen_3$ is $(\pk, \qual, \auxinfo)$.
+The private output to each participant $i$ is $(\status, \sk_i)$.
+
+
+
+\subsubsection{Recovery Algorithm.}
+While most practical DKG applications do not require the participants to actually come together to recover the secret key,
+it is possible that some applications may wish to do so. We define the recovery algorithm now.
+
+\begin{itemize}
+  \item $\recover(\PK, t, \{ (i, \SK_i) \}_{i \in \coalition}) \rightarrow \SK/\fail$:
+    Accepts  the public key $\PK \in \GG$
+    and $\lvert \coalition \rvert \geq t$ tuples $ \{ (i, \SK_i) \}_{i \in \coalition}$ consisting of participant $i$'s identifier and their secret key.
+    Using these inputs, perform the following steps:
+    \begin{enumerate}
+      \item Derive $\SK = \avss.\recover(t, \{ (i, \sk_i)\}_{i \in
+        \coalition}$).
+      \item If $\targetkeygen.\verify(\SK, \PK) \neq 1$, output $\fail$.
+      \item Output $\SK$.
+    \end{enumerate}
+\end{itemize}
+
+\subsection{Security of the Generic Protocol}
+
+We next demonstrate that the generic protocol in Figure~\ref{fg:generic-perfect} is
+weakly robust and zero-knowledge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%==================================================================================================
