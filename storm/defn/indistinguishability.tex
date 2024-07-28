@@ -1,0 +1,31 @@
+\subsection{Indistinguishability}
+\label{defn:indistinguishability}
+
+The security of any key generation protocol requires that the secret key be hard to guess or learn from the public transcript.
+In the single-party setting, the adversary does not have any influence over the sampling of key material,
+and so guaranteeing this property is straightforward.
+However, because the adversary is an active participant in a distributed key generation protocol,
+we must ensure that a subset of at most $t-1$ colluding players cannot bias key material.
+
+To establish this property,
+we require that a DKG must generate keys that are \emph{indistinguishable} from keys output by the target key generation algorithm.
+This property is implied by the notion of secrecy if the underlying
+construction assumes a one-to-one correspondence between secret and public
+keys.
+For example, the Gennaro et al.\ notion of simulatability assume that indistinguishability of the resulting keypair is an implicit consequence of the ability to simulate with respect to a public key.
+However, simulatability does not necessarily imply indistinguishability,
+because the zero-knowledge game \emph{only} guarantees the indistinguisahbility of public key material between the real and simulated environments.
+If there is a one-to-one relation between public and secret keys,
+proving zero-knowledge implies indistinguishability.
+For cryptosystems where a one-to-many relation exists between public and private keys,
+such as in lattice-based cryptosystems,
+proving that a DKG is zero-knowledge does \emph{not} imply indistinguishability from its target key generation scheme.
+
+
+Because our generic construction similarly assumes a one-to-one correspondence
+of secret and public keys, we do not make use of this notion of
+indistinguishability in the proof of security for our generic construction, as
+the proof of zero-knowledge implies indistinguishability.
+Hence, for future reference, we give the notion of indistinguishability more formally in
+Appendix~\ref{app:indistinguishability}.
+

@@ -1,0 +1,125 @@
+\section{Distributed Key Generation (DKG)}
+\label{dkg-reqs}
+
+Informally, a \emph{Distributed Key Generation} (DKG) scheme allows a set of $n$ players to jointly generate a public key $\pk$ and a secret key $\sk$,
+such that all parties learn the public key $\pk$ but no single party learns $\sk$.
+Instead, each party $\id_i$ has a share $\sk_i$ of the secret key,
+such that a threshold $t$ number of shares are required to recover $\sk$,
+where $t \leq n$.
+A DKG generates secret and public keys that are compatible with some \emph{target} key generation scheme which operates in the centralized (single-party) setting.
+
+We now formalize the definition of a DKG.
+We begin by defining a target single-party key generation scheme $\targetkeygen$ that the DKG implements in a distributed manner.
+
+\begin{definition}
+A \defn{target key generation scheme} $\targetkeygen$ is the tuple $\targetkeygen = (\keygen, \verify)$, where:
+\begin{itemize}
+    \item $\keygen(\lambda) \rightarrow (\SK, \PK)$: A probabilistic algorithm that
+      accepts as input a security parameter $\lambda$ and outputs a secret and public keypair $(\SK, \PK)$, where $\SK$ is an element of a secret domain $\secretspace$ and $\PK$ is an element of the public domain $\publicspace$.
+    \item $\verify(\SK, \PK) \rightarrow \zo$: A deterministic algorithm that accepts as input a secret and public keypair $(\SK, \PK)$,
+  and outputs $0$ if the keypair is invalid; otherwise, outputs~$1$.
+    \item For correctness, we require that for all $(\SK, \PK) \gets \targetkeygen.\keygen(\lambda)$, we have
+      \[
+        \targetkeygen.\verify(\SK, \PK) = 1
+      \]
+\end{itemize}
+\end{definition}
+
+
+
+\begin{definition}
+  A \defn{distributed key generation scheme}, or \defn{DKG},
+  is the tuple of the protocols $\dkg = (\keygen, \recover)$
+  parameterized by the number of rounds $\numrounds$.
+  A DKG is defined with respect to a target key generation scheme $\targetkeygen$,
+  %and initialized with the hash function $\Hash$, whose domain and codomain depend on $\dkg$,
+  where:
+
+  \begin{itemize}
+    \item $\keygen(\lambda, n, t) \rightarrow  \langle (\PK, \qual, \auxinfo), (\status_i,\sk_i)_{i \in \set{n}}\rangle$:
+      An interactive protocol between $n$ participants.
+      Accepts as input the security parameter $\lambda$,
+      and positive integers $n \geq t \geq 1$,
+      where $n$ is the number of participants and $t$ is the threshold.
+
+      The protocol outputs
+      a public value $(\PK, \qual, \auxinfo)$
+      and private values $(\status_i, \sk_i), i \in \set{n}$
+      where:
+      \begin{itemize}
+        \item $\PK$ is the public key representing the group;
+          it will be $\bot$ if the protocol terminated unsuccessfully.
+        \item $\qual \subseteq \set{n}$ is the set of qualified players remaining at the end of the protocol;
+          it will be $\bot$ if the protocol terminated unsuccessfully.
+        \item $\auxinfo$ is any auxiliary information that may be required for a particular application,
+          such as participant public keys,
+        \item $\status_i$ indicates if participant $i$ completed the protocol successfully,
+      and can be either $\abort$, $\fail$, or $\accept$.
+      Here, $\abort$ indicates the protocol terminated early,
+      $\fail$ indicates a critical fail state has been reached,
+      and $\accept$ indicates that the protocol completed successfully.
+        \item $\SK_i$ is participant $i$'s secret key share;
+          it will be $\bot$ if the protocol terminated unsuccessfully.
+      \end{itemize}
+
+
+      % CK- I originally had this, but this should be defined in the construction, not the definition.
+      %Note that once a participant's state has been set to $\fail$ or $\abort$,
+      %the participant no longer performs subsequent round operations for that session (i.e, its protocol execution is terminated).
+      %\ian{I don't see anywhere in the paper where $\status_i$ can be set to $\fail$? If there is such, be more clear about the difference between that and $\abort$.}
+      % CK- we don't have that in our DKG, but others could.
+      % CK- I said that abort indicates the protocol terminated early and fail is a critical failure.
+      %\ian{This is a per-player output, though; if the protocol completes, but say 3 players are kicked out, what do the kicked-out players get as their private output?  What do the non-kicked-out players get?}
+      % CK- We don't define what kicked out players do, because at this point, they are considered adversarial.
+      % CK- we do define what honest players statuses get set to in the construction.
+      % The definition requires just defining the inputs/outputs. The logic for how these get set is defined in the constrcution.
+
+
+      \medskip
+      Internally to the $\keygen$ protocol, each participant performs the following:
+
+      \begin{itemize}
+        \item $\dkgkeygen_0(\lambda, n, t, \id_i) \rightarrow (\party_i,\outvecp,\bmsg_i)$:
+          The algorithm run by the participant to initiate the protocol.
+          Accepts the security parameter $\lambda$,
+          the number of participants $n$, the threshold $t$, and the participant identifier $\id_i$.
+          Outputs the state $\party_i$ for that participant,
+          the vector $\outvecp$ of any outgoing peer-to-peer messages to other parties,
+          and a broadcast message $\bmsg_i$ to all other parties.
+          See Section~\ref{prelim:network} for definitions of these network channels.
+	  %\ian{The vector $\outvecp$ can also be $\bot$, right? It sometimes is in the actual protocol.}
+    % CK- yes, but so can any variable, we don't need to say that explicitly here.
+        \item $\dkgkeygen_k(\party_i, \invecp, \invecb) \rightarrow (\party_i, \outvecp, \bmsg_i)$:
+          The algorithm run for each intermediate round $k \in \{ 1, \ldots, \numrounds-1\}$ in the protocol.
+          Accepts as input the participant's internal state $\party_i$,
+          the vector $\outvecp$ of any peer-to-peer messages sent by other participants in the previous round,
+          and the set $\invecb$ of any broadcast messages sent by other participants in the previous round.
+          Outputs the tuple $(\party_i, \outvecp, \bmsg_i)$.
+        \item $\finalize(\party_i, \invecp, \invecb) \rightarrow \langle(\PK, \qual,\auxinfo), (\status_i, \sk_i)_{i \in \set{n}}\rangle$:
+          Accepts participant state $\party_i$, peer-to-peer messages $\outvecp$, and broadcast messages $\invecb$.
+          Outputs a public output $(\PK, \qual,\auxinfo)$ and a private output $(\status_i, \SK_i)$.
+      \end{itemize}
+
+    \item $\recover(\PK, t, \{ (i, \SK_i) \}_{i \in \coalition}) \rightarrow \SK/\fail$:
+      The algorithm run by the participant to finish its protocol execution.
+      Accepts as input the public key $\PK$,
+      the threshold $t$,
+      and a set of secret key shares $\{(i,\sk_i) \}_{i \in C}$,
+      where $\lvert C \rvert \geq t$.
+      Derive $\SK$ from $\{\SK_i \}_{i \in \coalition}$.
+      If $\targetkeygen.\verify(\SK, \PK) \neq 1$, output $\fail$.
+      Otherwise, output $\SK$.
+    \item For correctness, we require that, when all participants follow the protocol:
+\begin{align*}
+    \text{if } & \dkg.\keygen(\lambda, n, t) \rightarrow \left((\PK, \qual), \langle (\status_i, \sk_i)\rangle_{i \in \set{n}}\right) \\[1mm]
+    \text{then } & \dkg.\recover(\PK, t, \{(i,\SK_i)\}_{i \in \coalition}) \rightarrow \SK \text{ for all } \coalition \subseteq \set{n}, \lvert \coalition \rvert \geq t, \\[1mm]
+    \text{and } &  \targetkeygen.\verify(\SK, \PK) \rightarrow 1
+ \end{align*}
+\end{itemize}
+\end{definition}
+
+A DKG must be correct, and fulfill the security notions of
+zero-knowledge and indistinguishability.
+Additionally, a DKG may fulfill the notion of either strong or weak robustness.
+We explain these concepts next.
+

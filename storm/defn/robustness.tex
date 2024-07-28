@@ -1,0 +1,200 @@
+\subsection{Robustness}
+
+We now review the notion of robustness, building upon the formalism presented by Gurkan et al.~\cite{GurkanJMMST21}.
+In the literature, robustness today refers to the property that so long as the number of corrupted and honest participants meet some pre-defined threshold, then the protocol will complete successfully.
+The definition by Gurkan et al.\ deems a DKG to be robust if
+honest parties' shares combine to output a secret key that is valid with respect to a public key.
+However, the notion by Gurkan et al.\ does not consider the consistency of players' ending states.
+
+We present several clarifications to the notion of robustness using a game-based definition in Figure~\ref{fg:robustness}.
+First, our definition is generalizable beyond discrete-logarithm based constructions.
+Second, our definition encodes two different forms of robustness.
+\emph{Strong robustness} defines the existing notion of robustness in the literature.
+We additionally introduce the notion of \emph{weak robustness},
+which allows the protocol to non-fatally abort,
+so long as all honest participants maintain the same status.
+In particular, participants can exit either with an $\abort$ status or a $\fail$ status,
+where $\fail$ indicates a critical failure.
+A critical failure depends on the context of the construction;
+for the generic construction we present in Section~\ref{generic-construction},
+a critical failure occurs when the adversary can cause the protocol to abort in
+the final round of the protocol, which in turn has consequences for the proof
+of security.
+
+Prior notions in the literature considered only strong robustness;
+however, introducing a weaker variant allows us to define a more efficient construction that fulfills our other notions of secrecy and indistinguishability.
+
+\begin{remark}[Number of Honest Players]
+  The robustness experiment in Figure~\ref{fg:robustness} assumes an honest majority of players.
+  If an adversary were allowed to control the majority of  participants,
+  it could split the view of honest participants,
+  unless some additional structure is assumed, such as a public bulletin board.
+\end{remark}
+
+\begin{figure}[!ht]
+  \begin{pchstack}[boxed,center,space=1em]
+  \begin{pcvstack}
+    \procedure[linenumbering]{\protect\fbox{$\StrongRobustnessExp_{\dkg,\adv}(\lambda)$} \protect\dbox{$\WeakRobustnessExp_{\dkg,\adv}(\lambda)$} }{
+    \roundcounter \gets 0 \text{\algcom Ensure rounds are queried in order}\\
+    \invecp_{11} \gets \emptyset, \ldots, \invecp_{1n} \gets \emptyset \text{\algcom Simulate peer-to-peer channels} \\
+    (n, t, \corrupt, \advstate) \gets \adv(\lambda);\
+    \pcreturn 0\ \pcif n < t \vee \corrupt \not\subset \set{n} \vee \lvert \corrupt \rvert \ge t \\
+    \honest \gets \set{n} \setminus \corrupt \\
+    \pcreturn 0\ \pcif \lvert \honest \rvert < t \\
+    \pcfor i \in \honest \pcdo \\
+    \pcind (\party_i, \outvecp_{0i}, \bmsg_i) \gets \dkgkeygen_0(\lambda,n, t, i) \\
+    \pcind \invecp_{1k}[i] \gets \outvecp_{0i}[k],\ \forall\ k \in \set{n}\\
+    \text{\algcom Set party $i$'s peer-to-peer messages for all other parties} \\
+    \adv^{{\oraclekg}, \oraclefinalize}(\advstate, \{ \invecp_{1i} \}_{i \in \corrupt}, \{ \bmsg_i \}_{i \in \honest}) \\
+    \pcreturn 0\ \pcif \roundcounter \neq \numrounds \text{\algcom Prevents trivial win by forcing coordination} \\
+    \fbox{$\pcif \honest \neq \{i : \status_i = \accept \}_{i \in \honest}$} \\
+    \fbox{$\pcind \pcreturn 1$} \\
+    \dbox{$\pcfor i,j \in \honest \pcdo$ } \\
+    \dbox{$\pcind \pcreturn 1\ \pcif \status_i \neq \status_j $} \\
+    \dbox{\algcom $\adv$ wins if any honest party ends in a disjoint state} \\
+    \dbox{$\pcif \honest = \{ i : \status_i = \abort \}_{i \in \honest}$} \\
+    \dbox{$\pcind \pcreturn 0 $} \\
+    \dbox{\algcom $\adv$ loses if all honest parties end in a consistent aborted state } \\
+    \pcfor i,j \in \honest \pcdo  \\
+    \pcind \pcreturn 1\ \pcif \PK_i \neq \PK_j  \\
+    \pcind \pcreturn 1\ \pcif \qual_i \neq \qual_j  \\
+    \pcind \pcreturn 1\ \pcif \auxinfo_i \neq \auxinfo_j  \\
+    \PK = \PK_i, i \in \honest \text{\algcom All honest parties at this point have the same view of $\pk$} \\
+    \SK \gets \dkg.\recover(\PK, \{(i,\SK_i) \}_{i \in \honest}) \\
+    \pcreturn 1\ \pcif \SK = \fail \\
+    \text{\algcom $\adv$ wins if honest parties' shares do not recover a valid secret} \\
+    \pcreturn 0
+  }
+  \end{pcvstack}
+  \end{pchstack}
+
+\caption{Game defining the advantage of an adversary $\adv$ to disrupt robustness for a DKG.
+We show the \emph{strong robustness} experiment in a box, and the \emph{weak robustness} experiment in a dashed box.
+%We denote the parties controlled by $\adv$ as $\corrupt$, where $\lvert \corrupt \rvert < t$,
+%and the set of simulated honest parties as $\honest$.
+  The oracles $\oraclekg, r \in \set{\numrounds-1}$ and $\oraclefinalize$ are defined in Figure~\ref{fg:keygen-o}.
+}
+%\douglas{Line 24 checks that $\sk \ne \fail$.  Should we also be checking that $\sk$ is the (a) secret key corresponding to $\pk$?  Is robustness violated if the adversary the parties can be tricked into recovering a different $\sk$?  Sorry if we've discussed this already and I forgot.}
+% \chelsea{The recover algorithm checks key validity internally}
+\label{fg:robustness}
+\end{figure}
+
+
+
+\subsubsection{Strong Robustness.}
+We show the strong robustness attack experiment in Figure~\ref{fg:robustness},
+where its differences with weak robustness are outlined in a box.
+The advantage of an adversary $\adv$ against $\dkg$ in the strong robustness experiment is
+  \[
+  \advantstrrobust{\dkg,\adv}(\lambda) = \Pr[\StrongRobustnessExp_{\dkg,\adv}(\lambda) = 1 ]
+\]
+
+\begin{definition}
+A DKG $\dkg$ is \defn{strongly robust} if for all probabilistic polynomial-time adversaries $\adv$,
+the function $\advantstrrobust{\dkg,\adv}(\lambda)$  is negligible.
+\end{definition}
+
+
+The strong robustness attack game allows $\adv$ to participate in key generation and control up to $t-1$ players,
+the set of which we denote by $\corrupt$.
+We denote the set of honest players as $\honest$.
+The robustness attack game has oracles $\oraclekg, r \in \set{\numrounds-1}  $
+and $\oraclefinalize$ in common with other games,
+so we show these oracles in Figure~\ref{fg:keygen-o}.
+% This requirement doesn't seem necessary in the definition
+% and require that the number of honest players be at least $t$.
+The adversary participates in the protocol by exchanging peer-to-peer and
+broadcast messages with honest players in each round $r$ via the oracle
+$\oraclekg$.
+The experiment is responsible for exchanging messages between parties and enforcing assumptions of the underlying network channels.
+Additionally, the experiment ensures that rounds must be queried in order, and that no round is repeated.
+
+$\adv$ wins the strong robustness game under three conditions.
+First, if it causes any honest player to end in a non-accepting state.
+Second, if it causes any honest players' view of $\pk, \qual,$ or $\auxinfo$ to
+be different from any other honest player's view.
+Finally, $\adv$ wins if it can cause the resulting keypair to be invalid with
+respect to the target key generation algorithm (recall that $\dkg.\recover$ tests for validity of the keypair, and outputs $\fail$ if $\sk$ is invalid).
+
+\subsubsection{Weak Robustness.}
+We similarly present the weak robustness attack experiment in Figure~\ref{fg:robustness},
+where its differences with strong robustness are outlined in a dashed box.
+Intuitively, weak robustness differs from strong robustness in that it
+allows honest parties to end in an aborted state $\abort$,
+so long as \emph{all} honest parties end in the same state.
+Otherwise, if all honest parties end in an accepting state,
+it is identical to the notion of strong robustness.
+
+The advantage of an adversary $\adv$ against the DKG $\dkg$ in the weak robustness experiment is
+\[
+  \advantwkrobust{\dkg,\adv}(\lambda) = \Pr[\WeakRobustnessExp_{\dkg,\adv}(\lambda) = 1 ]
+\]
+
+\begin{definition}
+A DKG $\dkg$ is \defn{weakly robust} if for all probabilistic polynomial-time adversaries $\adv$,
+the function $\advantwkrobust{\dkg,\adv}(\lambda)$  is negligible.
+\end{definition}
+
+
+$\adv$ wins the weak robustness game under three conditions.
+First, $\adv$ wins if honest players do not all finish with the same status.
+Otherwise, if all honest players have status $\accept$, then $\adv$ wins
+if the honest players' view of $\pk$ or $\qual$ are not all the same or if
+the resulting keypair is invalid with respect to the target key generation algorithm.
+
+\begin{figure}[t]
+  \begin{framed}
+  %\begin{pchstack}[boxed,center,space=1em]
+  \begin{pchstack}
+  {
+    %\chelsea{TODO: this needs to be script size for the proceedings version}
+  }
+	\pseudocode[codesize=\scriptsize]{
+    \procedure[linenumbering]{$\oraclekg(\{\{ \pmsg_{i,j}\}_{j \in \honest}, \bmsg_{ri} \}_{i \in \corrupt})
+    $}{
+      \text{\algcom Executes round  } \\
+      \text{\algcom $r \in \set{\numrounds-1}$ } \\
+    \pcreturn \bot\ \pcif r \neq \roundcounter+1 \\
+    \text{\algcom Ensure all prior rounds } \\
+    \text{\algcom have been queried,} \\
+    \text{\algcom and that this round has} \\
+    \text{\algcom not yet been queried.} \\
+    \roundcounter \gets r \\
+    \pcfor i \in \corrupt, j \in \honest \pcdo \\
+      \pcind \invecp_{rj}[i]  \gets \pmsg_i[j] \\
+    \pcfor j \in \honest \pcdo \\
+      \pcind \mathsf{in} \gets (\party_j, \invecp_{rj}, \{\bmsg_{ri} \}_{i \in \set{n}}) \\
+      \pcind \fbox{$\mathsf{out} \gets \dkgkeygen_r(\mathsf{in})$} \\
+      \pcind \dbox{$\mathsf{out} \gets \simkeygen_r(\mathsf{in})$} \\
+      \pcind (\party_j, \outvecp_{r+1,j}, \bmsg_{r+1,j}) \gets \mathsf{out} \\
+      \pcind \pcfor k \in \set{n} \pcdo \\
+      \pcind \pcind \invecp_{r+1,k} \gets \outvecp_{r+1,j}[k] \\
+    \pcreturn (\{  \invecp_{r+1,i} \}_{i \in \corrupt}, \{ \bmsg_j \}_{j \in \honest} )
+  }
+  \pchspace
+  \begin{pcvstack}
+  \procedure[linenumbering]{$\oraclefinalize(\{\{ \pmsg_{i,j}\}_{j \in \honest}, \bmsg_{ri} \}_{i \in \corrupt})$}{
+    \pcreturn \bot\ \pcif \roundcounter \neq \numrounds - 1 \\
+    \roundcounter \gets \roundcounter + 1 \\
+    \pcfor i \in \corrupt, j \in \honest \pcdo \\
+      \pcind \invecp_{rj}[i]  \gets \pmsg_i[j] \\
+    \pcfor j \in \honest \pcdo \\
+      \pcind \mathsf{in} \gets (\party_j, \invecp_{rj}, \{\bmsg_{ri} \}_{i \in \set{n}}) \\
+      \pcind \fbox{$\mathsf{out} \gets \finalize(\mathsf{in}) $}\\
+      \pcind \dbox{$\mathsf{out} \gets \simfin(\mathsf{in}) $}\\
+      \pcind (\PK_j, \qual_j, \auxinfo_j), (\status_j, \SK_j) \gets \mathsf{out}
+  }
+  \end{pcvstack}
+  }
+  \end{pchstack}
+  \end{framed}
+\caption{Common oracles used within the games defining the security of a distributed key generation algorithm.
+Boxed algorithms are used by the robustness and indistinguishability
+  games; dashed boxed algorithms are used by the zero-knowledge game.
+}
+\label{fg:keygen-o}
+\end{figure}
+
+
+
+
