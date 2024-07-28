@@ -1,0 +1,259 @@
+Distributed Key Generation (DKG) schemes underlie many
+multi-party cryptographic primitives in use today,
+such as threshold signature schemes~\cite{KomloG20,BellareCKMTZ22,Lindell22} and distributed randomness beacons~\cite{le19}.
+A DKG allows a set of $n$ participants to cooperate to generate a keypair,
+such that the public key represents the entire set of participants,
+and each participant holds a share of the corresponding secret key.
+DKGs ensure that the public key is agreed upon by all (honest) parties at the end of the protocol,
+but no single party knows the corresponding secret key.
+However, this secret key can be recovered given a threshold $t$ number of cooperating parties,
+where $t \leq n$.
+
+Despite widespread interest in DKGs,
+existing constructions fall short in either their complexity or composability.
+Most glaringly is Pedersen-DKG~\cite{Pedersen91} and variants of Pedersen DKG
+such as PedPop~\cite{KomloG20,BellareCKMTZ22}.
+While Pedersen-DKG is appealing because of its simplicity and efficiency,
+its security to date has only been proven in the context of specific applications~\cite{GennaroJK02,GurkanJMMST21,BellareCKMTZ22},
+as it cannot be proven secure in a standalone fashion~\cite{GennaroJKR07}.
+More specifically,
+it is possible that the use of Pedersen-DKG may be secure in some settings, but not in others.
+As such, the risk exists that Pedersen-DKG might be misused in contexts for which it cannot been proven secure.
+While many alternative DKG constructions have been presented in the literature~\cite{GennaroJKR07,Groth21,GurkanJMMST21,BonehS2020,NejiBR16,Lindell22,DasYXMKR21,BachoL22,AbrahamJMMS2022},
+these constructions incur undesirable protocol complexity or require pairings.
+
+Conversely, growing interest in threshold schemes points
+towards the need for DKGs that are friendly to standardization efforts~\cite{NIST22,NIST23} and
+securely composable across a range of use cases.
+For example, the FROST Schnorr threshold signature scheme~\cite{KomloG20,BellareCKMTZ22},
+for which an IETF draft exists~\cite{Connolly22},
+is written in a way to be agnostic to any particular key generation scheme.
+Ideally, a candidate DKG to be standardized should be applicable not only to
+a specific threshold signature scheme,
+but also to other applications that require secret key material to be distributed
+among a set of trusted parties~\cite{DavidsonSSW22}.
+
+\paragraph{Proving the Security of DKGs.}
+However,
+challenges arise when proving the security of a DKG in a standalone manner;
+i.e., that the DKG is secure in \emph{any} setting in place of its target (single-party) key generation scheme.
+Although existing simulatability-based notions for DKGs exist~\cite{GennaroJKR07,GurkanJMMST21,Lindell22,BachoL22,BonehS2020,BendlinKP13},
+these notions prove to be either incomplete or insufficient.
+For example,
+many simulatability-based notions assume important details such as the
+consistency of honest participants' state or that adversarial players do not cause the protocol to abort.
+However, such assumptions are \emph{not} guaranteed in a distributed, multi-party setting.
+Notably, participants that force the protocol to abort during the last round
+can be employed as a vector for a key-bias attack~\cite{GennaroJKR07}.
+Under the hood, many definitions assume the protocol to be robust;
+i.e., that the protocol will always complete successfully in spite of misbehaving parties.
+However, doing so increases the complexity for the protocol
+by requiring additional complaint and voting rounds, which are difficult to
+implement correctly in practice.
+
+
+\subsection{Our Contributions}
+
+\paragraph{A Composable and Generic DKG.}
+In this work, we present a novel and simple generic DKG construction that is a good candidate for ongoing threshold standardisation efforts.
+Our construction relies on three simple cryptographic building blocks:
+a secure hash function,
+an \emph{Aggregatable Verifiable Secret Sharing} (AgVSS) scheme,
+and a \emph{Non-Interactive Key Exchange} (NIKE) scheme.
+The ability to aggregate Feldman's VSS~\cite{Feldman87}  has been extensively employed in prior DKG
+constructions~\cite{Pedersen91,GennaroJKR07,KomloG20,GurkanJMMST21,Lindell22};
+we simply formalize the notion of a VSS that is aggregatable,
+and present new security notions to reflect this property.
+We additionally provide formal definitions and notions of security for a NIKE,
+as well as concrete AgVSS and NIKE constructions.
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{tabular}{c|c|c|c|c|c|c}
+	\hline
+    & \multicolumn{2}{c|}{Composable \& VSS}
+    & \multicolumn{2}{c|}{Composable \& PVSS} &
+    Not Composable \\
+	\hline
+    & \GJKRConstruction~\cite{GennaroJKR07}
+    &  \RG
+    & X
+    & X
+    &  $\pedpop$~\cite{KomloG20,BellareCKMTZ22}
+      \\
+	\hline
+    \textbf{Optimistic Rounds} & 3 & 3  & X & X & 2 \\
+    \textbf{Total Rounds} & 6 & 4 & X & X & 2 \\
+    \textbf{Robustness} & Strong & Weak &  X & X &No \\
+    \textbf{Bandwidth} & $2nt + 3n$ &  $nt+ 5n$ & X & X & $nt +3n$  \\
+    \textbf{Computation } & $2nt + 2n + t$ &  $nt + 2n$ & X & X & $nt + 2n$   \\
+    \textbf{Assumption} & DLP & CDH & X & X & KoE/AGM   \\
+    \textbf{Threshold} & $n \geq 2t-1$ &  $n \geq 2t-1$ & X & X & $n \geq t$  \\
+\hline
+	\end{tabular}
+  \smallskip
+  \caption{Comparison between \RG and related synchronous constructions that are secure in the random oracle model,
+  that are based on discrete logarithm assumptions,
+  do not require pairings,
+  and have formal proofs of security.
+  Composable denotes if the construction has a standalone proof of security
+  and can be used in any context that its target (single-party) key generation
+  algorithm is used.
+  %as opposed to requiring a (new) proof of security for each use case.
+  Optimistic rounds considers only when no participant cheats;
+  total rounds includes additional rounds required to recover from players that
+  misbehave during the protocol.
+  Robustness indicates whether the protocol always succeeds assuming some
+  number of honest players (strong) or allows non-fatal aborts (weak).
+  Bandwidth efficiency denotes the number of group and field elements sent and received by each participant throughout the protocol.
+  Computational efficiency denotes the number of exponentiations required (i.e., scalar multiplications in an elliptic curve group).
+  $n$ is the total number of participants in the protocol,
+  $t$ is the threshold number required to recover the secret key,
+  and the number of corrupted parties is assumed to be \emph{at most} $t-1$.
+  $k$ is security parameters for the respective scheme~\cite{DasYXMKR21}.
+  %$k,r$ are security parameters for their respective schemes~\cite{DasYXMKR21,Lindell22,Fischlin05}.
+  DLP is the Discrete Logarithm Problem;
+  KoE is the Knowledge of Exponent model; AGM is the Algebraic Group Model;
+  CDH is the Computational Diffie-Hellman Problem.
+  }
+  \label{tbl:intro-comp}
+\end{table}
+
+
+
+\medskip
+
+\noindent \textit{Why a Generic Construction?}
+The goal for presenting a generic DKG as opposed to a monolithic construction is to enable flexibility for implementations and future standardization efforts.
+For example, while we define concrete AgVSS and NIKE constructions,
+future implementations may instead wish to employ a standardized
+NIKE~\cite{hpke} instead.
+Further, as NIST is currently in the process of standardizing threshold primitives~\cite{NIST23},
+it may be worthwhile to leverage future VSS standards, which may possibly diverge from the concrete VSS defined in this work.
+Or, implementations may wish to define a construction that employs publicly verifiable randomness,
+a polynomial commitment scheme that is more efficient,
+or derives secret values deterministically, such as from a seed phrase.
+The utility of a generic DKG is that so long as the chosen building blocks are secure,
+any instantiation of our generic DKG using these building blocks will remain secure.
+
+\paragraph{Concrete Instantiation: \RG.}
+We then describe a concrete instantiation of our generic construction that we call
+\RG (\underline{S}ynchronous, dis\underline{T}ributed, and
+\underline{O}ptimized gene\underline{R}ation of key \underline{M}aterial).
+
+The security of \RG reduces to the Computational Diffie-Hellman (CDH) problem in the random oracle model.
+\RG is securely composable with existing threshold cryptosystems such
+as threshold Schnorr signatures~\cite{KomloG20,Connolly22} and similar
+discrete-log based systems.
+We compare in Table~\ref{tbl:intro-comp} the practicality and security of \RG compared to related constructions in the literature that require only standard (i.e., non-pairing based) groups.
+\RG is simpler and therefore (slightly) more efficient than related syncronous DKGs in the discrete-logarithm setting with similar
+security guarantees~\cite{GennaroJK02}.
+Its efficiency improvement is due to the use of a NIKE,
+which allows the parties to derive
+a ``tweaked'' key at the end of the protocol, preventing adaptive attacks.
+
+
+
+
+
+\paragraph{Foramlized Notions of Security for DKGs.}
+Our goal is to prove the security of our generic construction in such a way that
+(i) demonstrates the DKG can be securely used in any setting where its target key generation scheme is used,
+and (ii) captures implicit notions such as handling adversarial aborts and honest participant consistency.
+Towards this end,
+we introduce formal game-based security notions for DKGs
+that generalize and extend prior notions in the literature.
+Our games make explicit important details such as communication patterns between honest and adversarial players,
+where prior notions have omitted some details.
+For example,
+our games explicitly model the adversary as \emph{rushing},
+in that it can always query for honest player's contributions before producing its own.
+We then prove the security of our generic DKG with respect to these notions.
+
+For a DKG to be secure, we require that the DKG  be strongly or weakly robust,
+zero-knowledge, and
+indistinguishable.
+Strong versus weak robustness captures the distinction between a protocol that always succeeds assuming some threshold of honest participants (strong robustness),
+and one which allows for non-fatal aborts that do not impact the security of the scheme (weak robustness).
+Similar to prior simulation-based notions,
+zero-knowledge requires that the DKG is simulatable with respect to a public
+key.
+Indistinguishability requires that the output of a DKG be indistinguishable from its target (single-party) key generation scheme.
+By fulfilling the notion of indistinguishability,
+the DKG can be securely employed in any setting where the target (single-party) key generation scheme could be used.
+However,
+for cryptosystems that ensure secret and public keys have a unique correspondence (such as discrete-log based schemes),
+zero-knowledge implies indistinguishability.
+%
+
+These notions could be captured by an alternative model such as Universal Composability~\cite{Canetti01}.
+We instead opt for a game-based approach,
+so we can explicitly and independently define each notion.
+%However, because these notions capture
+%perfect simulatability with respect to a target key generation algorithm,
+%DKGs that achieve our notions of security without rewinding achieve UC security~\cite{KushilevitzLR10}.
+
+
+
+\paragraph{What We Do Not Do.}
+Our definitions and constructions assume a strictly synchronous setting;
+i.e., that every participant in the protocol terminates a round before beginning the next.
+While asynchronous DKGs
+exist~\cite{NejiBR16,DasYXMKR21,AbrahamJMMST21,Kokoris-KogiasM20,KateHG12,YurekLFKM22},
+these constructions require the tradeoff of increased complexity.
+For similar reasons, we require the existence of a secure broadcast channel.
+%While alternative schemes do not~\cite{YurekLFKM22},
+%the tradeoff is higher complexity and decreased modularity.
+%We target the setting where key generation is performed infrequently or in a more controlled environment.
+
+Additionally, while some prior DKGs build upon a publicly verifiable secret
+sharing scheme (PVSS)~\cite{Groth21,BonehS2020},
+we explicitly do not,
+due to the tradeoff in increased implementation complexity.
+Furthermore,
+we do not consider the large-scale
+setting~\cite{CannyS04,ZhangXHSZ22,YurekLFKM22}, although such optimizations
+could be employed to define a more efficient instantiation of our
+generic construction.
+
+We leave proofs of adaptive security for our generic construction for future work.
+Techniques to achieve tight proofs of adaptive security in stronger security
+models (such as the AGM) have recently been demonstrated in concurrent work~\cite{BachoL22,AbrahamJMMS2022};
+we expect these techniques to similarly apply to our constructions.
+
+%Finally, our proof for our generic construction is in the ROM.
+%However, we believe recent results lifing some proofs to the QROM~\cite{BonehDFLSZ11,GriloHHM21} to
+%likely be applicable to our proof as well.
+
+
+\paragraph{Open Questions.}
+Our generic construction assumes a one-to-one correspondence between public and private keys.
+While \RG is secure assuming the hardness of the Computational Diffie-Hellman (CDH) problem,
+it is possible our generic construction can be instantiated by quantum-secure primitives that define a homomorphism between the secret and public domains.
+For example, performing rounds in a sequential manner may allow our generic construction to be instantiated by CSIDH-based primitives~\cite{CastryckLMPR18,BeullensDPV21}.
+However, because of the difficulty of instantiating a NIKE using lattice-based primitives,
+it is an open question as to how our generic construction can be extended to lattice-based primitives.
+
+
+\paragraph{Summary of Our Contributions.}
+In this work, we present the following contributions.
+
+\begin{itemize}
+  \item We introduce the notion of an aggregated Verifiable Secret Sharing (AgVSS) scheme,
+    building upon its implicit use in prior literature.
+    We then give concrete AgVSS and Non-Interactive Key Exchange (NIKE) constructions.
+  \item We present formal game-based definitions for the security of a DKG,
+    that makes explicit details such as communication patterns between honest and corrupted players,
+    expectations of participant consistency and requirements of key validity.
+    Further, our separation of the notion of robustness into a strong and weak variant allows for
+    a simpler and more efficient DKG construction.
+  \item We give a generic DKG construction,
+    and prove its security using our new notions.
+    Our generic construction requires a secure hash function, an AgVSS, and a NIKE.
+  \item We introduce \RG, a concrete instantiations of our generic
+    construction.
+    The security of \RG reduces to the Computational Diffie-Hellman (CDH)
+    problem in the random oracle model.
+\end{itemize}
+
