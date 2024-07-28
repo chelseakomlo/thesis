@@ -1,0 +1,230 @@
+\subsection{Robustness}
+
+\begin{theorem} \label{thm:perfect-robust}
+  The generic construction is weakly robust in the honest majority setting ($t < n/2$ )against
+  an adversary $\adv$ controlling up to $t-1$ participants in the random oracle model,
+  a zero-indexed and secure \AVSS,
+  a binding \ENIKE.
+
+  Concretely, for every adversary $\adv$ that attacks the scheme,
+  there exist adversaries $(\bdv_1, \bdv_2)$ that run in about the same time as $\adv$ such that
+  \begin{align} \label{eq:wk-rbt-thm}
+       \advantwkrobust{\dkg,\adv}(\lambda) \leq & \ \advant{bind}{\enike,\bdv_1}(\lambda) +
+       \advantuniqueness{\avss[\Hash_1],\bdv_2}(\lambda).
+    \end{align}
+\end{theorem}
+
+\begin{proof}
+%\setcounter{case}{0}
+
+We prove Theorem~\ref{thm:perfect-robust} by a sequence of games.
+
+\medskip
+
+\noindent \textit{\underline{Game 0.}}
+This is the DKG weak robustness game as in Figure~\ref{fg:robustness},
+applied to construction in Figure~\ref{fg:generic-perfect}.
+
+Let $W_0$ be the event that $\adv$ wins in Game~0. Then,
+
+\[
+    \advant{wk-rbst}{\adv,\dkg}(\lambda) = \Pr[W_0]
+\]
+
+
+Let $\cdv$ be the algorithm that simulates the robustness game to $\adv$.
+We now describe how $\cdv$ simulates the game.
+
+\medskip
+
+\noindent \textit{Setup.}
+To begin, $\cdv$ initializes $Q_1 \gets \emptyset$ to simulate $\Hash_1$
+and $Q_2 \gets \emptyset$ to simulate $\Hash_2$,
+in addition to initializing each honest party as shown in Figure~\ref{fg:robustness}.
+$\cdv$ handles $\adv$'s random oracle queries by lazy sampling, as follow:
+
+  \begin{itemize}
+    \item[$\underline{\Hash_1}$]: When the adversary queries $\Hash_1$ on inputs $(\pubaggregateset_i, \auxstring_i)$,
+      the environment checks if it is in $Q_1$, and if so, returns the corresponding $\tweak_i$.
+      Otherwise, the environment randomly samples $\tweak_i$ from its respective domain,
+      sets $Q_1[(\pubaggregateset_i, \auxstring_i)] = \tweak_i$, and then returns $\tweak_i$.
+    \item[$\underline{\Hash_2}$]: When the adversary queries $\Hash_2$ on inputs $\{\blinding_1,\ldots,\blinding_n \}$,
+      the environment checks if it is in $Q_2$, and if so, returns the corresponding $\auxstring_i$.
+      Otherwise, the environment randomly samples $\auxstring_i$ from its respective domain,
+      sets $Q_2[\{\blinding_1,\ldots,\blinding_n \}] = \auxstring_i$, and then returns $\auxstring_i$.
+  \end{itemize}
+
+$\cdv$ performs all signing oracle queries honestly.
+
+\medskip
+
+\noindent \textit{\underline{Game 1.}}
+The only difference in Game~1 is if $\adv$ outputs a tuple $(\commitment_j, \pk_j,\vsscommit_j,\witness_j), j \in \corrupt$
+where $(\commitment_j, \pk_j,\vsscommit_j)$ are output in $\dkgkeygen_0$
+and $\witness_j$ is output in $\dkgkeygen_2$
+such that Equation~\ref{eq:game1-robust-condition} holds,
+then $\cdv$ aborts.
+
+\begin{align} \label{eq:game1-robust-condition}
+  \begin{split}
+    &\ \avss[\Hash_1].\derivepshare(0, \vsscommit_j) = \pk, \text{ and } \\
+    &\ \enike.\verify(\witness_j, \commitment_j) \rightarrow 1, \text{ but } \\
+    &\ \enike.\getsharedkey(\witness_j, \pk_j) \neq \enike.\getsharedkey(\secretone_j, \commitment_j)
+  \end{split}
+\end{align}
+
+However, if the \ENIKE is binding and Assumption~\ref{ass:avss-enike} holds,
+then Game~1 and Game~0 are indistinguishable to $\adv$.
+
+\medskip
+
+\noindent \textit{Reduction to \ENIKE Binding.}
+Let $\bdv_1$ be an adversary playing against the \ENIKE binding game.
+%\douglas{The general structure of this proof doesn't seem right at all.  The \ENIKE binding game isn't a distinguishing game, there's no hidden bit $b$.  The \ENIKE binding game is a win/lose game.  Now you can certainly still do a reduction to the binding game, and just observe that when the abort event happens in Game 1 corresponds exactly to when the reduction wins the \ENIKE binding game.}
+% CK- changed it to this, hope it looks right now
+$\bdv_1$ simulates Game~1 to $\adv$ in exactly the same way as Game~0.
+However, in $\finalize$,
+if $\adv$ outputs some $\witness_j$ with respect to the commitments $(\pk_j, \commitment_j, \vsscommit_j)$ output in $\dkgkeygen_0$ such that Equation~\ref{eq:game1-robust-condition} holds,
+then $\bdv_1$ recovers $\secretone_j$,
+and outputs $(\secretone_j, \pk_j, \witness_j, \commitment_j)$ as its output to the \ENIKE binding game.
+
+$\bdv_1$ recovers $\secretone_j$ by performing $\secretone_j \gets \avss[\Hash_1].\recover(t, \recoveryset_j)$,
+where
+$\recoveryset_j = \{(k,\share_{jk}) \}_{k \in \honest}$.
+$\bdv_1$ can recover $\secret_j$ because the checks in $\dkgkeygen_1$ completed successfully
+(else the honest participants would have aborted the protocol in $\dkgkeygen_1$ and $\dkgkeygen_2$),
+then each share in $\recoveryset_j$ is a valid share of the secret $\secretone_j$ committed to by $\vsscommit_j$ and $\pk_j$.
+Further, because $\bdv_1$ simulates at least $t$ honest players,
+it has a sufficient number of shares to perform this recovery step.
+
+Hence, when $\adv$ distinguishes Game~1 from Game~0 (i.e., by causing Game~1 to abort),
+then $\bdv_1$ wins.
+
+\medskip
+
+\noindent \textit{Difference between Game~0 and Game~1.}
+Let $W_1$ be the event that $\adv$ wins in Game~1. Then,
+\begin{equation} \label{eq:game1-robust}
+  \bigabs{ \Pr[W_1] - \Pr[W_0]  } \leq \advant{bind}{\enike,\bdv_1}(\lambda)
+\end{equation}
+
+\medskip
+
+
+\noindent \textit{\underline{Game 2.}}
+The only difference in Game~2 is that in $\finalize$,
+if Equation~\ref{eq:game2-robust-condition} holds,
+then $\cdv$ aborts.
+\begin{align} \label{eq:game2-robust-condition}
+  \begin{split}
+    &\ \sk \gets \avss.\recover(t, \{(i, \sk_i) \}_{i \in \honest}), \text{ but} \\
+    &\ \enike.\verify(\sk, \pk) \rightarrow 0
+  \end{split}
+\end{align}
+
+However, if the \AVSS is unique, then Game~1 and Game~2 are indistinguishable.
+
+\medskip
+
+\noindent \textit{Reduction to \AVSS Uniqueness.}
+Let $\bdv_2$ be an adversary playing against the \AVSS uniqueness game.
+
+$\bdv_2$ follows the protocol honestly for all parties $i \in \honest$.
+However, in $\dkgkeygen_3$, $\bdv_2$ recovers $\sk$ and tests to see if Equation~\ref{eq:game2-robust-condition} holds.
+$\bdv_2$ can recover $\sk$ without the involvement of $\adv$ because it simulates at least $t$ honest parties.
+
+Recall that
+
+\[
+\sk_i \gets \avss[\Hash_1].\aggregatepriv(i, \{\share_{i,j} \}_{j \in \set{n}}, \{ \vsscommit_j \}_{j \in \set{n}}, \auxstring)
+\]
+
+and
+
+\[
+\avsscommit \gets \avss[\Hash_1].\aggregatepub(\{ \vsscommit_j \}_{j \in \set{n}}, \auxstring)
+\]
+
+The only values that differ between each honest party when performing this aggregation step are the sets $\{\share_{i,j} \}_{j \in \set{n}}$.
+
+If Equation~\ref{eq:game2-robust-condition} holds,
+then this means that at least one honest party $k \in \honest$ received a share $\share_{j,k}$ from a corrupted party $j \in \corrupt$
+such that $\avss[\Hash_1].\verify(k, \share_{j,k}, \vsscommit_j) = 1$
+but where Equation~\ref{eq:g2-robust-recovery} holds.
+\begin{align} \label{eq:g2-robust-recovery}
+  \begin{split}
+    & \avss[\Hash_1].\recover(t, \{(\ell,\share_{j,\ell}) \}_{\ell \in \honest}) \neq \\
+    & \avss[\Hash_1].\recover(t, \{(\ell,\share_{j,\ell}) \}_{\ell \in \honest,\ell\neq k})
+  \end{split}
+\end{align}
+%\ian{API for $\avss.\recover$ above.  But worse, doesn't the second recovery set only have $t-1$ elements? $\recover$ isn't even defined for such an input?}
+%\chelsea{The adversary trivially cannot win if it chooses $\lvert \honest \rvert = t$}
+
+
+Let $\recoveryset_1 = \{(\ell,\share_{j,\ell}) \}_{\ell \in \honest}$ and
+$\recoveryset_2 = \{(\ell,\share_{j,\ell}) \}_{\ell \in \honest,\ell\neq k}$.
+When this event has occurred,
+$\bdv_2$ submits $(t, \recoveryset_1, \recoveryset_2, \vsscommit_j)$ as its output to the \AVSS uniqueness game.
+%\ian{The $t$ and $\ell$ should both be omitted, right? (And check your paren balencing.) And this is the ``uniqueness'' game, not the ``security'' game, right?}
+%\chelsea{The adversary needs to return t, two recovery sets (which are the identifier/share pairs) and the commitment}
+When $\adv$ can distinguish Game~2 from Game~1,
+then $\bdv_2$ wins the \AVSS uniqueness game.
+
+\medskip
+
+\noindent \textit{Difference between Game~1 and Game~2.}
+Let $W_2$ be the event that $\adv$ wins in Game~2. Then,
+\begin{equation} \label{eq:game2-robust}
+  \bigabs{ \Pr[W_2] -  \Pr[W_1]  } \leq \advant{unq}{\avss[\Hash_1],\bdv_2}(\lambda)
+\end{equation}
+
+
+
+\medskip
+
+\noindent \textit{Finishing the Proof.}
+Recall that in the weak robustness game,
+the adversary has four opportunities to win,
+assuming all honest parties have not aborted the protocol.
+First, if any honest party has a disjoint view of $\pk$,
+second, if any honest party has a disjoint view of $\qual$,
+and third, if any honest party has a disjoint view of $\auxinfo$.
+Finally, the adversary wins if the $\sk$ that is recovered from the honest parties' shares is invalid.
+
+Because we assume a broadcast channel,
+if any honest party aborts in either $\dkgkeygen_1$ or $\dkgkeygen_2$,
+then all honest parties will abort in $\dkgkeygen_2$.
+And so if any honest party proceeds to $\finalize$,
+then all honest parties will proceed to $\finalize$,
+and all honest parties will set their status to $\accept$.
+While honest parties might abort (meaning that strong robustness cannot be fulfilled),
+honest parties will consistently either end in an aborted or accepting status,
+meaning that the weak robustness game can be fulfilled.
+And so the only opportunity for the adversary to win against the generic
+construction in the weak robustness game is to disrupt consistency of $\pk,\qual,\auxinfo$,
+or to make $\dkg[\Hash].\recover$ output $\fail$.
+
+Again, because we assume a broadcast channel,
+all parties will maintain the same view of $\{(\witness_j,\commitment_j,\pk_j,\vsscommit_j) \}$.
+And so all parties will determine the set $\qual$ in $\finalize$ using the same information.
+Hence, the adversary has no advantage in forcing a disjoint $\qual$.
+
+From Game~1,
+we know that all honest parties derive the same view of $\{ \blinding_j \}$ such that $\enike.\getsharedkey(\witness_j,\pk_j) \rightarrow \blinding_j$.
+Because the tweak value $\tweak$ is derived from $\Hash_2$ using the values $\{\blinding_j \}_{j \in \set{n}}$,
+then all parties will obtain the same $\tweak$.
+Because $\PK$ is derived using $\tweak$ and the set $\{\vsscommit_j \}_{j \in \set{n}}$,
+then the adversary has no advantage in forcing a disjoint $\PK$.
+Similarly,
+the adversary has no advantage in forcing a disjoint $\auxinfo = \{\PK_i \}_{i
+\in \qual}$, which are also derived from $\tweak$ and the set $\{\vsscommit_j \}_{j \in \set{n}}$.
+
+Finally, from Game~2,
+we know that $\dkg[\Hash].\recover$ will output a $\sk$ that is valid with respect to $\pk$.
+
+The adversary in Game~2 then has no advantage in winning the DKG weak robustness game.
+Concretely, combining the advantages in
+Equations~\ref{eq:game1-robust} and \ref{eq:game2-robust} gives Equation~\ref{eq:wk-rbt-thm}.
+This completes the proof. \qed
+\end{proof}
+
