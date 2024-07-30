@@ -1,0 +1,100 @@
+\section{Related Work}
+
+
+\paragraph{Randomized (Non-Deterministic) Threshold Schnorr Signatures.}
+We review randomized threshold Schnorr signature schemes in Section~\\ref{frost-related-work}.
+
+\paragraph{Deterministic Threshold Signatures.}
+The BLS signature scheme~\cite{BonehLS04} is deterministic,
+because the signature is of the form $z \gets H(m)^\sk$.
+Likewise, threshold BLS signatures are similarly deterministic~\cite{Boldyreva03}.
+However, such schemes are often not viable in a practical setting that requires backwards compatibility with Schnorr signature verification,
+or due to the requirement of pairings.
+
+Deterministic threshold Schnorr signatures have been described in the literature,
+but rely on heavyweight zero-knowledge proofs to demonstrate that each
+participant followed the protocol correctly.
+The challenge of deterministic threshold Schnorr signatures is that of \emph{verifiability},
+because if even one participant deviates from the protocol and chooses its nonce randomly,
+a complete key-recovery attack is possible.
+
+Nick et al.~\cite{NickRSW20} define a threshold Schnorr $n$-of-$n$ multisignature
+that uses SNARKs to demonstrate in zero-knowledge that
+a participant generated its nonce using a PRF correctly with respect to a pre-established keypair.
+However, the authors report the computational overhead of at least 943\,ms for a single execution,
+% \ian{The 943\,ms figure is just for ZKP creation; there's more for verification, and all the non-ZKP bits.}
+independent of the number of signers,
+due to the overhead of proving the PRF was evaluated correctly in zero-knowledge.
+In particular, to instantiate the PRF,
+a non-algebraic cryptographic hash function $H : \zo \rightarrow \GG$ must be used,
+along with a regular function $f : \GG \rightarrow \Zq$.
+The complete PRF $F_\sk$ is defined by $F_\sk(x) = f( \sk \cdot H(x))$,
+where $\sk$ is a PRF key.
+Then, signers generate a Bulletproof~\cite{BunzBBPWM18} to prove in zero-knowledge that the nonce was derived with respect to $F$, $\sk$, and some input $H(x)$.
+
+Bronte et al.~\cite{BonteST21} define an MPC protocol to partition the functionality of EdDSA,
+which itself is deterministic.
+However, their MPC protocol is randomized and requires multiple rounds of interaction,
+and therefore is stateful.
+
+Garillot et al.~\cite{GarillotKMN21} similarly rely on parties sampling and committing to a PRF key at the time of key generation,
+but instead make use of the Zero-Knowledge from Garbled Circuits (ZKGC) paradigm~\cite{JawurekKO13} to demonstrate that the PRF was derived correctly.
+The specific function that is garbled is $C(x) = \phi(F(x))$,
+where $F$ is a boolean circuit such as AES,
+and $\phi$ is standard exponentiation (or curve multiplication).
+The authors give efficiency estimates for a 256-bit curve  and using SHA-512 as
+the PRF $F$;
+the performance overhead is dominated by performing $132,000$ AES invocations and $256$ additions in $\Zq$ per proof generated and verified.
+For a signing invocation involving $t$ parties,
+each party must then perform $256t$ field operations and $132,000t$ AES invocations,
+accounting for each proof a signer generates and the $t-1$ proof verifications for all other signers.
+
+Kondi, Orlandi, and Roy~\cite{KondiOR23} take a different approach,
+and define a two-round stateless and deterministic two-party Schnorr signature scheme using pseudorandom correlation functions (PCFs)~\cite{BoyleCGIKS20} as a building block.
+In particular,
+their scheme employs a Paillier-based PRF~\cite{OrlandiSY21},
+but additionally define a verification mechanism to ensure that parties honestly followed the protocol.
+However,
+their scheme is restricted to the two-party setting,
+and as written, cannot be extended to the general $(t,n)$ threshold setting.
+In particular, the PCF used as a building block by their scheme assumes only two parties.
+Extending their scheme to any $(t,n)$ setting requires designing a new $n$-party PCF~\cite{KPC24}.
+
+\paragraph{Honest Majority Threshold Signatures.}
+Honest majority threshold schemes have been proposed in the literature as a means to achieve properties that are either impossible,
+or require higher performance overhead,
+in the honest minority setting.
+Notably, honest majority schemes have been demonstrated to achieve robustness or to circumvent requiring the use of heavyweight zero-knowledge proofs~\cite{CanettiGGMP20}.
+
+Gennaro et al.~\cite{GennaroJKR96} use error correcting codes in the honest majority setting to achieve a robust threshold DSS scheme.
+Similarly, Ruffing et al.~\cite{RuffingRJSS22} present a wrapper to the FROST threshold signature scheme to achieve robustness,
+in the honest majority setting.
+
+In the randomized threshold ECDSA setting,
+Damg{\aa}rd et al.~\cite{DamgardJNPO22},
+Doerner et al.~\cite{DoernerKLS23},
+and Delskov~\cite{DalskovOKSS20}
+show how  the pseudorandom secret sharing scheme by Cramer et al.~\cite{CramerDI05} can be employed as a sub-protocol for improved efficiency.
+However, our work targets the setting of deterministic threshold Schnorr signatures.
+
+\paragraph{Distributed VRFs.}
+Galindo et al.~\cite{GalindoLOW21} give a formalization of distributed VRFs and their security notions.
+While our notions for a Verifiable Pseudorandom Secret Sharing (VPSS) scheme are similar,
+our definition for a VPSS does not require that players' outputs are accompanied by a zero-knowledge proof that the protocol was performed correctly.
+Instead,
+the VPSS verification function \emph{collectively} verifies all parties' outputs.
+
+
+\paragraph{Pseudorandom Secret Sharing.}
+Our VPSS construction \DVRFOne builds on the pseudorandom secret sharing scheme by Cramer et al.~\cite{CramerDI05}.
+Note that while Cramer et al.\ additionally define a Non-Interactive\ Verifiable Secret-Sharing (NIVSS)  variant,
+their construction assumes that players output shares in the clear,
+and requires an honest supermajority so that the secret can be recovered.
+In our case, players verify the correctness of their shares with respect to other players' public commitments,
+and requires only honest majority (as players simply need to determine if any other party deviated from the protocol).
+
+While we are the first to do so in a threshold Schnorr signature setting,
+pseudorandom secret sharing has been used as a building block in other other threshold settings.
+For example,
+Jarecki, Krawczyk, and Resch~\cite{JareckiKR18} define a threshold Oblivious PRF which likewise builds upon pseudorandom secret sharing.
+
