@@ -115,7 +115,39 @@ with additionally a verification check to ensure that $\pk = g^{\sk}$.
     Output $\sharedkey$.
 \end{itemize}
 
-We demonstrate in Appendix~\ref{appendix:enike-proofs} that
-the concrete scheme is unrecoverable assuming the Computational Diffie-Hellman (CDH) problem is hard,
+We next demonstrate that the concrete scheme is unrecoverable assuming the Computational Diffie-Hellman (CDH) problem is hard,
 and is unconditionally binding.
+
+\begin{theorem} \label{thm:enike-recovery}
+  The concrete NIKE of Section~\ref{enike:concrete} is unrecoverable against a probabilistic polynomial-time adversary $\adv$,
+  assuming the Computational Diffie--Hellman (CDH) assumption holds in $\GG$.
+  More specifically, for any PPT adversary $\adv$ that attacks $\enike$,
+  there exists an adversary $\bdv$ with approximately the same running time as $\adv$ such that
+  \[
+    \advant{rec}{\enike,\adv}(\lambda)  \leq \advant{cdh}{\bdv}(\lambda)
+  \]
+\end{theorem}
+
+Because breaking session key recovery in our concrete scheme simply requires an adversary to guess a valid Diffie--Hellman shared secret knowing only two public keys,
+we omit the proof for Theorem~\ref{thm:enike-recovery} as it is a direct reduction to CDH.
+
+
+\begin{theorem} \label{thm:enike-binding}
+  The concrete NIKE of Section~\ref{enike:concrete} is binding against a computationally unbounded adversary $\adv$.
+\end{theorem}
+
+\begin{proof}
+  We now show that any adversary $\adv$ cannot win the binding experiment $\BindingExp$ in Figure~\ref{fg:enike-binding} for the concrete NIKE of Section~\ref{enike:concrete}.
+  $\adv$ wins when it can produce some $(\sk_1^*, \pk_1^*, \sk_2^*, \pk_2^*)$ such that:
+
+  \begin{enumerate}
+    \item $\enike.\verifykeypair(\sk_1^*, \pk_1^*)$ outputs $1$, and
+    \item $\enike.\verifykeypair(\sk_2^*, \pk_2^*)$ outputs $1$, but
+    \item $\enike.\getsharedkey(\sk_1^*, \pk_2^*) \neq \enike.\getsharedkey(\sk_2^*, \pk_1^*) $
+  \end{enumerate}
+
+  However, in the setting of the concrete scheme, this means that
+  $\pk_1^* = g^{\sk_1^*}$ and $\pk_2^* = g^{\sk_2^*}$, yet
+  $({\pk_2^*})^{\sk_1^*} \neq ({\pk_1^*})^{\sk_2^*}$, which is impossible.
+\end{proof}
 
