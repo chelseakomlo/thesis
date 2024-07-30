@@ -1,0 +1,130 @@
+
+\paragraph{Aggregated Secrecy.}
+Unlike in the plain VSS setting,
+an \AVSS allows for aggregating shares and commitments that could both be honestly as well as maliciously generated.
+Hence, we require that the \AVSS fulfills the notion of \emph{aggregated secrecy},
+which we formalize in Figure~\ref{fg:avss-secrecy}.
+
+
+\begin{remark}[Aggregated secrecy for an \AVSS is a generalization of VSS secrecy]
+  The secrecy game for a VSS scheme as shown in Figure~\ref{fg:vss-secrecy} only allows the adversary to receive a single set of shares and their corresponding commitment from the environment.
+  Hence, the aggregated secrecy game in Figure~\ref{fg:avss-secrecy} is a strict generalization of the VSS secrecy game,
+  as the adversary in the secure aggregation game can not only query for many shares and commitments, but submit its own.
+  As a consequence, any \AVSS that fulfills aggregated secrecy is also secret.
+\end{remark}
+
+
+\begin{figure}[!ht]
+  \begin{pchstack}[boxed,center,space=1em]
+  \begin{pcvstack}
+    \procedure[linenumbering]{$\AggSecrecyExp_{\avss[\Hash], \adv, \simshare}(\lambda, \secret)$}{
+    b \rgets \zo \\
+    \vsschal \rgets \avss.\vfunc(\secret) \\
+    \issuedchal \gets 0 \\
+    \auxstring \rgets \avss.\auxdistr \\
+    \text{\algcom Pick random auxiliary string} \\
+    \simtotal \gets 0  \\
+    Q_1 \gets \emptyset, Q_2 \gets \emptyset \\
+    (n, t, \corrupt, \advstate) \rgets \adv(\lambda) \\
+    % We already said that n,t are natural numbers so we don't need to check their types.
+    \pcif t > n \vee \corrupt \not\subseteq \set{n}  \\
+    \textbf{or }\lvert \corrupt \rvert \geq t \\
+    \pcind \randcoin \rgets \zo;\ \pcreturn \randcoin \\
+    \honest \gets \set{n} \setminus \corrupt \\
+    %
+    \advstate' \rgets \adv^{\getshare,\recvshare, \Ogettweak}(\advstate) \\
+    \pcif \issuedchal = 0 \\
+    \pcind \randcoin \rgets \zo;\ \pcreturn \randcoin \\
+    \pcif b=1 \\
+    %\pcind (\secretone^*,\vsscommit^*) \gets Q_1 \\
+    %\pcind \{(\{(i,\share_{ji})\}_{i \in \honest},\vsscommit_j) \}_{j \in \set{\simtotal}} \gets Q_2 \\
+    \pcind \mathsf{in} \gets ( \{\vsscommit_j \}_{j \in \set{\simtotal}} \cup \{\vsscommit^* \}, \auxstring) \\
+    \pcind \avsscommit \gets \avss[\Hash].\aggregatepub(\mathsf{in}) \\
+    \pcind \pcif \avss[\Hash].\derivepshare(0, \avsscommit) \neq \vsschal \\
+    \pcind \pcind \pcreturn 1 \\
+    b' \rgets \adv^{\Ogettweak}(\advstate', \auxstring) \\
+    \text{\algcom $\adv$ performs} \\
+    \text{\algcom  aggregation directly} \\
+    \pcreturn 1\ \pcif b' = b \\
+    \pcreturn 0
+  }
+  \end{pcvstack}
+  \pchspace
+  \begin{pcvstack}
+    \procedure[linenumbering]{$\getshare() \text{\algcom Performs secret sharing}$}{
+      \pcif \issuedchal = 0 \\
+      \pcind \issuedchal \gets 1 \\
+      \pcind \pcif b=0 \\
+      \pcind \pcind \{(j,\share_{j})\}_{j =1}^n, \vsscommit \rgets \avss[\Hash].\issueshares(\lambda, s, n, t) \\
+      \pcind \pcind Q_2 \gets  Q_2 \cup   \{ (\{(j,\share_{j})\}_{j \in \honest},, \vsscommit) \} \\
+      \pcind \pcind \pcreturn ( \{(j,\share_j)\}_{j \in \corrupt}, \vsscommit) \\
+      \pcind \pcelse \text{\algcom $b=1$ case} \\
+      \pcind \pcind \mathbf{out} \rgets \simshare(\lambda, \corrupt, \vsschal)\\
+      \pcind \pcind (\secretone^*, \{(j,\share_j) \}_{j \in \corrupt},
+      \vsscommit^*) \gets \mathbf{out} \\
+      \pcind \pcind Q_1 \gets (\secretone^*, \vsscommit^*) \\
+      \pcind \pcreturn ( \{(j,\share_j)\}_{j \in \corrupt}, \vsscommit^*) \\
+      \simtotal \gets \simtotal + 1 \\
+      s_\simtotal \rgets \secretspace \\
+      \{(j,\share_{\simtotal j})\}_{j =1}^n, \vsscommit_\simtotal \rgets \avss[\Hash].\issueshares(\lambda, s_\simtotal, n, t) \\
+      Q_2 \gets  Q_2 \cup   \{ (\{(j,\share_{\simtotal j})\}_{j \in \honest},, \vsscommit_\simtotal) \} \\
+      \pcreturn (\{(j,\share_{\simtotal j})\}_{j \in \corrupt}, \vsscommit_\simtotal)
+  }
+  \pcvspace
+    \procedure[linenumbering]{$\recvshare(\{ (j, \share_{\simtotal j}) \}_{j \in \honest}, \vsscommit_\simtotal)$}{
+    \text{\algcom Receives shares from $\adv$} \\
+    \simtotal \gets \simtotal + 1 \\
+	  \pcfor j \in \honest \\
+    \pcind \pcif \avss[\Hash].\verify(j, \share_{\simtotal j}, \vsscommit_\simtotal) \neq 1 \\
+    \pcind \pcind \pcreturn \bot \\
+    Q_2 \gets  Q_2 \cup  \{ (\{(j,\share_{\simtotal j})\}_{j \in \honest}, \vsscommit_\simtotal) \}
+  }
+  \pcvspace
+  \procedure[linenumbering]{$\Ogettweak(\pubaggregateset_i, \auxstring_i) $}{
+    \pcif b=1 \\
+    \pcind \tweak \gets \simgettweak(\pubaggregateset_i, \auxstring_i, Q_1, Q_2) \\
+    \pcelse \\
+    \pcind \tweak \gets \avss.\gettweak(\pubaggregateset_i, \auxstring_i) \\
+    \pcreturn \tweak
+}
+  \end{pcvstack}
+  \end{pchstack}
+
+  \caption{Aggregated secrecy experiment defining the advantage of an adversary $\adv$ against a zero-indexed Aggregatable Verifiable Secret Sharing scheme (\AVSS) $\avss$.
+}
+  \label{fg:avss-secrecy}
+\end{figure}
+
+
+
+When executing the experiment shown in Figure~\ref{fg:avss-secrecy},
+%the environment accepts as input the security parameter $\lambda$,
+%a secret $\secret$ from the secret space $\secretspace$, and a bit $b$.
+%The environment then interacts with the adversary to perform secret sharing and to receive secret shares.
+%The adversary is able to receive $\lvert \corrupt \rvert$ number of secret shares for a fresh secret by querying the oracle $\getshare$,
+%and send $\lvert \honest \rvert$ number of its own secret shares to the environment by querying $\recvshare$ with its contributions.
+the environment simulates one secret sharing operation with respect to a challenge $\vsschal$ when the random bit $b=1$.
+The environment then allows the adversary to query for corrupted parties' shares by $\getshare$,
+and submit its own shares for honest parties by $\recvshare$.
+The adversary is then provided with the auxiliary string $\auxstring$.
+The adversary automatically wins if the aggregated commitment $\avsscommit$ does not
+fulfill the check
+$\avss[\Hash].\derivepshare(0, \avsscommit) \neq \vsschal$.
+Otherwise,
+%the adversary learns sufficient information to perform $\avss.\aggregatepub$ and $\avss.\aggregatepriv$ directly.
+$\adv$ outputs a guess $b'$ to guess if it is in the real or simulated environment.
+
+The advantage of an adversary $\adv$ against $\avss[\Hash]$ in the aggregated secrecy experiment as defined in Figure~\ref{fg:avss-secrecy} with respect to algorithms $\simshare,\simgettweak$ is
+\[
+  \advantaggsecrecy{\avss[\Hash], \adv, \simshare,\simgettweak}(\lambda) = \max_{\secret \in \secretspace}{ \bigabs{\Pr[\AggSecrecyExp_{\avss[\Hash], \adv,\simshare,\simgettweak}(\lambda,s) = 1 ] - 1/2 } }
+ \]
+
+\begin{definition}
+\label{defn:aggsecrecy}
+An \AVSS scheme $\avss$ achieves \defn{aggregated secrecy} if
+there exist algorithms $\simshare, \simgettweak$ such that
+for all probabilistic polynomial-time adversaries $\adv$,
+the function $\advantaggsecrecy{\avss[\Hash], \adv,\simshare,\simgettweak}(\lambda)$
+is a negligible function of $\lambda$.
+\end{definition}
+
