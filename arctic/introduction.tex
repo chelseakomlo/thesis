@@ -1,0 +1,372 @@
+\section{Introduction}
+
+Threshold signature schemes allow a subset of at least $\minsigners$ out of $n$ possible parties to cooperate to produce a signature over a single message,
+while preserving security when up to $t-1$ signers may be corrupted,
+where $\minsigners \leq n$ and  $t \leq \minsigners$.
+Threshold signatures offer practical security benefits,
+allowing for dynamic key management and defense in depth against potential adversarial corruptions.
+While threshold signatures can be instantiated by simply concatenating multiple individual signatures into a single joint signature,
+a practical goal for threshold signatures is to preserve compatibility with existing single-party signature schemes,
+%Compatibility with existing single-party signature schemes is particularly important in practice,
+to minimize implementation complexity.
+
+%The trivial threshold signature scheme
+%represents the public key as the set of $n$ public keys for each party.
+%To sign,
+%each participant produces a signature individually;
+%the output signature is simply the concatination of all $t$ signatures.
+%Verification requires each signature to be individually verified with respect
+%to its respective public key.
+
+%However, the trivial threshold signature scheme is undesirable for two reasons.
+%First, the performance overhead of the trivial threshold scheme scales linearly
+%relative to $t$.
+%Second,
+%the verification algorithm of the trivial threshold scheme is not compatible with existing single-party threshold signature schemes.
+
+In this work,
+we focus our attention on threshold Schnorr signatures;
+i.e,
+a threshold signature scheme that is compatible with the (single-party) Schnorr signature verification algorithm~\cite{Schnorr91}.
+Efficient (two-round) threshold Schnorr signatures exist in the randomized
+setting~\cite{KomloG20,BellareCKMTZ22,RuffingRJSS22},
+where each party is assumed to securely maintain state between signing rounds and have access to good sources of randomness.
+However,
+efficient and \emph{deterministic} threshold Schnorr signatures has thus far remained an elusive goal.
+
+\paragraph{\bf Why Deterministic Threshold Signatures?}
+Producing threshold signatures in a deterministic manner is useful for two reasons.
+%
+First,
+it is useful as a general defense-in-depth measure,
+to protect against the event of temporarily losing access to good sources of   randomness~\cite{RistenpartY10},
+such as if a machine randomly rebooted.
+
+Second,
+threshold Schnorr signature schemes generally require participants to perform multiple rounds of communication before a joint signature can be issued.
+As such, participants must keep state between each round,
+and carefully delete state once a signing protocol is completed.
+In the setting where the signer must produce signatures at increasing scale and
+in a concurrent setting,
+managing state can become a significant performance bottleneck.
+Further,
+%because in practice machines can randomly go offline at any time,
+secure management of secret state can be considered a security risk.
+In particular,
+for threshold Schnorr signatures,
+participants must generate secret nonces for each signing session.
+If a participant's state is mismanaged in such a way that it is used even twice,
+a fatal key-recovery attack is possible.
+However, in the setting where machines can go offline at any time,
+and signing is done at scale and concurrently,
+such careful management of secret state becomes even more challenging.
+%\ian{I'm not doing a careful read over the intro, as requested, but I wanted to leave a note for later that the checkpointing-and-restoring-VMs problem is also a good example of where deterministic signatures are useful.}
+
+
+\paragraph{\bf The Challenge of Efficient Deterministic Multi-Party Schnorr Signatures.}
+While the goal of efficient and deterministic multi-party Schnorr signature schemes is desirable,
+producing such schemes has proven difficult.
+The challenge can be summarized as follows.
+While honest participants can certainly  pick their nonces deterministically
+(say, by hashing their secret signing share and the message),
+a malicious party might deviate from the protocol and pick its nonce at random.
+Recall that for Schnorr signatures,
+the output signature $\sigma = (R,z)$ is a commitment $R$ and response $z$,
+satisfying the relation $g^z = R \cdot \pk^c$ for a challenge $c \gets H(R,\pk,m)$.
+In the setting for threshold Schnorr signatures,
+where $(R,z)$ are contributed to by all signing parties,
+one party deviating from the protocol results in the challenge $c$ likewise changing.
+If honest parties cannot verify that other parties followed the protocol,
+such a deviation would allow an adversary to perform a key recovery attack with as little as two signing queries.
+
+Prior deterministic multi-party Schnorr signature schemes in the literature~\cite{NickRSW20,GarillotKMN21,KondiOR23}
+can be broken down into two general approaches.
+We give an overview of the approaches that support the general threshold setting with general $(t, \minsigners, n)$ in Table~\ref{table:efficiency},
+with more context now.
+
+The first approach requires that signers output zero-knowledge proofs that a Pseudorandom Function (PRF) was evaluated correctly~\cite{NickRSW20,GarillotKMN21}.
+However,
+this approach adds undesirable performance and complexity overhead.
+For example,
+while MuSig-DN~\cite{NickRSW20} requires only two network rounds,
+proof generation requires approximately $1$~second (regardless of the number of signers) for $256$-bit security,
+and verification requires at least $10n$\,ms.
+%\ian{That's not what their Table 1 says? Where did this number come from?}
+%\chelsea{edited; this roughly follows that they report in their table}
+%\ian{For Musig-DN, $\minsigners = t$, right? So perhaps using $t$ is better, particularly because ``$100\mu$\,ms'' looks like you're mixing microseconds and milliseconds?}
+%\chelsea{it is technically n, i think saying t is a little too generoug}
+Similarly,
+the scheme by Garillot et al.~\cite{GarillotKMN21}
+requires three rounds of communication between signers and high complexity and bandwidth overhead.
+
+The second approach  by Kondi et al.~\cite{KondiOR23} is to use as a black box a Pseudorandom Correlation Generator (PCG)~\cite{BoyleCGIKS20}  to generate nonces in a verifiable manner~\cite{KondiOR23}.
+However, while the PCG used in their construction can support $2$-of-$2$ signing,~\cite{OrlandiSY21,KondiOR23},
+it remains an open problem as to how to extend such a PCG to the general threshold setting for any $t$, $\minsigners$, or $n$\cite{KPC24}.
+As such,
+the scheme by Kondi et al.~\cite{KondiOR23} supports only the $t=\minsigners=n=2$ setting.
+%This is because the PCG requires the verifier to maintain a secret verification key unknown to the prover;
+%otherwise all security is lost.
+
+Therefore
+in this work,
+we address the following question:
+
+\begin{quote}
+  \it
+Can we design a simple, deterministic, and stateless two-round threshold Schnorr signature scheme,
+with similar efficiency to existing randomized schemes,
+and acceptable security assumptions in practice?
+\end{quote}
+
+\subsection{Our Results}
+We answer the above question in the affirmative.
+In particular, we present \glitter,
+a deterministic and stateless threshold Schnorr signature scheme.
+For moderately sized groups (i.e., when $n \leq 20$),
+\glitter is more than an order of magnitude more efficient than existing deterministic schemes in the literature;
+it is three orders of magnitude more efficient when $n \leq 10$.
+For even larger groups,
+\glitter scales linearly relative to the number of processing cores available to most machines.
+Signers in \glitter are required to generate and maintain secret keys,
+but otherwise do not need to manage secret state.
+
+To achieve efficient determinism,
+\glitter requires three tradeoffs.
+The first tradeoff is in the number of required signers;
+\glitter requires $\minsigners \geq 2t-1$ parties to participate in signing.
+This requirement is because \glitter assumes the honest majority model.
+We discuss in Section~\ref{hon-maj-obs} why the assumption of an honest majority is acceptable for some real-world applications.
+
+The second tradeoff is in the required overhead as the signing set grows large.
+Under the hood, \glitter employs a replicated secret sharing scheme~\cite{MitsuruSN89},
+and so requires participants to store a secret key of size
+${n-1  \choose t-1}$.
+As such,
+\glitter outperforms other schemes in the literature for moderately sized groups,
+but incurs a crossover point as the signing set grows large.
+
+The final tradeoff is that \glitter as defined does not support identifiable abort.
+While the protocol allows honest participants to identify misbehavior has occurred,
+the protocol does not support identifying which participant caused in the abort
+(which is possible for MuSig-DN~\cite{NickRSW20}, for example).
+However,
+we give a discussion on how \glitter can be extended to support identifiable abort,
+and indeed robustness,
+in the \emph{honest supermajority} setting (i.e., when $\minsigners \geq 3t-2$).
+
+\begin{table}[t]
+	\centering
+%		\resizebox{\textwidth}{!}{
+		\begin{tabular}{ c | c | c | c | c | c  }
+		 \hline
+      %& \rot{Deterministic?} & \rot{Stateless?}
+      & \rot{Computation}
+      & \rot{Bandwidth}
+      & \rot{Num. Rounds} & \rot{Assumptions} &
+      \rot{Min. Signers }   \\
+             \hline
+             % TODO
+      %FROST \cite{KomloG20,BellareCKMTZ22} & \xmark & \xmark & 0.1  & $t$ group & 2 & AOMDL & t  & n \\
+             % TODO add back in for the final version
+      %\hline
+      MuSig-DN~\cite{NickRSW20} & $14210 + 24 (n - 1)$ group & 1189~bytes & 2 & DDH & $n$  \\
+      \hline
+      \multirow{2}{*}{ GKMN21~\cite{GarillotKMN21}} & $132,000(t-1)$ AES & \multirow{2}{*}{ $1.01(t-1)$~MB}
+      & \multirow{2}{*}{3} & \multirow{2}{*}{PRF} &  \multirow{2}{*}{$t$}  \\
+      &   $256(t-1)$ field &  & &   \\
+      %\hline
+      %\multirow{2}{*}{KOR23~\cite{KondiOR23}} & \multirow{2}{*}{\xmark} & \multirow{2}{*}{\cmark} & \multirow{2}{*}{\cmark} &
+      %\multirow{2}{*}{0.5} & todo & \multirow{2}{*}{2} & \multirow{2}{*}{DCR+Strong RSA} & \multirow{2}{*}{2} & \multirow{2}{*}{2} \\
+      \hline
+      \glitter  & $2t^2 -t + 2$ group &
+      \multirow{2}{*}{97~bytes} & \multirow{2}{*}{2} & \multirow{2}{*}{DL} & \multirow{2}{*}{$2t-1$}   \\
+      (this work) &  $2{n-1 \choose t-1}$ field,  $2{n-1 \choose t-1}$ hash &  & &   \\
+      \hline
+	\end{tabular}
+%}
+  \medskip
+	\caption{ Comparison of multi-party deterministic Schnorr signature schemes in the random oracle model (ROM) that support general choices of $n$
+  (i.e., we exclude $2$-of-$2$ schemes).
+  Here,
+  $n$ denotes the number of total possible signers,
+  $t$ denotes the corruption threshold.
+  %and $\minsigners$ denotes the minimum number of parties required to participate in a signing operation.
+  Computation is given with respect to the operations that dominate;
+  estimates for MuSig-DN are given with respect to a $256$-bit elliptic curve;
+  more information is given in Appendix~\ref{app:performance-estimates}.
+  Bandwidth similarly is given with respect to a $256$-bit elliptic curve~\cite{NickRSW20,GarillotKMN21}.
+  %\ian{Isn't the ``computation'' column the per-signer cost?  Why does Musig-DN have an ``$n$'' in it?}
+  %\chelsea{because it is n-of-n and each signer needs to generate a proof and verify n-1 other proofs.}
+  }
+\label{table:efficiency}
+\end{table}
+
+
+\paragraph{\bf Verifiable Pseudorandom Secret Sharing (VPSS).}
+As a building block,
+we first formalize a cryptographic primitive that we call a \emph{Verifiable Pseudorandom Secret Sharing (VPSS)} scheme.
+While pseudorandom secret sharing is a standard notion in the literature,
+and verifiability of such schemes had been employed implicitly in maliciously secure MPC-based schemes~\cite{BenhamoudaBGHIN21},
+we present a formal definition for a VPSS and
+%\ian{Were you going to add something like ``following Bellare et al.~\cite{something},''?}
+%\chelsea{I don't think it is necessary to elaborate on it, beyond a citaiton}
+give game-based security notions~\cite{BellareR06},
+building on existing notions of verifiable random functions in the literature~\cite{MicaliRV99,NaorPR99,Dodis03,GalindoLOW21}.
+%taking inspiration from prior security notions for distributed VRFs~\cite{MicaliRV99,NaorPR99,Dodis03,GalindoLOW21}.
+
+Intuitively, a pseudorandom secret sharing scheme allows a coalition of players holding pre-established secret shares of a random secret to generate shares of additional pseudorandom secrets.
+%We additionally require that a pseuodorandom secret sharing scheme be \emph{publicly verifiable};
+%i.e., it is possible to determine that the output held by each participant is valid,
+%simply by verifying commitments to secret shares output by each participant.
+%
+A \emph{verifiable pseudoradnom secret sharing scheme} is simply an extension
+to allow for public verifiability by collectively verifying the outputs for the set of participants.
+As such, misbehavior of players in a VPSS can be detected assuming some threshold of honest participants.
+As we will see in the case of \glitter,
+a VPSS allows for more efficiently verifying the correctness of the output of a pseudorandom function that is distributed among a set of players,
+without requiring each player individually to produce a zero-knowledge proof that it followed the protocol.
+
+We then define a concrete VPSS construction that we call \DVRFOne
+that builds upon the pseudorandom secret sharing scheme by Cramer et al.~\cite{CramerDI05}.
+We augment the scheme by Cramer et al.\ to additionally define a verification algorithm that is publicly verifiable even when players only publish commitments to their shares;
+i.e., it preserves secrecy of players' shares while allowing players to verify that all other players followed the protocol honestly.
+\DVRFOne is efficient for moderately sized groups;
+concretely, evaluation requires ${n-1\choose t-1}$ sub-microsecond
+hash and field operations,
+and verification requires $2t^2 - t$ group exponentiations,
+where $t$ is the corruption threshold.
+We prove that \DVRFOne is secure assuming the existence of a secure hash function in the honest majority model,
+i,e.,
+when $\minparticipants \geq 2t-1$,
+where $\minparticipants$ is the minimum number of participants required to participate in the protocol.
+Additionally, we require that as $n$ grows, $t$ remains $\BigO(1)$ so that
+${n-1\choose t-1} = \text{poly}(n)$.
+
+
+\paragraph{\bf A New Two-Round, Deterministic, and Stateless Threshold Schnorr Signature.}
+Next,
+we introduce \glitter,
+a new two-round, deterministic, and stateless threshold Schnorr signature.
+\glitter is an order of magnitude more efficient than related schemes in the literature for moderately sized groups ($n \le 20$),
+due to its use of \DVRFOne as a building block.
+Furthermore,
+\glitter supports the general threshold setting for any $t, \minsigners$ and $n$,
+so long as $\minsigners \geq 2t-1$ and $\minsigners \leq n$.
+We give an overview of \glitter in Table~\ref{table:efficiency} in comparison to related
+schemes in the literature.
+
+At a high level,
+\glitter uses \DVRFOne in the first round of signing to generate participant nonces and commitments;
+participants publish their commitments without having to maintain state of their (secret) nonce.
+Then, in the second round,
+participants use \DVRFOne to re-derive their nonce and commitment,
+and verify all other participants' commitments,
+ensuring that other participants followed the protocol correctly.
+If the verification check holds,
+participants derive the group commitment as the aggregation of all participants' individual commitments,
+and generate a signature share as a combination of their nonce, challenge, and secret signing share.
+The output signature is the aggregated group commitment and an aggregation of all participants' signature shares,
+and can be verified using the single-party Schnorr verification algorithm.,
+
+We prove the unforgeability of \glitter assuming the hardness of the discrete logarithm problem in the random oracle model,
+assuming $\minsigners \geq 2t-1$,
+the adversary corrupts at most $t-1$ players,
+and ${n-1\choose t-1} = \text{poly}(n)$.
+We describe in Section~\ref{hon-maj-obs} why requiring honest majority assumptions can be practical for some real-world deployments of threshold signatures,
+at the benefit of improved simplicity and performance.
+
+
+\paragraph{\bf Performance Analysis of \glitter.}
+To estimate the practicality of \glitter for various choices of $n, t$, and $\minsigners$,
+we implement the scheme and provide concrete benchmarks.
+
+\glitter is highly efficient for moderately sized groups,
+and so is a good choice for such settings.
+As we show in greater detail in Section~\ref{sec:performance},
+for a group where $2t-1 \leq \minparticipants \le n \leq 20$,
+\glitter signing operations require less than 100 milliseconds of computation for each signer, and for $n \le 10$, less than 1 millisecond.
+%\ian{Wait; that's not what the figure shows?  Where did this number come from?}
+%\chelsea{can you update if this is incorrect? this looks correct to me}
+%\ian{For $n \le 20$, the figure shows 100 milliseconds, not 100 microseconds?}
+Signing however increases in cost relative to the corruption threshold;
+for signing sets of size $n=25, t=11$, the
+computational overhead for each signer on a single core requires one second.
+However, \glitter is highly parallelizable, showing almost perfect linear speedups for up to 32 cores for that size of signing set.
+
+For comparison,
+MuSig-DN requires about $1$~second in computational overhead per signer~\cite{NickRSW20},
+regardless of the size of the signing set.
+As such, \glitter is a practical choice for moderately sized groups of $n \leq 25$,
+whereas MuSig-DN or GKMN21~\cite{GarillotKMN21} may be good choices as the set of signers grows large,
+depending on the parallelization of each scheme.
+
+\paragraph{\bf Our Contributions.}
+In summary,
+the contributions of our work are as follows:
+\begin{itemize}
+  \item We formalize the definition of a Verifiable Pseudorandom Secret Sharing (VPSS) scheme,
+    and give game-based security notions.
+  \item We define a concrete VPSS scheme that we call \DVRFOne,
+    which extends the pseudorandom scheme by Cramer et al.~\cite{CramerDI05} to allow for public verifiability,
+    assuming an honest majority of participants.
+  \item We then present \glitter,
+    a deterministic and stateless two-round threshold Schnorr signature scheme.
+    \glitter uses \DVRFOne as a building block to generate participant nonces and commitments,
+    and verify that participants performed this action correctly.
+  \item We prove that \glitter is secure under the discrete logarithm problem
+    in the random oracle model,
+    assuming \DVRFOne is a secure VPSS,
+    the adversary corrupts fewer than $t$ parties,
+    at least $\minsigners \geq 2t-1$ parties participate in the signing protocol,
+    and ${n-1\choose t-1} = \text{poly}(n)$.
+  \item We provide performance benchmarks for \glitter for different sizes of signing sets,
+    and show that parallelization enables a linear speedup in signer computation.
+\end{itemize}
+
+\subsection{Observations of Honest Majority Assumptions in Practice}
+\label{hon-maj-obs}
+
+While honest minority assumptions may be desirable for some real-world applications,
+we observe that honest majority assumptions may be an acceptable tradeoff for other applications in exchange for statelessness, improved performance, and protocol simplicity.
+
+For applications that can easily support additional signers,
+moving from an honest minority setting to honest majority can be relatively straightforward.
+For example,
+an application that currently uses a $(t=2, \minsigners=2, n=3)$ configuration can instead move to a $(t=2, \minsigners=3, n=4)$ configuration.
+
+In settings that require liveness,
+honest majority requirements are already assumed,
+to ensure usability of the shared secret key even when corrupt players refuse to participate.
+For example,
+applications such as cryptocurrency wallets often implicitly require honest majority assumptions,
+to ensure that corrupt players cannot prevent use of funds by simply refusing to participate in signing operations.
+
+Finally, some applications may see the requirement for additional signers as an acceptable tradeoff to mitigate the security risk of protocol complexity,
+as protocol complexity increases the risk of exploitable implementation errors~\cite{MakriyannisYG23}.
+
+%Prior works on deterministic threshold Schnorr signatures have focused on
+%schemes that are secure assuming an honest minority of signers~\cite{},
+%at the tradeoff of performance.
+%However, honest majority assumptions are implicitly required by implementations
+%of threshold signature schemes in practice.
+%In particular,
+%while honest majority assumptions may not necessarily be required for
+%unforgeability,
+%these assumptions are strictly required for liveness.
+%In particular,
+%real-world implementations of threshold signatures require a sufficient number
+%of honest players such that even if corrupt players refuse to participate in
+%the protocol,
+%signatures can still be produced,
+%otherwise the secret key is rendered unrecoverable.
+
+%As such,
+%the tradeoff of honest majority assumptions for improved performance for moderately sized groups and simplicity may be a natural fit for some applications of threshold signature schemes in practice.
+
+
+
+
+
+
+
+
