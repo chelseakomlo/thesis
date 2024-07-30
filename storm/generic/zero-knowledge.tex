@@ -1,0 +1,329 @@
+\subsection{Zero-Knowledge}
+\label{appendix:const-zk}
+
+\begin{theorem} \label{thm:zero-knowledge}
+  The generic construction is zero-knowledge in the honest majority setting ($t < n/2$) in the random oracle model,
+  against a PPT adversary $\adv$ controlling up to $t-1$ participants,
+  assuming the generic construction itself is weakly robust,
+  the \AVSS achieves aggregated secrecy,
+  and the \ENIKE is unrecoverable.
+%  \ian{Thm 1 specified an honest majority.  Is that not a requirement here as well?}
+  % CK- it says that in the above statement
+
+  Concretely, for every adversary $\adv$ that attacks the construction,
+  there exist adversaries $(\bdv_1, \bdv_3, \bdv_4)$ that run in about the same time as $\adv$,
+  and algorithms $\simkeygen_i, i \in \{0,\ldots,2 \}, \simfin$,
+  such that
+  \begin{align} \label{eq:zk-thm}
+  \begin{split}
+      \advantzk{\dkg,\adv,\simkeygen_i,\simfin}(\lambda) & \leq \advantsecrecy{\avss[\Hash_1],\bdv_1}(\lambda)\ + \advant{rec}{\enike,\bdv_3}(\lambda) \\
+      & \quad + \advantaggsecrecy{\avss[\Hash_1], \bdv_4, \simshare,\simgettweak}(\lambda) .
+      \end{split}
+  \end{align}
+  where $\simshare, \simgettweak$ are as defined for aggregated secrecy of the \AVSS,
+  as in Definition~\ref{defn:aggsecrecy}.
+\end{theorem}
+
+
+\begin{proof}
+  We now complete the proof of Theorem~\ref{thm:zero-knowledge} via a sequence of games.
+
+
+\medskip
+
+\noindent \textit{\underline{Game 0.}}
+This is the DKG zero-knowledge game when $b=0$ as in Figure~\ref{fg:zk},
+applied to the construction in Figure~\ref{fg:generic-perfect}.
+
+Let $W_0$ be the event that $\adv$ outputs $1$ in Game~0. Then,
+\[ \advant{zk}{\dkg,\adv,\simkeygen_i,\simfin}(\lambda)  = \Pr[W_0]    \]
+
+Let $\cdv$ be the algorithm that simulates the DKG zero-knowledge game to $\adv$.
+We now describe in further detail how $\cdv$ simulates the game.
+
+\medskip
+
+\noindent \textit{Setup.}
+To begin, $\cdv$ initializes $Q_1 \gets \emptyset$ to simulate $\Hash_1$
+and $Q_2 \gets \emptyset$ to simulate $\Hash_2$,
+in addition to initializing each honest party as shown in Figure~\ref{fg:zk}.
+$\cdv$ handles $\adv$'s random oracle queries by lazy sampling, as follows:
+
+  \begin{itemize}
+    \item[$\underline{\Hash_1}$]: When the adversary queries $\Hash_1$ on inputs $(\pubaggregateset_i, \auxstring_i)$,
+      the environment checks if it is in $Q_1$, and if so, returns the corresponding $\tweak_i$.
+      Otherwise, the environment randomly samples $\tweak_i$ from its respective domain,
+      sets $Q_1[(\pubaggregateset_i, \auxstring_i)] = \tweak_i$, and then returns $\tweak_i$.
+    \item[$\underline{\Hash_2}$]: When the adversary queries $\Hash_2$ on inputs $\{\blinding_1,\ldots,\blinding_n \}$,
+      the environment checks if it is in $Q_2$, and if so, returns the corresponding $\auxstring_i$.
+      Otherwise, the environment randomly samples $\auxstring_i$ from its respective domain,
+      sets $Q_2[\{\blinding_1,\ldots,\blinding_n \}] = \auxstring_i$, and then returns $\auxstring_i$.
+  \end{itemize}
+
+$\cdv$ performs all signing oracle queries honestly.
+
+\medskip
+
+\noindent \textit{\underline{Game 1.}}
+The only difference between Game~0 and Game~1 is that in Game~1,
+$\cdv$ performs $\simkeygen_0, \ldots, \simkeygen_{\numrounds-1},
+\simfin$ for participant $\simid \rgets \honest$ with respect to the challenge $\dkgchal$.
+More specifically,
+when performing $\simkeygen_0$,
+$\cdv$ employs $(\{ \share_{\tau,j}^* \}_{j \in \corrupt},\allowbreak\vsscommit_\simid^*) \gets \avss[\Hash_1].\simshare(\lambda,n,t,\simid,\dkgchal)$ for an honest participant $\simid$ sampled from the set of honest participants at random,
+such that Equation~\ref{eq:g2-sim} holds:
+  \begin{equation} \label{eq:g2-sim}
+    \vess.\derivepshare(0, \vsscommit_\simid^*) = \dkgchal
+  \end{equation}
+
+$\cdv$ performs $\simkeygen_1, \simkeygen_2,\simfin$ as in the real protocol.
+However, one consequence of $\cdv$ simulating secret sharing with respect to $\dkgchal$ is that
+$\cdv$ cannot correctly derive each honest players' $\SK_i$, for all $i \in
+\honest$ when performing $\simfin$.
+This however does not impact the ability of $\cdv$ to perfectly
+simulate all honest players, because $\cdv$ is never required to perform
+operations with respect to $\dkgchal$ directly.
+
+If the \AVSS is secret,
+then Game~0 and Game~1 are indistinguishable to $\adv$.
+
+\medskip
+
+\noindent \textit{Reduction to \AVSS (Non-Aggregated) Secrecy.}
+We will construct a reduction $\bdv_1$ which is an adversary against the \AVSS (non-aggregated) secrecy game as defined in Definition~\ref{defn:vss-secrecy},
+such that $\bdv_1$ simulates either Game~0 or Game~1 to $\adv$.
+When the \AVSS hidden bit $b=0$, $\bdv_1$ ends up simulating Game~0;
+when the \AVSS hidden bit $b=1$, $\bdv_1$ ends up simulating Game~1.
+
+$\bdv_1$ is constructed similar to Game~0, with the following exception.
+$\bdv_1$ simply performs $\dkgkeygen_1$ for each honest non-simulated party $i \in \honest, i \neq \simid$.
+However, for the simulated honest party $\tau$,
+instead of following the protocol honestly,
+$\bdv_1$ instead employs the challenge received as input $(\{(j, \share_j)\}_{j \in \corrupt}, \vsscommit) $
+from the \AVSS secrecy experiment.
+In particular, it sets $\vsscommit_\simid \gets \vsscommit$,
+and $(\{(j, \share_{\simid,j} )\}_{j \in \corrupt}\allowbreak\gets (\{(j, \share_j)\}_{j \in \corrupt}$.
+It then follows the remainder of the protocol honestly.
+While it will not be able to derive the honest player's secret keys in $\dkgkeygen_3$,
+this will not have an impact on its ability to correctly simulate.
+
+%\douglas{This reduction is very thin -- too much of a skevtch in my opinion.  You say that the reduction ``queries its \AVSS secrecy oracle'', but in fact there are three oracles it could be querying -- Oget, Orev, Otweak. Which one?  How does it use the other oracles?}
+% CK- this is a reduction to the non-aggregated game, which we can do because
+% the AVSS is an extension of the VSS scheme.
+% In that game,
+
+The simulation of Game~0 by $\bdv_1$ is identical to when $b=0$ in the \AVSS secrecy game.
+Hence, the only distinction between Game~0 and Game~1 is when $b=1$ in the \AVSS secrecy game.
+
+When $\adv$ outputs $b'$ as its guess,
+then $\bdv_1$ outputs $b'$.
+Hence, when $\adv$ distinguishes Game~0 from Game~1,
+$\bdv_1$ wins the \AVSS secrecy game.
+
+
+
+
+\medskip
+
+\noindent \textit{Difference between Game~0 and Game~1.}
+If the \AVSS is secret, then
+the difference between Game~0 and Game~1 is negligible.
+Let $W_1$ be the event that $\adv$ wins in Game~1.
+Then
+\begin{equation} \label{eq:game1-zk}
+  \bigabs{ \Pr[W_1]  - \Pr[W_0] } \leq   \advant{sec}{\avss,\bdv_1}(\lambda)
+\end{equation}
+
+
+\medskip
+
+\begin{figure}[!ht]
+\begin{pchstack}[boxed,center,space=1em]
+\pcvspace
+\procedure[linenumbering]{$\dkgkeygen_2(\party_i, \invecp, \invecb)$} {
+  \pcfor j \in \set{n}, j \neq i \pcdo \\
+  \pcind \pcif \avss[\Hash].\verify(i, \share_{ji}, \vsscommit_j) \neq 1 \\
+  \pcind \textbf{or }\pcif \avss[\Hash].\derivepshare(0, \vsscommit_j) \neq \pk_j \\
+  \pcind \pcind \party_i.\status = \abort \\
+  \pcind \pcind \pcreturn (\party_i, \bot, \fail) \\
+  \party_i \gets \party_i \cup \{ (i, \share_{ji}) \}_{j \in \set{n}} \\
+  %
+  \framebox{$\recoveryset_k = \{(j,\share_{kj}) \}_{k \in \corrupt, j \in \honest}$} \\
+  \framebox{$\secretone_k \gets \avss.\recover[\Hash](t, \recoveryset_k, \vsscommit_k) $} \\
+  \framebox{$\pcreturn \bot\ \pcif \secretone_k = \fail$} \\
+  \framebox{$\blinding_k \gets \enike.\getsharedkey[\Hash](\secretone_k, \commitment_k), \forall\ i \in \corrupt $} \\
+  \framebox{$\pubaggregateset =  \{\vsscommit_j\}_{j \in \set{n}} $} \\
+  \framebox{$\auxstring \gets \{\blinding_j \}_{j \in \set{n}}$} \\
+  \pcreturn (\party_i,\ \bot,\ \accept)
+}
+\end{pchstack}
+    \caption{Game 2: Code movement, highlighting lines moved from $\dkgkeygen_3$ to $\dkgkeygen_2$}
+  \label{fg:zk-g3}
+\end{figure}
+
+\noindent \textit{\underline{Game 2.}}
+The difference between Game~1 and Game~2 is code movement from
+$\finalize$ to $\dkgkeygen_1$,
+as shown in Figure~\ref{fg:zk-g3}.
+Rather than learning corrupted players' blinding factors as input to $\dkgkeygen_3$,
+$\cdv$ instead derives blinding factors for all corrupted parties in $\dkgkeygen_2$,
+(importantly, before it reveals the honest players' blinding factors to $\adv$)
+using the shares from all honest players.
+If $\cdv$ is unable to recover these blinding factors,
+then it returns $\bot$.
+
+However, because $\cdv$ simulates at minimum $t$ honest players (honest majority model),
+it can perform $\avss.\recover$ without the involvement of corrupted parties.
+
+
+\medskip
+
+\noindent \textit{Difference between Game~1 and Game~2.}
+Let $W_2$ be the event that $\adv$ wins in Game~2. Then,
+
+\begin{equation} \label{eq:game3-zk}
+  \bigabs{ \Pr[W_2]} = \bigabs{ \Pr[W_1]  }
+\end{equation}
+
+
+
+
+\medskip
+
+\noindent \textit{\underline{Game 3.}}
+The only difference between Game~3 and Game~2 is that if the adversary queries
+the random oracle $\Hash_1$ with respect to any of the honest parties' blinding values $\{\blinding_i \}_{i \in \honest}$ before the adversary is provided with the witness values $\{ \witness_i\}_{i \in \honest}$ as input to $\dkgkeygen_3$,
+then the game aborts.
+
+If the \ENIKE is session-key unrecoverable,
+the additional advantage to $\adv$ is negligible.
+
+\medskip
+
+\noindent \textit{Reduction to \ENIKE Unrecoverability.}
+We will construct a reduction $\bdv_3$ which is an adversary against the \ENIKE
+unrecoverability game, such that $\bdv_3$ simulates Game~3 to $\adv$.
+
+$\bdv_3$ begins by receiving $(\PK_1,\PK_2)$ in the \ENIKE unrecoverability game.
+It then simulates Game~3 to $\adv$ in exactly the same manner as in Game~2,
+with the following exception.
+$\bdv_3$ simply performs $\dkgkeygen_0$ honestly for each honest party $i \in \honest, i \neq \simid$.
+However, for honest party
+$\simid$, $\bdv_4$ instead simulates the protocol via $\simkeygen$;
+it sets $\PK_\simid \gets \PK_1$ and $\commitment_\simid \gets \PK_2$
+$\bdv_3$ then simulates secret sharing via $\simshare$ with respect to $\PK_\simid$.
+% CK - this is why we need the hop to VSS secrecy
+From Game~1, we know that doing so is indistinguishable to $\adv$.
+$\bdv_3$ then follows the remainder of $\dkgkeygen_1$ as for all the other honest parties.
+
+When simulating $\oraclekg_2$,
+$\bdv_3$ acts honestly for all honest parties $i \in \honest, i \neq \simid$.
+However, for participant $\simid$, $\bdv_4$ does the following.
+Because it does not know the corresponding $\witness_c$ to $\commitment_c$,
+it instead must guess.
+It looks at all of the queries made to $\Hash_1$ that $\adv$ has made up to that point,
+and randomly selects one of the inputs.
+Let this randomly selected input be $\{\blinding_j \}_{j \in \set{n}}^*, \auxstring^*)$.
+
+$\bdv_3$ then picks the simulated party's element $\blinding_\simid \gets \{\blinding_j \}_{j \in \set{n}}^*$,
+and outputs $\sharedkey' = \blinding_\simid$ as its guess for the \ENIKE unrecoverability game.
+%
+If $\adv$ queries $\Hash_1$ with $\blinding_\simid$ before $\bdv_3$ has
+completed $\oraclekg_2$,
+then $\bdv_3$ wins the \ENIKE game with probability $\frac{1}{q}$.
+
+\medskip
+
+\noindent \textit{Difference between Game~2 and Game~3.}
+Let $W_3$ be the event that $\adv$ wins in Game~3.
+The additional ability for $\adv$ to win Game~3 is then bounded by its ability to win the \ENIKE unrecoverability game.
+Hence,
+\begin{equation} \label{eq:game3-secrecy}
+  \bigabs{\Pr[W_3] - \Pr[W_2] } \leq  \advant{unpred}{\enike,\bdv_3}(\lambda) \cdot \frac{1}{q}
+\end{equation}
+
+\medskip
+
+\noindent \textit{\underline{Game 4.}}
+The only difference between Game~3 and Game~4 is that in Game~4,
+$\cdv$ simulates secret sharing for participant $\simid \rgets \honest$ with respect to the challenge $\dkgchal$.
+From Game~1,
+we know that $\cdv$ can do so in such a way that is indistinguishable to $\adv$.
+However, in Game~4,
+it additionally does so in such a way that Equation~\ref{eq:program-tweak} holds after performing $\finalize$.
+\begin{equation} \label{eq:program-tweak}
+  \avsscommit[\Hash_1].\derivepshare(0, \avsscommit) = \dkgchal
+\end{equation}
+
+
+More specifically,
+in $\oraclekg_0$,
+$\cdv$ performs
+\[ (\{ (j, \share_{\simid j}) \}_{j \in \corrupt}, \vsscommit_\simid) \rgets \avss[\Hash_1].\simshare(\lambda, \corrupt, \dkgchal)\,. \]
+It then follows the remainder of $\dkgkeygen_0$ as in Game~3.
+
+Then,
+in $\oraclekg_3$,
+it derives $\tweak'$ as
+$\tweak' \rgets \avss[\Hash_1].\simgettweak(\pubaggregateset, \party_\simid)$.
+It then programs $\Hash_2(\pubaggregateset, \auxstring)$ with $\tweak'$.
+From Game~3, we know that $\cdv$ can derive $\auxstring$ in $\oraclekg_3$,
+but $\adv$ has only negligible probability of doing so.
+
+
+We will see that, if the \AVSS is securely aggregatable,
+then the additional advantage to the adversary in Game~4 is negligible.
+
+\medskip
+
+\noindent \textit{Reduction to \AVSS Aggregated Secrecy.}
+We will construct a reduction $\bdv_4$ which is an adversary against the AVSS aggregated secrecy game,
+such that $\bdv_4$ simulates either Game~3 or Game~4 to $\adv$.
+When the hidden bit $b$ in the AVSS aggregated secrecy game is $b=0$, $\bdv_4$ ends up simulating Game~3;
+when $b=1$,  $\bdv_4$ ends up simulating Game~4.
+
+$\bdv_4$ is constructed similar to Game~3, except as follows.
+When $\adv$ queries $\oraclekg_1$,
+for each honest player $k \in \honest$,
+$\bdv_4$ queries the AVSS oracle $\getshare()$,
+receiving $(\{ \share_j \}_{j \in \honest}, \vsscommit^*)$ in return.
+$\bdv_4$ then uses these outputs to simulate participant $\simid$ for $\oraclekg_1$.
+%
+$\bdv_4$ follows the protocol honestly for all other players,
+and  submits all $(\{ \share_{kj} \}_{j \in \honest}, \vsscommit_k), k \in \set{n} \setminus \simid$
+to the AVSS oracle $\recvshare$.
+
+Then, $\bdv_4$ receives $\auxstring'$,
+and then queries the \AVSS aggregated secrecy oracle $\Ogettweak$ on inputs $(\pubaggregateset, \auxstring')$,
+ receiving $\tweak'$ in return.
+$\bdv_4$ then programs its own $\Hash_1(\pubaggregateset, \auxstring) = \tweak'$.
+From Game~3,
+$\adv$ can query for its output with negligible probability before $\bdv_4$ programs it.
+$\bdv_4$ then follows the remainder of Game~3 as before.
+
+When $\adv$ outputs $b'$,
+then $\bdv_4$ outputs $b'$.
+Hence, when $\adv$ distinguishes Game~3 from Game~4,
+$\bdv_4$ wins the \AVSS aggregated secrecy game.
+
+
+\medskip
+
+\noindent \textit{Difference between Game~3 and Game~4.}
+Let $W_4$ be the event that $\adv$ wins in Game~4.
+The difference between $W_3$ and $W_4$ is bounded by the advantage of $\adv$ in the \AVSS aggregated security game.
+\begin{equation} \label{eq:game4-zk}
+  \bigabs{\Pr[W_4] - \Pr[W_3] } \leq \advant{asec}{\avss, \bdv_4, \simshare}(\lambda)
+\end{equation}
+
+
+\medskip
+
+\noindent \textit{Finishing the Proof.}
+The resulting public key in Game~4 is identical to the challenge $\dkgchal$,
+and hence is identical to the DKG zero-knowledge game when $b=1$.
+The adversary then has at most negligible advantage in winning the DKG zero-knowledge game.
+Concretely, combining the advantage of the adversary in (\ref{eq:game1-zk})-(\ref{eq:game4-zk}) proves Equation~\ref{eq:zk-thm}.
+This concludes the proof.
+\end{proof}
+
