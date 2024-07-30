@@ -1,0 +1,198 @@
+\subsection{Verifiable Secret Sharing} \label{verifiable-tss}
+
+\emph{Verifiable Secret Sharing} (VSS) allows a dealer to share a secret $s$ in such a way that
+participants can ensure that combining their shares allows for recovery of a secret that corresponds to a public commitment to $s$, without learning $s$ in the process.
+%
+%As such, VSS schemes are akin to public-key schemes, and rely on distinct secret and public domains,
+%where both $s$ and participant shares are in the secret domain, and commitments to these shares and $s$ are in the public domain.
+Participants verify that their shares can correctly recover $s$ using this commitment.
+While prior definitions of VSS schemes~\cite{KatzLindell2014} define algorithms to issue and verify shares, and recover the secret,
+we additionally define an algorithm to derive shares in a public domain.
+This notion has been employed implicitly in prior DKGs~\cite{KomloG20}, and we formalize this construct here.
+
+\begin{definition} \label{defn:vss}
+  A \defn{Verifiable Secret Sharing (VSS) scheme} $\vess$ is the tuple
+  $(\Setup, \issueshares, \recover, \verify, \derivepshare)$
+  and parameterized by a one-way map $\vfunc : \secretspace \rightarrow \publicspace$ that maps elements in the secret domain $\secretspace$ to the public domain $\publicspace$,
+  where
+  \begin{itemize}
+    \item $\Setup(1^\secp) \rightarrow \pp$:
+    On input a security parameter $1^\secp$, this algorithm outputs public parameters $\pp$ (which are given implicitly as input to all other algorithms).
+    \item $\IssueShares(\secret, n, t) \rightarrow (\{ (1, \share_1), \ldots, (n, \share_n)\}, \vsscommit)$:
+      A probabilistic algorithm performed by a dealer that accepts as input
+      the secret $\secret \in \secretspace$ from the secret domain $\secretspace$,
+      the number of participants $n$, and the threshold $t$,
+      where $n$ and $t$ are positive integers, and $n \geq t$.
+      Outputs the list of shares $\{ (1, \share_1), \ldots, (n, \share_n) \}$
+      and commitment $\vsscommit$.
+    \item $\verify(i, \share_i, \vsscommit) \rightarrow \zo$:
+      A deterministic algorithm performed by a recipient of a share that accepts
+      an identifier $i$,
+      a share $\share_i$,
+      and a commitment $\vsscommit$.
+      Outputs $1$ if the share is valid with respect to $\vsscommit$, otherwise outputs $0$.
+    \item $\recover(t, \recoveryset) \rightarrow \secret/\fail$:
+      A deterministic algorithm that accepts a recovery set $\recoveryset = \{ (j, \share_j)\}_{j \in C}$,
+      where $C$ is a set of participant identifiers such that $\lvert C \rvert \geq t$.
+      Employ $\recoveryset$ to obtain $s$,
+      or output $\fail$ in the case of failure.
+    \item $\derivepshare(i, \vsscommit) \rightarrow \pshare_i$:
+      A deterministic algorithm that accepts an identifier $i$ and a commitment $\vsscommit$.
+      Outputs a share in the public domain $\pshare_i$ associated with identifier $i$.
+  \end{itemize}
+\end{definition}
+
+For correctness, for all security parameters $\lambda$,
+for all $s \in \secretspace$, and $n, t, C$,
+such that $n \geq t$, $t \geq 1$, $C \subseteq \set{n}$, and $\lvert C \rvert \geq t$,
+the following must hold:
+    \begin{align*}
+      & \vess.\verify(i, \share_i, \vsscommit) = 1 \text{ for all } i \in \set{n},  \text{ and } \\
+      & \vess.\derivepshare(i, \vsscommit) = \vess.\vfunc(\share_i) \text{ for all } i \in \set{n}, \text{ and}  \\
+      & \vess.\recover(t, \recoveryset) = \secret,
+      \text{ where }   \\
+      & \vess.\issueshares(\lambda, \secret, n, t) \rightarrow ( \{ (i, \share_i) \}_{i \in \set{n}}, \vsscommit) \text{ and } \recoveryset = \{ (i, \share_i)\}_{i \in C}
+    \end{align*}
+
+
+\myparagraph{Zero-Indexing.}
+For the purposes of our definitions, we additionally require that a VSS be \emph{zero-indexed}, which we define next.
+
+\begin{definition} \label{defn:zero-vss}
+  A \defn{zero-indexed VSS} is one which satisfies the correctness condition augmented with the following line:
+\begin{equation} \label{eq:zero-index}
+  \vess.\verify(0, s, \vsscommit) = 1  \text{ and } \vess.\derivepshare(0, \vsscommit) = \vess.\vfunc(s)\;.
+\end{equation}
+\end{definition}
+
+A prototypical example of a zero-indexed VSS is Feldman's secret sharing~\cite{Feldman87},
+which itself builds on Shamir secret sharing~\cite{Shamir79}.
+Zero-indexing is important later in our generic construction,
+to demonstrate a relation between the VSS and a NIKE,
+where the secret that is input to the VSS is the secret key output from the
+NIKE key generation algorithm.
+
+We now employ the notion of a zero-indexed VSS to define the security notions of secrecy and uniqueness for VSS schemes,
+building upon prior definitions in the literature~\cite{KatzLindell2014,BonehS2020},
+but formalized in game-based notation.
+
+%\subsubsection{Security.}
+%A VSS threshold secret sharing scheme $\vess$ is secure if for every PPT adversary $\adv$ the
+%following function is negligible:
+%\[
+%\advant{scr}{\adv,\vess}(\lambda) =
+%  \Pr\left[
+%    \begin{array}{l}
+%      \secret' = \secret \\
+%    \end{array}
+%    \ \ :\ \
+%    \begin{array}{l}
+%    (n, t, \corrupt, \advstate) \rgets \adv(\lambda) \\
+%    \lvert \corrupt \rvert < t, \corrupt \subset \set{n} \\
+%    \secret \rgets \secretspace \\
+%    ( \{ (i, \share_i)\}_{i \in \set{n}}, \vsscommit) \rgets \vess.\issueshares(\lambda, \secret, n, t) \\
+%    \secret'\ \rgets \adv(\advstate, \{ (j, \share_j)\}_{j \in \corrupt}, \vsscommit)
+%    \end{array}
+%  \right]
+%\]
+%\ian{You've introduced this new notion of security (and changed the old notion of security to uniqueness), but isn't this new notion automatically implied by secrecy + DLP? If $\vess$ has secrecy, and you're given a DL challenge $\Delta$, use SimShare instead of Share in the above definition (which $\adv$ can't distinguish because of the secrecy property), and output $\adv$'s output $s'$ as your answer to the DL challenge?}
+%\chelsea{The adversary in the secrecy game outputs a bit, not $s'$. So I don't
+%see how it can be used to win the DLP game, except for heuristically.}
+%\chelsea{I introduced this more as a learning reference because the
+%simulation-based notion is hard to compare, but I'll just remove this because
+%it isn't used.}
+
+\begin{figure}[t]
+  \begin{pchstack}[boxed,center,space=1em]
+  \begin{pcvstack}
+    \procedure[linenumbering]{$\SecrecyExp_{\vess, \adv, \simshare}(\lambda,\secret)$}{
+    b \rgets \zo \\
+    (n, t, \corrupt, \advstate) \rgets \adv(\lambda) \\
+    \pcreturn 0\ \pcif t > n \textbf{ or } \corrupt \not\subseteq \set{n} \textbf{ or } \lvert \corrupt \rvert \geq t  \\
+    %
+    \pcif b=0 \\
+    \pcind (\{(j, \share_j)\}_{j \in \set{n}}, \vsscommit) \gets \vess.\issueshares(\lambda, \secret, n, t) \\
+    \pcelse \text{\algcom $b=1$ case} \\
+    \pcind \vsschal \rgets \vess.\vfunc(\secret) \\
+    \pcind (\{(j, \share_j)\}_{j \in \corrupt}, \vsscommit) \rgets \simshare(\vsschal, n, t, \corrupt) \\
+    \pcind \pcfor j \in \corrupt \pcdo \\
+    \pcind \pcind \pcreturn 1\ \pcif \vess.\verify(j, \share_j, \vsscommit) \neq 1 \\
+    \pcind \text{\algcom The simulation must produce $\lvert \corrupt \rvert$ valid shares} \\
+    \pcind \pcreturn 1\ \pcif \vess.\derivepshare(0, \vsscommit) \neq \vsschal  \\
+    \pcind \text{\algcom The commitment must be valid with respect to $\vsschal$} \\
+    b' \rgets \adv(\advstate, \{(j, \share_j)\}_{j \in \corrupt}, \vsscommit) \\
+    \pcreturn 1\ \pcif b' = b \\
+    \pcreturn 0
+  }
+  \end{pcvstack}
+  \end{pchstack}
+  \caption{Secrecy experiment defining the advantage of an adversary $\adv$ against a Verifiable Secret Sharing scheme (VSS) $\vess$ that is zero-indexed.}
+  \label{fg:vss-secrecy}
+\end{figure}
+
+\begin{figure}[!ht]
+  \begin{pchstack}[boxed,center,space=1em]
+  \begin{pcvstack}
+    \procedure[linenumbering]{$\UniquenessExp_{\vess,\adv}(\lambda)$}{
+    (t^*, \recoveryset_1^*, \recoveryset_2^*, \vsscommit^*) \rgets \adv(\lambda) \\
+    \text{\algcom $\adv$ chooses two recovery sets and a commitment} \\
+    \text{\algcom with respect to the same threshold} \\
+    \pcfor (i, \share_i) \in \recoveryset_1^* \pcdo \\
+    \pcind \pcreturn 0\ \pcif \vess.\verify(i, \share_i, \vsscommit^*) \neq 1 \\
+    \pcfor (i', \share_i') \in \recoveryset_2^* \pcdo \\
+    \pcind \pcreturn 0\ \pcif \vess.\verify(i', \share_i', \vsscommit^*) \neq 1 \\
+    \pcreturn 0\ \pcif \vess.\recover(t^*, \recoveryset_1^*) = \fail \vee
+    \vess.\recover(t^*, \recoveryset_2^*) = \fail \\
+    \pcreturn 1\ \pcif \vess.\recover(t^*, \recoveryset_1^*) \neq \vess.\recover(t^*, \recoveryset_2^*) \\
+    \text{\algcom $\adv$ wins if it can generate two different recovery sets for the same} \\
+    \text{\algcom commitment, but which recover distinct secrets} \\
+    \pcreturn 0
+  }
+  \end{pcvstack}
+  \end{pchstack}
+
+  \caption{Uniqueness experiment defining the advantage of an adversary $\adv$ against a Verifiable Secret Sharing scheme (VSS) $\vess$.
+  %An adversary is allowed to play the role of the dealer,
+  %and is required to generate a set of shares such that $\vess.\recover$ outputs two distinct secrets when provided as input two distinct recovery sets but the same commitment.
+  }
+\label{fg:vss-unique}
+\end{figure}
+
+
+
+\myparagraph{Secrecy.}
+A VSS scheme is \emph{secret} if an adversary that is allowed to corrupt up to $t-1$ players has a negligible probability of learning the secret $s$.
+This notion can be also expressed in terms of \emph{simulatability};
+i.e., an environment that can simulate secret sharing for an unknown challenge ensures that the adversary learns no additional information than is known by the environment.
+We formalize this notion in Figure~\ref{fg:vss-secrecy},
+with respect to an algorithm $\simshare$ that is defined in the context of the concrete construction.
+The experiment takes as input any secret $\secret$ from the secret space
+$\secretspace$.
+Importantly, we do not restrict secrets to be sampled uniformly at random; even degenerate cases should hold.
+
+
+The advantage of an adversary $\adv$ against a VSS scheme $\vess$ in the secrecy experiment as defined in Figure~\ref{fg:vss-secrecy} is
+\shortlongeqn{
+  \advant{sec}{\vess,\adv, \simshare}(\lambda) = \max_{\secret \in \secretspace}(\bigabs{\Pr[\SecrecyExp_{\vess,\adv,\simshare}(\lambda, \secret) = 1 ]  - 1/2 } )
+}{.}
+
+\begin{definition} \label{defn:vss-secrecy}
+A VSS scheme $\vess$ is \defn{secret} if
+there exists an algorithm $\simshare$ such that
+for all probabilistic polynomial time adversaries $\adv$,
+$\advant{sec}{\vess,\adv,\simshare}(\lambda)$  is a negligible function of $\lambda$.
+\end{definition}
+
+\myparagraph{Uniqueness.}
+Informally, a VSS scheme $\vess$ that is \emph{unique} is one where the public commitment $\vsscommit$ uniquely determines the output from $\vess.\recover$.
+We formalize this notion in Figure~\ref{fg:vss-unique}.
+
+The advantage of an adversary $\adv$ against $\vess$ in the uniqueness experiment as defined in Figure~\ref{fg:vss-unique} is
+\shortlongeqn{
+  \advant{unq}{\vess,\adv}(\lambda) = \Pr[\UniquenessExp_{\vess,\adv}(\lambda) = 1 ]
+}{.}
+
+\begin{definition}
+A VSS scheme is \defn{unique} if for all probabilistic polynomial time adversaries $\adv$,
+$\advant{unq}{\vess,\adv}(\lambda)$  is a negligible function of $\lambda$.
+\end{definition}

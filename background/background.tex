@@ -192,61 +192,7 @@ Shamir secret sharing $\shamir$ is concrete instance of a threshold secret shari
 \end{itemize}
 \end{definition}
 
-\subsection{Verifiable Secret Sharing} \label{verifiable-tss}
-
-\emph{Verifiable Secret Sharing} (VSS) allows a dealer to share a secret $s$ in such a way that
-participants can ensure that combining their shares allows for recovery of a secret that corresponds to a public commitment to $s$, without learning $s$ in the process.
-%
-%As such, VSS schemes are akin to public-key schemes, and rely on distinct secret and public domains,
-%where both $s$ and participant shares are in the secret domain, and commitments to these shares and $s$ are in the public domain.
-Participants verify that their shares can correctly recover $s$ using this commitment.
-While prior definitions of VSS schemes~\cite{KatzLindell2014} define algorithms to issue and verify shares, and recover the secret,
-we additionally define an algorithm to derive shares in a public domain.
-This notion has been employed implicitly in prior DKGs~\cite{KomloG20}, and we formalize this construct here.
-
-\begin{definition} \label{defn:vss}
-  A \defn{Verifiable Secret Sharing (VSS) scheme} $\vess$ is the tuple
-  $(\Setup, \issueshares, \recover, \verify, \derivepshare)$
-  and parameterized by a one-way map $\vfunc : \secretspace \rightarrow \publicspace$ that maps elements in the secret domain $\secretspace$ to the public domain $\publicspace$,
-  where
-  \begin{itemize}
-    \item $\Setup(1^\secp) \rightarrow \pp$:
-    On input a security parameter $1^\secp$, this algorithm outputs public parameters $\pp$ (which are given implicitly as input to all other algorithms).
-    \item $\IssueShares(\secret, n, t) \rightarrow (\{ (1, \share_1), \ldots, (n, \share_n)\}, \vsscommit)$:
-      A probabilistic algorithm performed by a dealer that accepts as input
-      the secret $\secret \in \secretspace$ from the secret domain $\secretspace$,
-      the number of participants $n$, and the threshold $t$,
-      where $n$ and $t$ are positive integers, and $n \geq t$.
-      Outputs the list of shares $\{ (1, \share_1), \ldots, (n, \share_n) \}$
-      and commitment $\vsscommit$.
-    \item $\verify(i, \share_i, \vsscommit) \rightarrow \zo$:
-      A deterministic algorithm performed by a recipient of a share that accepts
-      an identifier $i$,
-      a share $\share_i$,
-      and a commitment $\vsscommit$.
-      Outputs $1$ if the share is valid with respect to $\vsscommit$, otherwise outputs $0$.
-    \item $\recover(t, \recoveryset) \rightarrow \secret/\fail$:
-      A deterministic algorithm that accepts a recovery set $\recoveryset = \{ (j, \share_j)\}_{j \in C}$,
-      where $C$ is a set of participant identifiers such that $\lvert C \rvert \geq t$.
-      Employ $\recoveryset$ to obtain $s$,
-      or output $\fail$ in the case of failure.
-    \item $\derivepshare(i, \vsscommit) \rightarrow \pshare_i$:
-      A deterministic algorithm that accepts an identifier $i$ and a commitment $\vsscommit$.
-      Outputs a share in the public domain $\pshare_i$ associated with identifier $i$.
-  \end{itemize}
-\end{definition}
-
-For correctness, for all security parameters $\lambda$,
-for all $s \in \secretspace$, and $n, t, C$,
-such that $n \geq t$, $t \geq 1$, $C \subseteq \set{n}$, and $\lvert C \rvert \geq t$,
-the following must hold:
-    \begin{align*}
-      & \vess.\verify(i, \share_i, \vsscommit) = 1 \text{ for all } i \in \set{n},  \text{ and } \\
-      & \vess.\derivepshare(i, \vsscommit) = \vess.\vfunc(\share_i) \text{ for all } i \in \set{n}, \text{ and}  \\
-      & \vess.\recover(t, \recoveryset) = \secret,
-      \text{ where }   \\
-      & \vess.\issueshares(\lambda, \secret, n, t) \rightarrow ( \{ (i, \share_i) \}_{i \in \set{n}}, \vsscommit) \text{ and } \recoveryset = \{ (i, \share_i)\}_{i \in C}
-    \end{align*}
+\include{vss}
 
 \subsubsection{Feldman's VSS}
 \label{feldman-vss}
