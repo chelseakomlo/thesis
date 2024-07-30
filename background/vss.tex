@@ -55,7 +55,7 @@ the following must hold:
     \end{align*}
 
 
-\myparagraph{Zero-Indexing.}
+\paragraph{Zero-Indexing.}
 For the purposes of our definitions, we additionally require that a VSS be \emph{zero-indexed}, which we define next.
 
 \begin{definition} \label{defn:zero-vss}
@@ -160,7 +160,7 @@ but formalized in game-based notation.
 
 
 
-\myparagraph{Secrecy.}
+\paragraph{Secrecy.}
 A VSS scheme is \emph{secret} if an adversary that is allowed to corrupt up to $t-1$ players has a negligible probability of learning the secret $s$.
 This notion can be also expressed in terms of \emph{simulatability};
 i.e., an environment that can simulate secret sharing for an unknown challenge ensures that the adversary learns no additional information than is known by the environment.
@@ -172,9 +172,9 @@ Importantly, we do not restrict secrets to be sampled uniformly at random; even 
 
 
 The advantage of an adversary $\adv$ against a VSS scheme $\vess$ in the secrecy experiment as defined in Figure~\ref{fg:vss-secrecy} is
-\shortlongeqn{
+\[
   \advant{sec}{\vess,\adv, \simshare}(\lambda) = \max_{\secret \in \secretspace}(\bigabs{\Pr[\SecrecyExp_{\vess,\adv,\simshare}(\lambda, \secret) = 1 ]  - 1/2 } )
-}{.}
+\]
 
 \begin{definition} \label{defn:vss-secrecy}
 A VSS scheme $\vess$ is \defn{secret} if
@@ -183,14 +183,14 @@ for all probabilistic polynomial time adversaries $\adv$,
 $\advant{sec}{\vess,\adv,\simshare}(\lambda)$  is a negligible function of $\lambda$.
 \end{definition}
 
-\myparagraph{Uniqueness.}
+\paragraph{Uniqueness.}
 Informally, a VSS scheme $\vess$ that is \emph{unique} is one where the public commitment $\vsscommit$ uniquely determines the output from $\vess.\recover$.
 We formalize this notion in Figure~\ref{fg:vss-unique}.
 
 The advantage of an adversary $\adv$ against $\vess$ in the uniqueness experiment as defined in Figure~\ref{fg:vss-unique} is
-\shortlongeqn{
+\[
   \advant{unq}{\vess,\adv}(\lambda) = \Pr[\UniquenessExp_{\vess,\adv}(\lambda) = 1 ]
-}{.}
+\]
 
 \begin{definition}
 A VSS scheme is \defn{unique} if for all probabilistic polynomial time adversaries $\adv$,
