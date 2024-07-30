@@ -1,0 +1,101 @@
+\subsection{Aggregatable Verifiable Secret Sharing (\AVSS)}
+\label{asym-vss}
+
+We now augment the notion of a verifiable secret sharing scheme as presented in Definition~\ref{defn:vss}
+to define an \emph{aggregatable} verifiable secret sharing scheme (\AVSS) $\avss$.
+The ability to aggregate Feldman VSS has been demonstrated before~\cite{GurkanJMMST21},
+and is employed implicitly in nearly every DKG that has been defined in the literature~\cite{Pedersen91,GennaroJK02,Groth21,Lindell22}
+but we formalize the notion of an \AVSS more generally.
+%
+
+An \AVSS builds upon a base VSS scheme,
+and is defined with respect to the same map $\vfunc : \secretspace \rightarrow \publicspace$ as the base VSS that maps elements in the secret space $\secretspace$ to the public space $\publicspace$.
+%It is also defined with respect to a random oracle $\Hash$, and
+%Additionally,
+%an \AVSS is defined with respect to a map $\avfunc : (\secretspace)^n \rightarrow \secretspace$,
+%that maps a tuple of $n$ elements in the secret space to a single element in the secret space.
+an auxiliary distribution
+$\auxdistr$ that has guessing entropy linear to the security parameter $\lambda$.
+
+\begin{definition} \label{defn:avss}
+  An \defn{Aggregatable Verifiable Secret Sharing (\AVSS) scheme} $\avss$ is the tuple $(\issueshares, \recover, \verify, \derivepshare, \aggregatepriv, \aggregatepub, \gettweak)$,
+   where \\ $\issueshares,\recover,\verify,\derivepshare$ are identical to the base VSS scheme as in Definition~\ref{defn:vss},
+   %\ian{So to be clear, that means none of those functions can use $\Hash$, right? It then seems confusing to write things like $\avss[\Hash].\derivepshare$ later?}
+   % CK- I don't think this is implied. The inputs/outputs of these algorithms
+   % are the same, but that doesn't entail that they don't have access to the
+   % hash function that the AVSS is paramaterized by.
+   and where
+  \begin{itemize}
+    \item $\gettweak(\pubaggregateset, \auxstring) \rightarrow \tweak$:
+      A deterministic algorithm that accepts as input
+      a public aggregation set $\pubaggregateset$ consisting of $\total$ VSS commitments $\{ \vsscommit_1, \ldots, \vsscommit_\total \}$,
+      and an auxiliary string $\auxstring$ drawn from $\auxdistr$.
+      Output a tweak $\tweak \in \secretspace$.
+
+    \item $\aggregatepriv(\privaggregateset, \tweak) \rightarrow \ashare_i$:
+      A deterministic algorithm that accepts as input
+      a private aggregation set $\privaggregateset $ consisting of $\total$ shares $ \{ \share_{ji} \}_{j \in \set{\total}}$,
+      and a tweak $\tweak$.
+      Output the aggregated share $\ashare_i$.
+
+    \item $\aggregatepub(\pubaggregateset, \tweak) \rightarrow \avsscommit$:
+      A deterministic algorithm that accepts as input
+      a public aggregation set $\pubaggregateset$ consisting of $\total$ VSS commitments $\{ \vsscommit_1, \ldots, \vsscommit_\total \}$,
+      and a tweak $\tweak$.
+      Output the aggregated commitment $\avsscommit$.
+  \end{itemize}
+\end{definition}
+
+\noindent
+Similarly to the VSS setting, we require that the \AVSS be zero-indexed.
+
+\medskip
+
+\paragraph{Aggregation Correctness.}
+An \AVSS must fulfill the notion of correctness for a VSS scheme.
+In addition,
+an \AVSS must fulfill the notion of correctness when the scheme is aggregatable;
+i.e., that for all $n, t, \total,C$, where
+$n,t,\total \in \N$, $C \subseteq \set{n}$, and $\lvert C \rvert \geq t$,
+\[
+  \Pr\bigl[\AgVSSCorrectnessExp_{\avss}(\lambda,n,t,C,\total) = 1 \bigr] = 1
+\]
+where $\AgVSSCorrectnessExp_{\avss}(\lambda,n,t,C,\total)$ is presented in Figure~\ref{fg:avss-correctness}.
+
+
+\begin{figure}[t]
+  \begin{pchstack}[boxed,center,space=1em]
+  \procedure[linenumbering]{$\AgVSSCorrectnessExp_{\avss}(\lambda,n, t,C, \total)$}{
+      \pcreturn 0\ \pcif t \geq n \vee C \not\subseteq \set{n} \vee \lvert C \rvert < t \\
+      \auxstring \rgets \avss.\auxdistr  \\
+      \pcfor j \in \set{\total} \pcdo \\
+      \pcind s_j \rgets \secretspace;\
+      (\{(i,\share_{ji})\}_{i \in \set{n}} , \vsscommit_j) \gets \avss.\issueshares(\lambda, s_j, n, t) \\
+      \tweak \gets \avss.\gettweak(\{ \vsscommit_j \}_{j \in \set{\total}}, \auxstring) \\
+      \pcfor i \in \set{n} \pcdo \\
+      \pcind \ashare_i \gets \avss.\aggregatepriv(\{ \share_{ji}  \}_{j \in \set{\total}}, \{ \vsscommit_j \}_{j \in \set{\total}},\tweak) \\
+      \avsscommit \gets \avss.\aggregatepub(\{ \vsscommit_j \}_{j \in \set{\total}}, \tweak) \\
+      %
+      \pcfor i \in \set{n} \pcdo \\
+      \pcind \pcreturn 0\ \pcif \avss.\verify(i, \ashare_i, \avsscommit) \neq 1 \\
+      %
+      \aggsk \gets \avss.\recover(t,  \{ (k, \ashare_k) \}_{k \in C}) \\
+      \pcreturn 0\ \pcif \avss.\verify(0, \aggsk, \avsscommit) \neq 1 \\
+      \text{\algcom This check assumes the \AVSS is zero-indexed} \\
+      \pcreturn 1
+  }
+\end{pchstack}
+  \caption{Notion of correctness for an \AVSS.}
+  \label{fg:avss-correctness}
+\end{figure}
+
+
+
+An \AVSS must satisfy
+aggregated secrecy
+and uniqueness,
+as discussed next.
+
+
+
+
