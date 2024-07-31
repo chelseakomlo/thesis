@@ -1,0 +1,209 @@
+\subsection{Deterministic Threshold Signature Schemes}
+
+We begin with the definition of a deterministic threshold signature scheme,
+and then define the notion of unforgeability.
+We build upon standard definitions and notions of unforgeability for threshold signatures in the literature~\cite{CritesKM23,GennaroJKR01,GennaroRJK07,GennaroG19}.
+
+Intuitively, our definition for deterministic threshold signature schemes is
+identical to that of randomized threshold signature schemes,
+with the exception that in the deterministic setting,
+the signing algorithms are deterministic and the signer does not maintain state between rounds.
+Furthermore,
+each signing round in the deterministic setting is given as input the message $m$,
+coalition of signers $\coalition$,
+and secret signing key share $\sk_i$.
+
+\begin{definition}[Deterministic Threshold Signatures]
+  A \defn{deterministic threshold signature scheme} $\dthreshsig$ with an interactive signing protocol consisting of $\numrounds$ rounds is a tuple of PPT algorithms
+$\threshsig = (\setup, \keygen, \allowbreak (\sign_1, \ldots, \sign_\numrounds), \allowbreak \combine, \allowbreak \verify)$, defined as follows:
+
+
+\begin{itemize}
+
+  \item $\setup(1^\lambda) \rightarrow \pp$: Accepts as input a security
+parameter $\lambda$ and outputs public parameters $\pp$,
+which are then implicitly given as input to all other algorithms.
+
+  \item $\keygen(n,\thresh,\minsigners) \rightarrow (\pkgroup, \{ \pk_i, \sk_i\}_{i \in \set{n}})$:
+A probabilistic algorithm that takes as input the total number of possible signers $n$,
+the corruption threshold $\thresh$,
+and the minimum number of participating signers $\minsigners$.
+Outputs the public key $\pkgroup$ representing the set of $n$ signers,
+the set $\{ \pk_i, \sk_i \}_{i \in \set{n}}$ of public and secret key shares for each signer.
+%It is assumed that participant $i$ is sent its respective share $\sk_i$ privately.
+%\ian{Nowhere in the paper do we use the $\pk_i$. Do we want to keep them?}
+%\chelsea{it is fairly standard at this point to include them...}
+
+  \item $(\sign_1, \ldots, \sign_\numrounds) \rightarrow \{\tsigmsg_1, \ldots \tsigmsg_\numrounds\}_{i \in \coalition}$:
+A set of deterministic algorithms where each algorithm represents a single stage in an interactive signing protocol
+performed by signing party $\partyid \in \set{n}$ in a signing set $\coalition \subseteq \set{n},
+|\coalition| \geq \minsigners$ with respect to a message $\msg$, defined as follows:
+
+% Ian compressed this to remove unnecessary whitespace; the original is
+% below.
+    \(\tsigmsg_1 \gets \sign_1(\partyid, \sk_\partyid, \msg, \coalition),
+    \quad \ldots, \quad
+    \tsigmsg_\numrounds \gets \sign_\numrounds(\partyid, \sk_\partyid,
+    \msg, \coalition, \{\tsigmsgin_{\numrounds-1}\}_{i \in
+    \coalition})\)
+
+%  \begin{align*}
+%    \tsigmsg_1 &\gets \sign_1(\partyid, \sk_\partyid, \msg, \coalition)  \\
+%    %\tsigmsg_2 &\gets \sign_2(\partyid, \sk_\partyid, \msg, \coalition, \{\tsigmsgin_1\}_{i \in \coalition}) \\
+%    \vdots \\
+%    \tsigmsg_\numrounds &\gets \sign_\numrounds(\partyid, \sk_\partyid, \msg, \coalition, \{\tsigmsgin_{\numrounds-1}\}_{i \in \coalition})
+%  \end{align*}
+where $\tsigmsg_1, \ldots, \tsigmsg_\numrounds$ are protocol messages produced by party $\partyid \in \coalition$.
+
+  \item $\combine(\pkgroup, \msg, \coalition, \{(\tsigmsgin_1, \ldots, \tsigmsgin_\numrounds) \}_{i \in \coalition}) \rightarrow \sigma$:
+  A deterministic algorithm that takes as input the public key $\pk$, the message
+    $\msg$, the set of signers $\coalition$, and the set of protocol messages
+  sent by each party during the $\sign_1, \ldots, \sign_\numrounds$ signing stages, and outputs a joint signature $\sigma$.
+
+  \item $\verify(\pkgroup, \msg, \sigma) \rightarrow 0/1$:
+A deterministic algorithm that takes as input the public key $\pkgroup$,
+a message $\msg$,
+and signature $\sigma$ and outputs $1$ to indicate accept if the signature verifies;
+otherwise, it outputs $0$ to indicate reject.
+\end{itemize}
+\end{definition}
+
+\begin{remark}[Distributed key generation]\label{rmk:dkg}
+  Our definition assumes a centralized key generation algorithm $\KeyGen$ to
+  generate the public key $\pkgroup$ and public key shares $\{ \pk_i, \sk_i \}_{i \in \set{n}}$.
+  However, our scheme and proofs can be adapted to use a fully decentralized distributed key generation protocol (DKG).
+\end{remark}
+
+\begin{remark}[Deferring the Choice of Coalition to Later Rounds.]
+  Our definition likewise assumes that the coalition of signers $\coalition$ is provided in the first round of signing $\Sign_1$.
+  However, some constructions (as is the case with \glitter) may defer the choice of $\coalition$ to later rounds.
+\end{remark}
+
+\paragraph{Correctness.} A deterministic threshold signature scheme $\dthreshsig$ is \emph{correct} if for all security parameters $\lambda$,
+all allowable $1 \leq \thresh \leq \minsigners \leq n$,
+all $\coalition \subseteq \set{n}$ such that $\minsigners \leq | \coalition | \leq n$,
+and for all messages $m \in \{0,1\}^*$,
+the following relation holds:
+
+  \begin{align*}
+    \dthreshsig.\verify(\pkgroup, \msg, \sigma) = 1, \text{ for } \\
+    (\pkgroup, \{ \pk_i, \sk_i \}_{i \in \set{n}}) \rgets \dthreshsig.\keygen(n, \thresh,\minsigners),
+    \text{ where}\\
+    \tsigmsg_{1} \gets \dthreshsig.\sign_1(\partyid, \sk_\partyid, \msg, \coalition),
+    \ldots,
+    \tsigmsg_{\numrounds } \gets \dthreshsig.\sign_\numrounds(\partyid, \sk_\partyid, \msg, \coalition, \{\tsigmsgin_{\numrounds-1} \}_{i \in \coalition}), \text{ and} \\
+    \sigma \gets \dthreshsig.\combine(\pkgroup, \msg, \coalition, \{ \tsigmsgin_{1}, \ldots, \tsigmsgin_{\numrounds } \}_{i \in \coalition})
+  \end{align*}
+
+\begin{figure}[t]
+  \centering
+	%\begin{linedgamespec}
+	\begin{pchstack}[boxed]
+		\begin{pcvstack}
+		\procedure{ $\UnforgExp_{\adv,\dthreshsig}(\lambda, n, t,\minsigners)$ }{
+			\pp \leftarrow \dthreshsig.\setup(1^\lambda) \\
+      Q \gets \emptyset \pccomment{set of queried messages} \\
+      (\corrupt, \advstate) \rgets \adv(\pp, n, t, \minsigners) \\
+      \pcif \lvert \corrupt \rvert \geq t \\
+      \pcind \pcreturn \bot \\
+      \honest \gets \set{n} \setminus \corrupt \\
+      (\pkgroup, \{ \pk_i, \sk_i \}_{i=1}^n) \rgets \dthreshsig.\keygen(n,\thresh,\minsigners) \\
+      \mathsf{in} \gets (\pk, \{ \pk_i \}_{i =1}^n,  \{\sk_j \}_{j \in \corrupt},  \advstate)  \\
+      (\msg^*, \sigma^*) \rgets \adv^{\BigO^{\tiny{\Sign_i, i \in \set{\numrounds}}}}(\mathsf{in}) \\
+      \pcif \msg^* \notin Q \wedge \dthreshsig.\verify(\pkgroup, \msg^*, \sigma^*) = 1\\
+      \pcind \pcreturn 1 \\
+			\pcreturn 0
+		}
+   		\pcvspace
+		\end{pcvstack}
+    		\pchspace
+		\begin{pcvstack}
+			\procedure{ $\BigO^{\Sign_1}(\partyid, \msg, \coalition)$ }{
+        \pccomment{$\partyid$ denotes the participant identifier} \\
+				\tsigmsg_1 \gets \dthreshsig.\Sign_1(\partyid, \sk_\partyid, \msg, \coalition) \\
+        \pcreturn \tsigmsg_1
+			}
+        \vdots
+      \procedure{ $\BigO^{\Sign_j}(\partyid, \msg, \coalition, \{\tsigmsgin_{j-1} \}_{i \in \coalition})$ }{
+        \text{ \algcom for $j \in \{ 2, \ldots, \numrounds-1\}$} \\
+				\tsigmsg_j \gets \dthreshsig.\Sign_i(\partyid, \sk_\partyid, \msg, \coalition, \{\tsigmsgin_{j-1} \}_{i \in \coalition}) \\
+        \pcreturn \tsigmsg_j
+			}
+        \vdots
+        \procedure{$\BigO^{\Sign_\numrounds}(\partyid, \msg, \coalition, \{\tsigmsgin_{\numrounds-1} \}_{i \in \coalition})$}{
+				Q \gets Q \cup \{\msg\} \\
+        \tsigmsg_\numrounds \gets \dthreshsig.\Sign_\numrounds(\partyid, \sk_\partyid, \msg, \coalition, \{ \tsigmsgin_{\numrounds-1} \}_{i \in \coalition}) \\
+        \pcreturn \tsigmsg_\numrounds
+		}
+		\end{pcvstack}
+	\end{pchstack}
+	%\end{linedgamespec}
+\caption{Unforgeability game for a deterministic threshold signature scheme $\dthreshsig$ with a $\numrounds$-round signing protocol.
+  The game assumes a static adversary that picks the players it corrupts at the beginning of the game.
+  The public parameters $\pp$ are implicitly given as input to all algorithms,
+  and $\tsigmsg_1, \ldots, \tsigmsg_\numrounds$ represent protocol messages
+  sent by participant $\partyid$ throughout the interactive signing protocol.
+  }
+\label{fig:euf-cma-threshold}
+\end{figure}
+%
+
+
+
+
+
+
+\subsubsection{Unforgeability}
+%
+We present a game-based definition of unforgeability for a deterministic threshold signature scheme in Figure~\ref{fig:euf-cma-threshold}.
+This notion of unforgeability is analogous to the standard notion of chosen message attack (EUF-CMA) for standard signature schemes~\cite{GoldwasserMR88}.
+We present the adversary as a static adversary,
+which is allowed to corrupt at most $\thresh-1$ signers.
+%
+The static unforgeability game for a deterministic threshold signature scheme is nearly identical to that of a randomized scheme,
+with the exception that the environment does not maintain state between invocations of signing oracles by the adversary,
+and the adversary provides as input the message $\msg$ and coalition of signers $\coalition$ (of its choosing) for each call to a signing oracle.
+
+In the static unforgeability game for a deterministic threshold signature scheme,
+the environment allows the adversary to sample the corrupt parties $\corrupt \subset \set{n}$.
+If the set of corrupt parties is less than the corruption threshold $t$,
+it derives the set of honest parties $\honest \subseteq \set{n}$ as the remaining parties in $\set{n}$.
+The environment then runs $\keygen$ to derive the joint public key $\pkgroup$ representing the set of $n$ signers,
+the set of public key shares $\{ \pk_i \}_{i \in \set{n}}$,
+and the secret key shares $ \{ \sk_i \}_{i \in \set{n}}$.
+The adversary is then run on input $n, t, \minsigners, \pp, \pkgroup$, $\{ \pk_i \}_{i \in \set{n}}$,
+and the corrupt signing key shares $ \{ \sk_j \}_{j \in \corrupt}$.
+%
+The adversary can then query any honest signers $k \in \honest$ of its choosing at each step in the signing protocol,
+%by querying oracles $\BigO^{\Sign_1}, \ldots, \BigO^{\Sign_\numrounds}$,
+and has full power over choosing the set of signers $\coalition$ and the message $\msg$.
+Additionally, the adversary may query the signing round oracles in arbitrary order.
+%in particular that unlike for randomized stateful signature schemes,
+%This gives substantially more power to the adversary than in the randomized stateful case.
+%\chelsea{this is also possible in the randomized steting.}
+However,
+unlike in the randomized setting,
+the environment for a deterministic threshold signature scheme does not maintain any session identifiers,
+or state about ongoing signing sessions.
+%
+The adversary wins if it can produce a valid forgery $\sigma^*$ with
+respect to the joint public key $\pkgroup$ on a message $\msg^*$ that has not been queried to $\oracle^{\sign_\numrounds}$ (i.e., in the final round of signing).
+%
+Importantly, this definition allows the adversary to be \emph{rushing},
+meaning it can wait to produce its outputs after having seen the honest outputs first.
+The adversary may also be \emph{concurrent},
+meaning it can open simultaneous signing sessions at once,
+or choose not to complete a signing session.
+
+\begin{definition}[Unforgeability]
+Let the advantage of a static adversary $\adv$ playing the unforgeability game against a deterministic threshold signature scheme $\dthreshsig$ as defined in Figure~\ref{fig:euf-cma-threshold} be as follows:
+
+\[
+  \advant{uf}{\adv, \dthreshsig}(\lambda, n, \thresh,\minsigners) = \bigabs{\Pr[ \UnforgExp_{\adv,\dthreshsig}(\lambda,n,t,\minsigners)= 1]}
+\]
+%
+A deterministic threshold signature scheme $\dthreshsig$ is \emph{unforgeable} if for all PPT adversaries $\adv$,
+$\advant{uf}{\adv, \dthreshsig}(\lambda, n, t,\minsigners) $ is negligible
+in $\lambda$,
+for all allowable $n, t,\minsigners \in \mathbb{N}$.
+\end{definition}
