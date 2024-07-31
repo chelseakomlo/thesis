@@ -1,0 +1,107 @@
+\section{Preliminaries}
+
+We now define additional preliminaries used specifically in this chapter.
+
+
+
+\begin{figure}[t]
+\begin{pcvstack}[boxed,center,space=1em]
+    \centering
+    \procedure{Algorithm $\genfork^\cdv(X)$  \fbox{$\modgenfork^\cdv(X)$}}{
+    \text{Sample coins $\rho$ for $\cdv$ at random.} \\
+    h_1, \ldots, h_\forkhashes  \rgets H \\
+    (j, \auxstring) \rgets \cdv\bigl(X, (h_1, \ldots, h_\forkhashes); \rho\bigr) \\
+    \pcreturn \bot\ \pcif j = \bot \\
+    h_j', \ldots, h_\forkhashes' \rgets H \\
+    (j', \auxstring') \rgets \cdv\bigl(X,  (h_1, \ldots, h_{j-1}, h_j', \ldots, h_\forkhashes'); \rho\bigr) \\
+    \pcreturn \bot\ \pcif j' = \bot \\
+    \pcreturn \bot\ \pcif j \neq j'  \\
+    \fbox{\parbox{25em}{%
+    $\text{\algcom Fail if any outputs sampled from $H$ collide} $ \\
+    $\pcif (h_1, \ldots, h_\forkhashes , h_j', \ldots, h_\forkhashes')$ contains a repeated element  \\
+    $\pcind \pcreturn \bot$
+    }} \\
+    \pcreturn (h_j, h_j', \auxstring, \auxstring')
+  }
+\end{pcvstack}
+    \caption{
+    The general forking algorithm $\genfork^\cdv(X)$ and the modified general forking algorithm $\modgenfork^\cdv(X)$,
+    defined with respect to an algorithm $\cdv$ and instance $X$.
+    The difference between the general forking algorithm and modified variant is shown in a box, for emphasis.
+    In summary,
+    the modified general forking algorithm aborts if \emph{any} of the $(h_1, \ldots, h_\forkhashes, h_j', \ldots, h_\forkhashes')$ collide.
+    }
+    \label{fg:gen-fork-mod}
+\end{figure}
+
+
+
+
+\subsection{General Forking Lemma}
+\label{mod-fork}
+
+
+
+We review the general forking lemma by Bellare and Neven~\cite{BellareN06}, which itself is a formalization of the forking lemma  introduced by Pointcheval and Stern~\cite{PointchevalS96}.
+We show the general forking algorithm in Figure~\ref{fg:gen-fork-mod}.
+
+
+
+
+\begin{lemma}[General Forking Lemma~\cite{BellareN06}] \label{lem:forking-lemma}
+Let $H$ be a finite set and $\forkhashes \geq 1$ be an integer.
+Let $\IG$ be a randomized instance generator and let $X \rgets \IG$ be an instance.
+Let $\cdv$ be a randomized algorithm that takes as input $X$,
+quantities $h_1,\ldots,h_\forkhashes \in H$,
+and a random tape $\rho$.
+Let $\accept(\cdv)$ be the probability that $\cdv$ outputs an accepting answer, namely
+\[
+%\accept(\cdv) \deq \Pr_{X \rgets \IG, \{h_1, \ldots, h_q \} \rgets H} \bigl[ (j, \auxstring) \rgets \cdv(X, \{h_1, \ldots, h_q \}; \rho)\ : j \neq \bot \bigr].
+\accept(\cdv) \deq
+        \Pr\left[ j \neq \bot \ :\  \
+               \begin{array}{c}
+                               X \rgets \IG, \ \
+                               h_1, \ldots, h_\forkhashes  \rgets H  \\
+                               (j, \auxstring) \rgets \cdv\bigl(X, (h_1, \ldots, h_\forkhashes); \rho\bigr)
+                \end{array}
+            \right].
+\]
+Let $\genfork^\cdv(X)$ be the general forking algorithm defined in Figure~\ref{fg:gen-fork-mod} and let
+\[
+\accept(\genfork^\cdv) \deq
+        \Pr\left[ \alpha \neq \bot \ :\  \   X \rgets \IG,\ \ \alpha \rgets \genfork^\cdv(X)  \right].
+\]
+Then,  $\accept(\genfork^\cdv)$ is bounded by
+\[
+    \accept(\genfork^\cdv)  \geq \accept(\cdv) \cdot \left(\frac{\accept(\cdv) }{\forkhashes} -\frac{1}{\abs{H}} \right).
+\]
+\end{lemma}
+
+
+\subsubsection{A modified forking lemma.}
+\label{sec:modified-forking}
+We will employ a slight modification of the forking experiment,
+and give a corollary on how it impacts the accepting probability of its output.
+
+The modification to the forking experiment is natural;
+intuitively,
+we add an additional abort condition if any of the values $h_1, \ldots, h_\forkhashes, h_j', \ldots, h_\forkhashes'$ collide.
+Because there are at most $2\forkhashes$ values, and they are all sampled uniformly at random from the set $H$,
+the probability that any of them collide is at most $2\forkhashes^2/\abs{H}$.
+By considering this case here,
+we can be sure that such collisions are considered in our proof of security for \glitter.
+
+\begin{corollary} \label{cor:modified-fork}
+    Let $\modgenfork^\cdv$ be the forking experiment in Figure~\ref{fg:gen-fork-mod}.
+    Then using the notation of Lemma~\ref{lem:forking-lemma} we have
+    \begin{align} \label{eq:bound-mod-fork}
+    \begin{split}
+        \accept(\modgenfork^\cdv) & \geq \accept(\genfork^\cdv) - \Pr[\badhashevent]   \\
+        & \geq \accept(\genfork^\cdv) - 2\forkhashes^2/\lvert H \rvert
+    \end{split}
+    \end{align}
+    Where $\badhashevent$ denotes the event that $\modgenfork^\cdv$ returns $\bot$ due to the boxed lines in Figure~\ref{fg:gen-fork-mod}.
+\end{corollary}
+
+
+
