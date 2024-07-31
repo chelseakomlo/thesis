@@ -1,0 +1,883 @@
+\section{Security of \glitter}
+\label{app:arctic-proofs}
+
+We next demonstrate the unforgeability of \glitter,
+via Theorem~\ref{thm:unforgeability}.
+
+\begin{theorem}\label{thm:unforgeability}
+	\glitter is unforgeable against a PPT adversary $\adv$ playing the static unforgeability game as shown in Figure~\ref{fig:euf-cma-threshold} against \glitter,
+  assuming $\adv$ can make up to $\tcor$ corruptions,
+  the number of honest parties is at least $t$,
+  the discrete logarithm assumption holds in the ROM,
+  participants exchange messages over an authenticated channel,
+  \DVRFOne is a secure VPSS,
+  and where $(n, t) \in \mathbb{N}$  are such that ${n-1\choose t-1} = \text{poly}(n)$.
+
+  Concretely, let $\advant{dl}{\ddv}(\lambda) $ be the advantage of an adversary $\ddv$ against the discrete logarithm assumption.
+  The advantage of $\adv$ is bounded by
+
+
+  \begin{equation*} \label{eq:glitter-adv}
+    \advant{uf}{\adv,\glitterm}(\lambda, n, t, \minsigners) \leq
+    \sqrt{ \rototal \advant{dl}{\ddv}(\lambda)
+    + \frac{2(\honetotal + \qchal)}{q}
+    + \frac{3\rototal^2}{q}
+    }
+  \end{equation*}
+
+where $\minsigners \geq 2t-1$ and $n \geq \minsigners$,
+and where $\rototal = \htwototal +\qchal + 2\numsignq + 1$,
+such that $\numsignq$ is the number of times $\adv$ is allowed to query the signing oracles,
+$\honetotal$ is the number of times $\adv$ is allowed to query $\HashOne$,
+$\htwototal$ is the number of times that $\adv$ is allowed to query $\HashThree$,
+and $\qchal$ is the number of times $\adv$ is allowed to query $\HashTwo$.
+\end{theorem}
+
+To prove Theorem~\ref{thm:unforgeability},
+we rely on two lemmas.
+
+
+\begin{lemma} \label{lem:simulation}
+There exists an algorithm $\SIM$ which can simulate \glitter with respect to a discrete logarithm challenge to an adversary $\adv$
+playing against the unforgeability game as in Figure~\ref{fig:euf-cma-threshold}.
+In other words,
+$\adv$ has negligible additional advantage in winning the unforgeability game when
+interacting with $\SIM$ that it does when playing against \glitter directly.
+
+Concretely, in the honest majority setting with authenticated channels, then
+  %\chelsea{That condition is super weird and it is an artifact of SIM. I don't think it is necessary to condition like that.}
+\begin{align} \label{eq:simulation}
+  \begin{split}
+    \advant{uf}{\glitterm, \adv}(\lambda, n, t, \minsigners)  & \leq
+       % \advant{uf}{\SIM, \adv}(\lambda, n, t, \minsigners) + \Pr[\BadEvent] \\
+       % & \leq
+        \advant{uf}{\SIM, \adv}(\lambda, n, t, \minsigners) +
+        \frac{(\honetotal + \qchal)}{q}
+        + \frac{\rototal^2}{2q}
+  \end{split}
+\end{align}
+where $\minsigners \geq 2t-1$ and $n \geq \minsigners$,
+and where $(n, t)$  are such that ${n-1\choose t-1} = \text{poly}(n)$.
+\end{lemma}
+
+
+\begin{lemma} \label{lem:reduction}
+Given any PPT adversary $\adv$ that wins the unforgeability game against \glitter
+and a simulating algorithm $\SIM$ which can simulate \glitter,
+then there exists a PPT DL adversary $\ddv$ that can use $\adv$ as a subroutine to solve for its DL challenge.
+
+Concretely, in the honest majority setting with authenticated channels,
+    \begin{align} \label{eq:ddv-dl}
+    \begin{split}
+        \advant{dl}{\ddv}(\lambda) & \geq
+        \frac{\advant{uf}{\adv,\glitterm}(\lambda, n, t, \minsigners)^2}{\rototal}
+        - \frac{2(\honetotal + \qchal)}{q}
+        - \frac{3\rototal^2}{q}
+    \end{split}
+    \end{align}
+where $\minsigners \geq 2t-1$ and $n \geq \minsigners$,
+and $\rototal = \htwototal + \qchal + 2\numsignq + 1$,
+and where $(n, t) \in \mathbb{N}$  are such that ${n-1\choose t-1} = \text{poly}(n)$.
+\end{lemma}
+
+
+\paragraph{\bf Proof Intuition.}
+We give the proof in two parts.
+First, Lemma~\ref{lem:simulation} shows that a simulating PPT algorithm $\SIM$ exists which can simulate \glitter to an unforgeability PPT adversary $\adv$ with respect to a public key  $\pkgroup$ for which $\SIM$ does not know the corresponding secret key.
+Recall that we give the unforgeability game in Figure~\ref{fig:euf-cma-threshold}.
+We show that the advantage of $\adv$ with respect to $\SIM$ is negligibly different than its advantage against \glitter.
+
+We prove Lemma~\ref{lem:simulation} using a series of game hops,
+showing that because \DVRFOne is verifiable, unique, and pseudorandom,
+then $\SIM$ can simulate a signing session for a message $\msg$ chosen by $\adv$  with respect to $\pkgroup$.
+in a way that is indistinguishable to $\adv$ from a real execution of the signing protocol.
+$\SIM$ does this by sampling $(z,c)$ uniformly at random in $\oracle^{\sign_1}$,
+deriving $R$ as $R = g^z \cdot \pkgroup^{-c}$,
+and then programming $\HashTwo(R,\pkgroup,\msg)$ on $c$.
+Then,
+to simulate each honest party's commitment $R_i, i \in \honest$,
+$\SIM$ uses its knowledge of corrupt parties' \DVRFOne keys $\skrand_j, j \in \corrupt$ to derive corrupt parties' nonces and commitments,
+by performing $(r_j, R_j) \gets \DVRFOnem.\generate(j, \skrand_j, y)$.
+$\SIM$ can then correctly derive each honest party's commitment $R_\partyid, \partyid \in \honest$ by performing polynomial interpolation in the exponent,
+with respect to $R$ and the set $(R_j)_{j \in \corrupt }$.
+
+Because \DVRFOne is verifiable,
+if $\adv$ submits commitments $(R_j')_{j \in \coalition \cap \corrupt} \ne (R_j)_{j \in \coalition \cap \corrupt}$
+to $\oracle^{\sign_2}$,
+$\SIM$ will output $\bot$ with the same probability as in the real scheme.
+Because \DVRFOne is unique,
+then $R$ is fixed with respect to $y \gets \HashThree(\pkgroup, \msg)$,
+regardless of $\adv$'s choice of coalition in the second round.
+Finally,
+because \DVRFOne is pseudorandom,
+then unless $\adv$ can guess $\targetshinekey$,
+where $\targetshinekey$ is an honest party's portion of the replicated secret defined in $\DVRFOnem.\keygen$,
+then $\SIM$ can simulate each honest party's $R_i, i \in \honest$ with negligible advantage to $\adv$.
+We show that in order for $\adv$ to break the pseudorandomness of \DVRFOne,
+it must guess a preimage of $\HashOne$,
+which it can do with negligible advantage less than $\honetotal/q$,
+where $\honetotal$ is the number of queries $\adv$ is allowed to make to $\HashOne$.
+
+If $\adv$ wins the unforgeability experiment against \glitter,
+$\adv$ will output a forgery $\sigma^* = (R^*, z^*)$ corresponding to a message $m^*$ that is valid under a challenge public key $\pkgroup$.
+Lemma~\ref{lem:reduction} shows that given a successful PPT adversary $\adv$,
+a PPT reduction $\ddv$ exists against the Discrete Logarithm assumption.
+In particular, we show that $\ddv$ can use $\adv$ and $\SIM$ to solve for its discrete logarithm challenge.
+$\ddv$ accepts a group element $\dlchal \in \GG$ from its discrete logarithm
+challenger,
+and its goal is to output $\dlsol$ such that $\dlchal = g^{\dlsol}$.
+It uses the modified forking algorithm $\modgenfork^\SIM(X)$ shown in Figure~\ref{fg:gen-fork-mod}
+on the instance $X = (\pp, \dlchal, n, t, \minsigners)$,
+where $n, t, \minsigners$ are chosen by $\ddv$.
+$\modgenfork$ runs $\SIM$ twice,
+the first time on $X$ and the set $\{ h_1, \ldots, h_{\rototal} \}$,
+which is the set of random oracle outputs that $\SIM$ will use to program its random oracle.
+On the second execution of $\SIM$,
+$\SIM$ is again given $X$ and the set $\{ h_1, \ldots, h_{j-1}, h_{j}', \ldots,  h_{\rototal}'\}$,
+where $h_j$ corresponds to the challenge $c^* = H(R^*, \pk, m^*)$ for the forgery $\sigma^*$ output by $\adv$ in its first execution.
+Corollary~\ref{cor:modified-fork} lower-bounds the probability that $\adv$ will output a second forgery $\sigma^{**} = (R^*, z^{**})$ on the same random oracle query
+$c^{**} = H(R^*, \pk, m^*)$ as in its first iteration,
+where the programmed outputs $c^* = h_j, c^{**} = h_j'$ are such that $c^* \neq c^{**}$.
+$\ddv$ can use the two forgeries output by $\adv$ in its first and second execution to then solve for the discrete logarithm solution $\dlsol =
+\frac{z^* - z^{**}}{c^* - c^{**}}$.
+
+
+%\begin{remark}[Use of $\DVRFOne$]
+%We emphasize that we are not claiming that \glitter can be used with \emph{any} DCVRF in place of \DVRFOne; \glitter relies on the particular structure of \DVRFOne, for example, that $\DVRFOnem.\combinepub$ combines commitments using Lagrange interpolation in the exponent (Equation~\ref{eq:combine-proof}).
+%\end{remark}
+%\ian{Is this the \emph{only} particular structure we rely on?  If there were another DCVRF that (a) was correct and secure, and (b) combined commitments in exactly this way, would it automatically work in \glitter?}
+%\chelsea{I don't think we need to add this remark, we say this explicitly in the figure and throughout the description...}
+
+
+\begin{proof}[Of Lemma~\ref{lem:simulation}]
+  We prove Lemma~\ref{lem:simulation} by a sequence of games.
+
+  \paragraph{Game 0.}
+  This is the unforgeability game as defined in Figure~\ref{fig:euf-cma-threshold},
+  instantiated with \glitter.
+  Let $\adv$ be an adversary playing against the unforgeability game.
+
+  Let $W_0$ be the event that $\adv$ wins Game~0.
+  Then, the advantage of $\adv$ is simply
+
+  \begin{equation} \label{eq:game0}
+    \advant{uf}{\glitterm, \adv}(\lambda) = \Pr[W_0]
+  \end{equation}
+
+  \paragraph{Game 1.}
+  The only difference between Game~0 and Game~1 is as follows.
+  If $\adv$ queries $\HashThree$ or $\HashTwo$ on any input that produces a colliding output with another query,
+  then the environment aborts.
+  %\ian{It's actually fine if $\Hash_1$ has collisions, and we in fact \emph{don't} want to rule that out, since there are potentially exponentially many calls to $\Hash_1$ and the probability of a collision is actually pretty high, so ruling them out would give an exponentially high extra advantage to the adversary.}
+  %\chelsea{This is incorrect with how SIM is written and I'm not willing to re-write the proof. Changing it back to how it was.}
+
+
+  \paragraph{Difference between Game~1 and Game~0.}
+  Let $W_1$ be the event that $\adv$ wins Game~1.
+  Because we model $\HashThree$ and $\HashTwo$ as random oracles,
+  then
+
+  \begin{equation} \label{eq:game1}
+    \lvert \Pr[W_1] - \Pr[W_0] \rvert \leq \frac{\rototal^2}{2q}
+  \end{equation}
+
+  %\ian{As discussed, the tighter bound of $\frac{\rototal^2}{2q}$ is actually true. So what you wrote is also true, but we could make the result slightly tighter.}
+  %\chelsea{No. I'm not willing to change SIM at this point, and as written, this is incorrect. please don't change this.}
+
+
+  \paragraph{\underline{Game~2.}}
+  The only difference between Game~2 and Game~1 is as follows.
+  If $\adv$  queries $\oracle^{\sign_2}$ on
+  an input $(\partyid, \msg, \coalition, S_1)$
+  where $S_1 = (y_i, R_{i} )_{i \in \coalition}$,
+  such that the following relation holds:
+
+  \begin{align} \label{eq:game-coll-ver-arctic}
+    \begin{split}
+      y \gets \HashThree(\pkgroup, \msg);\ & y=y_i, i \in \coalition, \text{ and } \\
+      & \lvert \coalition \cap \honest \rvert \geq t, \\
+      \DVRFOnem.\generate(i, \skrand_i, y) & = (r_i', R_i') \quad \forall i \in \coalition  \text{ and} \\
+      \DVRFOnem.\verify(t, \minparticipants, \coalition, (R_{j} )_{j \in \coalition}) &= 1, \text{ but} \\
+      S_1 \neq & (y_i, R_i')_{i \in \coalition} \\
+    \end{split}
+  \end{align}
+
+  then the environment aborts.
+
+%\ian{Somewhere in this reduction there needs to be a mention of honest majority and possibly authenticated channels, no?  Otherwise the adversary can trivially cause the above abort, and indeed trivially break the verifiability game?}
+%\chelsea{I say this as an assumption in the theorem statement, I'm not sure what adding game hops would add.}
+
+  \paragraph{Reduction to Verifiability of \DVRFOne.}
+  We now define a reduction $\bdv_2$ that uses $\adv$ as a subroutine when it plays against the verifiability game of \DVRFOne.
+
+  To begin,
+  $\bdv_2$ receives as input from the VPSS verifiability game as shown in Figure~\ref{fig:dcvrf-verif} the set of  \DVRFOne secret keys $(\skrand_i)_{i \in \corrupt}$.
+  It honestly follows the protocol to generate signing key material,
+  and then sets $\skparty_i \gets (\skrand_i, \sksign_i, \pkgroup)$ for all $i \in \corrupt$.
+  It then outputs to the adversary $\adv$ the key material
+  $(\pkgroup, (\pkparty_j)_{j \in \set{n}}, \allowbreak (\skparty_i)_{i \in \corrupt})$.
+
+  To simulate signing,
+  when $\adv$ queries $\oracle^{\sign_1}$ on input $(\partyid, \msg)$,
+  $\bdv_2$ derives $y \gets \HashThree(\pkgroup, \msg)$ honestly.
+  $\bdv_2$ then queries its own VPSS verifiability oracle $\oracle^{\generate}$ on $(\partyid, y)$
+  receiving $(\vrfprivout_\partyid, \vrfpubout_\partyid)$ as the output.
+  It sets  $R_\partyid = \vrfpubout_\partyid$,
+  and outputs $(y, R_\partyid)$.
+
+  When $\adv$ queries $\oracle^{\sign_2}$ on input
+  $(\partyid, \msg, \coalition, (y_j, R_j')_{j \in \coalition})$,
+  $\bdv_2$ first performs $\DVRFOnem.\verify$ on the inputs,
+  outputting $\bot$ if the input is invalid.
+  Otherwise,
+  $\bdv_2$ then derives $y \gets \HashThree(\pkgroup, \msg)$ honestly.
+
+  $\bdv_2$ then derives each corrupted party's nonce and commitment honestly,
+  by performing
+  $(r_i', R_i') \gets \DVRFOnem.\generate(i, \skrand_i, y)$, for $i \in \corrupt \cap \coalition$.
+  If any $(R_i \neq R_i')$, for $i \in \corrupt \cap \coalition$,
+  then $\bdv_2$ terminates the execution of $\adv$.
+  $\bdv_2$ then submits
+  $(y, \coalition, (R_i)_{i \in \corrupt \cap \coalition})$
+  as its own output to the VPSS verifiability experiment.
+
+  Otherwise,
+  $\bdv_2$ simply simulates by querying $\oracle^{\generate}$ for each honest party $\honest \cap \coalition$ on input $y$,
+  to re-derive $(r_j, R_j)$  for $j \in \honest \cap \coalition$ .
+  $\bdv_2$ then follows the remainder of the protocol honestly,
+  outputting its signature share $z_\partyid$.
+
+  The simulation by $\bdv_2$ is perfect because the simulation by the VPSS oracle  $\oracle^{\generate}$ is perfect.
+  Further, the early termination of $\adv$ has no consequence on the indistinguishability of the simulation.
+
+  \paragraph{Difference between Game~2 and Game~1.}
+  The additional advantage to $\adv$ in Game~2 is upper-bounded by the
+  advantage that $\bdv_2$ wins its VPSS verifiability game against $\DVRFOnem$.
+  Let $W_2$ be the event that $\adv$ wins in Game~2,
+  and let $\advant{verf}{\bdv_2, \DVRFOnem}$ be the advantage that $\bdv_2$ has in the verifiability experiment against $\DVRFOnem$.
+  Because $\DVRFOnem$ is information-theoretically verifiable in the honest majority setting,
+  and \glitter likewise assumes an honest majority
+  then
+
+  \begin{equation} \label{eq:game2}
+  \lvert \Pr[W_2] - \Pr[W_1] \rvert \leq  \advant{verf}{\bdv_2, \DVRFOnem} = 0
+  \end{equation}
+
+
+  \paragraph{\underline{Game~3.}}
+  The only difference between Game~2 and Game~3 is as follows.
+  If $\adv$ queries $\oracle^{\sign_2}$ on  the inputs
+  $(\msg, \coalition, S)$ and
+  $(\msg, \coalition', S')$
+  such that
+  $S = (y, R_i)_{i \in \coalition}$ and
+  $S' = (y, R_i')_{i \in \coalition'}$ and
+  $(\coalition, S) \neq (\coalition', S')$,
+  but the following relation holds:
+
+  \begin{align} \label{eq:game-2-rel}
+    \begin{split}
+      y \gets \HashThree(\pk,m) \\
+      (r_j, R_j) \gets \DVRFOnem.\generate(j, \skrand_j, y), j \in \honest \cap (\coalition \cup \coalition') \\
+      \lvert \coalition \cap \honest \rvert \geq t, \quad \lvert \coalition' \cap \honest \rvert \geq t \\
+      \DVRFOnem.\verify(t, \minparticipants, \coalition, (R_i)_{i \in \coalition} ) = 1,
+      \DVRFOnem.\verify(t, \minparticipants, \coalition', (R_i')_{i \in \coalition}) = 1, \text{ but} \\
+      \DVRFOnem.\combinepub(t, \minparticipants, \coalition, (R_i)_{i \in \coalition}) \neq
+      \DVRFOnem.\combinepub(t, \minparticipants, \coalition', (R_i')_{i \in \coalition'})
+    \end{split}
+  \end{align}
+
+  %\chelsea{The combine step is implied by the verify step, so I guess we don't really need it as an additional check.}
+
+  %\ian{I'm not seeing the role of this game at all.  Where does SIM in Game 4 go wrong if you don't do this check?}
+  %\chelsea{If there is a hash collision then it would store entries incorrectly
+  %between sessions. Because hash collisions are not possible, this event is not
+  %possbile, but we need to show even if they are, then uniqueness prevents this
+  %bad case.}
+
+
+  then the environment aborts.
+
+
+  \paragraph{Reduction to Uniqueness of \DVRFOne.}
+  We now define a reduction $\bdv_3$ that uses $\adv$ as a subroutine when it plays against the uniqueness game of \DVRFOne.
+
+  To begin,
+  $\bdv_3$ receives as input from the VPSS uniqueness experiment the set of \DVRFOne secret keys $(\skrand_i)_{i \in \corrupt}$.
+  $\bdv_3$ then generates a table $Q$ to maintain queries by $\adv$ to $\oracle^{\sign_2}$.
+  It honestly follows the protocol to generate signing key material,
+  and then sets $\skparty_i \gets (\skrand_i, \sksign_i, \pkgroup)$ for all $i \in \corrupt$.
+  It then outputs to the adversary $\adv$ the key material
+  $(\pkgroup, (\pkparty_j)_{j \in \set{n}}, (\skparty_i)_{i \in \corrupt})$.
+
+  To simulate signing,
+  when $\adv$ queries $\oracle^{\sign_1}$ on input $(\partyid, \msg)$,
+  $\bdv_3$ first derives $y \gets \HashThree(\pkgroup, \msg)$ honestly.
+  It then queries its own VPSS uniqueness oracle $\oracle^{\generate}$ on the input $(\partyid, y)$,
+  receiving $(\vrfprivout_\partyid, \vrfpubout_\partyid)$ as the output.
+  It sets $R_\partyid = \vrfpubout_\partyid$,
+  and then outputs $(y, R_\partyid)$.
+
+  When $\adv$ queries $\oracle^{\sign_2}$ on input $(\partyid, \msg, \coalition, (y_j, R_j)_{j \in \coalition})$,
+  $\bdv_3$ again derives $y \gets \HashThree(\pkgroup, \msg)$ honestly.
+  After checking that $y=y_i$ for each $i$ and that $k \in \coalition$,
+  it then updates $Q$ to be $Q \gets Q \cup \{ (\msg, \coalition, y, \{ R_j\}_{j \in \coalition}) \}$.
+  $\bdv_3$ then checks $Q$ to see if any two entries
+  $(\msg, \coalition, y, \{ R_j\}_{j \in \coalition})$, $(\msg, \coalition', y, \{ R_j'\}_{j \in \coalition'})$
+  exist such that Equation~\ref{eq:game-2-rel} holds.
+
+  If the check succeeds,
+  then $\bdv_3$ terminates the execution of $\adv$.
+  $\bdv_3$ then outputs
+  $(y, (\coalition, (R_j)_{j \in \coalition \cap \corrupt}), \allowbreak (\coalition', (R_j')_{j \in \coalition' \cap \corrupt}))$
+  as its own output to the VPSS uniqueness game.
+
+  If the check fails,
+  then $\bdv_3$ again queries its own VPSS uniqueness oracle $\oracle^{\generate}$ on the input $(\partyid, y)$,
+  receiving $(\vrfprivout_\partyid, \vrfpubout_\partyid)$ as the output.
+  $\bdv_3$ then sets $r_\partyid = \vrfprivout_\partyid$  and $R_\partyid = \vrfpubout_\partyid$.
+  It follows the rest of the protocol honestly.
+
+  The simulation by $\bdv_3$ is perfect because the simulation by the VPSS oracle $\oracle^{\generate}$ is perfect.
+  Further, the early termination of $\adv$ has no consequence on the indistinguishability of the simulation.
+
+
+  \paragraph{Difference between Game~3 and Game~2.}
+  The additional advantage to $\adv$ in Game~2 is upper-bounded by the advantage that $\bdv_3$ wins its VPSS uniqueness game against $\DVRFOnem$.
+  Let $W_3$ be the event that $\adv$ wins in Game~3,
+  and let $\advant{unq}{\bdv_3, \DVRFOnem}$ be the advantage that $\bdv_3$ has in the verifiability experiment against $\DVRFOnem$.
+  Because $\DVRFOnem$ is information-theoretically unique in the honest majority setting with authenticated channels,
+  then
+
+  \begin{equation} \label{eq:game3}
+    \lvert \Pr[W_3] - \Pr[W_2] \rvert \leq  \advant{unq}{\bdv_3, \DVRFOnem} = 0
+  \end{equation}
+
+
+
+  \paragraph{\underline{Game~4.}}
+  The only differences between Game~4 and Game~3 are as follows.
+  On initialization, the environment initializes a table $Q \gets \emptyset$.
+
+  Let $\skrand_\corrupt = \cup_{i \in \corrupt} \skrand_i$,
+  and let $\skrand_\honest = \cup_{j \in \honest} \skrand_j$.
+  Let $\targetshinekey$ be such that $(\cdot, \targetshinekey) \in
+  \skrand_\honest \setminus \skrand_\corrupt$.
+  If $\adv$ queries $\HashOne$ on $\targetshinekey$,
+  then the environment aborts.
+
+
+  Otherwise, when $\adv$ queries $\oracle^{\sign_1}$ on party $\partyid \in \honest$ and message $\msg$,
+  instead of producing each party's nonce using \DVRFOne,
+  the environment first derives $y \gets \HashThree(\pkgroup, \msg)$ honestly.
+  It then checks if  $Q[y] \neq \bot$ ;
+  if so,
+  it parses $(r_i, R_i)_{i \in \honest} \gets Q[y]$,
+  and returns $(y, R_k)$.
+  Otherwise,
+  it does the following:
+  \begin{enumerate}
+    \item Sample $r \rgets \Zq$.
+    \item Use the algorithm $\SIMEval$ as defined by \DVRFOne in Figure~\ref{fig:simeval-shine} to generate
+      $(R, \{ (r_i, R_i)\}_{i \in \honest} ) \gets \SIMEval(y, r, \allowbreak \corrupt, n,  \{\skrand_i\}_{i \in \corrupt})$.
+    \item Set $Q[y] = (r_i, R_i)_{i \in \honest}$.
+    \item Return $(y, R_\partyid)$.
+  \end{enumerate}
+
+  When $\adv$ queries $\oracle^{\sign_2}$ on party $\partyid \in \honest$,
+  message $\msg$, coalition $\coalition$, and set of commitments $(R_i)_{i \in \coalition}$,
+  the environment first derives $y \gets \HashThree(\pkgroup, \msg)$ honestly.
+  It then checks if  $Q[y] = \bot$ ;
+  if so,
+  it returns $\bot$.
+  Otherwise,
+  it parses $(r_i, R_i)_{i \in \honest} \gets Q[y]$.
+  It follows the protocol honestly to derive $z_k$,
+  and outputs $z_k$.
+
+%\ian{The next bit (``Reduction to Pseudorandomness of $\DVRFOnem$'') is just a slightly different proof of Theorem 3, which seems unnecessary.  That entire bit and the ``Difference between Game 4 and Game 3'' bit can just be replaced with something like the following, which is a small variant of the previous ``Difference between Game 4 and Game 3'' bit:}
+%
+%  \paragraph{Difference between Game~4 and Game~3.}
+%  The difference between Game~4 and Game~3 is exactly the difference between the $b=1$ and $b=0$ cases in the pseudorandomness game for $\DVRFOnem$ (Figure~\ref{fig:dcvrf-pseudo}).
+%  Therefore, as in Theorem~\ref{thm:dcvrf-pseudo}, Game~4 will abort with probability at most $\qchal/q$ if $\adv$ queries $\HashOne$ on $\targetshinekey$, and otherwise, the simulation is perfect.
+%
+%  Therefore, if $W_4$ is the event that $\adv$ wins in Game~4,
+%  then
+%
+%  \begin{equation} \label{eq:game4}
+%    \lvert \Pr[W_4] - \Pr[W_3] \rvert \leq \frac{\qchal}{q}
+%  \end{equation}
+%
+%\ian{What do you think of that?}
+
+  \paragraph{Reduction to Pseudorandomness of $\DVRFOnem$.}
+  We now define a reduction $\bdv_4$ that uses $\adv$ as a subroutine when it plays against the pseudorandomness game of $\DVRFOnem$.
+  We assume without loss of generality that $\rvert \corrupt \rvert = t-1$.
+
+  On initialization,
+  $\bdv_4$ receives as input from the VPSS pseudorandomness experiment the set of \DVRFOne secret keys
+  $(\skrand_i)_{i \in \corrupt}$.
+  It honestly follows the protocol to generate signing key material,
+  and then sets $\skparty_i \gets (\skrand_i, \sksign_i, \pkgroup)$ for all $i \in \corrupt$.
+  It then outputs to the adversary $\adv$ the key material
+  $(\pkgroup, (\pkparty_j)_{j \in \set{n}}, \allowbreak (\skparty_i)_{i \in \corrupt})$.
+
+   When $\adv$ queries $\HashOne$ on inputs $(\phi_i, y)$,
+  $\bdv_4$ does the following:
+  \begin{enumerate}
+    \item Sets $\partyid$ be the identifier of an honest party.  Note that all of
+    $\skrand_k$ is known to $\bdv_4$ except the entry $(a_i, \targetshinekey)$ where $a_i = \corrupt$.
+    %\item Defines $a_i$ to be the set of participant identifiers $a_i = \corrupt \cup \{ \partyid\}$, where $\partyid \in \honest$.
+    \item Queries $\oracle^{\generate}$ on input $(\partyid, y)$,
+      receiving in return $(\vrfprivout_\partyid, \vrfpubout_\partyid)$.
+    %\item Queries $\oracle^{\generate}$ on honest party $\partyid$ and $y$,
+    %  receives $(\vrfprivout_\partyid, \vrfpubout_\partyid)$.
+    %\item Let $\skrand_\honest = \cup_{i \in \honest} \skrand_i$
+    %  and $\skrand_\corrupt = \cup_{j \in \corrupt} \skrand_j$.
+    %\item Let $\phi_i$ be such that $\phi_i \in \skrand_\honest$ but $\phi_i \not\in \skrand_\corrupt$.
+    \item Checks if the following relation holds:
+
+   \begin{equation}
+     \HashOne(\phi_i, y) \iseq \vrfprivout_\partyid -
+     \frac{ \sum_{(a_\ell, \share_\ell) \in \skrand_k, \ell \not= i} \HashOne(\phi_\ell, y) \cdot \cramerpoly_{a_\ell}(\partyid)}{ \cramerpoly_{a_{i}}(\partyid)}
+   \end{equation}
+
+      where $\cramerpoly_{a_\ell}(x)$ and $\cramerpoly_{a_i}(x)$ are defined in Equation~\ref{eq:cramerpoly}.
+
+    \item If the relation holds,
+      then $\bdv_4$ outputs $0$.
+
+%    \ian{I'm totally not seeing what this step is doing.  If the above relation holds, then $\bdv$ is almost certainly in the ``real'' game, and can just return 0.}
+%      then $\bdv_4$ can trivially detect if it is in the real or random game.
+%      It does so by performing these steps:
+%      \begin{enumerate}
+%        \item Querying its VPSS pseudorandomness oracle again $\oracle^{\generate}$ on
+%      honest identifier $\partyid \in \honest$,
+%      coalition $\coalition$ where $\coalition = \corrupt \cup \{ \partyid\}$,
+%      and random input $\vrfin$,
+%        \item It receives as output the tuple $(\vrfprivout_\partyid, \vrfpubout_\partyid)$.
+%        \item It defines $L_i(j)$ to be the Lagrange polynomial for the set $\corrupt \cup \{ 0\}$.
+%        \item It then checks if
+%
+%      \[
+%        \vrfprivout_\partyid \iseq \vrfin \cdot L_{0}(i) \sum_{j \in \corrupt} \vrfprivout_j  \cdot L_{j}(i) \
+%      \]
+%        \item If the relation holds,
+%      $\bdv_4$ outputs 0,
+%      \end{enumerate}
+
+  \end{enumerate}
+
+
+  Otherwise, when $\adv$ queries $\oracle^{\sign_1}$ on input $(\partyid, \msg)$,
+  $\bdv_4$ first derives $y \gets \HashThree(\pkgroup, \msg)$ honestly.
+  It then queries its VPSS pseudorandomness oracle $\oracle^{\generate}$ on input $(\partyid, y)$,
+  receiving in return $(\vrfprivout_\partyid, \vrfpubout_\partyid)$.
+  It sets $r_\partyid = \vrfprivout_\partyid $ and
+  $R_\partyid = \vrfpubout_\partyid$.
+  $\bdv_4$ then outputs $(y, R_\partyid)$.
+
+  When $\adv$ queries $\oracle^{\sign_2}$ on input
+  $(\partyid, \msg, \coalition, \{ (y_i, R_i) \}_{i \in \coalition})$,
+  $\bdv_4$ does the following:
+  \begin{enumerate}
+    \item Checks if $\lvert \coalition \cap \corrupt \rvert < t$,
+    if the check does not hold, $\bdv_4$ aborts.
+    \item Otherwise, $\bdv_4$ derives $y \gets \HashThree(\pkgroup, \msg)$ honestly.
+    \item It then checks that $y = y_i$ for all $i \in \coalition$,
+    and that $\partyid \in \coalition$.
+    If any check fails, $\bdv_4$ outputs $\bot$.
+    \item It then queries
+    its VPSS pseudorandomness oracle $\oracle^{\generate}$ again on input $(\partyid, y)$,
+    re-obtaining $(\vrfprivout_\partyid, \vrfpubout_\partyid)$.
+    \item It then follows the remainder of the protocol honestly,
+    deriving $z_\partyid = r_\partyid + c \cdot \sksign_\partyid$.
+    \item $\bdv_4$ then outputs $z_\partyid$ as its output.
+  \end{enumerate}
+
+%
+  Finally, when $\adv$ terminates,
+  $\bdv_4$ outputs $1$.
+
+  \paragraph{Difference between Game~4 and Game~3.}
+  Because we assume $\lvert \corrupt \rvert < t$,
+  $\bdv_4$ will abort with zero probability.
+  The additional advantage to $\adv$ in Game~4 is thus upper-bounded by the advantage that $\bdv_4$ wins its VPSS pseudorandomness game against $\DVRFOnem$.
+  In particular, when the pseudorandomness game bit $b=0$,
+  then $\bdv_4$'s simulation is identical to that of Game~3.
+  and if $b=1$, then it is identical to Game~4.
+  %\ian{I don't see this at all.  When $b=0$, $\bdv_3$ outputs $\DVRFOnem.\generate(...)$, while Game~3 outputs the thing from Eqn~\ref{eq:rel-game-4}. Whereas when $b=1$, $\bdv_3$ outputs $\SIMEval(...)$, which is actually (or could be made to be) more identical to Eqn~\ref{eq:rel-game-4}.}
+  %\chelsea{Sorry, that was a typo, it should have said game 2.}
+  %Hence,
+  %any additional advantage to $\adv$ in Game~3 is upper bounded to when $b=1$ in the VPSS pseudorandomness game.
+
+  Let $W_4$ be the event that $\adv$ wins in Game~4,
+  and let $\advant{psdr}{\bdv_4, \DVRFOnem}$ be the advantage that $\bdv_4$ wins the pseudorandomness experiment against $\DVRFOnem$.
+  Then
+
+  \begin{equation} \label{eq:game4}
+    \lvert \Pr[W_4] - \Pr[W_3] \rvert \leq  \advant{psdr}{\bdv_4, \DVRFOnem} \leq  \frac{\honetotal}{q}
+  \end{equation}
+
+  where $\honetotal$ is the number of times $\adv$ is allowed to query $\HashOne$.
+
+
+  \paragraph{\underline{Game~5.}}
+  We now describe a simulating algorithm $\SIM$ that simulates \glitter to  $\adv$,
+  with respect to a challenge group element $\dlchal \in \GG$ for which $\SIM$ does not know the corresponding discrete logarithm.
+
+  \medskip
+
+  \paragraph{Setup.}
+  $\SIM$ accepts as input an instance $X$,
+  which is a tuple consisting of public parameters $(\GG, q, p)$,
+  a discrete logarithm (DL) challenge $\dlchal \in \GG$,
+  and the total number of parties $n$, the corruption threshold $t$, and the minimum number of signing parties $\minsigners$.
+  In addition,
+  $\SIM$ accepts as input a set of $\rototal = \htwototal + \qchal + 2\numsignq + 1$
+  hash values $\{ h_1, \ldots, h_{\rototal}\}$.
+
+
+  Next, $\SIM$ initializes the following values:
+  \begin{itemize}
+    \item Initializes the table $\QQueries \gets \emptyset$ to maintain signatures it issued for honest participants during its simulation,
+      and the table $\QMsg \gets \emptyset$ to maintain the set of messages queried by $\adv$ to $\oracle^{\sign_2}$.
+    \item Initializes the tables $\QOne, \QThree, \QTwo \gets \emptyset^3$ to manage random oracle queries and responses.
+    \item Initializes the table $\QFour \gets \emptyset$ to manage state between signing queries.
+    \item Initializes the counter $\rocounter \gets 1$ to track issued random oracle outputs.
+  \end{itemize}
+
+  $\SIM$ then runs $\adv(\pp, n, t, \minsigners)$.
+  $\adv$ outputs the set of corrupted parties $\corrupt $ such that $\lvert  \corrupt \rvert \leq t-1$,
+  as well as its internal state $\state_A$.
+  $\SIM$ sets $\honest \gets [n]~\backslash~\corrupt$ and must reveal the secret keys of the corrupted parties to $\adv$,
+  which it does in the next step.
+
+  \medskip
+
+
+  \noindent\textit{Simulating KeyGen.}
+    To simulate key generation where $\SIM$ is the trusted dealer,
+    $\SIM$ does the following:
+    \begin{enumerate}
+    \item It sets $\pkgroup = \dlchal$.
+    \item To simulate key generation for the signing keys,
+    $\SIM$ first picks $t-1$ secret key shares for the corrupt parties $(\sksign_i)_{i \in \corrupt} \rgets \Zq$,
+    and defines their corresponding public keys $\pksign_i \gets g^{\sksign_i}$ for all $i \in \corrupt$.
+    \item $\SIM$ then derives the public key shares $\pksign_j, j \in \honest$ for the remaining honest parties in the exponent, as follows:
+  \begin{align} \label{eq:keygen-sim}
+    \pksign_j = (\pksign)^{L_0(j)} \cdot \prod_{i \in \corrupt} g^{\sksign_i L_i(j)}
+	\end{align}
+        where $L_i(x)$ is the $i\supth$ Lagrange polynomial defined by $\corrupt \cup \{0\}$.
+      \item To simulate key generation for the randomness keys,
+  $\SIM$ simply performs key generation honestly,
+  deriving $(\skrand_1, \ldots, \skrand_n) \rgets \DVRFOnem.\keygen(n, t)$.
+\item $\SIM$ then sets $\skparty_j = (\skrand_j, \sksign_j, \pk)$, for $j \in \corrupt$,
+  and $\pkparty_i = (\pksign_i)$, for $i \in \set{n}$.
+    \end{enumerate}
+
+
+  Then,
+  $\SIM$ runs
+  $\adv^{ \BigO^{\Sign_1, \Sign_2} }(\state_A, \pkgroup, \{ \pkparty_j \}_{j \in \set{n}}, \{ \skparty_i \}_{i \in \corrupt})$,
+  and responds to its oracle queries,
+  as we describe next.
+
+  \medskip
+
+  \paragraph{Simulating Random Oracles.}
+  To simulate $\adv$'s random oracle queries,
+  $\SIM$ simply performs lazy sampling.
+  It programs $\HashOne$ with values sampled from its own random tape;
+  however, it programs $\HashThree, \HashTwo$ with values from its input
+  $\{h_1, \ldots, h_{\rototal} \}$,
+  as follows.
+
+  \begin{itemize}
+  \item \underline{$\HashOne:$}
+   When $\adv$ queries $\HashOne$ on inputs $(\phi_i, y)$,
+   $\SIM$ does the following:
+      \begin{enumerate}
+        \item Checks if $\phi_i = \targetshinekey$,
+   where
+   $\targetshinekey$ is such that $(\cdot, \targetshinekey) \in \skrand_\honest \setminus \skrand_\corrupt$,
+   and where
+   $\skrand_\corrupt = \cup_{i \in \corrupt} \skrand_i$,
+   and $\skrand_\honest = \cup_{j \in \honest} \skrand_j$.
+
+  \item If this check holds, $\SIM$ aborts.
+    We refer to this bad event as $\BadEventOne$.
+  \item Otherwise, $\SIM$ checks to see if $\QOne[(\phi_i, y)] \neq \bot$,
+   if the check holds, it returns  $\QOne[(\phi_i, y)] $,
+ \item Otherwise,
+   it samples $\gamma \rgets \Zq$
+   (using its own random tape).
+  \item It then sets
+   $\QOne[(\phi_i, y)] = \gamma$.
+ \item Finally, $\SIM$ returns $\gamma$.
+      \end{enumerate}
+
+  \item \underline{$\HashThree:$}
+  When $\adv$ queries $\HashThree$ on inputs $(\pkgroup, \msg)$,
+  $\SIM$ first checks to see if $\QThree[(\pkgroup, \msg)] \neq \bot$,
+  If so, it returns $\QThree[(\pkgroup, \msg)]$.
+  Otherwise,
+  it sets $y \gets h_\rocounter$,
+  and increments $ \rocounter \gets \rocounter + 1$.
+  It then sets
+  $\QThree[(\pkgroup, \msg)] = y$.
+  Finally, $\SIM$ returns $y$.
+
+
+  \item \underline{$\HashTwo:$}
+  When $\adv$ queries $\HashTwo$ on inputs $(R, \PK, \msg)$,
+  $\SIM$ checks to see if $\QTwo[(R, \PK, \msg)] \neq \bot$.
+  If so,
+  it returns $\QTwo[(R, \PK, \msg)]$.
+  Otherwise,
+  it sets $c \gets h_\rocounter$,
+  and increments $ \rocounter \gets \rocounter + 1$.
+  it then sets $\QTwo[(R, \PK, \msg)] = c$.
+  Finally, $\SIM$ returns $c$.
+
+  \end{itemize}
+
+	\smallskip
+
+  \paragraph{Simulating Signing Oracles.}
+  To simulate signing oracles,
+  $\SIM$ does as follows:
+
+  \begin{itemize}
+    \item \underline{$\sign_1(\partyid, \msg)$}:
+      When $\adv$ queries $\oracle^{\sign_1}$ on participant identifier $\partyid$ and message $\msg$,
+      $\SIM$ does the following:
+      \begin{enumerate}
+        \item If $\partyid \not\in \honest$, output $\bot$.
+        \item Derives $y \gets \HashThree(\pkgroup, \msg)$ honestly.
+        \item $\SIM$ then checks to see if $ \QFour[y] \neq \bot$.
+        If so,
+        \begin{enumerate}
+          \item $\SIM$ parses $(\msg', z, c, R, (R_j, z_j)_{j \in \set{n}}) \gets \QFour[y]$.
+          %\chelsea{Again, the ability to reduce to uniqueness for the simulator is a little weird, because it also requires a hash collision. I think this is where it would happen, though.}
+      \item $\SIM$ then returns $(y, R_\partyid)$.
+      \end{enumerate}
+      \item However, if this is the first time that $\adv$ has queried $\oracle^{\sign_1}$ on $\msg$,
+        $\SIM$ then samples $z \rgets \Zq$,
+        and sets $c \gets h_\rocounter$.
+        It then increments the counter $\rocounter \gets \rocounter + 1$.
+        \item $\SIM$ then derives $R \gets g^z \cdot \PK^{-c}$.
+        \item Then, using its knowledge of $(\skrand_i,\sksign_i), i \in \corrupt$,
+        $\SIM$ deterministically derives each $(r_i, R_i, z_i), i \in \corrupt$,
+        by first deriving
+
+          \[
+            (r_i, R_i) \gets \DVRFOnem.\generate(i, \skrand_i, y)
+          \]
+
+        and then deriving
+
+          \[
+            z_i \gets r_i + c \cdot \sksign_i
+          \]
+
+        \item $\SIM$ then derives each honest party's commitment $R_j, j \in \honest$ with respect to the  joint commitment $R$ defined in Step~$5$ and each corrupted party's $R_i, i \in \corrupt$,
+          via Equation~\ref{eq:derive-hon-comm}:
+
+          \begin{equation} \label{eq:derive-hon-comm}
+            R_j \gets R^{L_0(j)} \cdot \prod_{i \in \corrupt} R_i^{L_i(j)}
+          \end{equation}
+
+        where $L_i(x)$ is the $i\supth$ Lagrange polynomial defined by $\corrupt \cup \{0\}$.
+        \item $\SIM$ then derives each honest party's response $z_j, j \in \honest$ via
+          Equation~\ref{eq:derive-hon-resp}:
+
+          \begin{equation} \label{eq:derive-hon-resp}
+            z_j \gets z \cdot L_0(j) + \sum_{i \in \corrupt} z_i \cdot L_i(j)
+          \end{equation}
+
+        \item $\SIM$ sets $\QFour[y] = (\msg, z, c, R, (R_j, z_j)_{j \in \set{n}})$.
+        \item $\SIM$ then checks if $\QTwo[(\pkgroup, R, m)] = \bot$;
+          if the check does not hold,
+          then a bad event has occurred.
+          We refer to this bad event as $\BadEventTwo$.
+          In this case, $\SIM$ aborts.
+          Otherwise, $\SIM$ programs $\QTwo[(\pkgroup, R, m)] = c$.
+        \item $\SIM$ then outputs $(y, R_\partyid)$.
+      \end{enumerate}
+
+      \medskip
+
+    \item \underline{$\sign_2(\partyid, \msg, \coalition, ( y_j, R_j )_{j \in \coalition})$}:
+      When $\adv$ queries $\oracle^{\sign_2}$ on honest participant identifier $\partyid$, message, coalition, and tuples $\{ (y_j, R_j) \}_{j \in \coalition}$,
+      $\SIM$ does the following:
+      \begin{enumerate}
+      \item Honestly follows the protocol to ensure that $\lvert \coalition \rvert \ge 2t-1$,
+          and returns $\bot$ if the check does not hold.
+      \item Checks to ensure that $\partyid \in \honest$ and $\partyid \in \coalition$,
+        if not, $\SIM$ outputs $\bot$.
+      \item Derives $y' \gets \HashThree(\pkgroup, \msg)$ honestly.
+      \item If $y_i \neq y'$  for any $i \in \coalition$, then $\SIM$ outputs $\bot$.
+      \item $\SIM$ verifies the query is valid,
+        by checking that $\DVRFOnem.\verify(t, \minparticipants, \coalition, (R_j)_{j \in \coalition}) = 1$.
+        If the check does not hold, $\SIM$ outputs $\bot$.
+      \item $\SIM$ then checks if $\QFour[y'] \neq \bot$.
+        If the check does not hold,
+        then a bad event has occurred;
+        we refer to this bad event as $\BadEventThree$.
+        In this case,
+        $\SIM$ aborts.
+      \item Otherwise, $\SIM$ parses the entry
+        $(\msg, z', c', R', (R_j', z_j')_{j \in \set{n}}) \gets  \QFour[y']$.
+      \item If $(R_j)_{j \in \coalition} \neq (R_j')_{j \in \coalition}$,
+        $\SIM$ aborts.
+        We refer to this event as $\BadEventFour$.
+
+      \item Otherwise, $\SIM$ derives $R \gets \prod_{j \in \coalition} R_j^{\lambda_j}$,
+        where $\lambda_j$ is defined by $\coalition$.
+        If $R \neq R'$,
+        $\SIM$ aborts.
+        We refer to this bad event as $\BadEventFive$.
+
+        \item Otherwise, $\SIM$ returns $z_\partyid'$.
+      \end{enumerate}
+  \end{itemize}
+
+  \paragraph{Analysis of $\SIM$'s Simulation.}
+  The simulation of $\HashOne$, $\HashThree$, and $\HashTwo$ are perfect because $\SIM$ simply simulates by lazy sampling.
+
+  $\SIM$'s simulation of key generation for signing keys with respect to $\pkgroup$ for which it
+  does not know the corresponding $\skgroup$ is perfect,
+  because $\adv$ is allowed to corrupt up to $t-1$ participants.
+  As such, $\SIM$ chooses $t-1$ random secret keys $\sksign_i, i \in \corrupt$,
+  and then simulates signing for the (unknown) honest signing keys $\sksign_j, j \in \honest$.
+  $\SIM$ follows the protocol honestly when it derives \DVRFOne keys.
+
+  $\SIM$'s simulation of signing is indistinguishable from honestly following the protocol when $\SIM$ does not abort,
+  because the output signature $z_\partyid'$ from $\oracle^{\sign_2}$ is valid with respect to the relation $g^{z_\partyid'} = R_\partyid \cdot (\pksign_\partyid)^c$,
+  where $R_\partyid$ is output from $\oracle^{\sign_1}$.
+  Further, by Equations~\ref{eq:derive-hon-comm} and \ref{eq:derive-hon-resp},
+  all honest parties' commitments $(R_i)_{i \in \honest}$ and responses $(z_i)_{i \in \honest}$ are consistent with corrupted parties' commitments and responses for any signing session.
+
+  $\SIM$ aborts with negligible probability more than Game~4 because:
+  \begin{enumerate}
+    \item When $\SIM$ aborts due $\BadEventOne$ and $\lvert \honest \rvert \geq t$,
+      then Game~4 also aborts.
+    \item The probability that $\BadEventTwo$ occurs is $\qchal/q$ because it can only occur if $\adv$ queries $\HashTwo(R, \pkgroup, \msg)$ for the correct $R$ for the given $\msg$ as computed in step~5 of $\SIM$'s simulation of $\sign_1$.
+    \item $\SIM$ aborts due to $\BadEventThree$ with zero probability,
+      because we assume the use of authenticated channels.
+    \item If $\SIM$ aborts due to $\BadEventFour$,
+      then $\lvert \coalition \cap \honest \rvert \geq t$,
+      and so Game~2 also aborts.
+    \item If $\SIM$ aborts due to $\BadEventFive$,
+      then $\lvert \coalition \cap \honest \rvert \geq t$,
+      then both Game~3 and Game~4 would also abort.
+  \end{enumerate}
+
+
+\paragraph{Output.} At the end of the game,
+$\adv$ outputs a forgery $(m^*, \sigma^* = (R^*, z^*))$.
+If $g^{z^*} \neq R^* \cdot (\pkgroup)^{c^*}$ (meaning that the forgery is invalid),
+$\SIM$ outputs $\bot$.
+Without loss of generality,
+we assume that $\adv$ queried $\HashTwo$ on $(R^*, \pkgroup, m^*)$.
+
+
+Otherwise,
+if $\adv$'s forgery is valid,
+$\SIM$ outputs the tuple $(j, \aux)$,
+where $j$ is the index corresponding to $c^* = h_j$,
+and $\aux=(m^*, \sigma^*)$ is the adversary's forgery with respect to $\pkgroup=\dlchal$.
+
+  \paragraph{Difference between Game~5 and Game~4.}
+  The only additional advantage introduced in Game~5 is that $\SIM$ aborts on  $\BadEventTwo$ with
+  probability $\qchal/q$ if $\adv$ queries $\HashTwo$ before it is programmed.
+  Let $W_5$ be the event that $\adv$ wins in Game~4.
+  Then
+
+  \begin{equation} \label{eq:game5}
+    \lvert \Pr[W_5] - \Pr[W_4] \rvert \leq  \frac{\qchal}{q}
+  \end{equation}
+
+
+\medskip
+
+  \paragraph{Finishing the Proof.}
+  The advantage of $\adv$ against $\SIM$ is given by Game~5.
+  Combining Equations~\ref{eq:game0}, \ref{eq:game1}, \ref{eq:game2}, \ref{eq:game3}, \ref{eq:game4}, and \ref{eq:game5} gives Equation~\ref{eq:simulation}.
+  This completes the proof.
+  \qed
+\end{proof}
+
+\begin{proof}[Of Lemma~\ref{lem:reduction}]
+  We now show that if there exists a PPT adversary $\adv$ against the
+  unforgeability of \glitter and an algorithm $\SIM$
+  as described in Lemma~\ref{lem:simulation} that simulates \glitter to $\adv$,
+  then we can define a PPT adversary $\ddv$ that can efficiently solve for discrete logarithm challenges.
+
+  $\ddv$ begins by accepting a discrete logarithm challenge $\dlchal \in \GG$ and public parameters $\pp$.
+  It then chooses a $(t, \minparticipants, n)$ such that $n \geq \minparticipants \geq 2t-1$,
+  and ${n-1\choose t-1} = \text{poly}(n)$.
+
+  $\ddv$ then executes the modified forking algorithm $\modgenfork^{\SIM}(X)$ as described in Section~\ref{mod-fork} and shown in Figure~\ref{fg:gen-fork-mod},
+  providing as input the instance $X = (\pp, \dlchal, n, t, \minparticipants)$.
+
+  $\modgenfork^{\SIM}(X)$ then either outputs $\bot$ when it fails or the value $(j, \aux)$ when it accepts.
+  Corollary~\ref{cor:modified-fork} upper-bounds the probability that $\modgenfork^{\SIM}(X)$ will output $\bot$
+  and Lemma~\ref{lem:simulation} upper-bounds the additional advantage of $\adv$ against $\SIM$.
+  Putting these two together gives Equation~\ref{eq:ddv-fork-acc}.\footnote{Because $\SIM$ is run twice by $\modgenfork$, the number of bad events that can occur is doubled.}
+
+
+    \begin{align}
+      \label{eq:ddv-fork-acc}
+    \begin{split}
+        \accept(\modgenfork^\SIM) & \geq
+        \frac{\advant{uf}{\adv,\glitterm}(\lambda, n, t, \minsigners)^2}{\rototal}
+        - \frac{2(\honetotal + \qchal)}{q}
+        - \frac{3\rototal^2}{q}
+    \end{split}
+    \end{align}
+
+%    \ian{You doubled the $\frac{(\honetotal + \qchal)}{q}$ term, but you appear to have omitted doubling the $\frac{\rototal^2}{2q}$ term?  The $\frac{2\rototal^2}{q}$ term in Eq~\ref{eq:ddv-fork-acc} is the extra term from Corollary 1.  So shouldn't the above be $\frac{\advant{uf}{\adv,\glitterm}(\lambda, n, t, \minsigners)^2}{\rototal}
+%        - \frac{2(\honetotal + \qchal)}{q}
+%        - \frac{3\rototal^2}{q}$?}
+%    \chelsea{I still think this is an overcount. Corr. 1 says there are no hash
+%    collision at all in the inputs to SIM, and then Lemma 2 again considers
+%    hash collisions. But at least it is an over-estimate.}
+
+   We now show that when $\modgenfork^{\SIM}(X)$ outputs an accepting output
+   (i.e., it does not output $\bot$),
+   then $\ddv$ can solve for its discrete logarithm challenge $\dlchal$ with
+   perfect success.
+
+   In the case that $\modgenfork^{\SIM}(X)$ outputs an accepting output,
+   it outputs the tuple $(h_j, h_j', \auxstring, \auxstring')$.
+   From these values,
+   $\ddv$ then parses the following:
+
+   \begin{align*}
+     \begin{split}
+       (m^*, \sigma^*)  \gets \auxstring,
+       & \quad (m^{**}, \sigma^{**})  \gets \auxstring', \\
+       (R^*, z^*)  \gets \sigma^*,
+       & \quad (R^{**}, z^{**})  \gets \sigma^{**}, \\
+       h_j = c^*, & \quad h_j'=c^{**}
+     \end{split}
+   \end{align*}
+
+  Because $h_j, h_j'$ are with respect to the same index $j$ corresponding to
+  $\adv$'s random query for $c^*$, $c^{**}$ in its first and second execution,
+  then we know that $R^{*}=R^{**}$ and $m^{*}=m^{**}$.
+   $\ddv$ can then solve for the discrete logarithm $y$ to its challenge $\dlchal = g^y$
+   by Equation~\ref{eq:solve-dl}:
+
+   \begin{equation} \label{eq:solve-dl}
+     \dlsol = \skgroup =  \frac{z^* - z^{**}}{c^* - c^{**}}
+   \end{equation}
+
+
+   Because $\modgenfork$ outputs $\bot$ in the case when any random oracle outputs collide (i.e., in the case when any $h_i = h_i'$),
+   then we know that Equation~\ref{eq:solve-dl} is solveable.
+   This completes the proof.
+   \qed
+\end{proof}
