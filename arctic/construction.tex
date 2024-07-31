@@ -1,0 +1,319 @@
+
+\begin{figure}[p]
+    % chelsea- make full size for eprint
+\begin{pchstack}[boxed,center,space=1em]
+\begin{pcvstack}
+\procedure[linenumbering]{$\setup(\usecp)$} {
+	(\GG, q, g) \leftarrow \GroupGen(\usecp) \\
+	\pp \gets ((\GG, q, g), \HashOne, \HashThree, \HashTwo) \\
+	\pcreturn \pp \\
+  \text{\algcom $\pp$ is given implicitly} \\
+  \text{\algcom  to all other algorithms}
+}
+\pcvspace
+\procedure[linenumbering]{$\keygen(n,t,\minsigners) $ } {
+  \text{\algcom Performed by a trusted} \\
+  \text{\algcom dealer, or DKG} \\
+  \pcif \minsigners < 2t-1 \text{ or } \minsigners > n\\
+  \pcind \pcreturn \bot \\
+  \text{\algcom{Require $\geq 2t-1$ signers}} \\
+  \skgroup \rgets \Zq;~\pkgroup \gets g^{\skgroup} \\
+  \{(i, \sksign_i) \}_{i =1}^n \rgets \shamir.\IssueShares(\skgroup, n, t) \\
+  (\skrand_i)_{i =1}^n \rgets \DVRFOnem[\HashOne].\keygen(n, t, \minsigners) \\
+  \pcfor i \in \{ 1, \ldots, n \} \pcdo \\
+  \pcind \pksign_i \gets g^{\sksign_i}\\
+  %\mathsf{pubkeys} =  (\pksign, \{ \pksign_i \}_{i \in \set{n}})   \\
+  \pcind \skparty_i \gets (\skrand_i, \sksign_i, \pkgroup) \\
+  \pcind \pkparty_i \gets (\pksign_i) \\
+  \pcreturn  (\pkgroup, \{ (\pkparty_i, \sk_i) \}_{i \in \set{n}}  )
+}
+\pcvspace
+  \procedure[linenumbering]{$\sign_1(\partyid, \skparty_\partyid, \msg)$} {
+    (\skrand_\partyid, \sksign_\partyid, \pkgroup) \gets \skparty_\partyid \\
+    y_\partyid \gets \HashThree(\pkgroup, \msg) \\
+    (r_\partyid, R_\partyid) \gets \DVRFOnem[\HashOne].\generate(\partyid, \skrand_\partyid,  y_\partyid) \\
+    \pcreturn (y_\partyid, R_\partyid)
+}
+\end{pcvstack}
+  \pchspace
+\begin{pcvstack}
+\procedure[linenumbering]{$\sign_2(\partyid, \skparty_\partyid, \msg, \coalition, \{(y_j, R_{j} )\}_{j \in \coalition})$} {
+  \pcreturn \bot\ \pcif \lvert \coalition \rvert < 2t-1 \\
+  (\skrand_\partyid, \sksign_\partyid, \pkgroup) \gets \skparty_\partyid \\
+  y' \gets \HashThree(\pk, \msg) \\
+  \pcfor j \in \coalition \pcdo \\
+  \pcind \pcif y_j \neq y' \\
+  \pcind \pcind \pcreturn \bot \\
+  (r_\partyid, R_\partyid') \\
+  \qquad \gets \DVRFOnem[\HashOne].\generate(\partyid, \skrand_\partyid, y') \\
+  \text{\algcom Re-derive state from $\sign_1$} \\
+  %\chelsea{$R^*$ is used as the adversarial output in the proof; please do not change this notation}
+  \pcif \partyid \not\in \coalition \text{ or } R_k' \not\in \{R_{j} \}_{j \in \coalition} \\
+  \pcind \pcreturn \bot \\
+  \mathsf{input} \gets (t, \minsigners, \coalition, \{ R_j\}_{j \in \coalition}) \\
+  \pcif \DVRFOnem[\HashOne].\verify(\mathsf{input}) \neq 1 \\
+  \pcind \pcreturn \bot \\
+  R \gets \DVRFOnem[\HashOne].\combinepub(\mathsf{input}) \\
+  c \gets \HashTwo(R, \pkgroup, \msg) \\
+  z_\partyid \gets r_\partyid + c \cdot \sksign_\partyid \\
+  \pcreturn z_\partyid
+}
+\pcvspace
+  \procedure[linenumbering]{$\combine(\pkgroup, \msg, \coalition, \{(y_j, R_{j}), z_j \}_{j \in \coalition}))$} {
+  \mathsf{input} \gets (t, \minsigners, \coalition, \{ R_j\}_{j \in \coalition}) \\
+  R \gets \DVRFOnem[\HashOne].\combinepub(\mathsf{input}) \\
+  c \gets \HashTwo(R, \pkgroup, \msg) \\
+  \text{\algcom{$\lambda_j$ are Lagrange}} \\
+  \text{\algcom{coefficients for $\coalition$}} \\
+  z \gets \sum_{j \in \coalition} z_{j} \lambda_j\\
+  \pcif g^z \neq R \cdot \pk^c \\
+  \pcind \pcreturn \bot \\
+  \pcreturn \sigma=(R, z)
+}
+\end{pcvstack}
+\end{pchstack}
+    \caption{
+      \glitter, a deterministic threshold Schnorr signature scheme.
+      For security,
+      \glitter requires that the minimum number of signing parties
+      $\minparticipants \leq n$ be at minimum $\minparticipants \geq 2t-1$,
+      where $t$ is the tolerated corruption threshold.
+      We further require that messages exchanged between participants are sent over an authenticated channel.
+      \glitter builds upon the verifiable pseudorandom secret sharing scheme \DVRFOne defined in Section~\ref{dvrf-concrete},
+      as well as Shamir's secret sharing.
+      Verification of signatures is identical to the single-party Schnorr verification algorithm.
+      %\ian{Is the same $\pp$ meant to be used for both \glitter and \DVRFOne? They don't appear to have the same parameter format?}
+      %\chelsea{Yes, but I think it is fine; this falls under the "you know what
+      %we mean" category and making it explicit makes it harder to read}
+      %\ian{The $\pk_i$ are never used in this protocol.  Do we need to keep them? They \emph{could} be used to check for corrupt players that give incorrect $z_k$ after giving correct $R_k$.}
+      %\chelsea{yes, I think we should keep them, for possible extensions}
+    }
+  \label{fg:construction}
+\end{figure}
+
+\section{\glitter, A Deterministic and Stateless Two-Round Threshold Schnorr Signature Scheme}
+
+We now introduce \glitter,
+an efficient,  two-round, deterministic threshold Schnorr signature scheme for moderately sized groups of participants that does not require participants to keep state between rounds of the signing protocol.
+As a building block,
+\glitter uses \DVRFOne to generate nonces deterministically,
+and to verify that all other participants followed the protocol honestly.
+\glitter is secure assuming fewer than $t$ participants are corrupted,
+and at least $\minsigners$ participated in the signing protocol,
+where $\minsigners \leq n$ but  $\minsigners \geq 2t-1$.
+
+\begin{remark}[Distributed Key Generation]
+The \glitter construction given in Figure~\ref{fg:construction} assumes a centralized key generation procedure;
+however,
+using a distributed key generation (DKG) scheme is equally possible.
+We discuss one possible DKG in Section~\ref{extensions}.
+\end{remark}
+
+\begin{remark}[Requirement of Authenticated Channels]
+  \label{remark:auth-channel}
+  We require that the messages exchanged between participants in the \glitter construction shown in Figure~\ref{fg:construction} be sent over authenticated channels;
+  i.e., messages must be authenticated and verifiable as having come from their purported senders.
+  Otherwise,
+  an adversary can simply pick contributions that are consistent with a single honest party's $R_i$,
+  which would result in a valid input for $\DVRFOnem.\verify$.
+  Note that we do \emph{not} assume the authenticated channel maintains any session identifiers or state about messages;
+  \glitter remains secure even if the adversary were to replay old authenticated messages.
+%
+  However, if a participant receives an unauthenticated message,
+  we require that the participant aborts.
+\end{remark}
+
+\subsection{The Construction.}
+
+We now give more detail for each stage in \glitter;
+see Figure~\ref{fg:construction} for a high-level overview.
+
+\paragraph{\bf Key Generation.}
+All participants with identifiers $i \in \set{n}$ begin by receiving a secret signing share $\sksign_i$ and a public signing share $\pksign_i = g^{\sksign_i}$.
+In Figure~\ref{fg:construction},
+we show key generation as a centralized procedure,
+but a DKG can likewise be used.
+Each $\sksign_i$ is a $t$-of-$n$ Shamir secret sharing of the group's joint secret key $\sk$;
+participants use these keys for signing messages.
+Participants also receive the public signing keys $\{ \pksign_i \}_{i \in \set{n}}$ for all other participants.
+
+Each participant receives a secret \DVRFOne key $\skrand_i$ generated by performing $\DVRFOnem.\keygen$.
+Participants use these keys to generate nonces and commitments for each signing session.
+%
+Each participant's public key share $\pkparty_i$ is just one public key,
+where $\pkparty_i = \pksign_i$.
+Each participant's secret key share is the tuple $\skparty_i = (\skrand_i, \sksign_i, \pkgroup)$.
+
+\paragraph{\bf Signing.}
+In the first round of signing,
+each participant $\partyid$ receive as input a message $\msg$.
+First,
+each party derives $y_\partyid \gets \HashThree(\pk, \msg)$.
+To generate their nonce $r_\partyid$ and commitment $R_\partyid$,
+each participant performs
+$(r_\partyid, R_\partyid) \rgets \DVRFOnem.\generate(\partyid, \skrand_\partyid, y_\partyid)$.
+Each participant then outputs $(y_\partyid, R_\partyid)$;
+they do not need to keep any state.
+
+In the second round of signing,
+all participants again receive as input a message $\msg$,
+as well as a set $\coalition$ representing the indices of at least $\minsigners$ signers,
+where $\coalition \subseteq \set{n}, \lvert \coalition \rvert \geq \minsigners$.
+Additionally, participants receive the list of tuples $ \{(y_j, R_j) \}_{j \in \coalition}.$
+First,
+each party re-derives $y' \gets \HashThree(\pkgroup, \msg)$.
+Then,
+each party checks the consistency of all other parties' views of $\msg$
+by checking that for each $i \in \coalition$,
+$y_i = y'$.
+Because we require that each protocol message is authenticated by its respective party,
+then this check guarantees that an adversarial player cannot split the view of honest players by sending different messages or choices of coalitions.
+If any check fails,
+the party aborts.
+
+Otherwise, if all consistency checks succeed,
+each participant re-derives their nonce and commitment using \DVRFOne,
+again performing
+$(r_\partyid, R_\partyid') \rgets \DVRFOnem.\generate(\partyid, \allowbreak \skrand_\partyid, \allowbreak y')$.
+Then, the participant checks its identifier is in the coalition $C$ and that $R_\partyid'$ is in the set of commitments
+$(R_j)_{j \in \coalition}$,
+aborting if either check does not hold.
+Then,
+each participant verifies that all other participants followed the protocol to derive  their  commitment,
+by checking $\DVRFOnem.\verify(t, \minsigners, \coalition, (R_j)_{j \in \coalition})$.
+If the check fails,
+they abort the protocol.
+
+Finally, if all of the above checks pass,
+each participant $\partyid \in \coalition$ will then derive the group commitment $R \gets \DVRFOnem.\combinepub(t, \minsigners, \coalition, \{ R_j\}_{j \in \coalition})$,
+and the challenge $c \gets \HashTwo(R, \pkgroup, \msg)$.
+Finally,
+each participant derives their signature share $z_\partyid \gets r_\partyid + c \cdot \sksign_\partyid$.
+Each participant outputs $z_\partyid$ as its output for $\sign_2$.
+
+
+\paragraph{\bf Combination and Verification.}
+To perform the $\combine$ algorithm,
+the group commitment $R$ is first derived using values output by participants from $\sign_1$.
+Then, the response $z$ is derived by finding $z \gets \sum_{j \in \coalition} z_j \lambda_j$, where the $\lambda_j$ are the Lagrange coefficients for the set $\coalition$.
+The output from $\combine$ is the Schnorr signature $\sigma = (R, z)$,
+which can be verified using the single-party Schnorr verification algorithm given in Definition~\ref{def:schnorr}.
+
+
+\subsection{Possible Extensions}
+\label{extensions}
+
+We now discuss two possible extensions to \glitter.
+
+\paragraph{\bf Robustness.}
+\glitter as currently defined is not robust;
+if any party submits invalid commitments,
+then the output from $\DVRFOnem.\combinepub$ cannot be used.
+%
+However, it is possible to extend \DVRFOne to be robust,
+therefore also ensuring that \glitter can likewise be extended.
+To do so in a secure manner,
+the robust extension would require additional players,
+along with a protocol to come to consensus about which players misbehaved.
+
+In particular,
+by requiring that the minimum number of participants $\minparticipants$ be of size at least $\minparticipants \geq 3t-2$,
+\DVRFOne and \glitter can be securely used in a robust manner.
+The requirement that $\minparticipants \geq 3t-2$ is referred to as the \emph{honest supermajority} setting.
+%
+We give further details on how robustness can be achieved in Appendix~\ref{app:robust-shine}.
+%
+In this setting,
+$\DVRFOnem.\verify$ can both detect any inconsistencies as well as identify the misbehaving players.
+This property could likewise allow for extending \glitter to support robustness,
+under the same assumption that $\minparticipants \geq 3t-2$.
+
+\paragraph{\bf Distributed Key Generation.}
+To define the signing keys $(\pksign, (\sksign_i)_{i=1}^{n})$,
+any DKG that Shamir secret shares a discrete logarithm secret key could be employed,
+such as the three-round DKG by Gennaro et al.\cite{GennaroJKR07}.
+
+As one possibility to perform $\DVRFOnem[\HashOne].\keygen$ in a distributed manner,
+each subset of $n-t+1$ parties could assign one representative to generate a secret PRF key uniformly at random for that subset.
+The representative would then share this PRF key with all parties in their subset.
+To ensure security against fully malicious adversaries,
+parties within each subset could perform a subsequent broadcast round to compare their received inputs,
+to ensure consistency.
+
+\subsection{Security}
+\label{arctic-security}
+
+\paragraph{\bf Correctness.}
+In the first round of signing,
+participants will output nonces and commitments
+$(r_i, R_i) \gets \DVRFOnem.\generate(i, \skrand_i, y_i)$,
+for $i \in \coalition$,
+where $y_i \gets \HashThree(\pkgroup, \msg)$,
+and $R_i = g^{r_i}$.
+
+In the second round of signing,
+each participant receives the set of tuples $\{(y_j, R_j) \}_{j \in \coalition}$.
+Because $\HashThree$ is correct,
+then after deriving $y' \gets \HashThree(\pkgroup, \msg)$,
+then the check that $y_j = y'$ for each $j \in \coalition$ will succeed.
+
+Because \DVRFOne is correct,
+then
+$\DVRFOnem.\verify(t, \minsigners, \coalition, \{R_j\}_{j \in \coalition})$ will output $1$
+and the same group commitment $R = \prod_{j \in \coalition} R_j^{\lambda_j}$ will be computed regardless of the choice of $\coalition$.
+Because $\DVRFOnem.\generate$ is deterministic,
+then after deriving $y \gets \HashThree(\pkgroup, \msg)$,
+$\DVRFOnem.\generate(\partyid, \allowbreak \skrand_\partyid, y)$
+will output the same $(r_\partyid, R_\partyid)$ as derived in the first round of signing.
+
+
+After deriving $(r_\partyid, R_\partyid)$,
+all signers in a coalition $\coalition$ output valid signature shares $z_\partyid$
+with respect to $R$
+and challenge $c = \HashTwo(\pkgroup, R, m)$,
+where $z_\partyid =  r_\partyid + c \cdot \sksign_\partyid$.
+The aggregated signature is then $\sigma = (R, z)$,
+where $z = \sum_{j \in \coalition} z_j \cdot \lambda_j$.
+Because $\skgroup = \sum_{j \in \coalition} \sksign_j \lambda_j$,
+$\pkgroup = g^\skgroup = g^{\sum_{j \in \coalition} \sksign_j \lambda_j}$,
+and $R = \prod_{j \in \coalition} R_j^{\lambda_j} = g^{\sum_{j \in \coalition} r_j\cdot \lambda_j}$,
+we have that $g^z = R \cdot \pkgroup^c$, as required.
+
+
+\paragraph{\bf Unforgeability.}
+We next demonstrate the unforgeability of \glitter,
+via Theorem~\ref{thm:unforgeability}.
+
+\begin{theorem}\label{thm:unforgeability}
+	\glitter is unforgeable against a PPT adversary $\adv$ playing the static unforgeability game as shown in Figure~\ref{fig:euf-cma-threshold} against \glitter,
+  assuming $\adv$ can make up to $\tcor$ corruptions,
+  the number of honest parties is at least $t$,
+  the discrete logarithm assumption holds in the ROM,
+  participants exchange messages over an authenticated channel,
+  \DVRFOne is a secure VPSS,
+  and where $(n, t) \in \mathbb{N}$  are such that ${n-1\choose t-1} = \text{poly}(n)$.
+
+  Concretely, let $\advant{dl}{\ddv}(\lambda) $ be the advantage of an adversary $\ddv$ against the discrete logarithm assumption.
+  The advantage of $\adv$ is bounded by
+
+
+  \begin{equation*} \label{eq:glitter-adv}
+    \advant{uf}{\adv,\glitterm}(\lambda, n, t, \minsigners) \leq
+    \sqrt{ \rototal \advant{dl}{\ddv}(\lambda)
+    + \frac{2(\honetotal + \qchal)}{q}
+    + \frac{3\rototal^2}{q}
+    }
+  \end{equation*}
+
+where $\minsigners \geq 2t-1$ and $n \geq \minsigners$,
+and where $\rototal = \htwototal +\qchal + 2\numsignq + 1$,
+such that $\numsignq$ is the number of times $\adv$ is allowed to query the signing oracles,
+$\honetotal$ is the number of times $\adv$ is allowed to query $\HashOne$,
+$\htwototal$ is the number of times that $\adv$ is allowed to query $\HashThree$,
+and $\qchal$ is the number of times $\adv$ is allowed to query $\HashTwo$.
+\end{theorem}
+
+
+
+We give the corresponding proof for Theorem~\ref{thm:unforgeability} in Appendix~\ref{app:arctic-proofs}.
+
