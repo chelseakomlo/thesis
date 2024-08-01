@@ -1,0 +1,98 @@
+\section{Details on Extending \DVRFOne and \glitter to be Robust}
+\label{app:robust-shine}
+
+As presented, \DVRFOne is not a robust algorithm: if corrupt players
+output incorrect values from $\DVRFOnem.\generate$, then
+$\DVRFOnem.\verify$ will compute that the $|\coalition| \ge 2t-1$
+commitments do not all lie on the same degree-$(t-1)$ polynomial in the
+exponent, and output 0.  However, $\DVRFOnem.\verify$ will not
+necessarily be able to identify \emph{which} party or parties
+misbehaved.  This is because it is possible for the $t-1$ corrupt
+parties to output commitments that are wrong, but consistent with up to
+$t-1$ of the honest players' commitments, making it look like the
+remaining honest player was the outlier.  Therefore, as we will see in
+the next section, \glitter will have to just abort in the case that
+$\DVRFOnem.\verify$ outputs 0.
+
+However, we observe that in the \emph{honest supermajority} case, where
+$|\coalition| \ge 3t-2$, and so there are at most $t-1$ corrupt parties
+and at least $2t-1$ honest parties, $\DVRFOnem.\verify$ can be modified
+to be robust: if any corrupt parties output incorrect values from
+$\DVRFOnem.\generate$, $\DVRFOnem.\verify$ will be able to notice the
+inconsistency \emph{and identify the misbehaving parties}.  Those
+parties can then be kicked out of $\coalition$, and \glitter will be
+able to continue and produce its correct deterministic signature.  The
+misbehaving parties may also be able to be kicked out of the system
+entirely, or have other external sanctions applied.
+The same observation was made by Cramer et al.~\cite{CramerDI05} for their NIVSS, but in their setting, the \emph{shares} are themselves published, whereas in \DVRFOne, only \emph{commitments} are available to $\DVRFOnem.\verify$.
+
+The reason this works is based on a simple fact about polynomials, as
+used in error-correcting codes: there can only be at most one polynomial
+of degree $t-1$ that passes through at least $2t-1$ of a given set of
+$3t-2$ points.  The reason is that if $f_1$ and $f_2$ each passed
+through a (possibly different) set of at least $2t-1$ of the $3t-2$
+points, then those two sets must intersect in at least $t$ points (by
+simple counting).  Those $t$ points uniquely define a polynomial of
+degree $t-1$, and so $f_1 = f_2$.  In the honest supermajority setting,
+the at least $2t-1$ honest parties will give consistent outputs from
+$\DVRFOnem.\generate$, and so there will be exactly one (not at most
+one) polynomial of degree $t-1$ that passes through at least $2t-1$ of
+the exponents of the $3t-2$ commitments.
+
+The typical way to \emph{find} this unique polynomial is with the
+Berlekamp-Welch algorithm, but $\DVRFOnem.\verify$ only has access to
+commitments to the purported polynomial evaluations, and not the
+evaluations themselves.  However, we can take advantage of the fact that
+we are already assuming that ${n-1 \choose t-1}$ is not too large, and
+take a more brute force approach.  The modification to
+$\DVRFOnem.\verify$ is then as follows: if player $\partyid$ running
+$\DVRFOnem.\verify$ would output 0 in Step 4 of $\DVRFOnem.\verify$, instead iterate
+through all $t-1$-sized subsets $S$ of $\coalition \setminus
+\{\partyid\}$, and reconstruct (in the exponent) the polynomial that
+passes through player $\partyid$'s own point, and the points of $S$.  If
+that polynomial fails to pass through at most $t-1$ of the points, those
+points are the misbehaving parties.  Exclude them from $\coalition$, and
+output 1.
+
+There are ${|\coalition|-1 \choose t-1}$ possible subsets $S$, and at
+least ${2t-1 \choose t-1}$ of those subsets contain only honest parties.
+If the iteration is done in a pseudorandom order (for example, keyed by
+$\vrfprivout_\partyid$), then the expected number of iterations before the misbehaving
+parties are identified is at most ${|\coalition|-1 \choose t-1} / {2t-1
+\choose t-1}$, which is significantly smaller than ${n-1 \choose t-1}$,
+which we already assumed is not too large.
+
+%\chelesa{I don't want to make this claim.}
+%In addition, potentially malicious parties are disincentivized from
+%giving incorrect outputs from $\DVRFOnem.\generate$ exactly
+%\emph{because} they will be able to be identified and sanctioned, and so
+%even a moderately large (but feasible) computation cost to identify
+%misbehavers may be acceptable.
+
+Extending \DVRFOne to be robust will make round 1 of \glitter robust, so
+that the correct $R$ can be computed even if some or all of the
+malicious parties submit incorrect $R_j$ values.
+To make round 2 of \glitter also robust, we must also guard against an
+adversary submitting a correct $R_j$ in round 1, but an incorrect
+signature share $z_j$ in round 2.
+
+In the event of the failure of the test $g^z \neq R \cdot \pk^c$ in
+$\combine$, one can identify the parties that submitted incorrect
+$z_j$ values by checking $g^{z_i} \iseq R_i \cdot (\pk_i)^c$.  Once the
+parties submitting incorrect signature shares are eliminated, the
+remaining correct shares (of which there will be at least $t$) can be
+combined into the final signature $\sigma=(R,z)$.
+
+\subsection{Communication Model for Robust \glitter}
+
+For non-robust \glitter,
+we discuss in Remark~\ref{remark:auth-channel} how our adversarial model requires authenticated channels,
+but does not assume replay protection.
+However,
+additionally in the robust setting,
+parties will require a communication channel that ensures protection against replayed messages,
+to ensure that an adversary cannot replay old messages from honest participants,
+resulting in a potential abort.
+Furthermore, to achieve robustness, the communication model likewise requires liveness;
+the adversary cannot prevent honest parties from exchanging messages.
+
