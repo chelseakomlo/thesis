@@ -1,0 +1,140 @@
+\section{Performance Analysis of \glitter}
+\label{sec:performance}
+
+
+
+
+%\begin{figure}[t]
+%        \begin{tikzpicture}
+%                \begin{groupplot}[group style = {group size = 5 by 1, horizontal sep = 35pt}, width = 7.0cm, height = 6.0cm]
+%                        \nextgroupplot[ title = {},
+%                        xmax=29.9,
+%                        ymin=0.2,
+%                        xlabel={\textsf{Number of parties ($|C| = n$)}},
+%                        ylabel={\textsf{Wall clock time (ms)}},
+%                        ymode=log,
+%                        grid=major,
+%                        legend columns=1,
+%                        legend style={nodes={scale=0.575},draw=black, fill=white, text=black, anchor=north west,at={(1,1)}},
+%                        ]
+%
+%                        \newcommand\tline[2]{
+%                        \addplot [color=#1, mark=*,mark options=solid,mark size=1.25pt,
+%                            error bars/.cd, y dir=both, y explicit,
+%                            error bar style={color=black,line width=0.75pt,solid},
+%                            error mark options={line width=1pt,mark size=1.75pt,rotate=90}]
+%                            table [x=n, y=tot_ms, y error=totsd]{t#2.dat}
+%                            node[right,pos=1,font=\scriptsize] {$t=#2$};
+%                            }
+%
+%                        \tline{red}{3}
+%                        \tline{orange}{5}
+%                        \tline{olive}{6}
+%                        \tline{blue}{7}
+%                        \tline{purple}{8}
+%                        \tline{brown}{9}
+%                        \tline{black}{11}
+%
+%                        \addplot [color=black!80!white, mark=+,mark options=solid,mark size=1.25pt,
+%                            error bars/.cd, y dir=both, y explicit,
+%                            error bar style={color=black,line width=0.75pt,solid},
+%                            error mark options={line width=1pt,mark size=1.75pt,rotate=90}]
+%                            table [x=n, y=tot_ms]{bullet.dat}
+%                            node[below,pos=0.1,font=\scriptsize] {MuSig-DN};
+%                \end{groupplot}
+%        \end{tikzpicture}
+%\caption{Single-core wall clock time for various parameter combinations
+%for \glitter.  The times shown are the sum of the computation times for
+%$\sign_1$, $\sign_2$, and $\combine$. The computation time for MuSig-DN
+%is shown for comparison.}
+%\label{fig:exp-nt}
+%\end{figure}
+%
+%\begin{figure}[t]
+%%\include{arctic/figures/cn.tex}
+%\caption{Scaling experiment, showing the wall clock time for the largest
+%configuration $(n,|\coalition|,t) = (25, 25, 11)$ shown in Figure~\ref{fig:exp-nt} as we increase the number
+%of CPU cores.}
+%\label{fig:exp-scaling}
+%\end{figure}
+%
+
+In this section, we analyze the performance of \glitter.  In terms of
+the number of rounds of communication, \glitter matches the state of the
+art, with two, and it sends significantly less bandwidth per signature,
+at 65 bytes per participant.  Therefore, we focus on the computational
+complexity.
+
+There are two sources of potentially expensive computation: the two
+calls to $\DVRFOnem.\generate$ (one in each of $\sign_1$ and $\sign_2$),
+and the call to $\DVRFOnem.\verify$ in $\sign_2$.  Which one dominates
+depends on the parameters $n$, $t$, and the number of participants in the signing protocol.
+Recall that $\coalition$ is a set representing the identifiers of participants in a particular signing session.
+Although the minimum number of participants required for signing is
+$\lvert \coalition \rvert \geq \minparticipants \geq 2t-1$,
+we assume $\lvert \coalition \rvert = n$ for this analysis,
+to give an upper performance bound.
+As such, performance will be even better when $\minparticipants \leq \lvert \coalition \rvert < n$.
+
+$\DVRFOnem.\generate$ primarily performs $\delta = {n-1 \choose t-1}$
+hash computations, field multiplications, and field additions, as seen
+in Equation~\ref{eq:vrf-out-eval} (recalling that the $\cramerpoly_{a_i}(\partyid)$ values can be precomputed).
+$\DVRFOnem.\verify$ computes $\ell=|\coalition|-t$,
+$|\coalition|$-way multiexponentiations.  When $t$ is small, we expect
+the $\DVRFOnem.\verify$ cost to dominate, and for larger $t$, the
+$\DVRFOnem.\generate$ cost should dominate.
+
+To concretely evaluate the performance of \glitter, we implemented it in
+Rust.\footnote{Our code is available at
+\url{https://git-crysp.uwaterloo.ca/iang/arctic/}}.
+We ran our implementation over all allowable combinations of
+parameters $t \ge 2$, $2t-1 \le |\coalition| \le n \le 25$, using a
+% this is squish
+4-core 3.7\,GHz Intel E-2374G CPU.
+We measured the computation time for each of $\sign_1$,
+$\sign_2$, and $\combine$, averaged over 10 signatures, for each parameter
+combination.  In Figure~\ref{fig:exp-nt}, we show the (single-core)
+total runtime of $\sign_1$, $\sign_2$, and $\combine$ for various
+combinations of parameters.  We concretely measure $\DVRFOnem.\generate$
+to take around $0.24 \delta$ microseconds for each of its two
+invocations, and $\DVRFOnem.\verify$ to take around $7 \ell
+|\coalition|$ microseconds.  For $t \le 4$, the latter dominates, for
+$t=5$, they are roughly comparable, and for $t \ge 6$, the former
+quickly dominates.
+
+For comparison, we also show the computational time for MuSig-DN, but
+\emph{only} the zero-knowledge proof and verification components of
+their algorithm.  We ran their code~\cite{musig-dn-code} on our same
+machine to obtain these figures.  We can see that for $n\le 20$,
+\glitter is more than an order of magnitude faster than MuSig-DN, and
+for $n \le 10$, it is three orders of magnitude faster.
+
+As seen in Figure~\ref{fig:exp-nt}, the computation time for the $(n,|\coalition|,t)
+= (25, 25, 11)$ parameter combination, where $\delta = {24 \choose 10} =
+1961256$ is around 940\,ms, almost all of which is spent in
+$\DVRFOnem.\generate$ computing Equation~\ref{eq:vrf-out-eval}.
+However, we observe that Equation~\ref{eq:vrf-out-eval} computes the sum of $\delta$
+independent terms, and so is highly amenable to parallelization, which we also implemented and measured.
+%As this CPU only had four
+%cores, and so the parallelization potential was limited,
+We ran this scaling experiment both on the above machine, and also on
+% this is sizzle
+a 40-core 2.3\,GHz Intel 8380 CPU.  The results are shown in
+Figure~\ref{fig:exp-scaling}.  Although the slower clock speed of the
+40-core CPU puts it at a disadvantage for smaller numbers of cores,
+we can see almost linear scaling for both CPUs.  Using all 4 cores, the
+4-core CPU sees a speedup of 3.69$\times$ for $\DVRFOnem.\generate$ and
+3.65$\times$ in total time, while using 32 cores, the 40-core CPU sees a
+speedup of 27.9$\times$ for $\DVRFOnem.\generate$ and 25.7$\times$ in total time.
+Beyond 32 cores, we observed diminishing returns.
+
+%\ian{Perhaps some discussion of applications for \glitter where either
+%$n$ and $t$ are small, and so it's already fast, and/or applications
+%where $n$ and $t$ are larger, but operations happen at a human scale (a
+%human needs to manually approve a message to be signed), so a one-second
+%processing time is no problem?  You seemed to have applications of
+%\glitter in mind in an earlier conversation?  Can we put them here?}
+%\chelsea{i don't want to make up applications, and i don't have anything that
+%concrete in my head, beyond wallets.}
+
+

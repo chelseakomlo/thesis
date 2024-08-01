@@ -1,0 +1,63 @@
+\subsection{Additional Performance Estimates}
+\label{performance-estimates}
+
+
+We now expand on our performance estimates given in Table~\ref{table:efficiency}.
+We do not give exact computation estimates,
+but instead give estimates for computation that dominate.
+For bandwidth,
+we estimate for a $256$-bit elliptic curve,
+and so estimate scalers as $32$ bytes and group elements as $33$ bytes.
+
+\paragraph{MuSig-DN~\cite{NickRSW20}.}
+Nick et al.~\cite{NickRSW20} present the proof size
+as $1124$~bytes, which agrees with our measurements.
+Further, each participant sends one group element in round one,
+and outputs one field element in round three, yielding
+the total of $1189$ bytes we report in Table~\ref{table:efficiency}.
+
+While Nick et al.\ give total computational overhead for MuSig-DN for a $256$-bit curve,
+we give more detail as to computation that dominates when performing signing operations.
+
+The computational overhead of MuSig-DN is dominated by the cost of generating and verifying Bulletproof~\cite{BunzBBPWM18} proofs.
+For each signing operation,
+each participant must generate one proof and verify $(n-1)$ other proofs.
+While the computational overhead of Bulletproofs scales linearly relative to the size of the circuit,
+batch verification and multi-scalar multiplication allow for improved performance.
+
+Proofs in MuSig-DN require a circuit of 2030 multiplication gates~\cite{NickRSW20},
+and estimates are given with respect to a $256$-bit elliptic curve group.
+Naively, this overhead would translate into roughly $2030n$ operations for each signer,
+due to the requirement that each signer generates a proof and verifies $n-1$ other proofs.
+
+However, when considering speedups offered by multi-scalar multiplications and batch verification,
+the overhead for a signer becomes roughly $2030$ operations,
+plus additional (small) terms linear in $n$.
+When generating a MuSig-DN proof using Bulletproofs,
+we estimate that the dominant computational overhead is roughly $6 \cdot 2030$ multi-scalar multiplications,
+to commit to the circuit constraints and additional factors.
+For batch verifying $n-1$ MuSig-DN proofs,
+we estimate the dominant computational overhead to the verifier is $2030 + 24(n-1)$ scalar multiplications.
+
+
+\paragraph{GKMN21~\cite{GarillotKMN21}.}
+Garillot et al.~\cite{GarillotKMN21} give computational and bandwidth estimates for a single sender and receiver,
+but each player will be involved in $t-1$ concurrent sending and receiving sessions with all other players.
+As such, the estimate we give in Table~\ref{table:efficiency} is for the total sending and receiving overhead for each signer in a signing session with $t$ participants.
+
+\paragraph{Arctic.}
+For bandwidth,
+each party sends one group element and one field element as the output to the first signing query,
+and then outputs a single field element in the second signing round.
+
+For computation,
+each party performs $\DVRFOnem.\generate$ once for each signing round,
+resulting in ${n-1 \choose t-1}$ field and hash operations, and one
+group multiplication, for each execution.
+In the second round of signing,
+each party performs
+$\DVRFOnem.\generate$ again, for another
+${n-1 \choose t-1}$ field and hash operations, and one
+group multiplication, and also
+$\DVRFOnem.\verify$ and $\DVRFOnem.\combinepub$,
+which require $2t^2 -t$ group multiplications.
