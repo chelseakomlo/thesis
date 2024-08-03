@@ -93,29 +93,7 @@ as well as concrete AgVSS and NIKE constructions.
 \hline
 	\end{tabular}
   \smallskip
-  \caption{Comparison between \RG and related synchronous constructions that are secure in the random oracle model,
-  that are based on discrete logarithm assumptions,
-  do not require pairings,
-  and have formal proofs of security.
-  Composable denotes if the construction has a standalone proof of security
-  and can be used in any context that its target (single-party) key generation
-  algorithm is used.
-  %as opposed to requiring a (new) proof of security for each use case.
-  Optimistic rounds considers only when no participant cheats;
-  total rounds includes additional rounds required to recover from players that
-  misbehave during the protocol.
-  Robustness indicates whether the protocol always succeeds assuming some
-  number of honest players (strong) or allows non-fatal aborts (weak).
-  Bandwidth efficiency denotes the number of group and field elements sent and received by each participant throughout the protocol.
-  Computational efficiency denotes the number of exponentiations required (i.e., scalar multiplications in an elliptic curve group).
-  $n$ is the total number of participants in the protocol,
-  $t$ is the threshold number required to recover the secret key,
-  and the number of corrupted parties is assumed to be \emph{at most} $t-1$.
-  $k$ is security parameters for the respective scheme~\cite{DasYXMKR21}.
-  %$k,r$ are security parameters for their respective schemes~\cite{DasYXMKR21,Lindell22,Fischlin05}.
-  DLP is the Discrete Logarithm Problem;
-  KoE is the Knowledge of Exponent model; AGM is the Algebraic Group Model;
-  CDH is the Computational Diffie-Hellman Problem.
+  \caption{Comparison between \RG and related synchronous constructions.
   }
   \label{tbl:intro-comp}
 \end{table}
@@ -146,14 +124,37 @@ The security of \RG reduces to the Computational Diffie-Hellman (CDH) problem in
 \RG is securely composable with existing threshold cryptosystems such
 as threshold Schnorr signatures~\cite{KomloG20,Connolly22} and similar
 discrete-log based systems.
-We compare in Table~\ref{tbl:intro-comp} the practicality and security of \RG compared to related constructions in the literature that require only standard (i.e., non-pairing based) groups.
-\RG is simpler and therefore (slightly) more efficient than related syncronous DKGs in the discrete-logarithm setting with similar
+\RG is simpler and therefore (slightly) more efficient than related synchronous  DKGs in the discrete-logarithm setting with similar
 security guarantees~\cite{GennaroJK02}.
 Its efficiency improvement is due to the use of a NIKE,
 which allows the parties to derive
 a ``tweaked'' key at the end of the protocol, preventing adaptive attacks.
 
 
+\paragraph{Comparing: \RG to Related Schemes.}
+We compare in Table~\ref{tbl:intro-comp} the practicality and security of \RG compared to related constructions in the literature that require only standard (i.e., non-pairing based) groups
+that are secure in the random oracle model,
+and have formal proofs of security.
+In the table, composable denotes if the construction has a standalone proof of security
+and can be used in any context that its target (single-party) key generation
+algorithm is used.
+%as opposed to requiring a (new) proof of security for each use case.
+
+Optimistic rounds considers only when no participant cheats;
+total rounds includes additional rounds required to recover from players that
+misbehave during the protocol.
+Robustness indicates whether the protocol always succeeds assuming some
+number of honest players (strong) or allows non-fatal aborts (weak).
+Bandwidth efficiency denotes the number of group and field elements sent and received by each participant throughout the protocol.
+Computational efficiency denotes the number of exponentiations required (i.e., scalar multiplications in an elliptic curve group).
+$n$ is the total number of participants in the protocol,
+$t$ is the threshold number required to recover the secret key,
+and the number of corrupted parties is assumed to be \emph{at most} $t-1$.
+$k$ is security parameters for the respective scheme~\cite{DasYXMKR21}.
+%$k,r$ are security parameters for their respective schemes~\cite{DasYXMKR21,Lindell22,Fischlin05}.
+DLP denotes the Discrete Logarithm Problem,
+KoE the Knowledge of Exponent model; AGM is the Algebraic Group Model,
+and CDH the Computational Diffie-Hellman Problem.
 
 
 
