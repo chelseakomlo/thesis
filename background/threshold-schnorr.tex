@@ -163,11 +163,8 @@ such that $\Verify(\pk, m, \sigma) = 1$.
 		}
 		\end{pcvstack}
 	\end{pchstack}
-\caption{Static and adaptive unforgeability games for a threshold signature scheme with $\numrounds$ signing rounds.  The public parameters $\pp$ are implicitly given as input to all algorithms, and $\PM_1, \PM_2, \dots, \PM_\numrounds$ represent protocol messages defined within the construction.
-The static game contains all but the boxes, and the adaptive game adds the boxes.
-$\tcornew$ specifies the number of signers that the adversary may corrupt,
-and $\tcor$ the reconstruction threshold,
-such that $\tcornew \leq \tcor \leq n$.}
+\caption{Static and adaptive unforgeability games for a threshold signature scheme with $\numrounds$ signing rounds.
+}
 \label{fig:euf-cma-threshold}
 \hrulefill
 \end{figure}
@@ -177,8 +174,9 @@ such that $\tcornew \leq \tcor \leq n$.}
 Most threshold signature schemes in the literature are proven in the \emph{static} security model,
 which captures a limited adversary that can only corrupt parties at the onset of the protocol.
 We provide a game-based definition in \ref{fig:euf-cma-threshold}, inspired by the definitions in \cite{CritesKM23,LibertJY16}.
-The static security game contains all but the boxes and is analogous to existential unforgeability under chosen message attack (EUF-CMA)~\cite{GoldwasserMR88} for standard, single-party signature schemes.
-
+The static security game contains all but the boxes and is analogous to existential unforgeability under chosen message attack (EUF-CMA)~\cite{GoldwasserMR88} for standard, single-party signature schemes;
+adaptive game adds the boxes.
+The public parameters $\pp$ are implicitly given as input to all algorithms, and $\PM_1, \PM_2, \dots, \PM_\numrounds$ represent protocol messages defined within the construction.
 
 In the static unforgeability game,
 the environment accepts a security parameter $\secp$,
@@ -187,6 +185,9 @@ and a corruption threshold $\tcornew$ as input,
 such that $\tcornew < t \leq n$.
 %The number of parties that the adversary corrupts must stay within the bound $\hmulp \cdot \tcor$.
 %Typically, a static adversary corrupts a full $\tcor$ (i.e., $\hmulp = 1$) signers out of at least $\thresh$ signers in a session.
+$\tcornew$ specifies the number of signers that the adversary may corrupt,
+and $\tcor$ the reconstruction threshold,
+such that $\tcornew \leq \tcor \leq n$.
 
 The environment generates public parameters $\pp$
 and initializes the adversary with $(\pp, n, \tcor)$.
