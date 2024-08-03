@@ -45,19 +45,20 @@
 
 \end{pchstack}
     \caption{The Discrete Logarithm (DL), One-More Discrete Logarithm (OMDL), and Algebraic One-More Discrete Logarithm (AOMDL) games.
-    $\Gr$ is a cyclic group with prime order $q$ and generator $g$.
-    $\mathsf{dlog}$ is an algorithm that finds the discrete logarithm relation of the input $X$ and $g$.
-    The differences between the OMDL and AOMDL games are highlighted in gray;
-    the key distinction is that in the AOMDL game,
-    the adversary can only query for linear combinations of its challenge group elements;
-    in the OMDL game, the environment must return the discrete logarithm of an
-    arbitrary group element.}
+    }
     \label{fig:dl-omdl}
 \end{figure*}
 
 \paragraph{Discrete Logarithm (DL) Assumption.}
-I show the DL assumption along with the DL assumption in Figure~\ref{fig:dl-omdl},
-but give an intuition here.
+The DL assumption is shown in Figure~\ref{fig:dl-omdl},
+$\Gr$ is a cyclic group with prime order $q$ and generator $g$.
+$\mathsf{dlog}$ is an algorithm that finds the discrete logarithm relation of the input $X$ and $g$.
+The differences between the OMDL and AOMDL games are highlighted in gray;
+the key distinction is that in the AOMDL game,
+the adversary can only query for linear combinations of its challenge group elements;
+in the OMDL game, the environment must return the discrete logarithm of an
+arbitrary group element.
+
 To begin,
 a PPT adversary is given a value $X \in \GG$ such that $X=g^x$ without knowing the value of $x$.
 The challenge to the adversary is to output $x$.
