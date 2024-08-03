@@ -44,22 +44,22 @@ signers and the set $\{ \aggpk_i \}_{i \in \set{n}}$ of public keys for each sig
   but they may be deferred to subsequent rounds,
   depending on the scheme.
 
-\item $\Combine(\S, m, \PM_1, \PM_2, \dots, \PM_\numrounds) \rightarrow (m, \sigma)$:
-  A deterministic algorithm that takes as input the signing set $\S$, the message $m$, and a set of protocol messages
+\item $\Combine(\coalition, m, \PM_1, \PM_2, \dots, \PM_\numrounds) \rightarrow (m, \sigma)$:
+  A deterministic algorithm that takes as input the signing set $\coalition$, the message $m$, and a set of protocol messages
   $\PM_1, \PM_2, \dots, \PM_\numrounds$ from all $\numrounds$ signing rounds
   and outputs a signature $\sigma$. (Note that this algorithm is separate from the signing rounds and may be performed by one of the signers or an external party.)
 
   \item $\Verify(\threshpk, m, \sigma) \rightarrow 0/1$: A deterministic algorithm that takes as input the public key $\threshpk$, a message $m$, and a purported signature $\sigma$ and outputs $1$ (accept) if the signature verifies; else, it outputs $0$ (reject).
 
-  \item $\Recover(\thresh, \{ (i, \sk_i)\}_{ i \in \S}) \rightarrow \bot / \sk$:
-    A deterministic algorithm that takes as input a threshold $\thresh$ and a set of secret key shares $\{(i, \sk_i) \}_{i \in \S}$.
-    If $\S \not\subseteq \set{n}$ or $\lvert \S \rvert < \thresh$,
+  \item $\Recover(\thresh, \{ (i, \sk_i)\}_{ i \in \coalition}) \rightarrow \bot / \sk$:
+    A deterministic algorithm that takes as input a threshold $\thresh$ and a set of secret key shares $\{(i, \sk_i) \}_{i \in \coalition}$.
+    If $\coalition \not\subseteq \set{n}$ or $\lvert \coalition \rvert < \thresh$,
     it outputs $\bot$; else, it recovers $\sk$ using the set of shares.
 \end{itemize}
 \end{definition}
 
 \begin{remark}
-The syntax assumes that the signing set $\S$, message $m$, and secret key share $\sk_i$ are given as input in the first round of signing.
+The syntax assumes that the signing set $\coalition$, message $m$, and secret key share $\sk_i$ are given as input in the first round of signing.
   However, constructions may defer these values to later rounds of signing,
   if the proof of security so allows.
 \end{remark}
@@ -74,7 +74,7 @@ The syntax assumes that the signing set $\S$, message $m$, and secret key share 
 
 \paragraph{Correctness.}
 A threshold signature scheme is \emph{correct} if for all security parameters $\secp$, all allowable $1 \leq \thresh \leq n$,
-all $\S \subseteq [n]$ such that $| \S | \geq \thresh$,
+all $\coalition \subseteq [n]$ such that $| \coalition | \geq \thresh$,
 all messages $m$ and
 for $(\aggpk, \{ \aggpk_i \}_{i \in \set{n}}, \{ \sk_i \}_{i \in \set{n}}) \allowbreak \randpick \KeyGen(n, \allowbreak \thresh)$,
 the $\Recover$ algorithm outputs $\sk$ and the experiment in (\ref{eqn:protocol-messages}) returns signature shares that, when combined with all other shares, produce a signature $\sigma$
