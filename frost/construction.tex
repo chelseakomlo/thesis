@@ -10,6 +10,9 @@ this DKG was given the name $\pedpop$,
 which will also be used here.
 
 $\pedpop$ is a two-round distributed key generation scheme shown in Figure~\ref{fg:pedpop}.
+$\pedpop$ builds upon the DKG by Pedersen~\cite{Pedersen91},
+with a proof of knowledge to protect against against rogue key attacks.
+
 Each participant performs the role of a dealer,
 by generating secret shares and a commitment via Pedersen's VSS
 with respect to a randomly sampled secret.
@@ -90,11 +93,9 @@ value.
     \end{description}
     \end{flushleft}
   \end{framed}
-    \caption{\textbf{KeyGen.} A distributed
-    key generation (DKG) protocol $\pedpop$ that builds upon
-    the DKG by Pedersen~\cite{Pedersen91}. Our variant includes a protection
-    against rogue key attacks by requiring each participant to prove knowledge
-    of their secret value commits, and requires aborting on misbehaviour.}
+    \caption{A distributed
+    key generation (DKG) protocol $\pedpop$.
+    }
   \label{fg:pedpop}
 \end{figure*}
 
@@ -162,10 +163,7 @@ value.
 	\end{pchstack}
 	%\end{linedgamespec}
 	\caption{The FROST threshold signature scheme.
-  The public parameters $\pp$ are implicitly given as input to all algorithms and protocols.
-  FROST assumes an external mechanism to choose the set $\S \subseteq \{1, \ldots, n \}$ of signers, where $t \leq \abs{\S} \leq n$.
-  $\S$ is required to be ordered to ensure consistency.
-  Verification is identical to (single-party) Schnorr signatures.}
+  }
 \label{fig:frost}
 \end{figure*}
 
@@ -176,6 +174,8 @@ conversion to non-interactively generate the nonce value for each
 signature.
 However, signing operations in FROST additionally leverage a binding
 technique to avoid known forgery attacks without limiting concurrency.
+Verification of signatures is identical to (single-party) Schnorr signatures.
+
 We present FROST signing in two parts: a pre-processing phase and a
 single-round signing phase. However, these stages can be combined for a single
 two-round protocol if desired.
@@ -193,9 +193,18 @@ particular signing operation. In doing so, combining responses
 over different messages or participant/commitment pairs results in an invalid
 signature, thwarting attacks such as those of Drijvers et al.
 
-\textbf{Preprocessing Stage.}
-We present in
-commitments at a time.
+\paragraph{Coordinator Role.}
+FROST assumes an external mechanism to choose the set $\S \subseteq \{1, \ldots, n \}$ of signers, where $t \leq \abs{\S} \leq n$.
+The coordinator is trusted to not perform denial of service attacks,
+but otherwise is untrusted.
+Even if the coordinator were untrusted,
+FROST would remain unforgeable.
+
+
+\paragraph{Preprocessing Stage.}
+As a reminder, the public parameters $\pp$ are implicitly given as input to all algorithms and protocols.
+$\S$ is required to be ordered to ensure consistency.
+
 In this setting, $\pi$ determines the number of
 nonces that are generated and their corresponding commitments that are
 published in a single preprocess step.
@@ -217,7 +226,7 @@ where participants publish these values can depend on the implementation
 The set of $(i, L_i)$ tuples are then stored by any entity that might perform
 the coordinator role during signing.
 
-\textbf{Signing Protocol.}
+\paragraph{Signing Protocol.}
 At the beginning of the signing protocol in Figure~\ref{fig:frost},
 the coordinator selects $\alpha : t \leq \alpha \leq n$
 participants (possibly including itself) to participate in the signing.  Let
@@ -286,7 +295,7 @@ with $Y$ as the public key (Section~\ref{background:schnorr}).
 
 
 
-\textbf{Handling Ephemeral Outstanding Shares.} Because each nonce and
+\paragraph{Handling Ephemeral Outstanding Shares.} Because each nonce and
 commitment share generated during the first round of signing described in Figure~\ref{fig:frost}
 must be used \emph{at most once},
 participants should delete these values after using them in a signing operation,.
