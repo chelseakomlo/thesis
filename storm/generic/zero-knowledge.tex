@@ -157,14 +157,19 @@ Then
   \pcreturn (\party_i,\ \bot,\ \accept)
 }
 \end{pchstack}
-    \caption{Game 2: Code movement, highlighting lines moved from $\dkgkeygen_3$ to $\dkgkeygen_2$}
+    \caption{Game 2 for the Zero Knowledge Proof for Our Generic Construction.
+    }
   \label{fg:zk-g3}
 \end{figure}
 
 \noindent \textit{\underline{Game 2.}}
 The difference between Game~1 and Game~2 is code movement from
 $\finalize$ to $\dkgkeygen_1$,
-as shown in Figure~\ref{fg:zk-g3}.
+as shown in Figure~\ref{fg:zk-g3},
+which shows code movement.
+In particular, the code that is moved is highlighted,
+moved from $\dkgkeygen_3$ to $\dkgkeygen_2$.
+
 Rather than learning corrupted players' blinding factors as input to $\dkgkeygen_3$,
 $\cdv$ instead derives blinding factors for all corrupted parties in $\dkgkeygen_2$,
 (importantly, before it reveals the honest players' blinding factors to $\adv$)

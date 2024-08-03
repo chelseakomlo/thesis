@@ -7,6 +7,7 @@ This notion is formalized by the requirement of \emph{simulatability}:
 that the DKG can be simulated to an adversary with respect to some challenge $\dkgchal \in \publicspace$,
 where $\dkgchal$ is a valid public key for the target key generation algorithm.
 We formalize this notion in Figure~\ref{fg:zk}.
+The oracle $\oraclekg$ is defined in Figure~\ref{fg:keygen-o}.
 
 \begin{figure}[!ht]
   \begin{pchstack}[boxed,center,space=1em]
@@ -45,8 +46,8 @@ We formalize this notion in Figure~\ref{fg:zk}.
   \end{pcvstack}
 \end{pchstack}
 
-\caption{Zero-knowledge experiment defining the advantage of an adversary $\adv$ that controls up to $t-1$ players in a DKG.
-  The oracle $\oraclekg$ is defined in Figure~\ref{fg:keygen-o}.}
+\caption{Zero-knowledge experiment for a DKG.
+  }
 \label{fg:zk}
 \end{figure}
 

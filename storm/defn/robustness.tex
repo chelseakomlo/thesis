@@ -68,11 +68,7 @@ however, introducing a weaker variant allows us to define a more efficient const
   \end{pcvstack}
   \end{pchstack}
 
-\caption{Game defining the advantage of an adversary $\adv$ to disrupt robustness for a DKG.
-We show the \emph{strong robustness} experiment in a box, and the \emph{weak robustness} experiment in a dashed box.
-%We denote the parties controlled by $\adv$ as $\corrupt$, where $\lvert \corrupt \rvert < t$,
-%and the set of simulated honest parties as $\honest$.
-  The oracles $\oraclekg, r \in \set{\numrounds-1}$ and $\oraclefinalize$ are defined in Figure~\ref{fg:keygen-o}.
+\caption{Robustness experiment for a DKG.
 }
 %\douglas{Line 24 checks that $\sk \ne \fail$.  Should we also be checking that $\sk$ is the (a) secret key corresponding to $\pk$?  Is robustness violated if the adversary the parties can be tricked into recovering a different $\sk$?  Sorry if we've discussed this already and I forgot.}
 % \chelsea{The recover algorithm checks key validity internally}
@@ -80,10 +76,17 @@ We show the \emph{strong robustness} experiment in a box, and the \emph{weak rob
 \end{figure}
 
 
+\paragraph{Common Oracles.}
+First, we define common oracles that are used within the respective security
+experiments for a DKG in in Figure~\ref{fg:keygen-o}.
+Boxed algorithms are used by the robustness and indistinguishability games;
+dashed boxed algorithms are used by the zero-knowledge game.
 
 \subsubsection{Strong Robustness.}
 We show the strong robustness attack experiment in Figure~\ref{fg:robustness},
 where its differences with weak robustness are outlined in a box.
+
+
 The advantage of an adversary $\adv$ against $\dkg$ in the strong robustness experiment is
   \[
   \advantstrrobust{\dkg,\adv}(\lambda) = \Pr[\StrongRobustnessExp_{\dkg,\adv}(\lambda) = 1 ]
@@ -188,9 +191,7 @@ the resulting keypair is invalid with respect to the target key generation algor
   }
   \end{pchstack}
   \end{framed}
-\caption{Common oracles used within the games defining the security of a distributed key generation algorithm.
-Boxed algorithms are used by the robustness and indistinguishability
-  games; dashed boxed algorithms are used by the zero-knowledge game.
+\caption{Common oracles used within security experiments for a distributed key generation scheme.
 }
 \label{fg:keygen-o}
 \end{figure}

@@ -25,11 +25,7 @@ We now define additional preliminaries used specifically in this chapter.
   }
 \end{pcvstack}
     \caption{
-    The general forking algorithm $\genfork^\cdv(X)$ and the modified general forking algorithm $\modgenfork^\cdv(X)$,
-    defined with respect to an algorithm $\cdv$ and instance $X$.
-    The difference between the general forking algorithm and modified variant is shown in a box, for emphasis.
-    In summary,
-    the modified general forking algorithm aborts if \emph{any} of the $(h_1, \ldots, h_\forkhashes, h_j', \ldots, h_\forkhashes')$ collide.
+    The general forking algorithm $\genfork^\cdv(X)$ and the modified general forking algorithm $\modgenfork^\cdv(X)$.
     }
     \label{fg:gen-fork-mod}
 \end{figure}
@@ -43,7 +39,14 @@ We now define additional preliminaries used specifically in this chapter.
 
 
 We review the general forking lemma by Bellare and Neven~\cite{BellareN06}, which itself is a formalization of the forking lemma  introduced by Pointcheval and Stern~\cite{PointchevalS96}.
-We show the general forking algorithm in Figure~\ref{fg:gen-fork-mod}.
+We show the general forking algorithm in Figure~\ref{fg:gen-fork-mod},
+as well as a slight modification,
+which we describe in Section~\ref{sec:modified-forking}.
+
+The algorithms are defined with respect to an algorithm $\cdv$ and instance $X$.
+The difference between the general forking algorithm and modified variant is shown in a box, for emphasis.
+In summary,
+the modified general forking algorithm aborts if \emph{any} of the $(h_1, \ldots, h_\forkhashes, h_j', \ldots, h_\forkhashes')$ collide.
 
 
 
