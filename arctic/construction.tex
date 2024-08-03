@@ -74,19 +74,6 @@
 \end{pchstack}
     \caption{
       \glitter, a deterministic threshold Schnorr signature scheme.
-      For security,
-      \glitter requires that the minimum number of signing parties
-      $\minparticipants \leq n$ be at minimum $\minparticipants \geq 2t-1$,
-      where $t$ is the tolerated corruption threshold.
-      We further require that messages exchanged between participants are sent over an authenticated channel.
-      \glitter builds upon the verifiable pseudorandom secret sharing scheme \DVRFOne defined in Section~\ref{dvrf-concrete},
-      as well as Shamir's secret sharing.
-      Verification of signatures is identical to the single-party Schnorr verification algorithm.
-      %\ian{Is the same $\pp$ meant to be used for both \glitter and \DVRFOne? They don't appear to have the same parameter format?}
-      %\chelsea{Yes, but I think it is fine; this falls under the "you know what
-      %we mean" category and making it explicit makes it harder to read}
-      %\ian{The $\pk_i$ are never used in this protocol.  Do we need to keep them? They \emph{could} be used to check for corrupt players that give incorrect $z_k$ after giving correct $R_k$.}
-      %\chelsea{yes, I think we should keep them, for possible extensions}
     }
   \label{fg:construction}
 \end{figure}
@@ -100,7 +87,13 @@ As a building block,
 and to verify that all other participants followed the protocol honestly.
 \glitter is secure assuming fewer than $t$ participants are corrupted,
 and at least $\minsigners$ participated in the signing protocol,
-where $\minsigners \leq n$ but  $\minsigners \geq 2t-1$.
+where $\minsigners \leq n$ but  $\minsigners \geq 2t-1$,
+and where $t$ is the tolerated corruption threshold.
+
+We further require that messages exchanged between participants are sent over an authenticated channel.
+\glitter builds upon the verifiable pseudorandom secret sharing scheme \DVRFOne defined in Section~\ref{dvrf-concrete},
+as well as Shamir's secret sharing.
+Verification of signatures is identical to the single-party Schnorr verification algorithm.
 
 \begin{remark}[Distributed Key Generation]
 The \glitter construction given in Figure~\ref{fg:construction} assumes a centralized key generation procedure;

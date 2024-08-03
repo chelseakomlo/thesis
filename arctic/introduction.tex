@@ -185,18 +185,8 @@ in the \emph{honest supermajority} setting (i.e., when $\minsigners \geq 3t-2$).
 	\end{tabular}
 %}
   \medskip
-	\caption{ Comparison of multi-party deterministic Schnorr signature schemes in the random oracle model (ROM) that support general choices of $n$
-  (i.e., we exclude $2$-of-$2$ schemes).
-  Here,
-  $n$ denotes the number of total possible signers,
-  $t$ denotes the corruption threshold.
-  %and $\minsigners$ denotes the minimum number of parties required to participate in a signing operation.
-  Computation is given with respect to the operations that dominate;
-  estimates for MuSig-DN are given with respect to a $256$-bit elliptic curve;
-  more information is given in Section~\ref{performance-estimates}.
-  Bandwidth similarly is given with respect to a $256$-bit elliptic curve~\cite{NickRSW20,GarillotKMN21}.
-  %\ian{Isn't the ``computation'' column the per-signer cost?  Why does Musig-DN have an ``$n$'' in it?}
-  %\chelsea{because it is n-of-n and each signer needs to generate a proof and verify n-1 other proofs.}
+	\caption{ Comparison of multi-party deterministic Schnorr signature schemes
+  in the ROM that support general choices of $n$.
   }
 \label{table:efficiency}
 \end{table}
@@ -252,8 +242,6 @@ due to its use of \DVRFOne as a building block.
 Furthermore,
 \glitter supports the general threshold setting for any $t, \minsigners$ and $n$,
 so long as $\minsigners \geq 2t-1$ and $\minsigners \leq n$.
-We give an overview of \glitter in Table~\ref{table:efficiency} in comparison to related
-schemes in the literature.
 
 At a high level,
 \glitter uses \DVRFOne in the first round of signing to generate participant nonces and commitments;
@@ -275,6 +263,16 @@ and ${n-1\choose t-1} = \text{poly}(n)$.
 We describe in Section~\ref{hon-maj-obs} why requiring honest majority assumptions can be practical for some real-world deployments of threshold signatures,
 at the benefit of improved simplicity and performance.
 
+
+\paragraph{\bf Comparison with Related Schemes.}
+We give an overview of \glitter in Table~\ref{table:efficiency} in comparison to related
+schemes in the literature.
+In the table,
+we review only schemes that support a general number $n$ of parties (i.e., we exclude $2$-of-$2$ schemes).
+Computation is given with respect to the operations that dominate;
+estimates for MuSig-DN are given with respect to a $256$-bit elliptic curve;
+more information is given in Section~\ref{performance-estimates}.
+Bandwidth similarly is given with respect to a $256$-bit elliptic curve~\cite{NickRSW20,GarillotKMN21}.
 
 \paragraph{\bf Performance Analysis of \glitter.}
 To estimate the practicality of \glitter for various choices of $n, t$, and $\minsigners$,
