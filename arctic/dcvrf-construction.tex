@@ -188,3 +188,249 @@ Therefore, if all parties are honest, the coefficients of $x^t$, \dots, $x^{\lve
 \DVRFOne is verifiable, unique, and pseudorandom.
 We give the corresponding proofs next.
 
+\begin{theorem} \label{thm:dcvrf-verifiable}
+\DVRFOne is information-theoretically verifiable,
+assuming the adversary controls at most $t-1$ participants,
+at least $t$ participants are honest, and
+participants exchange messages over an authenticated channel.
+\end{theorem}
+% \ian{The constraint on {n-1 \choose t-1} = poly(n) doesn't enter into
+% Theorems 1 and 2, because they're information theoretic (and never run
+% Gen anyway).}
+
+
+\begin{proof}
+  Recall that in the verifiability game,
+  the adversary is required to provide an input $\vrfin$,
+  a coalition $\coalition \subseteq \set{n}$,
+  and a set $ (\vrfpubout_i)_{i \in \coalition \cap \corrupt}$,
+  such that $ (\vrfpubout_i)_{i \in \coalition \cap \corrupt}$ does not equal the set $(\vrfpubout_i')_{i \in \coalition \cap \corrupt}$,
+  where $(\vrfprivout_i', \vrfpubout_i') \gets \DVRFOnem.\generate(i, \sk_i, \vrfin)$ is obtained honestly.
+  The environment derives the values
+  $(\vrfprivout_j, \vrfpubout_j) \gets \DVRFOnem.\generate(j, \sk_j, \vrfin), j \in \coalition \cap \honest$
+  for honest participants, reflecting the requirement that participants' messages are received over authenticated channels.
+%
+  The adversary wins when
+  $\DVRFOnem.\verify(t, \minparticipants, \coalition, S)$ outputs $1$, where
+  $S = (\vrfpubout_j)_{j \in \coalition}$.
+
+  For $\DVRFOnem.\verify(t, \minparticipants, \coalition, S)$ to output $1$,
+  then Equation~\ref{eq:poly-check} must hold.
+  But for Equation~\ref{eq:poly-check} to hold,
+  then $(\vrfpubout_j)_{j \in \coalition}$ must define a degree $t-1$ polynomial in the exponent.
+  However, this polynomial is information-theoretically defined by the set of honest participant commitments  $(\vrfpubout_j)_{j \in \coalition \cap \honest}$,
+  because we assume $\lvert \honest \rvert \geq t$,
+  and a degree $t-1$ polynomial is uniquely defined by $t$ points.
+
+  Hence, when corrupted participants do not honestly follow the protocol,
+  then the resulting polynomial committed to in $S$ will be of higher degree than $t-1$.
+  As such, \DVRFOne is information-theoretically verifiable.
+\end{proof}
+
+\begin{theorem} \label{thm:dcvrf-unique}
+\DVRFOne is information-theoretically unique,
+assuming the adversary controls at most $t-1$ participants,
+at least $t$ participants are honest, and
+participants exchange messages over an authenticated channel.
+\end{theorem}
+
+
+\begin{proof}
+  In the uniqueness game given in Figure~\ref{fig:dcvrf-unique},
+  the adversary is required to provide an input $\vrfin$ and the tuples
+  $(\coalition, (\vrfpubout_i)_{i \in \coalition \cap \corrupt}), (\coalition', (\vrfpubout_i')_{i \in \coalition' \cap \corrupt})$.
+  The environment then derives honest parties' contributions
+  $( \vrfpubout_j) \gets \DVRFOnem.\generate(j, \sk_j, \vrfin)$, again reflecting the authenticated channel,
+  and the environment derives the commitment sets
+  $S_1 = (\vrfpubout_j)_{j \in \coalition \cap \honest} \cup (\vrfpubout_i)_{i \in \coalition \cap \corrupt}$
+  and $S_2 = (\vrfpubout_j)_{j \in \coalition' \cap \honest} \cup (\vrfpubout_i')_{i \in \coalition' \cap \corrupt}$.
+  The adversary wins if both sets are valid for their respective coalitions,
+  and yet the output of $\DVRFOnem.\combinepub$ outputs different combined commitments.
+
+  However,
+  for $\DVRFOnem.\verify(\coalition, S_1)$ and $\DVRFOnem.\verify(\coalition', S_2)$ to both output $1$,
+  then Equation~\ref{eq:poly-check} must hold.
+  But for Equation~\ref{eq:poly-check} to hold,
+  then $S_1$ and $S_2$ must each define a degree $t-1$ polynomial.
+  Further, because we assume at least $t$ honest participants,
+  then $S_1$ and $S_2$ must agree on at minimum $t$ points.
+
+  %Hence, when corrupted participants do not honestly follow the protocol,
+  %then information-theoretically,
+  %either $S_1$ or $S_2$ will commit to a polynomial of higher degree than $t$,
+  %and so  Equation~\ref{eq:poly-check} cannot hold for both sets.
+
+  As such, when both $\DVRFOnem.\verify(\coalition, S_1)$ and $\DVRFOnem.\verify(\coalition, S_2)$ both output $1$,
+  then the sets $S_1$ and $S_2$ must define the same degree $t-1$ polynomial.
+  Because $\DVRFOnem.\combinepub$ simply performs polynomial interpolation in the exponent to output the commitment to the constant term of the polynomial,
+  then information-theoretically,
+  it must be the case that $\DVRFOnem.\combinepub(S_1) = \DVRFOnem.\combinepub(S_2)$.
+  Therefore, uniqueness likewise holds information-theoretically for \DVRFOne.
+\end{proof}
+
+\begin{figure}[t]
+  \centering
+	%\begin{linedgamespec}
+	\begin{pchstack}[boxed]
+    \procedure{ $\SIMEval(\vrfin, \vrfprivout, \corrupt, n, \{ \sk_j\}_{j \in \corrupt})$ }{
+      \vrfpubout \gets g^{\vrfprivout} \\
+      (\vrfprivout_j, \vrfpubout_j) \gets \DVRFOnem.\generate(j, \sk_j, \vrfin), \text{ for } j \in \corrupt \\
+      \text{\algcom This step is possible because \DVRFOne is verifiable,} \\
+      \text{\algcom and so it is guaranteed that the correct $(\vrfprivout_j, \vrfpubout_j), j \in \corrupt$ are derived } \\
+      \text{Define } f(x) = \vrfprivout \cdot L_0(x) + \sum_{j \in \corrupt} \vrfprivout_j \cdot L_j(x) \\
+      \text{\algcom $L_i(x)$ is the Lagrange polynomial defined by $\corrupt \cup \{ 0\}$} \\
+      \honest = \set{n} \setminus \corrupt \\
+      \pcfor i \in \honest \pcdo \\
+      \pcind \text{Derive } \vrfprivout_i \gets f(i) \\
+      \pcind \vrfpubout_i \gets g^{\vrfprivout_i} \\
+      \pcreturn (\vrfpubout, \{ (\vrfprivout_i, \vrfpubout_i)\}_{i \in \honest})
+		}
+	\end{pchstack}
+	%\end{linedgamespec}
+\caption{Simulating algorithm $\SIMEval$ for \DVRFOne.}
+\label{fig:simeval-shine}
+\end{figure}
+%
+
+\begin{theorem} \label{thm:dcvrf-pseudo}
+\DVRFOne is pseudorandom in the Random Oracle Model,
+assuming the adversary controls at most $t-1$ participants,
+at least $t$ participants are honest,
+\DVRFOne is verifiable,
+and where $(n, t) \in \mathbb{N}$  are such that ${n-1\choose t-1} = \text{poly}(n)$.
+%
+Concretely,
+  \begin{equation} \label{eq:thm-pseudo-shine}
+  \advant{psdr}{\adv,\DVRFOnem}(\secp, n, t, \minparticipants) \leq \hgenerictotal/q
+\end{equation}
+where $\hgenerictotal$ is the number of times $\adv$ is allowed to query $\Hash$.
+\end{theorem}
+
+\begin{proof}
+  We prove Theorem~\ref{thm:dcvrf-pseudo} by a sequence of games.
+
+  \paragraph{\underline{Game~0.}}
+  This is the peudorandomness game as defined in Figure~\ref{fig:dcvrf-pseudo} instantiated with \DVRFOne,
+  when $b=0$.
+  Let $W_0$ be the event that $\adv$ outputs $b'=1$ in Game~0.
+
+%\ian{You were mixing up the two styles of game hopping.  Here, you're using the ``Game 0 is $b=0$, ..., Game~$k$ is $b=1$'' style.  In that style, $W_i$ is the event that $\adv$ outputs 1 in Game~$i$, and the adversary's advantage is $\frac12 |\Pr[W_k]-\Pr[W_0]|$.  It can't be the event that $\adv$ \emph{wins} Game~$i$ (as you had it before), since the adversary can trivially win Game~0 by always outputting $b'=0$. This also meant the last game wasn't quite right.  (Also, you missed a step; your old Game~2 wasn't the $b=1$ case as you'd claimed. It was the $b=1$ case with also the environment aborting if $\Hash$ was queried on the magic $\share$ value. So you need to undo that as well. I've done all that.)}
+
+  \paragraph{\underline{Game~1.}}
+  Let $\sk_\corrupt = \cup_{i \in \corrupt} \sk_i$,
+  and let $\sk_\honest = \cup_{j \in \honest} \sk_j$.
+  Then $\sk_\honest \setminus \sk_\corrupt$ is necessarily non-empty, so let
+  $\targetshinekey$ be such that $(\cdot, \targetshinekey) \in \sk_\honest \setminus \sk_\corrupt$.
+
+  Note that this $\targetshinekey$ will be random in $\Zq$ and unknown to $\adv$.
+  Then the only difference between Game~0 and Game~1 is that
+  if $\adv$ queries $\Hash$ on any input $(\targetshinekey, \cdot)$,
+  the environment aborts.
+
+
+  \paragraph{Difference between Game~1 and Game~0.}
+  When $\adv$ is allowed to make up to $\hgenerictotal$ queries to $\Hash$,
+  then the probability the environment aborts is at most $\hgenerictotal/q$.
+  Let $W_1$ be the event that $\adv$ outputs $b'=1$ in Game~1.
+  Then
+
+  \begin{equation} \label{eq:dcvrf-game1}
+    \lvert \Pr[W_1] - \Pr[W_0] \rvert \leq \frac{\hgenerictotal}{q}
+  \end{equation}
+
+  \paragraph{\underline{Game~2.}}
+  This is the pseudorandomness game as in Figure~\ref{fig:dcvrf-pseudo},
+  when $b=1$,
+  and where $\SIMEval$ is as shown in Figure~\ref{fig:simeval-shine},
+  along with the abort condition of Game~1.
+
+  On start,
+  the environment initializes a table $Q \gets \emptyset$.
+  Then, when $\adv$ queries $\oracle^{\generate}$ on input $(\partyid, \vrfin)$,
+  instead of performing $\DVRFOnem.\generate$ honestly,
+  the environment first checks if $Q[\vrfin] \neq \bot$;
+  if the check holds,
+  it parses
+  $(\vrfpubout, \{ (\vrfprivout_i, \vrfpubout_i)\}_{i \in \honest} ) \gets Q[\vrfin]$ and
+  returns $(\vrfprivout_\partyid, \vrfpubout_\partyid)$.
+
+  Otherwise, the environment samples $\vrfprivout \rgets \vrfprivdomain$,
+  and then obtains
+  $(\vrfpubout, \{ (\vrfprivout_i, \vrfpubout_i)\}_{i \in \honest} ) \gets \SIMEval(\vrfin, \vrfprivout, \corrupt, n, \allowbreak \{ \sk_j\}_{j \in \corrupt})$,
+  where $\SIMEval$ is defined as in Figure~\ref{fig:simeval-shine}.
+  Note that $\SIMEval$ requires that \DVRFOne to be verifiable,
+  and hence that $\lvert \honest \rvert \geq t$.
+  The environment updates $Q[\vrfin] = (\vrfpubout, \{ (\vrfprivout_i, \vrfpubout_i)\}_{i \in \honest})$,
+  and then returns $(\vrfprivout_\partyid, \vrfpubout_\partyid)$.
+
+  \medskip
+
+  \noindent \textbf{Analysis of $\SIMEval$}
+  Because Game~$1$ aborts on the condition that the adversary guesses the honest participants' secret key,
+  in Game~2,
+  the adversary must win with knowledge of only $t-1$ secret keys.
+  However, because we assume that the number of honest parties is at least $t$,
+  then the honest parties will completely determine the combined $\vrfprivout$.
+
+  Furthermore,
+  because $\DVRFOnem$ is verifiable,
+  then $\SIMEval$ can derive the corrupt parties' contributions $(\vrfprivout_j, \vrfpubout_j), j \in \corrupt$ before it determines honest parties' contributions.
+  As such,  corrupt parties cannot adaptively choose their contributions after
+  the fact to influence the resulting
+  $\vrfpubout \gets  \DVRFOnem.\combine(t, \minparticipants, \{ \vrfpubout_i\}_{i \in \coalition^*})$.
+  Hence, the simulation by $\SIMEval$ is perfect.
+
+  \paragraph{Difference between Game~2 and Game~1.}
+  In Game~1, $\oracle^{\generate}(\partyid, \coalition, \vrfin)$ returns
+  $(f(k), g^{f(k)})$ where $f(x) = \sum_{i \in \set{\delta}} \Hash(\share_i, \vrfin) \cdot L'_{a_i}(x)$ defined as in Equation~\ref{eq:vrf-out-eval}.
+  Since $\Hash(\targetshinekey, \vrfin)$ is unknown to $\adv$,
+  $f(x)$ is a random degree-$(t-1)$ polynomial that passes through $(j,y_j)_{j \in \corrupt}$.
+
+  In Game~2, $\oracle^{\generate}(\partyid, \coalition, \vrfin)$ returns $(f(k), g^{f(k)})$,
+  where $f(x) =  \vrfprivout \cdot L_0(x) + \sum_{j \in \corrupt} \vrfprivout_j \cdot L_j(x)$.
+  Since $\vrfprivout$ is random,
+  this is also a random degree-$(t-1)$ polynomial that passes through $(j,y_j)_{j \in \corrupt}$.
+
+  There is no difference between the distributions of these outputs.
+  Let $W_2$ be the event that $\adv$ outputs $b'=1$ in Game~2. Then
+
+  \begin{equation} \label{eq:dcvrf-game2}
+    \lvert \Pr[W_2] - \Pr[W_1] \rvert = 0
+  \end{equation}
+
+  %\ian{What is this new game?  Game 2 is \emph{already} the pseudorandomness game with $b=1$, plus the abort condition.  (It used to say that explicitly, but you took it out?)  So what does ``except that $b$ is set to $b=1$'' mean, if it's already like that in Game 2?  I don't see what this new game hop is doing?}
+  %\chelsea{It used to say instantiated with shine, which is wrong. I clarified above.}
+
+
+  \paragraph{\underline{Game~3.}}
+  Game~3 is
+  identical to Figure~\ref{fig:dcvrf-pseudo} instantiated with \DVRFOne,
+  when $b=1$.
+
+
+  \paragraph{Difference between Game~3 and Game~2.}
+  The only difference between Game~3 and Game~2 is that Game~2 has the abort condition, but Game~3 does not.
+  Let $W_3$ be the event that $\adv$ outputs $b'=1$ in Game~3.
+  Then as above,
+
+  \begin{equation} \label{eq:dcvrf-game3}
+    \lvert \Pr[W_3] - \Pr[W_2] \rvert \leq \frac{\hgenerictotal}{q}
+  \end{equation}
+
+  \paragraph{\underline{Finishing the Proof.}}
+  Combining Equations~\ref{eq:dcvrf-game1}--\ref{eq:dcvrf-game3} yields
+
+  \begin{align*}
+  \begin{split}
+  \advant{psdr}{\adv,\DVRFOnem}(\secp, n, t, \minparticipants)
+  & = \bigabs{\Pr[ \PseudoExp_{\adv,\DVRFOnem}(\secp, n, t, \minparticipants) = 1] - 1/2} \\
+    & = \bigabs{\Pr[ b'=0 \wedge b=0 ] + \Pr[ b'=1 \wedge b=1 ] - 1/2} \\
+  & = \left|\frac{1}{2}(1-\Pr[W_0]) + \frac{1}{2}\Pr[W_3] - \frac{1}{2}\right| \\
+  & = \left|\frac{1}{2}(\Pr[W_3]- \Pr[W_0])\right| \le \frac{\hgenerictotal}{q},
+  \end{split}
+  \end{align*}
+  which gives Equation~\ref{eq:thm-pseudo-shine}.
+  This completes the proof.
+\end{proof}
+
+
