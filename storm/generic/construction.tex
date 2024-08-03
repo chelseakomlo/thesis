@@ -1,7 +1,11 @@
 \section{A Generic DKG Construction} \label{generic-construction}
 
-We now introduce a weakly robust generic construction that assumes an honest majority,
+We now introduce a weakly robust generic DKG construction that assumes an honest majority,
 shown in Figure~\ref{fg:generic-perfect}.
+The DKG initialized with a NIKE $\enike$ as defined in Section~\ref{enike},
+an \AVSS $\avss$ as defined in Section~\ref{asym-vss},
+and a hash function $\Hash$.
+
 We present a concrete constructions in Section~\ref{storm-gen}.
 
 \begin{figure}[p]
@@ -96,18 +100,7 @@ We present a concrete constructions in Section~\ref{storm-gen}.
 }
 \end{pcvstack}
 \end{pchstack}
-    \caption{A generic DKG key generation protocol as defined in
-    Section~\ref{dkg-reqs},
-    initialized with a NIKE $\enike$ as defined in Section~\ref{enike},
-    an \AVSS $\avss$ as defined in Section~\ref{asym-vss},
-    and a hash function $\Hash$.
-    Each $\dkgkeygen_r$ operation is defined with respect to participant $i$.
-    The peer-to-peer channel inputs for round $r$ are $\invecp_r$ and outputs are $\outvecp_r$,
-    composed of the peer-to-peer messages $\pmsg_j$.
-    The broadcast channel inputs are $\invecb_r$
-    composed of the broadcast messages $\bmsg_j$,
-    sent by participant $j, j \in \set{n}$.
-    }
+    \caption{A generic DKG protocol.}
 \end{figure}
 
 Our generic construction employs the following building blocks:
@@ -159,6 +152,13 @@ we require Assumption~\ref{ass:avss-enike} to hold.
 As shown in Figure~\ref{fg:generic-perfect}, the key generation protocol is
 completed in three network rounds in the optimistic setting and four network
 rounds in the worst-case setting.
+
+Each $\dkgkeygen_r$ operation is defined with respect to participant $i$.
+The peer-to-peer channel inputs for round $r$ are $\invecp_r$ and outputs are $\outvecp_r$,
+composed of the peer-to-peer messages $\pmsg_j$.
+The broadcast channel inputs are $\invecb_r$
+composed of the broadcast messages $\bmsg_j$,
+sent by participant $j, j \in \set{n}$.
 
 First, in $\dkgkeygen_0$, each participant $i$ performs $\enike.\keygen$ twice;
 first to generate a secret key $\secretone_i$ and its commitment $A_i$,
