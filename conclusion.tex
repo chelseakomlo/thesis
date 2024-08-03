@@ -1,0 +1,58 @@
+\chapter{Conclusion}
+
+In this thesis,
+we have investigated the design of practical threshold key generation and signing schemes.
+We have presented several constructions which minimize barriers to implementation,
+including reducing network latency,
+communication overhead,
+and limiting state-keeping.
+
+In Chapter~\ref{chp:frost},
+we present FROST,
+a Flexible Round-Optimized Schnorr Threshold Signature.
+We show how FROST can be used either as a two-round protocol,
+or optimized to a single-round online signing protocol,
+with a batched preprocessing phase.
+In addition,
+we present a two-round distributed key generation scheme,
+that builds upon Pedersen verifiable secret sharing,
+and Schnorr proofs of knowledge.
+
+In Chapter~\ref{chp:storm},
+we present new game-based definitions for distributed key generation schemes.
+We then present a generic construction that employs as building blocks a non-interactive key-exchange (NIKE) scheme,
+an aggregated verifiable secret sharing (AgVSS) scheme,
+and a secure hash function.
+Finally,
+we present Storm,
+a concrete instantiation of our generic construction that is secure assuming the hardness of the Computational Diffie-Hellman (CDH) assumption.
+
+Finally, in Chapter~\ref{chp:arctic},
+we present Arctic,
+a deterministic and stateless threshold Schnorr signature scheme.
+Arctic builds upon pseudorandom secret sharing as a building block,
+and allows all participants to perform a two-round threshold signing operation,
+without requiring participants to maintain state in between or across signing
+rounds.
+Arctic requires the assumption of an honest minority,
+and is efficient for small signing groups (i.e., when the total number of
+possible signers is less than $25$).
+
+\section{Future Work}
+
+While this thesis presents advancements in the design of practical threshold key generation and signatures,
+many problems remain.
+For example, this thesis largely considers the problem of efficient and practical threshold Schnorr signatures.
+However, it is possible that the techniques employed in this work are equally applications in the setting of other signature schemes,
+such as threshold ECDSA.
+While randomized threshold ECDSA signatures under honest-majority assumptions exist that similarly build upon pseudorandom secret sharing~\cite{DamgardJNPO22,DoernerKLS23,DalskovOKSS20},
+the techniques we employ in FROST may likewise potentially be applicable to improving the efficiency of threshold ECDSA signatures.
+
+Another avenue for future research is the investigation of the minimal security
+assumptions required for two-round threshold Schnorr signature schemes.
+While Arctic can be proven under standard assumptions,
+FROST requires the stronger Algebraic One-More Discrete Logarithm (AOMDL)
+assumption.
+It is interesting to consider whether this difference is inherent,
+or if it is possible to prove two-round randomized Schnorr threshold signature
+secure under weaker assumptions.
