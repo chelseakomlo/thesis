@@ -28,10 +28,15 @@ signers and the set $\{ \aggpk_i \}_{i \in \set{n}}$ of public keys for each sig
     Each $\sk_i$ is given to participant $i$, for $i \in \set{n}$.
     It is assumed that participant $i$ is sent its respective share $\sk_i$ privately.
 
-  \item $(\Sign_1, \ldots, \Sign_\numrounds) \rightarrow \{\msg_{ 1, i}, \ldots, \msg_{\numrounds, i} \}_{i \in \S}$: A set of probabilistic algorithms where each subsequent algorithm represents a single stage in an interactive signing protocol, performed by each signing party in a signing set $\S \subseteq \set{n}, |\S| \geq \thresh$, with respect to a message $m$, defined as follows:
+  \item $(\Sign_1, \ldots, \Sign_\numrounds) \rightarrow \{\msg_{ 1, i},
+    \ldots, \msg_{\numrounds, i} \}_{i \in \coalition}$:
+    A set of probabilistic algorithms where each subsequent algorithm represents a single stage in an interactive signing protocol,
+    performed by each signing party in a signing set
+    $\coalition \subseteq \set{n}, |\coalition| \geq \thresh$,
+    with respect to a message $m$, defined as follows:
   \begin{align}\label{eqn:protocol-messages}
     \begin{split}
-    (\msg_{1,i}, \state_{1,i}) &\gets \Sign_1(i, \sk_i, \S, m)   \\
+    (\msg_{1,i}, \state_{1,i}) &\gets \Sign_1(i, \sk_i, \coalition, m)   \\
     (\msg_{2,i}, \state_{2,i}) &\gets \Sign_2(\state_{1,i}, \PM_{1})   \\
     \vdots \\
     \msg_{\numrounds, i} &\gets \Sign_\numrounds(\state_{\numrounds-1,i}, \PM_{\numrounds-1}) \\
@@ -39,8 +44,8 @@ signers and the set $\{ \aggpk_i \}_{i \in \set{n}}$ of public keys for each sig
   \end{align}
     where $\msg_{ 1, i}, \ldots, \msg_{\numrounds, i}$ are protocol messages for each signing round,
      $\PM$ is a set of protocol messages, and
-  $\state_{j,i}$ is the state of signing party $i$ in $\S$ in round $j$.
-  The signing set $\S$ and message $m$ are shown here as inputs to the first round,
+  $\state_{j,i}$ is the state of signing party $i$ in $\coalition$ in round $j$.
+  The signing set $\coalition$ and message $m$ are shown here as inputs to the first round,
   but they may be deferred to subsequent rounds,
   depending on the scheme.
 
@@ -85,7 +90,7 @@ such that $\Verify(\pk, m, \sigma) = 1$.
 \begin{figure}[!htb]
 	\begin{pchstack}[boxed]
 		\begin{pcvstack}
-      \procedure{$\main$ $\G^{\scriptsize{\protect\fbox{$\mathsf{adp}$}\hbox{-}\suf}}_{\A,\threshsig}(\secp, n, \tcor, \tcornew)$}{
+      \procedure{$\TUnforgExp_{\A,\threshsig}(\secp, n, \tcor, \tcornew)$}{
 		%\protect\dashbox[3.5cm][c]{$\G^{\aduf}_{\A,\threshsig}(\secp, \hmulp)$}}{
 			\sessions \gets \emptyset \\
 			\pp \leftarrow  \ParGen(\usecp) \\
@@ -105,33 +110,25 @@ such that $\Verify(\pk, m, \sigma) = 1$.
 			\pcreturn 0
 		}
    		\pcvspace
-		\procedure{$\Init(\ssid, k, \S, m)$}{
+		\procedure{$\Init(\ssid, k, \coalition, m)$}{
 		\pcif \ssid \notin \sessions \\
-		~~~\pcreturn \bot~\pcif \S \not\subseteq [n] \vee |\S| \neq \thresh\\
-		~~~~\vee k \notin \honest \cap \S \\
+		~~~\pcreturn \bot~\pcif \coalition \not\subseteq [n] \vee |\coalition| \neq \thresh\\
+		~~~~\vee k \notin \honest \cap \coalition \\
 		~~~\sessions \gets \sessions \cup \{\ssid\} \\
-		~~~\S \gets \S[\ssid];~m \gets m[\ssid] \\
+		~~~\coalition \gets \coalition[\ssid];~m \gets m[\ssid] \\
 		~~~Q_m \gets Q_m \cup \{m[\ssid]\} \\
-		\pcreturn \bot~\pcif k \notin \honest \cap \S[\ssid] \\
+		\pcreturn \bot~\pcif k \notin \honest \cap \coalition[\ssid] \\
 		~~~\vee \round[\ssid, k] \neq \bot
 		}
-		\pcvspace
-    		\fbox{ \procedure{$\BigO^{\Corrupt}(k)$}{
-       			\pcreturn \bot~\pcif k \not\in \honest \\
-            ~~~\vee |\corrupt| > \hmulp \cdot \tcornew \\
-        			\corrupt \gets \corrupt \cup \{ k \} \\
-			\honest \gets \honest~\backslash~\{ k \} \\
-        			\pcreturn (\sk_k, \{ \state[\ssid', k] \}_{\ssid' \in \sessions})
-			} }
 		\end{pcvstack}
     		\pchspace
 		\begin{pcvstack}
-			\procedure{$\BigO^{\Sign_1}(\ssid, k, \S, m)$}{
+			\procedure{$\BigO^{\Sign_1}(\ssid, k, \coalition, m)$}{
        	 			%\pccomment{$k$ denotes an honest participant identifier} \\
-				\pcreturn \bot~\pcif \bot \gets \Init(\ssid, k, \S, m) \\
+				\pcreturn \bot~\pcif \bot \gets \Init(\ssid, k, \coalition, m) \\
 				%\S \gets \signers[\ssid];~m \gets m[\ssid] \\
 				(\PM_1[\ssid, k], \state_1[\ssid, k]) \\
-				~~~~~~~~~~~\gets  \Sign_1(k, \sk_k, \S[\ssid], m[\ssid]) \\
+				~~~~~~~~~~~\gets  \Sign_1(k, \sk_k, \coalition[\ssid], m[\ssid]) \\
 				%\PM_1[\ssid, k] \gets \PM_1;~\state_1[\ssid, k] \gets \state_1 \\
 				\PM_{1, k} \gets \PM_1[\ssid, k];~\round[\ssid, k] \gets 1 \\
         \pcreturn \PM_{1, k}
@@ -139,8 +136,8 @@ such that $\Verify(\pk, m, \sigma) = 1$.
     		\pcvspace
     		\procedure{$\BigO^{\Sign_2}(\ssid, k, \PM_1)$}{
 			\pcreturn \bot~\pcif \ssid \notin \sessions \\
-			~~~\vee k \notin \honest \cap \S[\ssid] \vee \round[\ssid, k] \neq 1 \\
-			\pcparse \{\PM_{1,i}\}_{i \in \S} \gets \PM_1 \\
+			~~~\vee k \notin \honest \cap \coalition[\ssid] \vee \round[\ssid, k] \neq 1 \\
+			\pcparse \{\PM_{1,i}\}_{i \in \coalition} \gets \PM_1 \\
 			\pcreturn \bot~\pcif \PM_{1, k} \neq \PM_1[\ssid, k] \\
 			%\state_1 \gets \state_1[\ssid, k] \\
 				(\PM_2[\ssid, k], \state_2[\ssid, k]) \\
@@ -152,8 +149,8 @@ such that $\Verify(\pk, m, \sigma) = 1$.
 		\vdots
 		\procedure{$\BigO^{\Sign_\numrounds}(\ssid, k, \PM_{\numrounds-1})$}{
 			\pcreturn \bot~\pcif \ssid \notin \sessions \\
-			~~~\vee k \notin \honest \cap \S[\ssid] \vee \round[\ssid, k] \neq \numrounds-1 \\
-			\pcparse \{\PM_{\numrounds-1,i}\}_{i \in \S} \gets \PM_{\numrounds-1} \\
+			~~~\vee k \notin \honest \cap \coalition[\ssid] \vee \round[\ssid, k] \neq \numrounds-1 \\
+			\pcparse \{\PM_{\numrounds-1,i}\}_{i \in \coalition} \gets \PM_{\numrounds-1} \\
 			\pcreturn \bot~\pcif \PM_{\numrounds-1, k} \neq \PM_{\numrounds-1}[\ssid, k] \\
 			%\state_2 \gets \state_2[\ssid, k] \\
 				\PM_\numrounds[\ssid, k] \gets  \Sign_\numrounds(\state_{\numrounds-1}[\ssid, k], \PM_{\numrounds-1}) \\
@@ -230,9 +227,11 @@ for $(n, \tcor, \tcornew) \in \mathbb{N}, \tcor \leq n$, $\tcornew < \tcor$.
 
 \subsection{Adaptive Security}
 
-In this work, we are interested in the notion of \emph{adaptive} security.
-We provide a game-based definition of adaptive security in \ref{fig:euf-cma-threshold},
-containing the boxes.
+In this work,
+we prove only static security for our threshold Schnorr signature constructions.
+We provide a high-level discussion of adaptive security here,
+for comparison.
+
 
 %As in static security, the adversary can corrupt a \emph{full} $\tcor$ out of $\thresh$ parties, and it is assumed that there is at least one honest signer.
 In the adaptive setting, the adversary is given the added capability to corrupt parties \emph{at any point during the protocol}, based on all protocol messages it has seen.
@@ -250,24 +249,4 @@ and learns additional information throughout the game (e.g., the signing state f
 
 
 
-
-
-\begin{definition}[Adaptive Security]
-Let the advantage of an adversary $\A$ playing the adaptive security game
-$\G^{\aduf}_{\A,\threshsig}(\secp, n, \tcor, \tcornew)$, as defined in Figure~\ref{fig:euf-cma-threshold}, be as follows:
-%
-\[
-  \advant{adp-sec}{\A,\threshsig}(\secp, n, \tcor, \tcornew) = \bigabs{\Pr[\G^{\aduf}_{\A,\threshsig}(\secp, n, \tcor, \tcornew) = 1]}
-\]
-
-A threshold signature scheme $\threshsig$ is \emph{adaptively secure} if for all PPT adversaries $\A$,
-$\advant{adp-sec}{\A}(\secp, n, \tcor, \tcornew) $ is negligible,
-for $(n, \tcor, \tcornew)  \in \mathbb{N}, \tcor \leq  n, \tcornew < \tcor$.
-\end{definition}
-
-\begin{definition}[Full Adaptive Security]
-We say that a threshold signature scheme $\threshsig$ achieves \emph{full adaptive security} if the
-corruption threshold $\tcornew$ in $\G^{\aduf}_{\A,\threshsig}(\secp, n, \tcor, \tcornew)$ is equal to the reconstruction threshold;
-i.e., $\tcornew = \tcor$.
-\end{definition}
 
