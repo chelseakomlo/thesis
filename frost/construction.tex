@@ -30,6 +30,66 @@ attack by picking  their public key with respect to any other participant's publ
 effectively cancelling out key material or forcing the group public key to hit some target
 value.
 
+\paragraph{Protocol Description.}
+To generate long-lived key shares,
+$\pedpop$ builds upon Pedersen's DKG for key generation; we detail
+these protocol steps in
+Figure~\ref{fg:pedpop}.
+Note that Pedersen's DKG is
+simply where each participant
+executes Feldman's VSS as the dealer in parallel, and derives their
+secret share as the sum of the shares received from each of the $n$
+VSS executions. In addition to the
+base Pedersen DKG protocol, FROST additionally requires each
+participant to demonstrate knowledge of their secret $a_{i0}$ by providing
+other participants with proof in zero knowledge, instantiated as a Schnorr
+signature, to protect against rogue-key attacks~\cite{BellareBS03}
+in the setting where $t \geq n/2$.
+
+To begin the key generation protocol, a set of participants must be formed
+using some out-of-band mechanism decided upon by the implementation.
+After participating in $\pedpop$, each participant $P_i$
+holds a value
+$(i, s_i)$ that is their long-lived secret signing share.
+Participant $P_i$'s public key share $Y_i = g^{s_i}$ is
+used by other participants to verify the correctness of $P_i$'s
+signature shares in the following signing phase, while
+the group public key $Y$ can be used by parties external to the group
+to verify signatures issued by the group in the future.
+
+\textbf{View of Commitment Values.} As required for \emph{any} multi-party
+protocol using Feldman's VSS,
+the key generation stage in $\pedpop$
+similarly requires participants to maintain a consistent view of commitments
+$\Vec{C_i}, 1 \leq i \le n$
+issued during the execution of $\pedpop$. In this work, we
+assume participants broadcast the
+commitment values honestly (e.g., participants do not provide different
+commitment values to a subset of participants).
+
+\textbf{Security tradeoffs.} While Gennaro et al.~\cite{GennaroJKR07}
+describe a ``Stop, Kill, and Rewind'' attack against Pedersen DKG (where the protocol
+terminates and is re-run if misbehaviour is detected) as vulnerable to
+influence by the adversary, we note that in a real-world setting,
+good security practices typically require that the cause of misbehaviour is
+investigated once it has been detected; the protocol is not allowed to
+terminate and re-run continuously until
+the adversary finds a desirable output.
+Further, many protocols in practice do not prevent an adversary from
+aborting and re-executing key agreement at any point in the protocol;
+adversaries in protocols such as the widely used TLS protocol can skew the
+distribution of the resulting key simply by re-running the protocol.
+
+However, implementations wishing for a robust DKG can simply use the DKG by Gennaro et al.~\cite{GennaroJKR07} to generate keys for the FROST signing protocol instead.
+Note that the efficiency of the DKG for the key generation
+phase is not extremely critical,
+because this operation
+must be done only once per key generation for long-lived keys.
+For the per-signature operations, FROST optimizes the generation of random
+values \emph{without} utilizing a DKG, as discussed next.
+
+
+
 
 
 \begin{figure*}[!ht]
