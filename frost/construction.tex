@@ -254,7 +254,8 @@ over different messages or participant/commitment pairs results in an invalid
 signature, thwarting attacks such as those of Drijvers et al.
 
 \paragraph{Coordinator Role.}
-FROST assumes an external mechanism to choose the set $\S \subseteq \{1, \ldots, n \}$ of signers, where $t \leq \abs{\S} \leq n$.
+FROST assumes an external mechanism to choose the set
+$\coalition \subseteq \{1, \ldots, n \}$ of signers, where $t \leq \abs{\coalition} \leq n$.
 The coordinator is trusted to not perform denial of service attacks,
 but otherwise is untrusted.
 Even if the coordinator were untrusted,
@@ -263,9 +264,9 @@ FROST would remain unforgeable.
 
 \paragraph{Preprocessing Stage.}
 As a reminder, the public parameters $\pp$ are implicitly given as input to all algorithms and protocols.
-$\S$ is required to be ordered to ensure consistency.
+The coalitoin $\coalition$ is required to be ordered to ensure consistency.
 
-In this setting, $\pi$ determines the number of
+In this setting, $\ell$ determines the number of
 nonces that are generated and their corresponding commitments that are
 published in a single preprocess step.
 Implementations that do not wish to cache commitments can instead
@@ -274,15 +275,13 @@ commitment to each other in the first round.
 
 Each participant $P_i$ begins by generating a list of
 \emph{single-use} private nonce pairs and corresponding public commitment shares
-$\langle((d_{ij}, D_{ij} = g^{d_{ij}}), (e_{ij}, E_{ij} = g^{e_{ij}})) \rangle_{j=1}^\pi$,
+$\langle((d_{ij}, D_{ij} = g^{d_{ij}}), (e_{ij}, E_{ij} = g^{e_{ij}})) \rangle_{j=1}^\ell$,
 where
 $j$ is a counter that identifies the next nonce/commitment share pair available
 to use for signing.
 Each $P_i$ then publishes $(i, L_i)$, where $L_i$ is their list of
 commitment shares
-$L_i  = \langle(D_{ij}, E_{ij}) \rangle_{j=1}^\pi$. The location
-where participants publish these values can depend on the implementation
-(which we discuss further in Section~\ref{frost:discussion}).
+$L_i  = \langle(D_{ij}, E_{ij}) \rangle_{j=1}^\ell$.
 The set of $(i, L_i)$ tuples are then stored by any entity that might perform
 the coordinator role during signing.
 
