@@ -264,7 +264,7 @@ FROST would remain unforgeable.
 
 \paragraph{Preprocessing Stage.}
 As a reminder, the public parameters $\pp$ are implicitly given as input to all algorithms and protocols.
-The coalitoin $\coalition$ is required to be ordered to ensure consistency.
+The coalition $\coalition$ is required to be ordered to ensure consistency.
 
 In this setting, $\ell$ determines the number of
 nonces that are generated and their corresponding commitments that are
@@ -285,12 +285,13 @@ $L_i  = \langle(D_{ij}, E_{ij}) \rangle_{j=1}^\ell$.
 The set of $(i, L_i)$ tuples are then stored by any entity that might perform
 the coordinator role during signing.
 
-\paragraph{Signing Protocol.}
+\paragraph{Online Signing Protocol.}
 At the beginning of the signing protocol in Figure~\ref{fig:frost},
-the coordinator selects $\alpha : t \leq \alpha \leq n$
+the coordinator selects  a coalition of parties $\coalition \subseteq \set{n}, \lvert \coalition \rvert \geq t$
 participants (possibly including itself) to participate in the signing.  Let
 $\coalition$ be the set of those $\alpha$ participants.
-The coordinator then selects the next available commitment $(D_i, E_i) : i \in S$,
+The coordinator then selects the next available commitment
+$(D_i, E_i) : i \in \coalition$,
 which are later used to generate a secret share to a random commitment $R$ for
 the signing group.\footnote{Each participant
 contributes to the group commitment $R$, which corresponds to the
@@ -326,9 +327,8 @@ deriving $R_i = D_i \cdot (E_i)^{\rho_i}$.
 Doing so binds the
 message, the set of signing participants, and each participant's commitment
 to each signature share.
-This binding technique thwarts the attack of Drijvers et al.\ described in
-Section~\ref{schnorr-attacks} as attackers cannot combine signature shares
-across disjoint signing operations or permute the set of signers or published
+This binding technique thwarts the attack of Drijvers et al.\cite{DrijversEFKLNS19},
+as attackers cannot combine signature shares across disjoint signing operations or permute the set of signers or published
 commitments for each signer.
 
 The commitment for the set of signers

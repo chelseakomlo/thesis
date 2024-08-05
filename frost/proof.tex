@@ -21,11 +21,11 @@ such that
 k = \sum_{i \in S} d_i + e_i \cdot \rho_i
 \)
 using the associated public data $(m, B)$ to determine $\rho_i$.
-During the key generation phase described in Figure~\ref{fg:keygen},
+During the key generation phase,
 the first polynomial $F_1(x) = \sum_{j=1}^n f_j(x)$ is generated
 such that the secret key shares are $s_i = F_1(i)$ and the secret key is $s = F_1(0)$.
 
-During the signature phase (Figure~\ref{fg:single-sign-parallel}),
+During the signature phase,
 each of the
 participants in the coalition $\coalition$ selected for signing use a pair of nonces $(d_i, e_i)$ to
 define a degree $\lvert\coalition-1 \rvert$ polynomial $F_2(x)$, interpolating the
