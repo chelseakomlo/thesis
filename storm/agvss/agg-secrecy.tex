@@ -64,7 +64,7 @@ which we formalize in Figure~\ref{fg:avss-secrecy}.
       \vsscommit^*) \gets \mathbf{out} \\
       \pcind \pcind Q_1 \gets (\secretone^*, \vsscommit^*) \\
       \pcind \pcreturn ( \{(j,\share_j)\}_{j \in \corrupt}, \vsscommit^*) \\
-      \simtotal \gets \simtotal + 1 \\
+      \simtotal \gets \simtotal + 1;\
       s_\simtotal \rgets \secretspace \\
       \{(j,\share_{\simtotal j})\}_{j =1}^n, \vsscommit_\simtotal \rgets \avss[\Hash].\issueshares(\lambda, s_\simtotal, n, t) \\
       Q_2 \gets  Q_2 \cup   \{ (\{(j,\share_{\simtotal j})\}_{j \in \honest},, \vsscommit_\simtotal) \} \\
@@ -72,7 +72,7 @@ which we formalize in Figure~\ref{fg:avss-secrecy}.
   }
   \pcvspace
     \procedure[linenumbering]{$\recvshare(\{ (j, \share_{\simtotal j}) \}_{j \in \honest}, \vsscommit_\simtotal)$}{
-    \text{\algcom Receives shares from $\adv$} \\
+    %\text{\algcom Receives shares from $\adv$} \\
     \simtotal \gets \simtotal + 1 \\
 	  \pcfor j \in \honest \\
     \pcind \pcif \avss[\Hash].\verify(j, \share_{\simtotal j}, \vsscommit_\simtotal) \neq 1 \\
