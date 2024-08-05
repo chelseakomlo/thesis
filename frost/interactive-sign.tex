@@ -1,14 +1,8 @@
-\begin{figure}[t]
-\begin{framed}
-
-\centerline{\textbf{Sign($m$) $\rightarrow (m, \sigma)$}}
-
-    \smallskip
-
-\begin{flushleft}
+\subsection{FROST-Interactive Two-Round Signing Protocol}
+\label{sec:interactive-sign-parallel}
 
 
-\textbf{Round 1}
+\noindent \textbf{Round 1.}
 \begin{description}
   \item[1.] The coordinator selects a set $S$ of $t$ participants for the signing protocol, and
     the next available commitments for each signing participant $(D_{ij}, E_{ij},
@@ -24,7 +18,7 @@
     and returns $\rho_i$ to the coordinator.
 \end{description}
 
-\textbf{Round 2}
+\noindent \textbf{Round 2.}
 \begin{description}
   \item[1.] After receiving each $\rho_\ell$, the coordinator then
     distributes all $\rho_\ell, \ell \in S$ to each signing participant.
@@ -44,9 +38,3 @@
     publication of signature shares as in plain FROST.
 \end{description}
 
-\end{flushleft}
-  \end{framed}
-
-    \caption{FROST-Interactive Two-Round Signing Protocol}
-    \label{fg:interactive-sign-parallel}
-\end{figure}
