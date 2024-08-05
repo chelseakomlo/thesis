@@ -49,15 +49,10 @@
           protocol for validation.
           \STATE \hskip1em Reprogram $T_3[K_1, \dots, K_n] = h_{ctr}$; set $ctr
           = ctr + 1$. Rederive $c_t$ and $J_t$ honestly.
-          \STATE \hskip1em Rewind $\mathcal{F}$ to step $1$ in Round $2$ of
-          Figure~\ref{fg:interactive-protocol-preprocess},
-            immediately before $\mathcal{F}$ queries $H_3$ with $(K_1, \dots,
-            K_n)$.
-            % CK I don't think it matters enough to the protocol to distinguish
-            % H_3 more.
-          \STATE \hskip1em After allowing $\mathcal{F}$ to proceed after
-          rewinding, use its two sets of outputs to derive the discrete logarithm
-          of each $A_{\ell j}$ and $B_{\ell j}$; store for use in the signing protocol.
+          \STATE \hskip1em Rewind $\mathcal{F}$ and let it run a second time.
+          \STATE \hskip1em Use outputs from each execution to derive the discrete logarithm
+          of each $A_{\ell j}$ and $B_{\ell j}$.
+          %store for use in the signing protocol.
           \STATE \hskip1em Complete the protocol honestly.
           %
           % Simulation of Signing

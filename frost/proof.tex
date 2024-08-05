@@ -277,7 +277,7 @@ the random oracle query that receives $h_J$, but diverges afterward.
 
 We use a coordination
 algorithm $C$ described in Algorithm~\ref{coordinator-alg}
-to perform setup for $GF_\mathcal{A}$ and to derive the discrete logarithm
+to perform setup for $\genfork^\mathcal{A}$ and to derive the discrete logarithm
 of the challenge value $\omega$ afterward.
 
     \begin{algorithm}[t]
@@ -290,7 +290,7 @@ of the challenge value $\omega$ afterward.
           \STATE Simulate KeyGen to embed challenge value $\omega$ and extract the
           forger's secret values
           $(\pk, (a_{10}, \dots, a_{(t-1)0})) \leftarrow SimKeyGen(\omega)$
-          \STATE $(1, h_J, h_J', \sigma, \sigma')$ or $\bot \leftarrow GF_\mathcal{A}(\pk)$
+          \STATE $(1, h_J, h_J', \sigma, \sigma')$ or $\bot \leftarrow \genfork^\mathcal{A}(\pk)$
           \STATE If not $\bot$, then ExtractDLog$(\omega, h_J, h_J', \sigma, \sigma',
           (a_{10}, \dots, a_{(t-1)0}))$
         \end{algorithmic}
@@ -300,7 +300,7 @@ of the challenge value $\omega$ afterward.
 \textbf{Simulating KeyGen.}
 We now describe how $C$ embeds the challenge value $\omega$ into the group public
 key $\pk$ during a simulation of the KeyGen phase; $\pk$ is in turn fed as input
-into $GF_\mathcal{A}$. For simplicity of notation, we
+into $\genfork^\mathcal{A}$. For simplicity of notation, we
 let $n=t$ (where $n$ is the total number of participants and $t$ is the
 threshold), and $\mathcal{F}$ controls $t-1$ participants, and
 $\mathcal{A}$ simulates the $t\supth$ (honest) participant to $\mathcal{F}$.
@@ -365,7 +365,7 @@ for the challenge value $\omega$.
 
 We now describe how two forged signatures $(\sigma, \sigma')$ along with the
 challenge values from the random oracle query $(h_J, h_J')$ produced as
-output from $GF_\mathcal{A}$ can be used by $C$ to extract the discrete logarithm of the
+output from $\genfork^\mathcal{A}$ can be used by $C$ to extract the discrete logarithm of the
 challenge value  $\omega$. We give an overview of the algorithm ExtractDLog in
 Algorithm~\ref{extract-dlog},
 which $C$ uses as a subroutine. Note that the
@@ -523,7 +523,7 @@ $H_2$, $H_3$, and $H_4$, $\mathcal{A}$ responds by first checking a correspondin
 associative table (initialized to empty on start) to see if the output has
 already been determined for that query. If no such output exists, $\mathcal{A}$
 sets the output to the next available value from $\{ h_1, \dots, h_{n_r} \}$
-supplied by $GF_\mathcal{A}$ upon start, indicated by $ctr$. After setting the output,
+supplied by $\genfork^\mathcal{A}$ upon start, indicated by $ctr$. After setting the output,
 $\mathcal{A}$ increments $ctr$ and returns the freshly assigned output.
 In lieu of the $H_1(i, m, B)$
 hash function used in FROST (presented in Section~\ref{frost-signing}),
