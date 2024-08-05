@@ -1,24 +1,16 @@
-\begin{figure}[t]
-  \begin{framed}
 
-    \centerline{\textbf{Preprocess($\pi$) $\rightarrow (i, \langle(D_{ij}, E_{ij},
-    A_{ij}, B_{ij})\rangle_{j=1}^\pi) $}}
-
-\begin{flushleft}
+\subsection{FROST-Interactive Preprocess}
 
 Each participant $P_i, i \in \{1, \dots, n\}$ performs this stage prior to signing.
-As before, $j$ is a
-counter for a nonce/commitment pair, and $\pi$ the number of commitments
-  generated.
-Let $H_3$ be a hash function whose input is a sequence of commitment values,
-and $H_4$ be one with inputs $(i, \Phi)$.
+$H_3$ is a hash function with input a sequence of commitment values,
+and $H_4$ with inputs $(i, \Phi)$.
 
 \smallskip
 
-\textbf{Round 1}
+\noindent \textbf{Round 1.}
 \begin{description}
   \item[1.] Create empty list $L_i$. Then, for
-  $1 \leq j \leq \pi$, perform the following:
+    $1 \leq j \leq \pi, \pi \in \mathbb{N}$, perform the following:
   \begin{description}
     \item[1.a] Generate nonces $d_{ij}, e_{ij}, a_{ij}, b_{ij} \random
       \mathbb{Z}_q^*$, and
@@ -39,7 +31,7 @@ and $H_4$ be one with inputs $(i, \Phi)$.
   other participants.
 \end{description}
 
-\textbf{Round 2}
+\noindent \textbf{Round 2.}
 \begin{description}
     \item[1.] After receiving $(\ell, K_\ell)$ from all other participants,
     generate a zero-knowledge proof of knowledge $\sigma_i$ for
@@ -68,9 +60,3 @@ and $H_4$ be one with inputs $(i, \Phi)$.
   \item[5.] Abort if any check failed. Otherwise,
   store $(\ell, L_\ell)$ for use in signing operations.
 \end{description}
-\end{flushleft}
-\end{framed}
-
-    \caption{FROST-Interactive Two-Round Preprocessing Protocol}
-    \label{fg:interactive-protocol-preprocess}
-\end{figure}
