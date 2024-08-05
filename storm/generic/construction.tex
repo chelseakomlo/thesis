@@ -18,8 +18,8 @@ We present a concrete constructions in Section~\ref{storm-gen}.
     (\secretone_i, A_i) \rgets \enike.\keygen(\lambda) \\
     \mathsf{in} \gets (\lambda, \secretone_i, n, t) \\
     \{ (j, \share_{ij}) \}_{j =1}^n, \vsscommit_i \rgets \avss[\Hash_1].\issueshares(\mathsf{in}) \\
-    \text{\algcom The \ENIKE secret key $\secretone_i$ is} \\
-    \text{\algcom secret-shared via the \AVSS.} \\
+    %\text{\algcom The \ENIKE secret key $\secretone_i$ is} \\
+    %\text{\algcom secret-shared via the \AVSS.} \\
     (\witness_i, \commitment_i) \rgets \enike.\keygen(\lambda) \\
     %\text{\algcom Broadcast commitments} \\
     \bmsg_{0,i} \gets (A_i, \commitment_i, \vsscommit_i) \\
@@ -39,8 +39,7 @@ We present a concrete constructions in Section~\ref{storm-gen}.
   \pcfor j \in \set{n}, j \neq i \pcdo \\
   \pcind \pcif \avss[\Hash_1].\verify(i, \share_{ji}, \vsscommit_j) \neq 1 \\
   \pcind \textbf{or } \avss[\Hash_1].\derivepshare(0, \vsscommit_j) \neq A_j \\
-  \pcind \pcind \party_i.\status = \abort \\
-  \pcind \pcind \bmsg_{1,i} \gets \fail \\
+  \pcind \pcind \party_i.\status = \abort;\ \bmsg_{1,i} \gets \fail \\
   %\text{\algcom If any verification check fails,} \\
   %\text{\algcom abort} \\
   \pcind \pcind \pcreturn (\party_i, \bot, \bmsg_{1,i}) \\
@@ -75,11 +74,12 @@ We present a concrete constructions in Section~\ref{storm-gen}.
     \pcind \pcelse \corrupt \gets \corrupt \cup \{ j \} \\
     \pcif \corrupt \neq \emptyset \\
     \pcind \textbf{Broadcast } \{ \share_{ij} \}_{j \in \corrupt} \\
-    \text{\algcom Broadcast shares for corrupt} \\
-    \text{\algcom parties to all other participants} \\
+    %\text{\algcom Broadcast shares for corrupt} \\
+    %\text{\algcom parties to all other participants} \\
     \pcind \textbf{Receive } \{ \share_{kj} \}_{j \in \corrupt, k \in \qual} \\
     \pcfor j \in \corrupt \pcdo \\
-    \pcind \secretone_j \gets \avss[\Hash_1].\recover(t, \{(k,\share_{jk}) \}_{k \in \qual} ) \\
+    \pcind \secretone_j \gets \avss[\Hash_1] \\
+    \pcind \pcind .\recover(t, \{(k,\share_{jk}) \}_{k \in \qual} ) \\
     \pcind \blinding_j \gets \enike.\getsharedkey(\secretone_j, \commitment_j)  \\
     %
     %\privaggregateset =  \{\share_{ji}\}_{j \in \set{n}} \\

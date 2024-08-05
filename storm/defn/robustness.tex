@@ -62,7 +62,7 @@ however, introducing a weaker variant allows us to define a more efficient const
     \PK = \PK_i, i \in \honest \text{\algcom All honest parties at this point have the same view of $\pk$} \\
     \SK \gets \dkg.\recover(\PK, \{(i,\SK_i) \}_{i \in \honest}) \\
     \pcreturn 1\ \pcif \SK = \fail \\
-    \text{\algcom $\adv$ wins if honest parties' shares do not recover a valid secret} \\
+    %\text{\algcom $\adv$ wins if honest parties' shares do not recover a valid secret} \\
     \pcreturn 0
   }
   \end{pcvstack}

@@ -63,8 +63,8 @@
   \mathsf{input} \gets (t, \minsigners, \coalition, \{ R_j\}_{j \in \coalition}) \\
   R \gets \DVRFOnem[\HashOne].\combinepub(\mathsf{input}) \\
   c \gets \HashTwo(R, \pkgroup, \msg) \\
-  \text{\algcom{$\lambda_j$ are Lagrange}} \\
-  \text{\algcom{coefficients for $\coalition$}} \\
+  %\text{\algcom{$\lambda_j$ are Lagrange}} \\
+  %\text{\algcom{coefficients for $\coalition$}} \\
   z \gets \sum_{j \in \coalition} z_{j} \lambda_j\\
   \pcif g^z \neq R \cdot \pk^c \\
   \pcind \pcreturn \bot \\
