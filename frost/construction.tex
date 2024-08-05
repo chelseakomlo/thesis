@@ -51,10 +51,10 @@ using some out-of-band mechanism decided upon by the implementation.
 After participating in $\pedpop$, each participant $P_i$
 holds a value
 $(i, s_i)$ that is their long-lived secret signing share.
-Participant $P_i$'s public key share $Y_i = g^{s_i}$ is
+Participant $P_i$'s public key share $\pk_i = g^{s_i}$ is
 used by other participants to verify the correctness of $P_i$'s
 signature shares in the following signing phase, while
-the group public key $Y$ can be used by parties external to the group
+the group public key $\pk$ can be used by parties external to the group
 to verify signatures issued by the group in the future.
 
 \textbf{View of Commitment Values.} As required for \emph{any} multi-party
@@ -142,12 +142,12 @@ values \emph{without} utilizing a DKG, as discussed next.
         signing share by computing $s_i = \sum_{\ell=1}^n f_\ell(i)$, stores
         $s_i$ securely, and deletes each $f_\ell(i)$.
       \item[4.] Each $P_i$ calculates their public verification
-        share $Y_i = g^{s_i}$, and the group's public key
-        $Y = \prod_{j=1}^n \phi_{j0}$.
+        share $\pk_i = g^{s_i}$, and the group's public key
+        $\pk = \prod_{j=1}^n \phi_{j0}$.
         Any participant can compute the public verification share of
         any other participant by calculating
         \( \displaystyle
-        Y_i = \prod_{j=1}^n \prod_{k=0}^{t-1} \phi_{jk}^{i^k }
+        \pk_i = \prod_{j=1}^n \prod_{k=0}^{t-1} \phi_{jk}^{i^k }
         \).
 
     \end{description}
@@ -334,7 +334,7 @@ commitments for each signer.
 The commitment for the set of signers
 is then simply $R = \prod_{i \in S} R_i$.
 As in single-party Schnorr signatures, each participant computes the challenge
-$c = H_2(R, Y, m)$.
+$c = H_2(R, \pk, m)$.
 
 Each participant's response $z_i$ to the challenge
 can be computed using the single-use nonces $(d_i, e_i)$ and the
@@ -345,12 +345,12 @@ long-term secret shares $s_i$, converted to additive form:
 
 The coordinator finally checks the consistency of each participant's reported
 $z_i$ with their commitment share $(D_i, E_i)$ and their public key share
-$Y_i$.
+$\pk_i$.
 If every participant issued a correct $z_i$, the group's response is
 $z = \sum_{i \in S} z_i$, and the group signature on $m$ is $\sigma=(R, z)$.
 This signature is
 verifiable to anyone performing a standard Schnorr verification operation
-with $Y$ as the public key (Section~\ref{background:schnorr}).
+with $\pk$ as the public key (Section~\ref{background:schnorr}).
 
 
 

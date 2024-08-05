@@ -14,7 +14,7 @@ Note that subsequent works have given a direct proof for FROST~\cite{BellareCKMT
 Signatures in FROST
 are constructed from two polynomials;
 the first polynomial $F_1(x)$ defines the secret sharing of the private
-signing key $s$ (such that $Y = g^s$) and the
+signing key $s$ (such that $\pk = g^s$) and the
 second polynomial $F_2(x)$ defines the secret sharing of the nonce $k$
 such that
 \(
@@ -33,12 +33,12 @@ values $(i,\frac{d_i + e_i \cdot H_1(i, m, B)}{\lambda_i})$,
 such that $F_2(0) = \sum_{i \in S} d_i + e_i \cdot \rho_i$.
 
 Then let $F_3(x) = F_2(x) + c \cdot F_1(x)$, where
-$c = H_2(R, Y, m)$.  Now $z_i$
+$c = H_2(R, \pk, m)$.  Now $z_i$
 equals $d_i + (e_i \cdot \rho_i) + \lambda_i \cdot s_i \cdot c =
 \lambda_i (F_2(i) + c \cdot F_1(i)) = \lambda_i F_3(i)$, so $z = \sum_{i \in S} z_i$
 is simply the Lagrange interpolation of $F_3(0) = (\sum_{i \in S} d_i + e_{ij} \cdot \rho_i) + c
 \cdot s$.  Because $R = g^{\sum_{i \in S} d_i + e_i \cdot \rho_i}$ and $c
-= H_2(R, Y, m)$, $(R, z)$ is a
+= H_2(R, \pk, m)$, $(R, z)$ is a
 correct Schnorr signature on $m$.
 
 \subsection{Description of EUF-CMA Security for FROST-Interactive}
@@ -110,8 +110,8 @@ Our proof strategy is to demonstrate that the security of
 FROST-Interactive
 reduces to the difficulty of computing the discrete logarithm of
 an arbitrary challenge value $\omega$. At a high level, $\omega$ will be
-embedded into a public key $Y$ representing a set of participants, such that
-$Y$ is the output of these participants cooperating to perform the FROST KeyGen
+embedded into a public key $\pk$ representing a set of participants, such that
+$\pk$ is the output of these participants cooperating to perform the FROST KeyGen
 protocol. Then, to compute the discrete logarithm of  $\omega$, a forger
 $\mathcal{F}$ will produce two forgeries $(\sigma, \sigma'), \sigma \neq
 \sigma'$ for the same commitment value $R$ and message $m$. Using $(\sigma,
@@ -125,15 +125,15 @@ in the following sections.
 
 \begin{itemize}
 \item[-] $\mathcal{F}$ represents a forger that with probability $\epsilon$ and
-  in time $t$ can compute a forgery $\sigma$ for a public key $Y$, where $Y$
+  in time $t$ can compute a forgery $\sigma$ for a public key $\pk$, where $\pk$
     was generated as part of the FROST KeyGen protocol.
 \item[-] $\mathcal{A}$ represents a simulator that invokes $\mathcal{F}$ and
   simulates the necessary inputs/outputs for $\mathcal{F}$ to perform its
     forgery attack. Specifically, $\mathcal{A}$ simulates honest participants
     in FROST KeyGen and signing operations, as well as random
     oracle queries.
-\item[-] $GF_\mathcal{A}$ represents the Generalized Forking Algorithm that establishes a
-  random tape and outputs to random oracle queries, and invokes $\mathcal{A}$
+\item[-] $\genfork^\adv$ represents the Generalized Forking Algorithm that establishes a
+  random tape and outputs to random oracle queries, and invokes $\adv$
     with these values in order to produce two forgeries $(\sigma, \sigma')$.
 \item[-] $C$ represents the coordination algorithm that accepts a challenge
   value $\omega$ and invokes the other algorithms in order to obtain $(\sigma,
@@ -149,7 +149,7 @@ participants behave, what secret and public values they generate, etc. We also
 assume the participant $P_t$ is in the signing set $S$.
 
 We now
-describe in greater detail $GF_\mathcal{A}$ and $C$, as
+describe in greater detail $\genfork_\mathcal{A}$ and $C$, as
 these algorithms remain
 largely unchanged from their use by Bellare and
 Neven~\cite{BellareN06}.
@@ -163,7 +163,7 @@ that our proof can support concurrent executions of the signing protocol.
 In the Generalized Forking Algorithm, the rewinding of
 the adversary $\mathcal{A}$ is simulated by invoking $\mathcal{A}$ in
 succession. In each invocation of $\mathcal{A}$, the same random tape $\beta$
-is supplied, as well as the same public key $Y$. However, each execution of
+is supplied, as well as the same public key $\pk$. However, each execution of
 $\mathcal{A}$ receives different outputs for a subset of random oracle queries.
 This approach is akin to the proof technique by  Pointcheval and
 Stern~\cite{PointchevalS96} for plain Schnorr,
@@ -175,76 +175,76 @@ rewinding, but instead re-executes $\mathcal{A}$ with fresh randomness
 $\mathcal{A}$. As a result, each execution of $\mathcal{A}$ is identical before
 the random oracle query that receives $h_J$, but diverges afterward.
 
-We next describe the Generalized Forking Algorithm and corresponding
-Generalized Forking Lemma in greater detail.
-
-\textbf{Generalized Forking Algorithm.} Let $n_r$ be the maximum number of
-random oracle outputs that $\mathcal{A}$ may need to generate,
-and let $h$ be the
-number of possible outputs from the random oracle $H$.
-
-The adversary $\mathcal{A}$ is an algorithm that accepts as
-inputs a public key $Y$, the randomly selected set $h_1, \dots, h_{n_r}$
-of random oracle outputs,
-and a random tape $\beta$.
-$\mathcal{A}$ outputs an integer $J$ which
-represents the index corresponding to the random oracle query that can be used
-to derive $c$ for the forgery $\sigma=(R, z)$, along with $\sigma$ itself. $GF_\mathcal{A}$ (Algorithm~\ref{alg:gfa})
-plays the role of setting
-up these inputs and outputs, and executing $\mathcal{A}$ accordingly.
-
-    \begin{algorithm}[t]
-        \caption{Generalized Forking Algorithm $GF_\mathcal{A}(Y)$\label{alg:gfa}}
-         \hspace*{\algorithmicindent} \textbf{Input} A public key $Y$ \\
-         \hspace*{\algorithmicindent} \textbf{Output} $(1, h_J, h_J', \sigma, \sigma')$ if
-         $\mathcal{A}$ produces two forgeries, otherwise $\bot$ \\
-        \begin{algorithmic}[1]
-          \STATE Instantiate a random tape $\beta$
-          \STATE $\{h_1, \dots, h_{n_r}\} \random H$
-          \STATE $(J, \sigma)$  or $\bot \leftarrow \mathcal{A}(Y, \{h_1,
-          \dots, h_{n_r}\}; \beta)$
-          \STATE If $\bot$, then return $\bot$
-          \STATE $h_J', \dots, h_{n_r}' \random H$
-          \STATE $(J', \sigma') \leftarrow \mathcal{A}(Y, \{h_1, \dots,
-          h_{J-1}, h_{J}', \dots, h_{n_r}' \}; \beta)$
-          \STATE If $J \stackrel{?}{=} J'$ and $h_J \neq h_J'$ then return $(1,
-          h_J, h_J', \sigma, \sigma')$. Else, return $\bot$
-        \end{algorithmic}
-    \end{algorithm}
-
-The execution $GF_\mathcal{A}$ is as follows: first $GF_\mathcal{A}$ instantiates a random tape
-$\beta$, and generates random outputs $h_1, \dots, h_{n_r}$ which will then be
-used by $\mathcal{A}$ to simulate the outputs for each random oracle query.
-$GF_\mathcal{A}$ then executes $\mathcal{A}$ with these inputs as well as a public key
-$Y$. $\mathcal{A}$ uses the forger $\mathcal{F}$ as a subroutine to perform its
-forgery attack, simulating all input and output whenever $\mathcal{F}$ requests
-a signing operation or random oracle query. Eventually,  $\mathcal{F}$ outputs
-a forgery $\sigma$ with probability $\epsilon$,
-which $\mathcal{A}$ returns along with its corresponding
-index for the random oracle query that can be used to derive $c$ for $\sigma$.
-After $\mathcal{A}$ outputs $(J, \sigma)$, $GF_\mathcal{A}$ first checks to see if the
-output is a successful forgery, as indicated by when $J \geq 1$. If so, it
-continues to the second execution of $\mathcal{A}$.
-
-For the second execution of $\mathcal{A}$, $GF_\mathcal{A}$ will feed in the same random
-tape $\beta$, but will supply a different set of simulated responses for the
-random oracle $H$. In order to  ``fork'' $\mathcal{A}$, $GF_\mathcal{A}$ will supply the
-same responses $h_1, \dots, h_{J-1}$, but will provide \emph{different}
-responses for  $h_J, \dots, h_{n_r}$. In doing so, $GF_\mathcal{A}$ simulates forking the
-adversary at a specific point when performing its attack similar to the proof
-model by Pointcheval and Stern~\cite{PointchevalS96}, but without
-needing to rewind $\mathcal{A}$ to a specific point.
-
-After its second execution, $\mathcal{A}$ will return $(J', \sigma')$ or
-$\bot$. If $J' \stackrel{?}{=} J$
-but the output from the random oracle queries
-is different such that $h_J \neq h_J'$,
-then $GF_\mathcal{A}$ will output 1 to indicate
-success along with the two forgeries $\sigma, \sigma'$ and the two random
-oracle queries corresponding to these forgeries $(h_J, h_J')$. These values can then
-be used by the coordination algorithm $C$ to determine the discrete logarithm
-of the challenge value $\omega$ (we provide more details on how to
-perform this operation below).
+%We next describe the Generalized Forking Algorithm and corresponding
+%Generalized Forking Lemma in greater detail.
+%
+%\textbf{Generalized Forking Algorithm.} Let $n_r$ be the maximum number of
+%random oracle outputs that $\mathcal{A}$ may need to generate,
+%and let $h$ be the
+%number of possible outputs from the random oracle $H$.
+%
+%The adversary $\mathcal{A}$ is an algorithm that accepts as
+%inputs a public key $\pk$, the randomly selected set $h_1, \dots, h_{n_r}$
+%of random oracle outputs,
+%and a random tape $\beta$.
+%$\mathcal{A}$ outputs an integer $J$ which
+%represents the index corresponding to the random oracle query that can be used
+%to derive $c$ for the forgery $\sigma=(R, z)$, along with $\sigma$ itself. $GF_\mathcal{A}$ (Algorithm~\ref{alg:gfa})
+%plays the role of setting
+%up these inputs and outputs, and executing $\mathcal{A}$ accordingly.
+%
+%    \begin{algorithm}[t]
+%        \caption{Generalized Forking Algorithm $GF_\mathcal{A}(\pk)$\label{alg:gfa}}
+%         \hspace*{\algorithmicindent} \textbf{Input} A public key $\pk$ \\
+%         \hspace*{\algorithmicindent} \textbf{Output} $(1, h_J, h_J', \sigma, \sigma')$ if
+%         $\mathcal{A}$ produces two forgeries, otherwise $\bot$ \\
+%        \begin{algorithmic}[1]
+%          \STATE Instantiate a random tape $\beta$
+%          \STATE $\{h_1, \dots, h_{n_r}\} \random H$
+%          \STATE $(J, \sigma)$  or $\bot \leftarrow \mathcal{A}(\pk, \{h_1,
+%          \dots, h_{n_r}\}; \beta)$
+%          \STATE If $\bot$, then return $\bot$
+%          \STATE $h_J', \dots, h_{n_r}' \random H$
+%          \STATE $(J', \sigma') \leftarrow \mathcal{A}(\pk, \{h_1, \dots,
+%          h_{J-1}, h_{J}', \dots, h_{n_r}' \}; \beta)$
+%          \STATE If $J \stackrel{?}{=} J'$ and $h_J \neq h_J'$ then return $(1,
+%          h_J, h_J', \sigma, \sigma')$. Else, return $\bot$
+%        \end{algorithmic}
+%    \end{algorithm}
+%
+%The execution $GF_\mathcal{A}$ is as follows: first $GF_\mathcal{A}$ instantiates a random tape
+%$\beta$, and generates random outputs $h_1, \dots, h_{n_r}$ which will then be
+%used by $\mathcal{A}$ to simulate the outputs for each random oracle query.
+%$GF_\mathcal{A}$ then executes $\mathcal{A}$ with these inputs as well as a public key
+%$\pk$. $\mathcal{A}$ uses the forger $\mathcal{F}$ as a subroutine to perform its
+%forgery attack, simulating all input and output whenever $\mathcal{F}$ requests
+%a signing operation or random oracle query. Eventually,  $\mathcal{F}$ outputs
+%a forgery $\sigma$ with probability $\epsilon$,
+%which $\mathcal{A}$ returns along with its corresponding
+%index for the random oracle query that can be used to derive $c$ for $\sigma$.
+%After $\mathcal{A}$ outputs $(J, \sigma)$, $GF_\mathcal{A}$ first checks to see if the
+%output is a successful forgery, as indicated by when $J \geq 1$. If so, it
+%continues to the second execution of $\mathcal{A}$.
+%
+%For the second execution of $\mathcal{A}$, $GF_\mathcal{A}$ will feed in the same random
+%tape $\beta$, but will supply a different set of simulated responses for the
+%random oracle $H$. In order to  ``fork'' $\mathcal{A}$, $GF_\mathcal{A}$ will supply the
+%same responses $h_1, \dots, h_{J-1}$, but will provide \emph{different}
+%responses for  $h_J, \dots, h_{n_r}$. In doing so, $GF_\mathcal{A}$ simulates forking the
+%adversary at a specific point when performing its attack similar to the proof
+%model by Pointcheval and Stern~\cite{PointchevalS96}, but without
+%needing to rewind $\mathcal{A}$ to a specific point.
+%
+%After its second execution, $\mathcal{A}$ will return $(J', \sigma')$ or
+%$\bot$. If $J' \stackrel{?}{=} J$
+%but the output from the random oracle queries
+%is different such that $h_J \neq h_J'$,
+%then $GF_\mathcal{A}$ will output 1 to indicate
+%success along with the two forgeries $\sigma, \sigma'$ and the two random
+%oracle queries corresponding to these forgeries $(h_J, h_J')$. These values can then
+%be used by the coordination algorithm $C$ to determine the discrete logarithm
+%of the challenge value $\omega$ (we provide more details on how to
+%perform this operation below).
 
 \textbf{Generalized Forking Lemma.} We will now see how the generalized forking
 lemma presented by Bellare and Neven~\cite{BellareN06}
@@ -291,8 +291,8 @@ of the challenge value $\omega$ afterward.
         \begin{algorithmic}[1]
           \STATE Simulate KeyGen to embed challenge value $\omega$ and extract the
           forger's secret values
-          $(Y, (a_{10}, \dots, a_{(t-1)0})) \leftarrow SimKeyGen(\omega)$
-          \STATE $(1, h_J, h_J', \sigma, \sigma')$ or $\bot \leftarrow GF_\mathcal{A}(Y)$
+          $(\pk, (a_{10}, \dots, a_{(t-1)0})) \leftarrow SimKeyGen(\omega)$
+          \STATE $(1, h_J, h_J', \sigma, \sigma')$ or $\bot \leftarrow GF_\mathcal{A}(\pk)$
           \STATE If not $\bot$, then ExtractDLog$(\omega, h_J, h_J', \sigma, \sigma',
           (a_{10}, \dots, a_{(t-1)0}))$
         \end{algorithmic}
@@ -301,7 +301,7 @@ of the challenge value $\omega$ afterward.
 
 \textbf{Simulating KeyGen.}
 We now describe how $C$ embeds the challenge value $\omega$ into the group public
-key $Y$ during a simulation of the KeyGen phase; $Y$ is in turn fed as input
+key $\pk$ during a simulation of the KeyGen phase; $\pk$ is in turn fed as input
 into $GF_\mathcal{A}$. For simplicity of notation, we
 let $n=t$ (where $n$ is the total number of participants and $t$ is the
 threshold), and $\mathcal{F}$ controls $t-1$ participants, and
@@ -341,24 +341,24 @@ following the same steps they would use to calculate the public key for their
 peers (as the discrete log of the challenge value $\omega$ is unknown),
 by performing:
 \[
-    Y_t = \prod_{j=1}^n \prod_{k=0}^{t-1} \phi_{jk}^{t^k \bmod q}
+    \pk_t = \prod_{j=1}^n \prod_{k=0}^{t-1} \phi_{jk}^{t^k \bmod q}
 \]
 
 
 The participants controlled by $\mathcal{F}$ can derive their private key
-shares $s_i$ by directly following the KeyGen protocol, then deriving $Y_i =
+shares $s_i$ by directly following the KeyGen protocol, then deriving $\pk_i =
 g^{s_i}$.
 We will see in the proof for FROST-Interactive how
 $\mathcal{A}$ can still simulate signing for the honest party $P_t$ to $\mathcal{F}$
 even without knowing its corresponding private key share.
 Each party (honest or corrupted by $\mathcal{F}$) can follow the KeyGen
-protocol to derive the group's long-lived public key, by calculating $Y =
+protocol to derive the group's long-lived public key, by calculating $\pk =
 \prod_{j=1}^n \phi_{j0}$.
 
 In addition, $C$ must obtain $\mathcal{F}$'s secret values $(a_{10}, \dots,
 a_{(t-1)0})$ using the extractor for the zero-knowledge proofs that
 $\mathcal{F}$ generates. $C$ will use these values next in order to convert
-the discrete logarithm for the group public key $Y$ into the discrete logarithm
+the discrete logarithm for the group public key $\pk$ into the discrete logarithm
 for the challenge value $\omega$.
 
 
@@ -383,24 +383,24 @@ solving the discrete logarithm for the challenge value $\omega$.
      \hspace*{\algorithmicindent} \textbf{Output} The discrete logarithm of $\omega$ \\
     \begin{algorithmic}[1]
       \STATE  Parse $\sigma, \sigma'$ as $(R, z), (R, z')$, and then compute
-      the discrete logarithm of $Y$ as $\frac{(z'-z)}{(h_J'-h_J)}$.
-      \STATE Compute $a_{t0} = dlog(Y) - \sum_{i = 1}^{t-1} a_{i0}$
+      the discrete logarithm of $\pk$ as $\frac{(z'-z)}{(h_J'-h_J)}$.
+      \STATE Compute $a_{t0} = dlog(\pk) - \sum_{i = 1}^{t-1} a_{i0}$
       \STATE Return $a_{t0}$, which is the discrete logarithm of $\omega$
     \end{algorithmic}
 \end{algorithm}
 
-We can compute $dlog(Y)$, because
+We can compute $dlog(\pk)$, because
 \[
-  R = g^z \cdot Y^{-h_J} = g^{z'} \cdot Y^{-h_{J}'}
+  R = g^z \cdot \pk^{-h_J} = g^{z'} \cdot \pk^{-h_{J}'}
 \]
 and since  $h_J \neq h_J'$, then
 \[
-  dlog(Y) = \frac{(z'-z)}{(h_J'-h_J)}
+  dlog(\pk) = \frac{(z'-z)}{(h_J'-h_J)}
 \]
 The discrete logarithm
 corresponding to $\omega$ can then be extracted as follows:
 \begin{equation} \label{extract-step}
-    a_{t0} = dlog(Y) - \sum_{i=1}^{t-1} a_{i0} = dlog(\omega)
+    a_{t0} = dlog(\pk) - \sum_{i=1}^{t-1} a_{i0} = dlog(\omega)
 \end{equation}
 
 As discussed in the overview of how $\mathcal{A}$ simulated the key generation
@@ -541,7 +541,7 @@ picks $\bar{c}_j$ as the next available $h_{ctr}$ value, and keeps track of
 which one it used by setting $C[j] = ctr$ in a list $C$. $\mathcal{A}$
 randomly selects
 $\bar{z}_{tj} \random \mathbb{Z}_q$, and
-then derives $D_{tj} = g^{\bar{z}_{tj}} \cdot{Y_t}^{-\bar{c}_j}$.
+then derives $D_{tj} = g^{\bar{z}_{tj}} \cdot{\pk_t}^{-\bar{c}_j}$.
 
 $\mathcal{A}$ honestly computes and  publishes its proof of knowledge of the $(a_{tj}, b_{tj})$ values in Round 2.
 However, during this round, $\mathcal{A}$ itself forks $\mathcal{F}$ in order
@@ -564,14 +564,14 @@ able to compute not only its $\rho_t$, but also \emph{all of the other $\rho_\el
 values for all of the other participants}, because of its knowledge of
 the $(a_{\ell j}, b_{\ell j})$ that $\mathcal{A}$ obtained during
 Round 2 of the preprocessing stage.  Using these $\rho_\ell$ values, it can
-compute the $R$ that will be used in Round~2, and program $H_2(R, Y, m) =
+compute the $R$ that will be used in Round~2, and program $H_2(R, \pk, m) =
 \bar{c}_j$. It also saves $C[j]$, the $ctr$ value such that $\bar{c}_k =
-h_{ctr}$, as $J_2[R, Y, m]$ in a table $J_2$.
+h_{ctr}$, as $J_2[R, \pk, m]$ in a table $J_2$.
 
 Note that $\mathcal{A}$ is never required to guess which output from the random oracle to
 program to correctly issue a signature, because $\mathcal{A}$ can
 always compute $R$ before $\mathcal{F}$ can, and consequently can program the
-random oracle $H_2(R, Y, m)$ with perfect success.
+random oracle $H_2(R, \pk, m)$ with perfect success.
 Conversely, a signing request by $\mathcal{A}$ in the simulation for plain
 Schnorr succeeds only with
 probability $1/(n_h + n_s + 1)$~\cite{BellareN06}.
@@ -601,7 +601,7 @@ the time to compute $(30\pi n_p + (4t-2)n_s + (n+t-1)t + 6)$ exponentiations:
 \begin{itemize}
 \setlength\itemsep{0ex}
 \item In simulating KeyGen,
-$(t-1)\cdot t$ to compute $\vec{C}_t$, $2$ to compute $R$, and $n\cdot t$ to compute $Y_t$
+$(t-1)\cdot t$ to compute $\vec{C}_t$, $2$ to compute $R$, and $n\cdot t$ to compute $\pk_t$
 \item In each of two executions of $\mathcal{A}$:
 \begin{itemize}
 \setlength\itemsep{0ex}
