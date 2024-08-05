@@ -51,7 +51,7 @@ plain FROST.
 
 We employ the generalized forking strategy used by Bellare and
 Neven~\cite{BellareN06} to create a reduction to the security of
-the discrete logarithm problem (DLP) in $\mathbb{G}$.
+the discrete logarithm problem (DLP).
 We prove security against the standard notion of existential unforgeability
 against chosen message
 attacks (EUF-CMA) by demonstrating that the difficulty to an adversary
@@ -104,7 +104,6 @@ using as a subroutine a forger $\mathcal{F}$ that can forge FROST-Interactive si
 \section{Complete Proof of EUF-CMA Security for FROST-Interactive}
 \label{security-proofs}
 
-We now present the complete EUF-CMA proof for FROST in detail.
 
 Our proof strategy is to demonstrate that the security of
 FROST-Interactive
@@ -117,8 +116,7 @@ $\mathcal{F}$ will produce two forgeries $(\sigma, \sigma'), \sigma \neq
 \sigma'$ for the same commitment value $R$ and message $m$. Using $(\sigma,
 \sigma')$, the discrete logarithm of $\omega$ can subsequently be extracted.
 
-We will now describe how we perform this proof strategy in detail. To begin, we
-introduce the different components required to execute this strategy. Our
+To begin, we introduce the different components required to execute this strategy. Our
 proof relies on four different algorithms, each with different roles and
 responsibilities. We describe these at a high level below, and expand on each
 in the following sections.
@@ -132,7 +130,7 @@ in the following sections.
     forgery attack. Specifically, $\mathcal{A}$ simulates honest participants
     in FROST KeyGen and signing operations, as well as random
     oracle queries.
-\item[-] $\genfork^\adv$ represents the Generalized Forking Algorithm that establishes a
+\item[-] $\genfork^\adv$ represents the General Forking Algorithm that establishes a
   random tape and outputs to random oracle queries, and invokes $\adv$
     with these values in order to produce two forgeries $(\sigma, \sigma')$.
 \item[-] $C$ represents the coordination algorithm that accepts a challenge
@@ -155,13 +153,13 @@ largely unchanged from their use by Bellare and
 Neven~\cite{BellareN06}.
 We describe the implementation of $\mathcal{A}$ in the proof directly.
 
-\subsubsection{Generalized Forking Algorithm and Lemma} \label{gfa}
+\subsubsection{General Forking Algorithm and Lemma} \label{gfa}
 
-We build upon the Generalized Forking Algorithm and Lemma by Bellare and
-Neven~\cite{BellareN06}, for both its simplicity and to ensure
-that our proof can support concurrent executions of the signing protocol.
-In the Generalized Forking Algorithm, the rewinding of
-the adversary $\mathcal{A}$ is simulated by invoking $\mathcal{A}$ in
+We build upon the General Forking Algorithm and Lemma by Bellare and
+Neven~\cite{BellareN06},
+as described in Section~\ref{mod-fork}.
+In the General Forking Algorithm, the rewinding of
+the algorithm $\mathcal{A}$ is simulated by invoking $\mathcal{A}$ in
 succession. In each invocation of $\mathcal{A}$, the same random tape $\beta$
 is supplied, as well as the same public key $\pk$. However, each execution of
 $\mathcal{A}$ receives different outputs for a subset of random oracle queries.
@@ -169,16 +167,16 @@ This approach is akin to the proof technique by  Pointcheval and
 Stern~\cite{PointchevalS96} for plain Schnorr,
 which requires running the adversary until
 a forgery is produced, and then ``rewinding'' the adversary back to a specific
-point in execution. However, the Generalized Forking Algorithm does not require
+point in execution. However, the General Forking Algorithm does not require
 rewinding, but instead re-executes $\mathcal{A}$ with fresh randomness
 \emph{after} a specific random oracle query $h_J$ to simulate the forking of
 $\mathcal{A}$. As a result, each execution of $\mathcal{A}$ is identical before
 the random oracle query that receives $h_J$, but diverges afterward.
 
-%We next describe the Generalized Forking Algorithm and corresponding
-%Generalized Forking Lemma in greater detail.
+%We next describe the General Forking Algorithm and corresponding
+%General Forking Lemma in greater detail.
 %
-%\textbf{Generalized Forking Algorithm.} Let $n_r$ be the maximum number of
+%\textbf{General Forking Algorithm.} Let $n_r$ be the maximum number of
 %random oracle outputs that $\mathcal{A}$ may need to generate,
 %and let $h$ be the
 %number of possible outputs from the random oracle $H$.
@@ -194,7 +192,7 @@ the random oracle query that receives $h_J$, but diverges afterward.
 %up these inputs and outputs, and executing $\mathcal{A}$ accordingly.
 %
 %    \begin{algorithm}[t]
-%        \caption{Generalized Forking Algorithm $GF_\mathcal{A}(\pk)$\label{alg:gfa}}
+%        \caption{General Forking Algorithm $GF_\mathcal{A}(\pk)$\label{alg:gfa}}
 %         \hspace*{\algorithmicindent} \textbf{Input} A public key $\pk$ \\
 %         \hspace*{\algorithmicindent} \textbf{Output} $(1, h_J, h_J', \sigma, \sigma')$ if
 %         $\mathcal{A}$ produces two forgeries, otherwise $\bot$ \\
@@ -246,33 +244,33 @@ the random oracle query that receives $h_J$, but diverges afterward.
 %of the challenge value $\omega$ (we provide more details on how to
 %perform this operation below).
 
-\textbf{Generalized Forking Lemma.} We will now see how the generalized forking
-lemma presented by Bellare and Neven~\cite{BellareN06}
-determines the probability that $GF_\mathcal{A}$ will return a successful output.
-Let $acc$ be the accepting probability of $\mathcal{A}$, or the probability that
-$J \geq 1$, and let $h$ be the total number of possible outputs of $H$. Let $e'$
-be the advantage of solving the discrete logarithm problem over some group
-$\mathbb{G}$. Recall that $n_r$ is the maximum number of random oracle outputs
-$\mathcal{A}$ may need to generate.
+%\textbf{General Forking Lemma.} We will now see how the generalized forking
+%lemma presented by Bellare and Neven~\cite{BellareN06}
+%determines the probability that $GF_\mathcal{A}$ will return a successful output.
+%Let $acc$ be the accepting probability of $\mathcal{A}$, or the probability that
+%$J \geq 1$, and let $h$ be the total number of possible outputs of $H$. Let $e'$
+%be the advantage of solving the discrete logarithm problem over some group
+%$\mathbb{G}$. Recall that $n_r$ is the maximum number of random oracle outputs
+%$\mathcal{A}$ may need to generate.
+%
+%\begin{lemma}{\textbf{General Forking Lemma}~\cite{BellareN06}}
+%  \label{generalized-forking-lemma}
+%    Let frk be defined by the following probability:
+%    \[
+%       \text{frk} = Pr [b=1 : x \random IG : (b, \sigma, \sigma') \random
+%       GF_\mathcal{A}(x)]
+%    \]
+%    where $IG$ is an input generator for a challenge input $x$. Then
+%    \[
+%        e' \geq \text{frk} \geq \text{acc} \cdot (\frac{\text{acc}}{n_r} - \frac{1}{h})
+%    \]
+%\end{lemma}
 
-\begin{lemma}{\textbf{Generalized Forking Lemma}~\cite{BellareN06}}
-  \label{generalized-forking-lemma}
-    Let frk be defined by the following probability:
-    \[
-       \text{frk} = Pr [b=1 : x \random IG : (b, \sigma, \sigma') \random
-       GF_\mathcal{A}(x)]
-    \]
-    where $IG$ is an input generator for a challenge input $x$. Then
-    \[
-        e' \geq \text{frk} \geq \text{acc} \cdot (\frac{\text{acc}}{n_r} - \frac{1}{h})
-    \]
-\end{lemma}
-
-Lemma~\ref{generalized-forking-lemma} demonstrates the probability $e'$ that
-running the generalized forking algorithm $GF_\mathcal{A}$
-will produce two valid forgeries $\sigma=(R, z)$ and $\sigma'=(R', z')$ along
-with their respective challenge responses from the random oracle $(h_J, h_J')$ over
-the same message $m$ and public commitment $R$, and so enable the extraction of the desired discrete logarithm.
+%Lemma~\ref{generalized-forking-lemma} demonstrates the probability $e'$ that
+%running the generalized forking algorithm $GF_\mathcal{A}$
+%will produce two valid forgeries $\sigma=(R, z)$ and $\sigma'=(R', z')$ along
+%with their respective challenge responses from the random oracle $(h_J, h_J')$ over
+%the same message $m$ and public commitment $R$, and so enable the extraction of the desired discrete logarithm.
 
 \subsubsection{Embedding the challenge value during KeyGen}
 \label{embedding-chal}
