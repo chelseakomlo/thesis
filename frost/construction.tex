@@ -136,7 +136,7 @@ values \emph{without} utilizing a DKG, as discussed next.
         a secret share $(\ell, f_i(\ell))$, deleting $f_i$ and each share
         afterward except for $(i, f_i(i))$, which they keep for themselves.
       \item[2.] Each $P_i$ verifies their shares by calculating:
-          $g^{f_\ell(i)} \iseq \prod_{k=0}^{t-1} \phi_{\ell k}^{i^k}$, aborting if the check fails.
+          $g^{f_\ell(i)} \iseq \prod_{k=0}^{t-1} \phi_{\ell k}^{i^k}$, aborting on failure.
 
       \item[3.] Each $P_i$ calculates their long-lived private
         signing share by computing $s_i = \sum_{\ell=1}^n f_\ell(i)$, stores
