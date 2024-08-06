@@ -1,0 +1,52 @@
+\subsubsection{A Discrete-Log Based \AVSS.} \label{avss:concrete}
+We now present a concrete \AVSS scheme that is secure in the discrete logarithm
+setting,
+builds upon \FeldVariant, and assumes an honest majority of participants.
+The algorithms $\issueshares, \recover, \verify, \derivepshare$ are identical to \FeldVariant,
+as described in Section~\ref{verifiable-shamir}.
+
+Let $\Hash: \GG^* \times \Zq \rightarrow \Zq$ be a cryptographically secure hash function,
+whose inputs are a tuple consisting of a vector of group elements in $\GG$, and an element in $\Zq$.
+Finally, let the distribution $\auxdistr$ be the uniform distribution on $\Zq$.
+
+We now define the aggregation algorithms for this concrete \AVSS.
+
+\begin{itemize}
+  \item[-] $\avss.\gettweak(\pubaggregateset, \auxstring)$:
+    Let $\pubaggregateset = \{ \vsscommit_j \}_{j \in \set{\total}}$
+    be the public aggregation set of the corresponding $\total$ Feldman VSS commitments to $\privaggregateset$,
+    such that $\lvert \pubaggregateset \rvert = t$,
+    and $\pubaggregateset$ is sorted in a canonical order.
+    Further, let $\auxstring$ be an element in $\Zq$.
+    Generate $\tweak \gets \Hash(\pubaggregateset, \auxstring)$.
+    Output $\tweak$.
+  \item[-] $\avss.\aggregatepriv(\privaggregateset,\tweak)$:
+      Let $\privaggregateset = \{ \share_{ji} \}_{j \in \set{\total}}$ be a private aggregation set of $\total$ Shamir secret shares,
+      and $\tweak \in \Zq$ be an auxiliary string.
+    \begin{enumerate}
+    \item Derive the aggregate share via Equation~\ref{eq:agg-share-1}.
+        \begin{equation} \label{eq:agg-share-1}
+          \ashare_i \gets \tweak + \sum_{j \in \set{\total}} \share_{ji}
+        \end{equation}
+    \item Output $\ashare_i$
+    \end{enumerate}
+
+  \item[-] $\avss.\aggregatepub(\pubaggregateset, \tweak)$:
+      Perform the following:
+    \begin{enumerate}
+      \item Derive the commitment to the aggregated constant coefficient by Equation~\ref{eq:const-agg}:
+        \begin{equation} \label{eq:const-agg}
+          \hat{A}_{0} = g^{\tweak} \cdot \prod_{j \in \set{\total}} \vsscommit_j[0]
+        \end{equation}
+    \item Derive the commitment to the $k \in \{1, \ldots, t-1 \}$ aggregated coefficients by Equation~\ref{eq:non-const-agg}:
+        \begin{equation} \label{eq:non-const-agg}
+          \hat{A}_{k} = \prod_{j \in \set{\total}} \vsscommit_j[k]
+        \end{equation}
+        Let $\avsscommit = \langle\hat{A}_0, \ldots, \hat{A}_{t-1} \rangle$
+      \item Output $\avsscommit$
+    \end{enumerate}
+\end{itemize}
+
+We demonstrate the correctness and security properties of the concrete scheme in Appendix~\ref{appendix:avss-proofs}.
+
+
