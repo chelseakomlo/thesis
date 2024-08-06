@@ -3,7 +3,7 @@ We now present a concrete \AVSS scheme that is secure in the discrete logarithm
 setting,
 builds upon \FeldVariant, and assumes an honest majority of participants.
 The algorithms $\issueshares, \recover, \verify, \derivepshare$ are identical to \FeldVariant,
-as described in Section~\ref{verifiable-shamir}.
+as described in Section~\ref{feldman-vss}.
 
 Let $\Hash: \GG^* \times \Zq \rightarrow \Zq$ be a cryptographically secure hash function,
 whose inputs are a tuple consisting of a vector of group elements in $\GG$, and an element in $\Zq$.
@@ -47,6 +47,6 @@ We now define the aggregation algorithms for this concrete \AVSS.
     \end{enumerate}
 \end{itemize}
 
-We demonstrate the correctness and security properties of the concrete scheme in Appendix~\ref{appendix:avss-proofs}.
+We demonstrate the correctness and security properties of the concrete scheme next.
 
 
