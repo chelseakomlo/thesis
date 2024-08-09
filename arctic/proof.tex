@@ -329,7 +329,7 @@ $\ddv$ can use the two forgeries output by $\adv$ in its first and second execut
   If the check succeeds,
   then $\bdv_3$ terminates the execution of $\adv$.
   $\bdv_3$ then outputs
-  $(y, (\coalition, (R_j)_{j \in \coalition \cap \corrupt}), \allowbreak (\coalition', (R_j')_{j \in \coalition' \cap \corrupt}))$
+  $(y, (\coalition, \allowbreak (R_j)_{j \in \coalition \cap \corrupt}), \allowbreak (\coalition', \allowbreak (R_j')_{j \in \coalition' \cap \corrupt}))$
   as its own output to the VPSS uniqueness game.
 
   If the check fails,
@@ -379,7 +379,7 @@ $\ddv$ can use the two forgeries output by $\adv$ in its first and second execut
   \begin{enumerate}
     \item Sample $r \rgets \Zq$.
     \item Use the algorithm $\SIMEval$ as defined by \DVRFOne in Figure~\ref{fig:simeval-shine} to generate
-      $(R, \{ (r_i, R_i)\}_{i \in \honest} ) \gets \SIMEval(y, r, \allowbreak \corrupt, n,  \{\skrand_i\}_{i \in \corrupt})$.
+      $(R, \{ (r_i, \allowbreak R_i)\}_{i \in \honest} ) \allowbreak \gets \SIMEval(y, r, \allowbreak \corrupt, n,  \{\skrand_i\}_{i \in \corrupt})$.
     \item Set $Q[y] = (r_i, R_i)_{i \in \honest}$.
     \item Return $(y, R_\partyid)$.
   \end{enumerate}
@@ -806,7 +806,6 @@ and $\aux=(m^*, \sigma^*)$ is the adversary's forgery with respect to $\pkgroup=
   The advantage of $\adv$ against $\SIM$ is given by Game~5.
   Combining Equations~\ref{eq:game0}, \ref{eq:game1}, \ref{eq:game2}, \ref{eq:game3}, \ref{eq:game4}, and \ref{eq:game5} gives Equation~\ref{eq:simulation}.
   This completes the proof.
-  \qed
 \end{proof}
 
 \begin{proof}[Proof of Lemma~\ref{lem:reduction}]
