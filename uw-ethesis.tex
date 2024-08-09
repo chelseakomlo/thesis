@@ -72,6 +72,8 @@
 %\newcommand{\texorpdfstring}[2]{#1} % does nothing, but defines the command
 % Anything defined here may be redefined by packages added below...
 
+\usepackage{amsfonts,amsmath,amssymb}
+\usepackage{etoolbox}
 \usepackage{framed}
 \usepackage{algorithm}
 \usepackage{algorithmic}
@@ -128,6 +130,7 @@
 \include{macros}
 
 \newtheorem{definition}{Definition}[section]
+\newtheorem{case}{Case}
 \newtheorem{theorem}{Theorem}
 \newtheorem{remark}{Remark}
 \newtheorem{lemma}{Lemma}

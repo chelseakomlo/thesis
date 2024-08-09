@@ -27,8 +27,9 @@ Gennaro et al.~\cite{GennaroJKR07} present a construction secure against the
 that is (similar to our generic construction) three rounds in the optimistic setting,
 but it has higher round complexity when parties misbehave.
 While their description of their construction implies that a round to broadcast failure messages is optional,
-we observe that their construction is in fact insecure without this round.
-We discuss this attack and present  a secure variant in Appendix~\ref{app:gjkr}.
+their construction is in fact insecure without this round,
+as a malicious party may force a subset of parties to fail,
+and so selectively choose which participant contributions are used towards the creation of the output public key and secret key shares.
 While requiring higher round complexity,
 their construction offers strong robustness as players negotiate in the second
 and third round which qualified set of players to continue the protocol with.
