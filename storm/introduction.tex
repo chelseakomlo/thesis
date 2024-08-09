@@ -70,30 +70,30 @@ as well as concrete AgVSS and NIKE constructions.
 \begin{table}[t]
   \centering
   \small
-  \begin{tabular}{c|c|c|c|c|c|c}
+  \begin{tabular}{c|c|c|c}
 	\hline
     & \multicolumn{2}{c|}{Composable \& VSS}
-    & \multicolumn{2}{c|}{Composable \& PVSS} &
+    %& \multicolumn{2}{c|}{Composable \& PVSS} &
+    &
     Not Composable \\
 	\hline
     & \GJKRConstruction~\cite{GennaroJKR07}
     &  \RG
-    & X
-    & X
+    %& X
     &  $\pedpop$~\cite{KomloG20,BellareCKMTZ22}
       \\
 	\hline
-    \textbf{Optimistic Rounds} & 3 & 3  & X & X & 2 \\
-    \textbf{Total Rounds} & 6 & 4 & X & X & 2 \\
-    \textbf{Robustness} & Strong & Weak &  X & X &No \\
-    \textbf{Bandwidth} & $2nt + 3n$ &  $nt+ 5n$ & X & X & $nt +3n$  \\
-    \textbf{Computation } & $2nt + 2n + t$ &  $nt + 2n$ & X & X & $nt + 2n$   \\
-    \textbf{Assumption} & DLP & CDH & X & X & KoE/AGM   \\
-    \textbf{Threshold} & $n \geq 2t-1$ &  $n \geq 2t-1$ & X & X & $n \geq t$  \\
+    \textbf{Optimistic Rounds} & 3 & 3  & 2 \\
+    \textbf{Total Rounds} & 6 & 4 & 2 \\
+    \textbf{Robustness} & Strong & Weak &  No \\
+    \textbf{Bandwidth} & $2nt + 3n$ &  $nt+ 5n$ &  $nt +3n$  \\
+    \textbf{Computation } & $2nt + 2n + t$ &  $nt + 2n$ & $nt + 2n$   \\
+    \textbf{Assumption} & DLP & CDH & KoE/AGM   \\
+    \textbf{Threshold} & $n \geq 2t-1$ &  $n \geq 2t-1$ & $n \geq t$  \\
 \hline
 	\end{tabular}
   \smallskip
-  \caption{Comparison between \RG and related synchronous constructions.
+  \caption{Comparison between \RG and related, non-publicly-verifiable, synchronous constructions.
   }
   \label{tbl:intro-comp}
 \end{table}

@@ -15,8 +15,8 @@ and $H_4$ with inputs $(i, \Phi)$.
   \begin{description}
     \item[1.a] Generate nonces $d_{ij}, e_{ij}, a_{ij}, b_{ij} \random
       \mathbb{Z}_q^*$, and
-    derive $(D_{ij}, E_{ij}, A_{ij}, B_{ij}) =
-    (g^{d_{ij}}, g^{e_{ij}}, g^{a_{ij}}, g^{b_{ij}})$.
+    derive $(D_{ij}, E_{ij}, \allowbreak A_{ij}, \allowbreak B_{ij}) =
+    (g^{d_{ij}}, \allowbreak g^{e_{ij}}, \allowbreak g^{a_{ij}}, g^{b_{ij}})$.
     \item[1.b] Generate nonces $k_{aij}, k_{bij} \random
       \mathbb{Z}_q$, and
       commitments $(R_{aij}, R_{bij}) =
@@ -25,7 +25,7 @@ and $H_4$ with inputs $(i, \Phi)$.
       R_{aij}, R_{bij})$.
     \item[1.d ]Append $(j, (D_{ij}, E_{ij}, A_{ij}, B_{ij}))$ to $L_i$, store
       $((d_{ij}, D_{ij}), (e_{ij}, E_{ij}),$
-      $(a_{ij}, A_{ij}), (b_{ij}, B_{ij}))$ for later use in signing
+      $(a_{ij}, A_{ij}), \allowbreak (b_{ij}, \allowbreak B_{ij}))$ for later use in signing
       operations.
   \end{description}
 \item[2.] Let $K_i = H_3(K_{i1}, \dots, K_{i\pi})$; send $(i, K_i)$ to all
