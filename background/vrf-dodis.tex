@@ -1,0 +1,223 @@
+
+\subsection{A Verifiable Random Function without Pairings}
+
+We now describe a verifiable random function that is pairing-free.
+We build upon the VRF defined by Dodis-Yampolskiy VRF~\cite{DodisY05},
+but where the proving mechanism is performed using discrete logarithm proofs of equality (DLEQ),
+which are pairing-free.
+
+We first begin by defining verifiable random functions more generally.
+A verifiable random function (VRF) is a keyed PRF,
+such that the PRF can be evaluated using only knowledge of the secret key,
+but is publicly verifiable given the public key.
+
+\begin{definition}
+A \defn{verifiable random function} (VRF) $\VRF$ is a tuple of algorithms
+$\VRF = (\setup, \keygen, \prove, \verify)$, such that:
+
+\begin{itemize}
+    \item $\VRF.\setup(1^\lambda) \rightarrow \pp$:
+Accepts as input a security
+parameter $\lambda$ and outputs public parameters $\pp$,
+which are then implicitly given as input to all other algorithms.
+    \item $\VRF.\keygen() \rightarrow (\sk, \pk)$:
+A probabilistic algorithm that outputs a VRF secret key $\sk$ and public key $\PK$.
+      \item $\VRF.\prove(\sk, \vrfin) \rightarrow (\vrfout, \pi)$:
+Accepts as input a secret $\sk$ and value $\vrfin$ to evaluate the VRF on.
+Outputs the evaluation of $x$ as $\vrfout$ and a proof $\pi$ that the evaluation was performed correctly.
+      \item $\VRF.\verify(\pk, \vrfin, \vrfout, \pi) \rightarrow \zo$:
+Accepts as input the input to evaluate $\vrfin$,
+a public key $\pk$,
+the VRF output $\vrfout$,
+and a proof $\pi$.
+Outputs $1$ if $\vrfout$ is a valid output with respect to $\pk$ and $\vrfin$,
+otherwise, outputs $0$.
+\end{itemize}
+\end{definition}
+
+\paragraph{Correctness.}
+A VRF is \defn{correct} if for all $\lambda$ and $\pp \gets \VRF.\setup(1^\lambda)$
+and $(\PK, \PK) \rgets \VRF.\keygen()$,
+Equation~\ref{eq:vrf-correct} holds:
+
+\begin{align} \label{eq:vrf-correct}
+  \begin{split}
+    \VRF.\verify(\PK, \vrfin, \pi) \rightarrow 1 \text{ when} \\
+    \VRF.\prove(\SK, \vrfin) \rightarrow (\vrfout, \pi)
+  \end{split}
+\end{align}
+
+\paragraph{Security.}
+A VRF is \emph{secure} if it is unique and pseudorandom.
+We define these notions next.
+
+\[
+  \advant{unq}{\adv,\VRF}(\lambda)
+     = \Pr\left[
+            \begin{array}{l}
+                \pp \gets \VRF.\Setup(1^\lambda) \\
+               (\PK, \vrfin,\vrfout, \pi, \vrfout', \pi') \rgets \adv(\pp)
+            \end{array}
+            \ \ :\ \
+            \begin{array}{l}
+                \VRF.\verify(\PK, \vrfin, \vrfout, \pi) = 1 \\
+                \VRF.\verify(\PK, \vrfin, \vrfout', \pi') = 1 \\
+                \vrfout \neq \vrfout'
+            \end{array}
+        \right]
+\]
+
+\begin{definition}
+  A VRF is \defn{unique} if for all PPT adversaries $\adv$,
+  $\advant{unq}{\adv,\VRF}$ is a negligible function of $\lambda$.
+\end{definition}
+
+
+\[
+  \advant{psdr}{\adv,\VRF}(\lambda)
+     = \Pr\left[
+            \begin{array}{l}
+              b = b', \text{ and} \\
+              \oracle^{\prove} \text{ was not queried on } \vrfin
+            \end{array}
+            \ \ :\ \
+            \begin{array}{l}
+                b \rgets \zo \\
+                \pp \gets \VRF.\Setup(1^\lambda) \\
+                (\sk, \pk) \rgets \VRF.\keygen() \\
+                \vrfin \rgets \adv(\pp, \pk) \\
+                (\vrfout_0, \pi) \rgets \VRF.\prove(\SK, \vrfin) \\
+                \vrfout_1 \rgets \vrfcodomain \\
+                b' \rgets \adv^{\prove}(\vrfout_b, \pstate_A)
+            \end{array}
+        \right]
+\]
+
+\begin{definition}
+  A VRF is \defn{pseudorandom} if for all PPT adversaries $\adv$,
+  $\advant{psdr}{\adv,\VRF}$ is a negligible function of $\lambda$.
+\end{definition}
+
+
+\subsubsection{A Verifiable Random Function without Pairings}
+\label{sec:dyprf}
+
+We now give a variant of the Dodis-Yampolskiy VRF~\cite{DodisY05},
+which itself builds on the Boneh-Boyen-Shacham unpredictable function~\cite{BonehBS04}.
+However, we define this VRF without relying upon pairings,
+by instead employing discrete log equality proofs,
+as further described in Section~\ref{sec:dleq}.
+We refer to this variant of the Dodis-Yampolskiy VRF as $\DYPRF$.
+
+$\DYPRF$ is defined respect to the hash function $\Hash$,
+such that:
+
+  \begin{itemize}
+    \item $\DYPRF[\Hash].\setup(1^\lambda) \rightarrow \pp$:
+      Perform $(\GG, q, g) \gets \GroupGen$.
+      Then, sample $\omega \rgets \Zq$ and derive $h \gets g^\omega$.
+      Output $(\GG, q, g, h) $.
+    \item $\DYPRF[\Hash].\keygen() \rightarrow (\sk, \pk)$:
+        Sample $\sk \rgets \Zq$; derive $\pk \gets g^{\sk}$.
+        Output $(\sk, \pk)$.
+      \item $\DYPRF[\Hash].\prove(\sk, x) \rightarrow (Y, \pi)$:
+        On input the secret key $\sk$ and value $x \in \Zq$,
+        derive $\alpha \gets \sk + x$.
+        derive $ Y \gets g^{1/\alpha}$.
+        Then, obtain $\pi \gets \DLEQ[\Hash].\prove(g, g^\alpha, Y, g, \alpha)$.
+        Output $(Y, \pi)$.
+      \item $\DYPRF[\Hash].\verify(x, \pk, Y, \pi) \rightarrow \zo$:
+        Derive $B \gets \PK \cdot g^x$.
+        Then, perform the following check: $\DLEQ[\Hash].\verify(g, B, Y, g, \pi) \iseq 1$.
+        Output $1$ if the check holds, otherwise, output $0$.
+  \end{itemize}
+
+\paragraph{Correctness.}
+$\DYPRF$ is correct, because the proof $\pi$ will be of the form $\pi = (R_1, R_2, z)$,
+where $R_1 = g^r, R_2 = g^{\frac{r}{\SK + \vrfin}}$,
+and $z = r + c(\SK + \vrfin)$.
+And so the following relations in Equations~\ref{eq:correct-one} and~\ref{eq:correct-two} will hold:
+
+\begin{align}
+  \label{eq:correct-one}
+  \begin{split}
+    g^z &= R_1 \cdot B^c \\
+    g^{r + c(\SK + \vrfin)}  &= g^r \cdot (g^{\SK + \vrfin})^c
+  \end{split}
+\end{align}
+
+\begin{align}
+  \label{eq:correct-two}
+  \begin{split}
+    Y^z &= R_2 \cdot g^c \\
+    g^{\frac{r}{\SK + \vrfin} + \frac{c(\SK + \vrfin)}{\SK + \vrfin}}  &= g^\frac{r}{\SK + \vrfin} \cdot g^c \\
+    g^{\frac{r}{\SK + \vrfin} + c}  &= g^\frac{r}{\SK + \vrfin} \cdot g^c
+  \end{split}
+\end{align}
+
+\paragraph{Security.}
+Recall that for a VRF to be secure,
+it must be unique, verifiable, and pseudorandom~\cite{DodisY05}.
+The pseudorandomness of $\DYPRF$ in the non-pairing setting is given by Dodis and Yampolskiy~\cite{DodisY05},
+and assumes the Diffie-Hellman inversion (DHI) assumption.
+Because DLEQ proofs are complete and sound,
+then $\DYPRF$ is also unique and verifiable.
+
+\subsection{Chaum-Pedersen Discrete-Log Equality Proofs}
+\label{sec:dleq}
+
+We now describe how to generate proofs of discrete log equality between two
+group elements,
+via Chaum-Pedersen proofs~\cite{BonehS2020}.
+
+\begin{definition}
+A Chaum-Pedersen discrete-log equality proof $\DLEQ$ is the tuple of algorithms
+  $(\DLEQ = (\setup, \prove, \verify))$,
+where:
+
+\begin{itemize}
+  \item $\DLEQ[\Hash].\setup(1^\lambda) \rightarrow \pp$:
+Derive $(\GG, q, g) \gets \GroupGen(1^\lambda)$.
+Sample $h \rgets \GG$.
+Output $\pp = (\GG, q, g, h)$.
+  \item $\DLEQ[\Hash].\prove(A, B, C, D, w) \rightarrow \pi$:
+Accepts as input four group elements $(A, B, C, D) \in \GG^4$ and a value $w \in \Zq$,
+with the following relation:
+
+    \begin{align}
+      \begin{split}
+        B &= A^w, \text{ and} \\
+        D &= C^w
+      \end{split}
+    \end{align}
+
+Performs the following steps:
+\begin{enumerate}
+\item Sample $r \rgets \Zq$ and derive $R_1 \gets A^r$ and $R_2 \gets C^r$.
+\item Derive $c \gets \Hash(A, B, C, D, R_1, R_2)$.
+\item Then, derive $z \gets r + c \cdot w$.
+\item Output $\pi = (R_1, R_2, z)$.
+\end{enumerate}
+\item $\DLEQ[\Hash].\verify(A, B, C, D, \pi) \rightarrow \zo$
+Accepts as input four group elements $(A, B, C, D) \in \GG^4$,
+and a proof $\pi$.
+Performs the following steps:
+\begin{enumerate}
+\item Parse $(R_1, R_2, z) \gets \pi$.
+\item Then, derive $c' \gets \Hash(A, B, C, D, R_1, R_2)$.
+\item Finally, perform the checks in Equation~\ref{eq:dleq-verify}:
+  \begin{align} \label{eq:dleq-verify}
+\begin{split}
+  & A^z \iseq R_1 \cdot B^c, \text{ and} \\
+  & C^z \iseq R_2 \cdot D^c
+\end{split}
+\end{align}
+\item Output $1$ if both checks hold, otherwise, output $0$.
+\end{enumerate}
+\end{itemize}
+\end{definition}
+
+\paragraph{Security.}
+DLEQ proofs are special-sound and honest-verifier zero-knowledge~\cite{BonehS2020}.
+
+
