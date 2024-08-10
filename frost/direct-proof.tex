@@ -5,3 +5,84 @@ We now present a direct proof for the version of FROST given in Figure~\ref{fig:
 This proof builds on prior work for prior proofs of security for FROST~\cite{BellareCKMTZ22},
 but gives a reduction to AOMDL, as opposed to OMDL.
 
+\begin{theorem}\label{thm:FROST-aomdl}
+	FROST is statically unforgeable against an adversary $\adv$ that is allowed to corrupt up to $\tcor$ participants,
+  assuming the AOMDL assumption holds for $\GroupGen$ in the ROM.
+  In other words, for every static unforgeability adversary $\adv$ that wins the adaptive unforgeability game against FROST,
+  there exists a PPT adversary $\B$ that wins the AOMDL game.
+
+  The advantage of $\adv$ is bounded by
+
+
+  \begin{equation*} \label{eq:frost-aomdl}
+\advant{$\uf$}{\A,\frost}(\secp, n, \thresh, \tcor)
+    \leq \sqrt{\advant{aomdl}{\B}(\secp) + \mathsf{negl}(\secp) }
+  \end{equation*}
+
+such that $\numsignq$ is the number of times $\adv$ is allowed to query the signing oracles.
+
+\end{theorem}
+
+To prove Theorem~\ref{thm:FROST-aomdl},
+we rely on two lemmas.
+
+\begin{lemma} \label{lem:frost-simulation}
+There exists an algorithm $\SIM$ which can simulate FROST with respect to an AOMDL instance to an adversary $\adv$
+playing against the unforgeability game as in Figure~\ref{fig:euf-cma-threshold}.
+In other words,
+$\adv$ has negligible additional advantage in winning the unforgeability game when
+interacting with $\SIM$ that it does when playing against FROST directly.
+
+Concretely, in the setting where $\adv$ is allowed up to $\tcor$ corruptions, then
+\begin{align} \label{eq:simulation-frost}
+  \begin{split}
+\advant{$\uf$}{\A,\frost}(\secp, n, \thresh, \tcor)  & \leq
+        \advant{uf}{\SIM, \adv}(\lambda, n, t, \tcornew)
+        \frac{(\honetotal + \qchal)}{q}
+        + \frac{\rototal^2}{2q}
+  \end{split}
+\end{align}
+\end{lemma}
+
+\begin{lemma} \label{lem:frost-reduction}
+Given any PPT adversary $\adv$ that wins the unforgeability game against FROST,
+and a simulating algorithm $\SIM$ which can simulate FROST,
+then there exists a PPT AOMDL adversary $\ddv$ that can use $\adv$ as a subroutine to solve for its AOMDL challenge.
+
+Concretely, in the honest majority setting with authenticated channels,
+    \begin{align} \label{eq:ddv-dl}
+    \begin{split}
+        \advant{dl}{\ddv}(\lambda) & \geq
+        \frac{\advant{uf}{\adv,\glitterm}(\lambda, n, t, \minsigners)^2}{\rototal}
+        - \frac{2(\honetotal + \qchal)}{q}
+        - \frac{3\rototal^2}{q}
+    \end{split}
+    \end{align}
+where $\minsigners \geq 2t-1$ and $n \geq \minsigners$,
+and $\rototal = \htwototal + \qchal + 2\numsignq + 1$.
+\end{lemma}
+
+\begin{proof}[Proof of Lemma~\ref{lem:frost-simulation}]
+  Let $\A$ be an adversary playing the static unforgeability game as defined in Figure~\ref{fig:euf-cma-threshold},
+  instantiated with FROST.
+  $\A$ is allowed to query $\HashNon$ $\qnon$ number of times,
+  $\HashSig$ $\qsigh$ number of times,
+  and is allowed to make $q_s$ signing queries.
+  Without loss of generality, we assume $\A$ queries $\HashSig$ on its forgery $(\threshpk, m^*, R^*)$.
+  Finally, let $\rototal = \qnon + \qsigh + q_s + 1$.
+
+
+
+  \noindent\textit{Setup.}
+  $\SIM$ is initialized with parameters $(\Gr, g, p)$ and a set  of $2q_s+1$ AOMDL challenges $\{ X_0, \ldots, X_{2q_s}\}$,
+  and can query the AOMDL oracle $\odlsol$ up to $2q_s$ times.
+  $\SIM$ then initializes the following values:
+  \begin{enumerate}
+    \item tables $\QNon \gets \emptyset$, $\QSig \gets \emptyset$ to simulate random oracles $\HashNon, \HashSig$;
+    \item tables $Q_1 \gets \emptyset$ to maintain state during its simulation;
+    \item tables $W, W'$ to maintain open and closed sessions,
+    \item the table $Q_m \gets \emptyset$ to maintain the set of messages
+queried by $\A$ to honest signers,
+    \item the counter $\counter$ to keep track of which AOMDL challenges have yet been used.
+  \end{enumerate}
+\end{proof}

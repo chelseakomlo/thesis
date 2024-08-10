@@ -90,12 +90,12 @@ such that $\Verify(\pk, m, \sigma) = 1$.
 \begin{figure}[!htb]
 	\begin{pchstack}[boxed]
 		\begin{pcvstack}
-      \procedure{$\TUnforgExp_{\A,\threshsig}(\secp, n, \tcor, \tcornew)$}{
+      \procedure{$\TUnforgExp_{\A,\threshsig}(\secp, n, \thresh, \tcornew)$}{
 		%\protect\dashbox[3.5cm][c]{$\G^{\aduf}_{\A,\threshsig}(\secp, \hmulp)$}}{
 			\sessions \gets \emptyset \\
 			\pp \leftarrow  \ParGen(\usecp) \\
       			%Q \gets \emptyset \pccomment{set of queried messages} \\ Liz: Do all or none?
- 	    		(\corrupt, \state_\A) \randpick \A(\pp, n, \tcor, \tcornew)   \\
+ 	    		(\corrupt, \state_\A) \randpick \A(\pp, n, \thresh, \tcornew)   \\
 			\pcreturn \bot~\pcif \corrupt \not\subset [n] \vee |\corrupt| > \tcornew \\
 			%\text{\algcom or \dbox{$\vert \corrupt \rvert \geq t/2$ (Theorem~\ref{thm:OMDL+ROM})} } \\
         			\honest \gets \set{n} \setminus \corrupt  \\
