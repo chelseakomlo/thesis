@@ -42,6 +42,10 @@ least three rounds of
 communication during signing operations, whereas constructions with fewer
 network rounds~\cite{GennaroJKR03} must limit signing
 concurrency to protect against a forgery attack~\cite{DrijversEFKLNS19}.
+In particular,
+these schemes are insecure against ROS (Random inhomogeneities in a Overdetermined
+Solvable system of linear equation) attacks~\cite{DrijversEFKLNS19,BenhamoudaLLOR20}.
+We discuss the ROS problem more in Section~\ref{background:ros}.
 
 In this work, we present FROST,
 a Flexible

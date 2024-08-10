@@ -26,11 +26,10 @@ round to distribute signature shares and compute the group signature.
 Each round requires participants to send values to every other participant.
 
 Gennaro et al.~\cite{GennaroJK02} present a threshold
-Schnorr signature protocol that uses a modification of Pedersen's
+Schnorr signature protocol that uses Pedersen's
 DKG~\cite{Pedersen91dkg} to generate both $s$ during key generation
-and the random nonce $k$ for signing operations. However, their construction
-requires \emph{all} $n$ signers to participate in signing, while the adversary
-is allowed to control up to the given threshold number of participants.
+and the random nonce $k$ for signing operations.
+However, this scheme is insecure against ROS attacks~\cite{DrijversEFKLNS19}
 Pedersen's DKG requires two rounds among participants;
 and so this construction requires an additional round for signing.
 Each round requires that
@@ -138,12 +137,18 @@ protocol.
 
 \subsection{Subsequent Work}
 
-Since the publication of FROST, several threshold Schnorr signature schemes have been proposed.
+Since the publication of FROST,
+the insecurity of the ROS problem has been underscored~\cite{BenhamoudaLLOR20}.,
+and additional concurrently secure threshold Schnorr signature schemes have been proposed.
 We now review subsequent works.
 
+\paragraph{Efficient Algorithms for Solving ROS Problems.}
+Benhamouda et al.~\cite{BenhamoudaLLOR20} TODO
+
+\paragraph{Concurrently Secure Threshold Schnorr Signatures.}
 FROST2, proposed by Crites, Komlo, and Maller~\cite{CritesKM21} and refined by Bellare, Tessaro, and Zhu~\cite{BellareTZ22} and BCKMTZ~\cite{BellareCKMTZ22}, is an optimized version of FROST that reduces the number of exponentiations required for signing from $\thresh$ to one.
 A further optimization of FROST2, called FROST3, is introduced by RRJSS~\cite{RuffingRJSS22} and proven secure with a DKG by Chu, Gerhart, Ruffing, and Schr{\"{o}}der~\cite{ChuGRS23}.
-All three of FROST, FROST2, FROST3 are only proven statically secure, under the algebraic one-more discrete logarithm assumption (AOMDL) \cite{BellareCKMTZ22}.
+All three of FROST, FROST2, FROST3 are only proven statically secure, under the algebraic one-more discrete logarithm assumption (AOMDL)~\cite{BellareCKMTZ22}.
 
 Lindell presents a three-round threshold Schnorr signature~\cite{Lindell22} with the goal of
 defining a scheme that is both secure against ROS attacks and
