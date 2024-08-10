@@ -1,12 +1,16 @@
-\section{Security}
-\label{frost:proof}
+\section{Security of Interactive-FROST}
+\label{frost:interactive-proof}
 
-We now present proofs of
-correctness and a high-level overview of our proof of security against
-chosen-message attacks for an adaptive version of FROST,
+We first present proofs of
+correctness and unforgeability for an interactive version of FROST,
 with a heuristic assumption on how the proof of security applies to FROST directly.
 
-Note that subsequent works have given a direct proof for FROST~\cite{BellareCKMTZ22}.
+Subsequent works have given a direct proof for the
+non-interactive versions of FROST~\cite{BellareCKMTZ22},
+with a reduction to OMDL in the ROM
+We give a direct proof for the non-interactive version of FROST presented in
+Figure~\ref{fig:frost} in Section~\ref{frost:non-interactive-proof},
+but instead to the weaker AOMDL assumption.
 
 \subsection{Correctness}
 \label{frost:correctness}
