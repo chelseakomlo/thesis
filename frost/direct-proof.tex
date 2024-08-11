@@ -45,11 +45,11 @@ Concretely, in the setting where $\adv$ is allowed up to $\tcor$ corruptions, th
 \end{lemma}
 
 \begin{lemma} \label{lem:frost-reduction}
-Given any PPT adversary $\adv$ that wins the unforgeability game against FROST,
+Given any PPT adversary $\adv$ that is allowed to corrupt $\tcor$ participants and wins the unforgeability game against FROST,
 and a simulating algorithm $\SIM$ which can simulate FROST,
 then there exists a PPT AOMDL adversary $\ddv$ that can use $\adv$ as a subroutine to solve for its AOMDL challenge.
 
-Concretely, in the honest majority setting with authenticated channels,
+Concretely,
     \begin{align} \label{eq:ddv-dl}
     \begin{split}
         \advant{dl}{\ddv}(\lambda) & \geq
@@ -58,8 +58,7 @@ Concretely, in the honest majority setting with authenticated channels,
         - \frac{3\rototal^2}{q}
     \end{split}
     \end{align}
-where $\minsigners \geq 2t-1$ and $n \geq \minsigners$,
-and $\rototal = \htwototal + \qchal + 2\numsignq + 1$.
+where $\rototal =  \qnon + \qsigh + q_s + 1$.
 \end{lemma}
 
 \begin{proof}[Proof of Lemma~\ref{lem:frost-simulation}]
@@ -74,8 +73,8 @@ and $\rototal = \htwototal + \qchal + 2\numsignq + 1$.
 
 
   \noindent\textit{Setup.}
-  $\SIM$ is initialized with parameters $(\Gr, g, p)$ and a set  of $2q_s+1$ AOMDL challenges $\{ X_0, \ldots, X_{2q_s}\}$,
-  and can query the AOMDL oracle $\odlsol$ up to $2q_s$ times.
+  $\SIM$ is initialized with parameters $\pp = (\Gr, g, p)$ and a set  of $2q_s+1$ AOMDL challenges $\{ X_0, \ldots, X_{2q_s}\}$,
+  and can query the AOMDL oracle $\odlsol$ up to $q_s$ times.
   $\SIM$ then initializes the following values:
   \begin{enumerate}
     \item tables $\QNon \gets \emptyset$, $\QSig \gets \emptyset$ to simulate random oracles $\HashNon, \HashSig$;
@@ -85,4 +84,55 @@ and $\rototal = \htwototal + \qchal + 2\numsignq + 1$.
 queried by $\A$ to honest signers,
     \item the counter $\counter$ to keep track of which AOMDL challenges have yet been used.
   \end{enumerate}
+
+  $\SIM$ runs $\A(\pp)$ on the public parameters $\pp$.
+  $\A$ chooses the initial set of corrupted parties $\corrupt \gets \set{n}, \lvert \corrupt \rvert \leq \tcor$.
+  $\SIM$ sets $\honest \gets [n]~\backslash~\corrupt$ and must reveal the secret keys of the corrupted parties to $\A$,
+  which it does in the next step.
+
+  \medskip
+
+  \noindent\textit{Simulating KeyGen.}
+    To simulate key generation where $\SIM$ is the trusted dealer,
+    $\SIM$ does the following:
+    \begin{enumerate}
+    \item It sets $\pkgroup = X_0$.
+    \item To simulate key generation for the signing keys,
+    $\SIM$ first picks $t-1$ secret key shares for the corrupt parties
+        $(\sk_i)_{i \in \corrupt} \rgets \Zq$,
+    and defines their corresponding public keys
+        $\pk_i \gets g^{\sk_i}$ for all $i \in \corrupt$.
+    \item $\SIM$ then derives the public key shares
+      $\pk_j, j \in \honest$ for the remaining honest parties in the exponent, as follows:
+  \begin{align} \label{eq:keygen-sim}
+    \pk_j = (\pk)^{L_0(j)} \cdot \prod_{i \in \corrupt} g^{\sk_i L_i(j)}
+	\end{align}
+        where $L_i(x)$ is the $i\supth$ Lagrange polynomial defined by $\corrupt \cup \{0\}$.
+    \end{enumerate}
+
+
+  Then,
+  $\SIM$ runs
+  $\adv^{ \BigO^{\Sign_1, \Sign_2} }(\state_A, \pkgroup, \{ \pkparty_j \}_{j \in \set{n}}, \{ \skparty_i \}_{i \in \corrupt})$,
+  and responds to its oracle queries,
+  as we describe next.
+
+  \medskip
+  \paragraph{Simulating Random Oracles.}
+  To simulate $\adv$'s random oracle queries,
+  $\SIM$ simply performs lazy sampling.
+  It programs $\HashNon, \HashSig$ with values from its input
+  $\{h_1, \ldots, h_{\rototal} \}$,
+  as follows.
+  \begin{itemize}
+  \item \underline{$\HashNon:$}
+  \item \underline{$\HashSig:$}
+  \end{itemize}
+
+	\smallskip
+
+  \paragraph{Simulating Signing Oracles.}
+  To simulate signing oracles,
+  $\SIM$ does as follows:
+
 \end{proof}
