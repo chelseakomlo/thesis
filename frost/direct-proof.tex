@@ -124,10 +124,44 @@ queried by $\A$ to honest signers,
   It programs $\HashNon, \HashSig$ with values from its input
   $\{h_1, \ldots, h_{\rototal} \}$,
   as follows.
+
   \begin{itemize}
-  \item \underline{$\HashNon:$}
-  \item \underline{$\HashSig:$}
+  \item{}\underline{$\HashNon:$} When $\A$ queries $\HashNon$ on $(k, \threshpk, m, \{   (i, R_i, S_i)\}_{i \in \coalition})$,
+  To respond,
+  $\SIM$ does the following:
+  \begin{enumerate}
+    \item First, $\SIM$ checks if $\QNon[(k, \threshpk, \allowbreak m,\allowbreak \{ (i, R_i, S_i)\}_{i \in \coalition})] \neq  \bot$.
+      If not, $\SIM$ simply returns $\QNon[(k, \threshpk, \allowbreak m,\allowbreak \{ (i, R_i, S_i)\}_{i \in \coalition})] $,
+    \item Otherwise, for all $j \in \coalition$, $\SIM$ does the following:
+  \begin{enumerate}
+    \item $\SIM$ sets $a_j \gets h_j $ and
+      $\QNon[(j, \threshpk, m, \{(i, R_i, S_i)\}_{i \in \coalition})] = a_j$
+      where $h_j$ is the next-unused hash value provided to $\SIM$ on initialization.
+  \end{enumerate}
+    \item Then, $\SIM$ derives $\aggR \gets \prod_{i \in \coalition} R_i \cdot S_i^{a_i}$.
+    \item $\SIM$ checks if $\QSig[(\threshpk, m, \aggR)] = \bot$;
+      if the check does not hold,
+      $\SIM$ returns $\BadEventOne$.
+    \item Otherwise, $\SIM$ sets $c \gets h_{j+1}$,
+      where $h_j$ is the next-unused random oracle output,
+      and stores $\QSig[(\pk, m, \aggR)] = c$.
+    \item Finally, $\SIM$ returns $a_k$.
+  \end{enumerate}
+
+
+  \item{}\underline{$\HashSig:$} When $\A$ queries $\HashSig$ on $(\threshpk, m, \aggR)$,
+  $\SIM$ checks whether $\QSig[(\threshpk, m, \aggR)] \neq \bot$;
+  if the check does not hold,
+  then
+  $\SIM$ returns $\QSig[(\threshpk, m, \aggR)]$.
+	Else, $\SIM$ sets $c \gets h_j$,
+  where $h_j$ is the next-unused random oracle output,
+  stores $\QSig[(\pk, m, \aggR)] = c$ and returns $c$.
   \end{itemize}
+
+
+  \medskip
+
 
 	\smallskip
 
