@@ -365,3 +365,35 @@ However, if the coordinator chooses to re-use a commitment set $(D_i,
 E_i)$ during the signing protocol,  doing so simply results in
 the participant $P_i$ aborting the protocol, and consequently does not increase the power of the coordinator.
 
+\subsection{Correctness of FROST}
+\label{frost:correctness}
+
+Signatures in FROST
+are constructed from two polynomials;
+the first polynomial $F_1(x)$ defines the secret sharing of the private
+signing key $s$ (such that $\pk = g^s$) and the
+second polynomial $F_2(x)$ defines the secret sharing of the nonce $k$
+such that
+\(
+k = \sum_{i \in S} d_i + e_i \cdot \rho_i
+\)
+using the associated public data $(m, B)$ to determine $\rho_i$.
+During the key generation phase,
+the first polynomial $F_1(x) = \sum_{j=1}^n f_j(x)$ is generated
+such that the secret key shares are $s_i = F_1(i)$ and the secret key is $s = F_1(0)$.
+
+During the signature phase,
+each of the
+participants in the coalition $\coalition$ selected for signing use a pair of nonces $(d_i, e_i)$ to
+define a degree $\lvert\coalition-1 \rvert$ polynomial $F_2(x)$, interpolating the
+values $(i,\frac{d_i + e_i \cdot H_1(i, m, B)}{\lambda_i})$,
+such that $F_2(0) = \sum_{i \in S} d_i + e_i \cdot \rho_i$.
+
+Then let $F_3(x) = F_2(x) + c \cdot F_1(x)$, where
+$c = H_2(R, \pk, m)$.  Now $z_i$
+equals $d_i + (e_i \cdot \rho_i) + \lambda_i \cdot s_i \cdot c =
+\lambda_i (F_2(i) + c \cdot F_1(i)) = \lambda_i F_3(i)$, so $z = \sum_{i \in S} z_i$
+is simply the Lagrange interpolation of $F_3(0) = (\sum_{i \in S} d_i + e_{ij} \cdot \rho_i) + c
+\cdot s$.  Because $R = g^{\sum_{i \in S} d_i + e_i \cdot \rho_i}$ and $c
+= H_2(R, \pk, m)$, $(R, z)$ is a
+correct Schnorr signature on $m$.

@@ -9,103 +9,99 @@ Subsequent works have given a direct proof for the
 non-interactive versions of FROST~\cite{BellareCKMTZ22},
 with a reduction to OMDL in the ROM
 We give a direct proof for the non-interactive version of FROST presented in
-Figure~\ref{fig:frost} in Section~\ref{frost:non-interactive-proof},
+Figure~\ref{fig:frost} in Section~\ref{frost:direct-proof},
 but instead to the weaker AOMDL assumption.
 
-\subsection{Correctness}
-\label{frost:correctness}
 
-Signatures in FROST
-are constructed from two polynomials;
-the first polynomial $F_1(x)$ defines the secret sharing of the private
-signing key $s$ (such that $\pk = g^s$) and the
-second polynomial $F_2(x)$ defines the secret sharing of the nonce $k$
-such that
-\(
-k = \sum_{i \in S} d_i + e_i \cdot \rho_i
-\)
-using the associated public data $(m, B)$ to determine $\rho_i$.
-During the key generation phase,
-the first polynomial $F_1(x) = \sum_{j=1}^n f_j(x)$ is generated
-such that the secret key shares are $s_i = F_1(i)$ and the secret key is $s = F_1(0)$.
+\subsection{Extension of FROST-Interactive to FROST}
+\label{interactive-to-frost}
+We first describe the changes we make to FROST-Interactive
+to remove one round of communication in each of the Preprocess and the Sign
+phases.
+We argue in Section~\ref{frost:interactive-proof} why our changes do not harm the
+security of the protocol.
 
-During the signature phase,
-each of the
-participants in the coalition $\coalition$ selected for signing use a pair of nonces $(d_i, e_i)$ to
-define a degree $\lvert\coalition-1 \rvert$ polynomial $F_2(x)$, interpolating the
-values $(i,\frac{d_i + e_i \cdot H_1(i, m, B)}{\lambda_i})$,
-such that $F_2(0) = \sum_{i \in S} d_i + e_i \cdot \rho_i$.
+\textbf{Removal of one-time verifiable random functions to generate $\rho_i$.}
+The primary difference between FROST-Interactive and FROST is that in the
+former, interactive one-time VRFs are used to generate the $\rho_i$ binding
+values.  In FROST, on the other hand, these values are generated with random
+oracles (modelling hash functions).  Removing the one-time VRFs removes the VRF
+keys $(a_{ij},b_{ij})$ and their commitments $(A_{ij}, B_{ij})$ from the
+protocol.
 
-Then let $F_3(x) = F_2(x) + c \cdot F_1(x)$, where
-$c = H_2(R, \pk, m)$.  Now $z_i$
-equals $d_i + (e_i \cdot \rho_i) + \lambda_i \cdot s_i \cdot c =
-\lambda_i (F_2(i) + c \cdot F_1(i)) = \lambda_i F_3(i)$, so $z = \sum_{i \in S} z_i$
-is simply the Lagrange interpolation of $F_3(0) = (\sum_{i \in S} d_i + e_{ij} \cdot \rho_i) + c
-\cdot s$.  Because $R = g^{\sum_{i \in S} d_i + e_i \cdot \rho_i}$ and $c
-= H_2(R, \pk, m)$, $(R, z)$ is a
-correct Schnorr signature on $m$.
+\textbf{Removal of one round of the Sign phase.}
+With the one-time VRFs removed, all participants can compute every other
+participants' $\rho_i$ values non-interactively, and so the first round of the
+Sign protocol for FROST-Interactive (where participants exchange their $\rho_i$
+values) is no longer necessary for FROST.
 
-\subsection{Description of EUF-CMA Security for FROST-Interactive}
-\label{frost:high-level-proofs}
-
-We now present a high-level argument of security for FROST.
-We begin by summarizing a proof of security for an interactive variant of FROST
-that we call FROST-Interactive, and then demonstrate how the proof extends to
-plain FROST.
-
-We employ the generalized forking strategy used by Bellare and
-Neven~\cite{BellareN06} to create a reduction to the security of
-the discrete logarithm problem (DLP).
-We prove security against the standard notion of existential unforgeability
-against chosen message
-attacks (EUF-CMA) by demonstrating that the difficulty to an adversary
-to forge FROST-Interactive signatures by
-performing an adaptively chosen message attack in the random oracle model
-reduces to the difficulty of computing the discrete logarithm of an arbitrary
-challenge value $\omega$ in the underlying group,
-so long as the adversary controls fewer than the threshold $t$
-participants.
-
-\textbf{FROST-Interactive.}
-In FROST-Interactive, $\rho_i$ is established using a
-``one-time'' verifiable random function (VRF),\footnote{A one-time VRF $F_k$ for key $k$ relaxes the standard properties of a
-VRF by requiring that $F_k(x)$ be unpredictable to someone who does not know
-$k$ only when at most one value of $F_k(y)$ has been published by the keyholder
-(and $y \not= x$). We use the construction $k=(a,b) \in \mathbb{Z}_q^2$ and
-$F_k(x) = a + b\cdot x$. The public key is $(A=g^a,B=g^b)$.}
-as $\rho_i = a_{ij} + (b_{ij} \cdot H_{\rho}(m, B))$,
-where $(a_{ij}, b_{ij})$ are selected and committed to as
-$(A_{ij}=g^{a_{ij}}, B_{ij}=g^{b_{ij}})$ during the preprocessing stage, along
-with zero-knowledge proofs of knowledge of $(a_{ij}, b_{ij})$.
-To perform a signing operation, participants first generate
-$\rho_i$ in the first round of the signing protocol using $(a_{ij}, b_{ij})$, and then
-publish $\rho_i$ to the signature aggregator, which distributes all $\rho_\ell, \ell
-\in S$ to all signing participants. These $\rho_\ell, \ell \in S$ values are then
-used by all signing participants to compute $R$ in the second round of the
-signing protocol, which participants use to calculate and publish $z_i$.
-
-\textbf{Summary of proof for EUF-CMA security for FROST-Interactive.}
-Let
-$n_h$ be the number of queries made to the random oracle,
-$n_p$ be the number of allowed preprocess queries, and
-$n_s$ be the number of allowed signing queries.
-We assume there exists a
-forger $\mathcal{F}$ that
-$(\tau, n_h, n_p, n_s, \epsilon)$-breaks FROST-Interactive, meaning that
-$\mathcal{F}$ can compute a forgery for a signature generated by
-FROST-Interactive in time $\tau$ with success $\epsilon$, but is limited to
-making
-$n_h$ number of random oracle queries,
-$n_p$ number of preprocess queries,
-and
-$n_s$ number of signing queries.
-We construct an algorithm $C$ that $(\tau', \epsilon')$-solves the discrete
-logarithm problem in $\mathcal{G}$, for an arbitrary challenge value $\omega
-\in \mathbb{G}$,
-using as a subroutine a forger $\mathcal{F}$ that can forge FROST-Interactive signatures.
+\textbf{Removal of the proofs of knowledge of the one-time VRF keys and one round of the Preprocess phase.}
+As the one-time VRF keys are removed, so are their proofs of knowledge $J_i$ in
+the Preprocess phase.  Removing the $J_i$ then makes the $K_i$ unused, and
+removing the $K_i$ removes the first round of the Preprocess phase.
 
 
-\section{Complete Proof of EUF-CMA Security for FROST-Interactive}
+%\subsection{Description of EUF-CMA Security for FROST-Interactive}
+%\label{frost:high-level-proofs}
+%
+%We now present a high-level argument of security for FROST.
+%We begin by summarizing a proof of security for an interactive variant of FROST
+%that we call FROST-Interactive, and then demonstrate how the proof extends to
+%plain FROST.
+%
+%We employ the generalized forking strategy used by Bellare and
+%Neven~\cite{BellareN06} to create a reduction to the security of
+%the discrete logarithm problem (DLP).
+%We prove security against the standard notion of existential unforgeability
+%against chosen message
+%attacks (EUF-CMA) by demonstrating that the difficulty to an adversary
+%to forge FROST-Interactive signatures by
+%performing an adaptively chosen message attack in the random oracle model
+%reduces to the difficulty of computing the discrete logarithm of an arbitrary
+%challenge value $\omega$ in the underlying group,
+%so long as the adversary controls fewer than the threshold $t$
+%participants.
+%
+%\textbf{FROST-Interactive.}
+%In FROST-Interactive, $\rho_i$ is established using a
+%``one-time'' verifiable random function (VRF),\footnote{A one-time VRF $F_k$ for key $k$ relaxes the standard properties of a
+%VRF by requiring that $F_k(x)$ be unpredictable to someone who does not know
+%$k$ only when at most one value of $F_k(y)$ has been published by the keyholder
+%(and $y \not= x$). We use the construction $k=(a,b) \in \mathbb{Z}_q^2$ and
+%$F_k(x) = a + b\cdot x$. The public key is $(A=g^a,B=g^b)$.}
+%as $\rho_i = a_{ij} + (b_{ij} \cdot H_{\rho}(m, B))$,
+%where $(a_{ij}, b_{ij})$ are selected and committed to as
+%$(A_{ij}=g^{a_{ij}}, B_{ij}=g^{b_{ij}})$ during the preprocessing stage, along
+%with zero-knowledge proofs of knowledge of $(a_{ij}, b_{ij})$.
+%To perform a signing operation, participants first generate
+%$\rho_i$ in the first round of the signing protocol using $(a_{ij}, b_{ij})$, and then
+%publish $\rho_i$ to the signature aggregator, which distributes all $\rho_\ell, \ell
+%\in S$ to all signing participants. These $\rho_\ell, \ell \in S$ values are then
+%used by all signing participants to compute $R$ in the second round of the
+%signing protocol, which participants use to calculate and publish $z_i$.
+%
+%\textbf{Summary of proof for EUF-CMA security for FROST-Interactive.}
+%Let
+%$n_h$ be the number of queries made to the random oracle,
+%$n_p$ be the number of allowed preprocess queries, and
+%$n_s$ be the number of allowed signing queries.
+%We assume there exists a
+%forger $\mathcal{F}$ that
+%$(\tau, n_h, n_p, n_s, \epsilon)$-breaks FROST-Interactive, meaning that
+%$\mathcal{F}$ can compute a forgery for a signature generated by
+%FROST-Interactive in time $\tau$ with success $\epsilon$, but is limited to
+%making
+%$n_h$ number of random oracle queries,
+%$n_p$ number of preprocess queries,
+%and
+%$n_s$ number of signing queries.
+%We construct an algorithm $C$ that $(\tau', \epsilon')$-solves the discrete
+%logarithm problem in $\mathcal{G}$, for an arbitrary challenge value $\omega
+%\in \mathbb{G}$,
+%using as a subroutine a forger $\mathcal{F}$ that can forge FROST-Interactive signatures.
+
+
+\subsection{EUF-CMA Security for FROST-Interactive}
 \label{security-proofs}
 
 
@@ -119,6 +115,7 @@ protocol. Then, to compute the discrete logarithm of  $\omega$, a forger
 $\mathcal{F}$ will produce two forgeries $(\sigma, \sigma'), \sigma \neq
 \sigma'$ for the same commitment value $R$ and message $m$. Using $(\sigma,
 \sigma')$, the discrete logarithm of $\omega$ can subsequently be extracted.
+
 
 To begin, we introduce the different components required to execute this strategy. Our
 proof relies on four different algorithms, each with different roles and
@@ -420,9 +417,7 @@ Due to the difficulty of simulating zero-knowledge proofs in parallel, for the
 purposes of proving the security of FROST, we will first prove
 security against an
 \emph{interactive} two-round variant of the FROST signing operation,
-which we call FROST-Interactive.  In Section~\ref{frost:high-level-proofs},
-we discuss how the security for FROST-Interactive extends to plain
-FROST.
+which we call FROST-Interactive.
 
 \subsubsection{FROST-Interactive}
 \label{frost-interactive-parallel}
@@ -619,30 +614,4 @@ $O(\pi n_p + n_s + n_h + 1)$ other minor operations, such as table lookups.
 
 
 \end{proof}
-
-\section{Extension of FROST-Interactive to FROST}
-
-In this section, we describe the changes we make to FROST-Interactive
-to remove one round of communication in each of the Preprocess and the Sign
-phases.  We argue in Section~\ref{frost:proof} why our changes do not harm the
-security of the protocol.
-
-\textbf{Removal of one-time verifiable random functions to generate $\rho_i$.}
-The primary difference between FROST-Interactive and FROST is that in the
-former, interactive one-time VRFs are used to generate the $\rho_i$ binding
-values.  In FROST, on the other hand, these values are generated with random
-oracles (modelling hash functions).  Removing the one-time VRFs removes the VRF
-keys $(a_{ij},b_{ij})$ and their commitments $(A_{ij}, B_{ij})$ from the
-protocol.
-
-\textbf{Removal of one round of the Sign phase.}
-With the one-time VRFs removed, all participants can compute every other
-participants' $\rho_i$ values non-interactively, and so the first round of the
-Sign protocol for FROST-Interactive (where participants exchange their $\rho_i$
-values) is no longer necessary for FROST.
-
-\textbf{Removal of the proofs of knowledge of the one-time VRF keys and one round of the Preprocess phase.}
-As the one-time VRF keys are removed, so are their proofs of knowledge $J_i$ in
-the Preprocess phase.  Removing the $J_i$ then makes the $K_i$ unused, and
-removing the $K_i$ removes the first round of the Preprocess phase.
 
