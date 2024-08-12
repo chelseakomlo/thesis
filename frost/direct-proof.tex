@@ -169,4 +169,49 @@ queried by $\A$ to honest signers,
   To simulate signing oracles,
   $\SIM$ does as follows:
 
+  \begin{itemize}
+    \item{Round 1 ($\BigO^{\Sign}(k, \ssid)$):}
+	When $\A$ queries $\BigO^{\Sign}$ on honest participant identifier $k \in \honest$ and session identifier $\ssid$,
+  $\SIM$ does the following:
+  \begin{enumerate}
+  \item checks if this signing session has already started by checking if $(k, \ssid) \in W$,
+  returning $\bot$ if the check holds.
+  \item Otherwise, it opens a new signing session for participant $k$ by storing $W \gets W \cup \{(k, \ssid) \} $.
+  \item Next, $\SIM$ sets $R_k \gets X_\counter$ and $S_k \gets X_{\counter+1}$,
+  where $\counter$ represents the next-unused value from the set of challenges $(X_1, \ldots, X_{2 q_S})$.
+  It then increments $\counter \gets \counter + 2$.
+  \item $\SIM$ then sets $\state_{k,\ssid} \gets (k, \ssid, R_k, S_k)$,
+  and stores $Q_1[(k, \ssid)] = (R_k, S_k)$,
+  \item Finally, $\B$ returns $(R_k, S_k)$ to $\A$.
+  \end{enumerate}
+
+\item{Round 2 ($\BigO^{\Sign'}(k, \ssid, m, \S, \{ (R_i, S_i) \}_{i \in \coalition})$):}
+	When $\A$ queries $\BigO^{\Sign}$ for honest participant identifier $k \in \honest$,
+  session identifier $\ssid$, message $m$, signing set $\coalition$,
+  and set of nonce commitments $\{ (R_i, S_i) \}_{i \in \coalition}$,
+  $\SIM$ does as follows:
+  \begin{enumerate}
+  \item checks if this signing session has already closed by checking if $(k, \ssid) \in W'$,
+  \item checks if this signing session has not yet been opened, by if $(k, \ssid) \not\in W$,
+  returning $\bot$ if the check holds.
+  \item checks that $(k, \ssid, R_k, S_k) \in Q_1$ to ensure that they were indeed issued in Round 1 and have not yet been used,
+    returning $\bot$ if the check does not hold.
+  \item Otherwise, $\SIM$ follows the protocol honestly to derive each $a_i, i \in \coalition$,
+  and then the group commitment $\aggR \gets \prod_{i \in \coalition} R_i \cdot {S_i}^{a_i}$
+  and the challenge $c \gets \HashSig(\threshpk, m, \aggR)$.
+  \item $\B$ then sets $Z_k \gets R_k \cdot S_k^{a_k} \cdot {\pk_k}^{c \lambda_k}$,
+  and queries the AOMDL oracle $\odlsol$ on $Z_k$ and
+  coefficients $(\alpha, ( \beta_i)_{i \in \set{2q_s + 1}})$,
+  where each coefficient is set to zero,
+  with the exception of
+  $(\beta_0 = c \cdot \gamma, \beta_\counter = 1, \beta_{\counter+1} = a_i)$.
+  Here, $(\counter, \counter+1)$ corresponds to the AOMDL challenges $(R_i, S_i)$ for this signing query,
+  and $\gamma = \sum_{i \in \corrupt} \sk_i L_i'$,
+  where $L_i'$ is the Lagrange coefficient for $i \in \corrupt$ associated with the set $\{ 0\} \cup \corrupt$,
+  such that $\pk_k^c = \pk^{L_0' c} \cdot g^{c \gamma}$.
+  \item $\SIM$ then receives $z_k$ in return from its AOMDL oracle,
+    which is the discrete logarithm of $Z_k$.
+  \end{enumerate}
+  \end{itemize}
+
 \end{proof}
