@@ -37,7 +37,7 @@ Concretely, in the setting where $\adv$ is allowed up to $\tcor$ corruptions, th
 \begin{align} \label{eq:simulation-frost}
   \begin{split}
 \advant{$\uf$}{\A,\frost}(\secp, n, \thresh, \tcor)  & \leq
-        \advant{uf}{\SIM, \adv}(\lambda, n, t, \tcornew)
+        \advant{uf}{\SIM, \adv}(\lambda, n, t, t-1)
         \frac{(\honetotal + \qchal)}{q}
         + \frac{\rototal^2}{2q}
   \end{split}
@@ -52,8 +52,8 @@ then there exists a PPT AOMDL adversary $\ddv$ that can use $\adv$ as a subrouti
 Concretely,
     \begin{align} \label{eq:ddv-dl}
     \begin{split}
-        \advant{dl}{\ddv}(\lambda) & \geq
-        \frac{\advant{uf}{\adv,\glitterm}(\lambda, n, t, \minsigners)^2}{\rototal}
+        \advant{aomdl}{\ddv}(\lambda) & \geq
+        \frac{\advant{uf}{\adv,\frost}(\lambda, n, t, t-1)^2}{\rototal}
         - \frac{2(\honetotal + \qchal)}{q}
         - \frac{3\rototal^2}{q}
     \end{split}
