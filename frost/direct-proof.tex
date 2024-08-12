@@ -253,7 +253,7 @@ and $\aux=(m^*, \sigma^*)$ is the adversary's forgery with respect to $\pkgroup=
 
 \begin{proof}[Proof of Lemma~\ref{lem:frost-reduction}]
   We now show that if there exists a PPT adversary $\adv$ against the
-  unforgeability of \glitter and an algorithm $\SIM$
+  unforgeability of FROST and an algorithm $\SIM$
   as described in Lemma~\ref{lem:frost-simulation} that simulates FROST to $\adv$,
   then we can define a PPT adversary $\ddv$ that can efficiently solve for an AOMDL challenge instance.
 
@@ -291,7 +291,7 @@ and $\aux=(m^*, \sigma^*)$ is the adversary's forgery with respect to $\pkgroup=
   $\adv$'s random query for $c^*$, $c^{**}$ in its first and second execution,
   then we know that $R^{*}=R^{**}$ and $m^{*}=m^{**}$.
    $\ddv$ can then solve for the discrete logarithm $y$ to its challenge $\dlchal = g^y$,
-   as follow:
+   as follows:
 
    \begin{equation}
      x_0 = \skgroup =  \frac{z^* - z^{**}}{c^* - c^{**}}
@@ -301,4 +301,25 @@ and $\aux=(m^*, \sigma^*)$ is the adversary's forgery with respect to $\pkgroup=
    then we know that this equation is solveable.
 
  \paragraph{Extracting the Discrete Logarithms of $X_1, \ldots, X_{2q_s}$.}
+  Finally, $\ddv$ must solve for all remaining $(R_i=X_i, S_i=X_{i+1})$ AOMDL challenges.
+  However,
+  $\ddv$ can do so in exactly the same manner as an OMDL reduction,
+  since $\ddv$ has already made its AOMDL queries and obtained valid solutions.
+  We refer to existing OMDL reductions for FROST for these techniques~\cite{BellareCKMTZ22}.
+
+  $\ddv$ will hence have the same advantage an OMDL reduction;
+  i.e., $\ddv$ will succeed with probability
+
+    \begin{align}
+      \label{eq:ddv-fork-acc-frost}
+    \begin{split}
+      \advant{$\uf$}{\A,\frost}(\secp, n, \thresh, \tcor) & \geq \accept(\modgenfork^\SIM) \\
+        & \geq
+        \frac{\advant{uf}{\adv,\frost}(\lambda, n, t, t-1)^2}{\rototal}
+        - \frac{2\honetotal}{q}
+        - \frac{3\rototal^2}{q}
+    \end{split}
+    \end{align}
+
+   This completes the proof.
 \end{proof}
