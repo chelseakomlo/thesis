@@ -54,8 +54,7 @@ Concretely,
     \begin{split}
         \advant{aomdl}{\ddv}(\lambda) & \geq
         \frac{\advant{uf}{\adv,\frost}(\lambda, n, t, t-1)^2}{\rototal}
-        - \frac{2(\honetotal + \qchal)}{q}
-        - \frac{3\rototal^2}{q}
+        - \frac{\honetotal}{q}
     \end{split}
     \end{align}
 where $\rototal =  \qnon + \qsigh + q_s + 1$.
@@ -223,7 +222,9 @@ queried by $\A$ to honest signers,
 	$\SIM$'s simulation of the random oracles, key generation, and signing is perfect,
   with exception of bad events.
   $\SIM$ responds to random oracle queries by lazy sampling;
-  $\SIM$ aborts due to $\BadEvent$ with probability $1/\rototal$.
+  $\SIM$ aborts due to $\BadEvent$ with probability $1/q$ for each query to $\HashNon$,
+  for a total of $\rototal$ possible queries.
+
   For key generation,
   $\A$ receives a valid secret key that is the point $i$ on the polynomial $f$,
   where $\pk_i = g^{f(i)}$.
@@ -246,4 +247,58 @@ $\SIM$ outputs the tuple $(j, \aux)$,
 where $j$ is the index corresponding to $c^* = h_j$,
 and $\aux=(m^*, \sigma^*)$ is the adversary's forgery with respect to $\pkgroup=\dlchal$.
 
+\end{proof}
+
+
+
+\begin{proof}[Proof of Lemma~\ref{lem:frost-reduction}]
+  We now show that if there exists a PPT adversary $\adv$ against the
+  unforgeability of \glitter and an algorithm $\SIM$
+  as described in Lemma~\ref{lem:frost-simulation} that simulates FROST to $\adv$,
+  then we can define a PPT adversary $\ddv$ that can efficiently solve for an AOMDL challenge instance.
+
+  $\ddv$ begins by accepting parameters $\pp = (\Gr, g, p)$ and a set  of $2q_s+1$ AOMDL challenges $\{ X_0, \ldots, X_{2q_s}\}$.
+  It then chooses a $(t, n)$ such that $n \geq t$.
+
+  $\ddv$ then executes the modified forking algorithm $\modgenfork^{\SIM}(X)$ as described in Section~\ref{mod-fork} and shown in Figure~\ref{fg:gen-fork-mod},
+  providing as input the instance $X = (\pp, \{ X_0, \ldots, X_{2q_s}\}, n, t)$.
+
+  $\modgenfork^{\SIM}(X)$ then either outputs $\bot$ when it fails or the value $(j, \aux)$ when it accepts.
+  Corollary~\ref{cor:modified-fork} upper-bounds the probability that $\modgenfork^{\SIM}(X)$ will output $\bot$
+  and Lemma~\ref{lem:simulation} upper-bounds the additional advantage of $\adv$ against $\SIM$.
+
+   We next show that when $\modgenfork^{\SIM}(X)$ outputs an accepting output
+   (i.e., it does not output $\bot$),
+   then $\ddv$ can solve for its AOMDL challenge with perfect success.
+
+ \paragraph{Extracting the Discrete Logarithm of $X_0$.}
+   In the case that $\modgenfork^{\SIM}(X)$ outputs an accepting output,
+   it outputs the tuple $(h_j, h_j', \auxstring, \auxstring')$.
+   From these values,
+   $\ddv$ then parses the following:
+
+   \begin{align*}
+     \begin{split}
+       (m^*, \sigma^*)  \gets \auxstring,
+       & \quad (m^{**}, \sigma^{**})  \gets \auxstring', \\
+       (R^*, z^*)  \gets \sigma^*,
+       & \quad (R^{**}, z^{**})  \gets \sigma^{**}, \\
+       h_j = c^*, & \quad h_j'=c^{**}
+     \end{split}
+   \end{align*}
+
+  Because $h_j, h_j'$ are with respect to the same index $j$ corresponding to
+  $\adv$'s random query for $c^*$, $c^{**}$ in its first and second execution,
+  then we know that $R^{*}=R^{**}$ and $m^{*}=m^{**}$.
+   $\ddv$ can then solve for the discrete logarithm $y$ to its challenge $\dlchal = g^y$,
+   as follow:
+
+   \begin{equation}
+     x_0 = \skgroup =  \frac{z^* - z^{**}}{c^* - c^{**}}
+   \end{equation}
+
+   Because $\modgenfork$ outputs $\bot$ in the case when any random oracle outputs collide (i.e., in the case when any $h_i = h_i'$),
+   then we know that this equation is solveable.
+
+ \paragraph{Extracting the Discrete Logarithms of $X_1, \ldots, X_{2q_s}$.}
 \end{proof}
