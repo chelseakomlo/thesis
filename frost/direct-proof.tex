@@ -174,7 +174,7 @@ queried by $\A$ to honest signers,
 	When $\A$ queries $\BigO^{\Sign}$ on honest participant identifier $k \in \honest$ and session identifier $\ssid$,
   $\SIM$ does the following:
   \begin{enumerate}
-  \item checks if this signing session has already started by checking if $(k, \ssid) \in W$,
+  \item Checks if this signing session has already started by checking if $(k, \ssid) \in W$,
   returning $\bot$ if the check holds.
   \item Otherwise, it opens a new signing session for participant $k$ by storing $W \gets W \cup \{(k, \ssid) \} $.
   \item Next, $\SIM$ sets $R_k \gets X_\counter$ and $S_k \gets X_{\counter+1}$,
@@ -191,10 +191,11 @@ queried by $\A$ to honest signers,
   and set of nonce commitments $\{ (R_i, S_i) \}_{i \in \coalition}$,
   $\SIM$ does as follows:
   \begin{enumerate}
-  \item checks if this signing session has already closed by checking if $(k, \ssid) \in W'$,
-  \item checks if this signing session has not yet been opened, by if $(k, \ssid) \not\in W$,
+  \item Checks if this signing session has already closed by checking if $(k, \ssid) \in W'$,
+  \item Checks if this signing session has not yet been opened, by if $(k, \ssid) \not\in W$,
   returning $\bot$ if the check holds.
-  \item checks that $(k, \ssid, R_k, S_k) \in Q_1$ to ensure that they were indeed issued in Round 1 and have not yet been used,
+\item Checks that $(k, \ssid, R_k, S_k) \in Q_1$ and $Q_2[(R_k, S_k)] = \bot$
+    to ensure that they were indeed issued in Round 1 and have not yet been used,
     returning $\bot$ if the check does not hold.
   \item Otherwise, $\SIM$ follows the protocol honestly to derive each $a_i, i \in \coalition$,
   and then the group commitment $\aggR \gets \prod_{i \in \coalition} R_i \cdot {S_i}^{a_i}$
@@ -212,6 +213,37 @@ queried by $\A$ to honest signers,
   \item $\SIM$ then receives $z_k$ in return from its AOMDL oracle,
     which is the discrete logarithm of $Z_k$.
   \end{enumerate}
+  \item $\SIM$ then stores $Q_2[(R_k, S_k)] = (z_k, c \lambda_k)$.
+  \item $\SIM$ then returns $z_k$ to $\A$.
   \end{itemize}
+
+  \medskip
+
+  \paragraph{Analysis of Simulation.}
+	$\SIM$'s simulation of the random oracles, key generation, and signing is perfect,
+  with exception of bad events.
+  $\SIM$ responds to random oracle queries by lazy sampling;
+  $\SIM$ aborts due to $\BadEvent$ with probability $1/\rototal$.
+  For key generation,
+  $\A$ receives a valid secret key that is the point $i$ on the polynomial $f$,
+  where $\pk_i = g^{f(i)}$.
+  For signing, simulation is perfect because $\SIM$ receives $z_k$ from its AOMDL oracle,
+  which is the discrete logarithm of $Z_k$,
+  with respect to $R_k, S_k, \pk_k$.
+
+
+\paragraph{Output.} At the end of the game,
+$\adv$ outputs a forgery $(m^*, \sigma^* = (R^*, z^*))$.
+If $g^{z^*} \neq R^* \cdot (\pkgroup)^{c^*}$ (meaning that the forgery is invalid),
+$\SIM$ outputs $\bot$.
+Without loss of generality,
+we assume that $\adv$ queried $\HashSig$ on $(R^*, \pkgroup, m^*)$.
+
+
+Otherwise,
+if $\adv$'s forgery is valid,
+$\SIM$ outputs the tuple $(j, \aux)$,
+where $j$ is the index corresponding to $c^* = h_j$,
+and $\aux=(m^*, \sigma^*)$ is the adversary's forgery with respect to $\pkgroup=\dlchal$.
 
 \end{proof}
