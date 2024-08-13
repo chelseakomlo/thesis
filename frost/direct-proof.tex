@@ -300,6 +300,11 @@ and $\aux=(m^*, \sigma^*)$ is the adversary's forgery with respect to $\pkgroup=
    Because $\modgenfork$ outputs $\bot$ in the case when any random oracle outputs collide (i.e., in the case when any $h_i = h_i'$),
    then we know that this equation is solveable.
 
+ \paragraph{Solving for Honest Parties' Secret Keys $\SK_k, k \in \honest$.}
+ In order to perform the next step of solving for the remaining AOMDL challenges $X_1, \ldots, X_{2q_s}$.
+
+  TODO
+
  \paragraph{Extracting the Discrete Logarithms of $X_1, \ldots, X_{2q_s}$.}
   Finally, $\ddv$ must solve for all remaining $(R_i=X_i, S_i=X_{i+1})$ AOMDL challenges.
   $\ddv$ can do so in a same manner as prior reductions to OMDL~\cite{BellareCKMTZ22}.
@@ -333,6 +338,63 @@ Consequently,
 the following cases depend only on  the relation between
 $(a_{i0}, a_{i1})$ and $(c_{i0}, c_{i1})$,
 which in turn determine $(z_{i0}, z_{i1})$.
+
+\begin{case}[$
+a_{i0} \neq a_{i1},
+c_{i0} \neq c_{i1}
+$]
+Because
+  $a_{i0} \neq a_{i1}$,
+  and $c_{i0} \neq c_{i1}$,
+then
+$\resp_{i0} \neq \resp_{i1}$.
+Hence,  $\odlsol$ will have been queried twice during the two executions of $\SIM$ to obtain $\resp_{i0} $ and $\resp_{i1}$
+However,
+$\ddv$ can solve for both  $x_i=r_i$ and $x_{i+1} = s_i$ without making any additional $\odlsol$ queries, by performing the following steps:
+
+\begin{itemize}
+    \item \textbf{Step One.} Derive $\resp_{i0} -\resp_{i1} $, resulting in Equation~\ref{eq:s_i-solve-1}, after cancelling out the $r_i$ term:
+
+       \begin{equation} \label{eq:s_i-solve-1}
+       \resp_{i0} - \resp_{i1} = \underline{s_i}\cdot a_{i0} + \SK \cdot c_{i0} - \underline{s_i}\cdot a_{i1} - \SK \cdot c_{i1}
+   \end{equation}
+
+    \item \textbf{Step Two.} $\ddv$ can then solve efficiently for $s_i$, by Equation~\ref{eq:solve-s_i-2}
+
+    \begin{equation} \label{eq:solve-s_i-2}
+        \underline{s_i} = \frac{ \resp_{i0} - \resp_{i1} + \SK ( c_{i1} - c_{i0})}{a_{i0}  - a_{i1}}
+    \end{equation}
+
+    Because $a_{i0} \neq a_{i1}$,
+    Equation~\ref{eq:solve_s_i-2} is solveable.
+
+    \item \textbf{Step Three.} $\ddv$ can then solve efficiently for $r_i$, as follows:
+
+    \[ \underline{r_i} = z_{i0} - s_i \cdot a_{i0} - c_{i0} \cdot \SK_k  \]
+
+\end{itemize}
+
+So, in this case, exactly two $\odlsol$ queries were made for the two challenges $(X_i = R_i, X_{i+1} = S_i)$,
+and $\ddv$ can efficiently solve for $y_i=r_i$ and $y_{i+1} = s_i$.
+\end{case}
+
+\begin{case}[$
+a_{i0} = a_{i1},
+c_{i0} \neq c_{i1}
+$]
+\end{case}
+
+\begin{case}[$
+a_{i0} \neq a_{i1},
+c_{i0} = c_{i1}
+$]
+\end{case}
+
+\begin{case}[$
+a_{i0} = a_{i1},
+c_{i0} = c_{i1}
+$]
+\end{case}
 
 
   \paragraph{Finishing the Proof.}
