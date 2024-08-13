@@ -169,8 +169,8 @@ queried by $\A$ to honest signers,
   $\SIM$ does as follows:
 
   \begin{itemize}
-    \item{Round 1 ($\BigO^{\Sign}(k, \ssid)$):}
-	When $\A$ queries $\BigO^{\Sign}$ on honest participant identifier $k \in \honest$ and session identifier $\ssid$,
+    \item{Round 1 ($\BigO^{\Sign_1}(k, \ssid)$):}
+	When $\A$ queries $\BigO^{\Sign_1}$ on honest participant identifier $k \in \honest$ and session identifier $\ssid$,
   $\SIM$ does the following:
   \begin{enumerate}
   \item Checks if this signing session has already started by checking if $(k, \ssid) \in W$,
@@ -184,8 +184,8 @@ queried by $\A$ to honest signers,
   \item Finally, $\B$ returns $(R_k, S_k)$ to $\A$.
   \end{enumerate}
 
-\item{Round 2 ($\BigO^{\Sign'}(k, \ssid, m, \S, \{ (R_i, S_i) \}_{i \in \coalition})$):}
-	When $\A$ queries $\BigO^{\Sign}$ for honest participant identifier $k \in \honest$,
+\item{Round 2 ($\BigO^{\Sign_2}(k, \ssid, m, \S, \{ (R_i, S_i) \}_{i \in \coalition})$):}
+	When $\A$ queries $\BigO^{\Sign_2}$ for honest participant identifier $k \in \honest$,
   session identifier $\ssid$, message $m$, signing set $\coalition$,
   and set of nonce commitments $\{ (R_i, S_i) \}_{i \in \coalition}$,
   $\SIM$ does as follows:

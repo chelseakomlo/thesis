@@ -182,7 +182,7 @@ values \emph{without} utilizing a DKG, as discussed next.
         \pcfor i \in \set{n}~\aggpk_i \gets g^{\sk_i}\\
         \pcreturn (\threshpk, \{ \aggpk_i \}_{i \in \set{n}},  \{ \sk_i\}_{i \in \set{n}})
 			}
-			\procedure{$\Sign()$}{
+			\procedure{$\Sign_1()$}{
         \text{\algcom Local signer has index $k$} \\
 				d_k, e_k \randpick \Z_p^2 \\
         D_k \gets g^{d_k};\ E_k \gets g^{e_k};\\
@@ -192,8 +192,8 @@ values \emph{without} utilizing a DKG, as discussed next.
 			}
 		\end{pcvstack}
 		\begin{pcvstack}[space=1em]
-			\procedure{$\Sign'(\state_k, \sk_k,  m, \{ \rho_i \}_{i \in \S})$}{
-        \text{\algcom $\Sign'$ must be called at most once per $\state_k$} \\
+			\procedure{$\Sign_2(\state_k, \sk_k,  m, \{ \rho_i \}_{i \in \S})$}{
+        \text{\algcom $\Sign_2$ must be called at most once per $\state_k$} \\
         \text{parse}~(  D_k, d_k, E_k, e_k )  \gets \state_k \\
         \text{parse}~ \{ D_i, E_i \}_{i \in S} \gets \{ \rho_i \}_{i \in \S}\\
         \pcreturn \bot\ \pcif (D_k, E_k) \not\in \{ D_i,E_i \}_{i \in S} \\
