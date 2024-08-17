@@ -1,9 +1,15 @@
 \section{Security of FROST}
 \label{frost:direct-proof}
 
-We now present a direct proof for the version of FROST given in Figure~\ref{fig:frost}.
+We now present a direct proof for the FROST signature construction given in Figure~\ref{fig:frost}.
 This proof builds on prior work for prior proofs of security for FROST~\cite{BellareCKMTZ22},
 but gives a reduction to AOMDL, as opposed to OMDL.
+
+Our proof assumes a centralized key generation mechanism.
+We later show how $\pedpop$ can be used directly,
+following similar techniques as ~\cite{BellareCKMTZ22}.
+
+
 
 \begin{theorem}\label{thm:FROST-aomdl}
 	FROST is statically unforgeable against an adversary $\adv$ that is allowed to corrupt up to $\tcor$ participants,
@@ -19,7 +25,10 @@ but gives a reduction to AOMDL, as opposed to OMDL.
     \leq \sqrt{\advant{aomdl}{\B}(\secp) + \mathsf{negl}(\secp) }
   \end{equation*}
 
-such that $\numsignq$ is the number of times $\adv$ is allowed to query the signing oracles.
+such that $\numsignq = \qnon + \qsigh +  \qsig + 1$ is the number of times $\adv$ is allowed to query the signing oracles,
+where $\qnon$ is the number of times $\adv$ is allowed to query $\HashNon$,
+$\qsigh$ is the number of times $\adv$ is allowed to query $\HashSig$,
+and $\qsig$ is the number of times $\adv$ is allowed to query its signing oracle.
 
 \end{theorem}
 
@@ -38,8 +47,8 @@ Concretely, in the setting where $\adv$ is allowed up to $\tcor$ corruptions, th
   \begin{split}
 \advant{$\uf$}{\A,\frost}(\secp, n, \thresh, \tcor)  & \leq
         \advant{uf}{\SIM, \adv}(\lambda, n, t, t-1)
-        \frac{(\honetotal + \qchal)}{q}
-        + \frac{\rototal^2}{2q}
+        \frac{\numsignq}{q}
+        + \frac{\rototal}{q}
   \end{split}
 \end{align}
 \end{lemma}
@@ -72,8 +81,14 @@ where $\rototal =  \qnon + \qsigh + q_s + 1$.
 
 
   \noindent\textit{Setup.}
-  $\SIM$ is initialized with parameters $\pp = (\Gr, g, p)$ and a set  of $2q_s+1$ AOMDL challenges $\{ X_0, \ldots, X_{2q_s}\}$,
-  and can query the AOMDL oracle $\odlsol$ up to $q_s$ times.
+  $\SIM$ is initialized with parameters $\pp = (\Gr, g, p)$,
+  a set  of $2q_s+1$ AOMDL challenges $\{ X_0, \ldots, X_{2q_s}\}$,
+  and a set of values
+  $\{h_1, \ldots, h_{\rototal} \}$ to program its random oracles.
+  $\SIM$ can query the AOMDL oracle $\odlsol$ up to $q_s$ times.
+
+  \medskip
+
   $\SIM$ then initializes the following values:
   \begin{enumerate}
     \item tables $\QNon \gets \emptyset$, $\QSig \gets \emptyset$ to simulate random oracles $\HashNon, \HashSig$;
@@ -302,8 +317,13 @@ and $\aux=(m^*, \sigma^*)$ is the adversary's forgery with respect to $\pkgroup=
 
  \paragraph{Solving for Honest Parties' Secret Keys $\SK_k, k \in \honest$.}
  In order to perform the next step of solving for the remaining AOMDL challenges $X_1, \ldots, X_{2q_s}$.
+ $\ddv$ needs to be able to derive the secret keys of each honest party.
+  However, it can do so by using $\{ \sk_i \}_{i \in \corrupt}$ and $x_0$,
+  simply by deriving
+  $\sk_k \gets x_0 \lambda_0' + \sum_{i \in \corrupt} \sk_i \lambda_i'$,
+  for each $k \in \honest$,
+  where $\lambda_i'$ is the Lagrange coefficient associated with the set $\{ 0\} \cup \corrupt$.
 
-  TODO
 
  \paragraph{Extracting the Discrete Logarithms of $X_1, \ldots, X_{2q_s}$.}
   Finally, $\ddv$ must solve for all remaining $(R_i=X_i, S_i=X_{i+1})$ AOMDL challenges.
@@ -366,7 +386,7 @@ $\ddv$ can solve for both  $x_i=r_i$ and $x_{i+1} = s_i$ without making any addi
     \end{equation}
 
     Because $a_{i0} \neq a_{i1}$,
-    Equation~\ref{eq:solve_s_i-2} is solveable.
+    Equation~\ref{eq:solve-s_i-2} is solveable.
 
     \item \textbf{Step Three.} $\ddv$ can then solve efficiently for $r_i$, as follows:
 
@@ -380,20 +400,54 @@ and $\ddv$ can efficiently solve for $y_i=r_i$ and $y_{i+1} = s_i$.
 
 \begin{case}[$
 a_{i0} = a_{i1},
-c_{i0} \neq c_{i1}
+c_{i0} = c_{i1}
 $]
+
+In this case,
+because $a_{i0} = a_{i1}$ and
+$c_{i0} = c_{i1}$,
+then $\resp_{i0} = \resp_{i1}$.
+Consequently,
+only one unique $\odlsol$ query will have been made to obtain $\resp_{i0} = \resp_{i1}$.
+
+
+$\ddv$ can then query $\odlsol$ one additional time on $R_i$ to obtain $r_i=x_i$.
+$\ddv$ can then solve for $x_{i+1} = s_i$ directly, by solving the linear relation in
+Equation~\ref{eq:solve-s_i-2} where the single unknown term $s_i$ is underlined for emphasis:
+
+\begin{equation} \label{eq:solve-s_i-2}
+ \underline{s_i} = \frac{ \resp_{i0} - r_i - \SK_k \cdot c_{i0} }{a_{i0}}
+\end{equation}
+
+So, again, in this case,  exactly two $\odlsol$ queries were made for the two challenges  $(X_i = R_i, X_{i+1} = S_i)$, and $\ddv$ has solved for $y_i=r_i$ and $y_{i+1} = s_i$.
 \end{case}
 
 \begin{case}[$
 a_{i0} \neq a_{i1},
 c_{i0} = c_{i1}
 $]
+Recall that the modification we use to the general forking algorithm given in
+Figure~\ref{fg:gen-fork-mod} prevents collisions from occurring in the random oracle inputs $\{h_1, \ldots, h_{\rototal} \}$.
+Because $\SIM$ programs $\HashSig$ at the same time as when it programs $\HashNon$,
+when $\HashNon$ forks,
+then so will $\HashSig$.
+
+As such, this case can never occur.
 \end{case}
+
 
 \begin{case}[$
 a_{i0} = a_{i1},
-c_{i0} = c_{i1}
+c_{i0} \neq c_{i1}
 $]
+Again,
+for similar reasons as in the case above,
+when $\HashSig$ forks,
+then subsequent queries to $\HashNon$ will also fork,
+because $\SIM$ always programs its random oracle with the next-available value $h_i$.
+
+As such, this case occurs with negiligible probability $1/q$ for each signing query that $\adv$ makes,
+with probability $q_s/q$ in total.
 \end{case}
 
 
