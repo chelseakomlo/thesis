@@ -234,11 +234,15 @@ queried by $\A$ to honest signers,
   \medskip
 
   \paragraph{Analysis of Simulation.}
-	$\SIM$'s simulation of the random oracles, key generation, and signing is perfect,
-  with exception of bad events.
+	$\SIM$'s simulation of key generation and signing is perfect,
+
+  $\SIM$'s simulation of the random oracles is perfect,
+  with exception of when it aborts due to a bad event.
   $\SIM$ responds to random oracle queries by lazy sampling;
   $\SIM$ aborts due to $\BadEvent$ with probability $1/q$ for each query to $\HashNon$,
-  for a total of $\rototal$ possible queries.
+  for a total of $\rototal$ possible queries,
+  hence;
+  it aborts with total probability $\rototal/q$ each time $\SIM$ is exeucted.
 
   For key generation,
   $\A$ receives a valid secret key that is the point $i$ on the polynomial $f$,
@@ -260,8 +264,12 @@ Otherwise,
 if $\adv$'s forgery is valid,
 $\SIM$ outputs the tuple $(j, \aux)$,
 where $j$ is the index corresponding to $c^* = h_j$,
-and $\aux=(m^*, \sigma^*)$ is the adversary's forgery with respect to $\pkgroup=\dlchal$.
+and $\aux=(\{ \sk_i\}_{i \in \corrupt}, Q_1,  (m^*, \sigma^*))$ is the tuple
+including the corrupted parties' secret key shares,
+the set of signature shares in $Q_1$ output by $\SIM$ on behalf of honest parties during its simulation,
+and the adversary's forgery with respect to $\pkgroup=\dlchal$.
 
+This completes the proof.
 \end{proof}
 
 
