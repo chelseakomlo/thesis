@@ -15,14 +15,14 @@ following similar techniques as ~\cite{BellareCKMTZ22}.
 	FROST is statically unforgeable against an adversary $\adv$ that is allowed to corrupt up to $\tcor$ participants,
   assuming the AOMDL assumption holds for $\GroupGen$ in the ROM.
   In other words, for every static unforgeability adversary $\adv$ that wins the adaptive unforgeability game against FROST,
-  there exists a PPT adversary $\B$ that wins the AOMDL game.
+  there exists a PPT adversary $\ddv$ that wins the AOMDL game.
 
   The advantage of $\adv$ is bounded by
 
 
   \begin{equation*} \label{eq:frost-aomdl}
 \advant{$\uf$}{\A,\frost}(\secp, n, \thresh, \tcor)
-    \leq \sqrt{\advant{aomdl}{\B}(\secp) + \mathsf{negl}(\secp) }
+    \leq \sqrt{\advant{aomdl}{\ddv}(\secp) + \mathsf{negl}(\secp) }
   \end{equation*}
 
 such that $\numsignq = \qnon + \qsigh +  \qsig + 1$ is the number of times $\adv$ is allowed to query the signing oracles,
@@ -47,7 +47,6 @@ Concretely, in the setting where $\adv$ is allowed up to $\tcor$ corruptions, th
   \begin{split}
 \advant{$\uf$}{\A,\frost}(\secp, n, \thresh, \tcor)  & \leq
         \advant{uf}{\SIM, \adv}(\lambda, n, t, t-1)
-        \frac{\numsignq}{q}
         + \frac{\rototal}{q}
   \end{split}
 \end{align}
@@ -63,10 +62,10 @@ Concretely,
     \begin{split}
         \advant{aomdl}{\ddv}(\lambda) & \geq
         \frac{\advant{uf}{\adv,\frost}(\lambda, n, t, t-1)^2}{\rototal}
-        - \frac{\honetotal}{q}
+        - \frac{2\rototal}{q}
+        - \frac{3\rototal^2}{q}
     \end{split}
     \end{align}
-where $\rototal =  \qnon + \qsigh + q_s + 1$.
 \end{lemma}
 
 \begin{proof}[Proof of Lemma~\ref{lem:frost-simulation}]
@@ -466,10 +465,10 @@ with probability $q_s/q$ in total.
     \begin{align}
       \label{eq:ddv-fork-acc-frost}
     \begin{split}
-      \advant{$\uf$}{\A,\frost}(\secp, n, \thresh, \tcor) & \geq \accept(\modgenfork^\SIM) \\
+\advant{aomdl}{\ddv}(\secp)
         & \geq
         \frac{\advant{uf}{\adv,\frost}(\lambda, n, t, t-1)^2}{\rototal}
-        - \frac{2\honetotal}{q}
+        - \frac{2 \qnon}{q}
         - \frac{3\rototal^2}{q}
     \end{split}
     \end{align}
