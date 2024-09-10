@@ -63,7 +63,7 @@ Concretely,
         \advant{aomdl}{\ddv}(\lambda) & \geq
         \frac{\advant{uf}{\adv,\frost}(\lambda, n, t, t-1)^2}{\rototal}
         - \frac{2\rototal}{q}
-        - \frac{3\rototal^2}{q}
+        - \frac{2\rototal^2}{q}
     \end{split}
     \end{align}
 \end{lemma}
@@ -433,13 +433,15 @@ So, again, in this case,  exactly two $\odlsol$ queries were made for the two ch
 a_{i0} \neq a_{i1},
 c_{i0} = c_{i1}
 $]
-Recall that the modification we use to the general forking algorithm given in
-Figure~\ref{fg:gen-fork-mod} prevents collisions from occurring in the random oracle inputs $\{h_1, \ldots, h_{\rototal} \}$.
-Because $\SIM$ programs $\HashSig$ at the same time as when it programs $\HashNon$,
-when $\HashNon$ forks,
-then so will $\HashSig$.
 
-As such, this case can never occur.
+Because $a_i$ is an input to the random oracle when generating $c_i$,
+then this event occurs only when there is a collision in $c_i$.
+If this event occurs,
+then $\ddv$ must abort.
+We refer to this bad event as $\BadEventTwo$,
+which occurs with total probability $\numsignq^2/q$.
+
+As such, this case occurs with low probability.
 \end{case}
 
 
@@ -452,9 +454,10 @@ for similar reasons as in the case above,
 when $\HashSig$ forks,
 then subsequent queries to $\HashNon$ will also fork,
 because $\SIM$ always programs its random oracle with the next-available value $h_i$.
+We refer to this bad event as $\BadEventThree$,
 
-As such, this case occurs with negiligible probability $1/q$ for each signing query that $\adv$ makes,
-with probability $q_s/q$ in total.
+As such, this case occurs with negligible probability $1/q$ for each signing query that $\adv$ makes,
+with total probability $q_s^2/q$.
 \end{case}
 
 
@@ -468,8 +471,13 @@ with probability $q_s/q$ in total.
 \advant{aomdl}{\ddv}(\secp)
         & \geq
         \frac{\advant{uf}{\adv,\frost}(\lambda, n, t, t-1)^2}{\rototal}
+        - 2 \cdot \BadEventOne
+        - \BadEventTwo
+        - \BadEventThree \\
+        & \geq
+        \frac{\advant{uf}{\adv,\frost}(\lambda, n, t, t-1)^2}{\rototal}
         - \frac{2 \qnon}{q}
-        - \frac{3\rototal^2}{q}
+        - \frac{2\rototal^2}{q}
     \end{split}
     \end{align}
 
