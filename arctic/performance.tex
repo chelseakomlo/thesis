@@ -44,10 +44,11 @@
                             node[below,pos=0.1,font=\scriptsize] {MuSig-DN};
                 \end{groupplot}
         \end{tikzpicture}
-\caption{Single-core wall clock time for various parameter combinations
-for \glitter.  The times shown are the sum of the computation times for
-$\sign_1$, $\sign_2$, and $\combine$. The computation time for MuSig-DN
-is shown for comparison.}
+\caption{Single-core wall clock time for for \glitter.
+%The times shown are the sum of the computation times for
+%$\sign_1$, $\sign_2$, and $\combine$. The computation time for MuSig-DN
+%is shown for comparison.
+}
 \label{fig:exp-nt}
 \end{figure}
 
@@ -86,9 +87,8 @@ is shown for comparison.}
 
                 \end{groupplot}
         \end{tikzpicture}
-\caption{Scaling experiment, showing the wall clock time for the largest
-configuration $(n,|\coalition|,t) = (25, 25, 11)$ shown in Figure~\ref{fig:exp-nt} as we increase the number
-of CPU cores.}
+\caption{Scaling experiment, showing the wall clock time of $(n,|\coalition|,t) = (25, 25, 11)$ shown in Figure~\ref{fig:exp-nt} relative to CPU cores.
+  }
 \label{fig:exp-scaling}
 \end{figure}
 
