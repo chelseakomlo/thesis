@@ -4,60 +4,94 @@
 
 
 
-%\begin{figure}[t]
-%        \begin{tikzpicture}
-%                \begin{groupplot}[group style = {group size = 5 by 1, horizontal sep = 35pt}, width = 7.0cm, height = 6.0cm]
-%                        \nextgroupplot[ title = {},
-%                        xmax=29.9,
-%                        ymin=0.2,
-%                        xlabel={\textsf{Number of parties ($|C| = n$)}},
-%                        ylabel={\textsf{Wall clock time (ms)}},
-%                        ymode=log,
-%                        grid=major,
-%                        legend columns=1,
-%                        legend style={nodes={scale=0.575},draw=black, fill=white, text=black, anchor=north west,at={(1,1)}},
-%                        ]
-%
-%                        \newcommand\tline[2]{
-%                        \addplot [color=#1, mark=*,mark options=solid,mark size=1.25pt,
-%                            error bars/.cd, y dir=both, y explicit,
-%                            error bar style={color=black,line width=0.75pt,solid},
-%                            error mark options={line width=1pt,mark size=1.75pt,rotate=90}]
-%                            table [x=n, y=tot_ms, y error=totsd]{t#2.dat}
-%                            node[right,pos=1,font=\scriptsize] {$t=#2$};
-%                            }
-%
-%                        \tline{red}{3}
-%                        \tline{orange}{5}
-%                        \tline{olive}{6}
-%                        \tline{blue}{7}
-%                        \tline{purple}{8}
-%                        \tline{brown}{9}
-%                        \tline{black}{11}
-%
-%                        \addplot [color=black!80!white, mark=+,mark options=solid,mark size=1.25pt,
-%                            error bars/.cd, y dir=both, y explicit,
-%                            error bar style={color=black,line width=0.75pt,solid},
-%                            error mark options={line width=1pt,mark size=1.75pt,rotate=90}]
-%                            table [x=n, y=tot_ms]{bullet.dat}
-%                            node[below,pos=0.1,font=\scriptsize] {MuSig-DN};
-%                \end{groupplot}
-%        \end{tikzpicture}
-%\caption{Single-core wall clock time for various parameter combinations
-%for \glitter.  The times shown are the sum of the computation times for
-%$\sign_1$, $\sign_2$, and $\combine$. The computation time for MuSig-DN
-%is shown for comparison.}
-%\label{fig:exp-nt}
-%\end{figure}
-%
-%\begin{figure}[t]
-%%\include{arctic/figures/cn.tex}
-%\caption{Scaling experiment, showing the wall clock time for the largest
-%configuration $(n,|\coalition|,t) = (25, 25, 11)$ shown in Figure~\ref{fig:exp-nt} as we increase the number
-%of CPU cores.}
-%\label{fig:exp-scaling}
-%\end{figure}
-%
+\begin{figure}[t]
+  \centering
+        \begin{tikzpicture}
+                \begin{groupplot}[group style = {group size = 5 by 1, horizontal sep = 35pt}, width = 8.0cm, height = 7.0cm]
+                        \nextgroupplot[ title = {},
+                        xmax=29.9,
+                        ymin=0.2,
+                        xlabel={\textsf{Number of parties ($|C| = n$)}},
+                        ylabel={\textsf{Wall clock time (ms)}},
+                        ymode=log,
+                        grid=major,
+                        legend columns=1,
+                        legend style={nodes={scale=0.575},draw=black, fill=white, text=black, anchor=north west,at={(1,1)}},
+                        ]
+
+                        \newcommand\tline[2]{
+                        \addplot [color=#1, mark=*,mark options=solid,mark size=1.25pt,
+                            error bars/.cd, y dir=both, y explicit,
+                            error bar style={color=black,line width=0.75pt,solid},
+                            error mark options={line width=1pt,mark size=1.75pt,rotate=90}]
+                            table [x=n, y=tot_ms, y error=totsd]{t#2.dat}
+                            node[right,pos=1,font=\scriptsize] {$t=#2$};
+                            }
+
+                        \tline{red}{3}
+                        \tline{orange}{5}
+                        \tline{olive}{6}
+                        \tline{blue}{7}
+                        \tline{purple}{8}
+                        \tline{brown}{9}
+                        \tline{black}{11}
+
+                        \addplot [color=black!80!white, mark=+,mark options=solid,mark size=1.25pt,
+                            error bars/.cd, y dir=both, y explicit,
+                            error bar style={color=black,line width=0.75pt,solid},
+                            error mark options={line width=1pt,mark size=1.75pt,rotate=90}]
+                            table [x=n, y=tot_ms]{bullet.dat}
+                            node[below,pos=0.1,font=\scriptsize] {MuSig-DN};
+                \end{groupplot}
+        \end{tikzpicture}
+\caption{Single-core wall clock time for various parameter combinations
+for \glitter.  The times shown are the sum of the computation times for
+$\sign_1$, $\sign_2$, and $\combine$. The computation time for MuSig-DN
+is shown for comparison.}
+\label{fig:exp-nt}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+%\include{arctic/figures/cn.tex}
+        \begin{tikzpicture}
+                \begin{groupplot}[group style = {group size = 5 by 1, horizontal sep = 35pt}, width = 6.0cm, height = 7.0cm]
+                        \nextgroupplot[ title = {},
+                        xtick={1,2,4,8,16,32},
+                        xticklabels={1,2,4,8,16,32},
+                        xlabel={\textsf{Number of cores}},
+                        ylabel={\textsf{Wall clock time (ms)}},
+                        xmode=log,
+                        ymode=log,
+                        grid=major,
+                        legend columns=1,
+                        legend style={nodes={scale=0.575},draw=black, fill=white, text=black, anchor=north west,at={(1,1)}},
+                        ]
+
+                        \newcommand\speedupline[3]{
+                        \addplot [color=#1, mark=*,mark options=solid,mark size=1.25pt,
+                            error bars/.cd, y dir=both, y explicit,
+                            error bar style={color=black,line width=0.75pt,solid},
+                            error mark options={line width=1pt,mark size=1.75pt,rotate=90}]
+                            table [x=nthreads, y=tot_ms, y error=totsd]{s#2.dat}
+                            %node[left,pos=0,font=\scriptsize] {#3}
+                            node[left,pos=1,font=\sffamily\tiny] {#3}
+                            ;
+                            }
+
+                        \speedupline{black}{25}{40-core 2.3\,GHz~~~}
+                        \speedupline{black}{25.squish}{4-core 3.7\,GHz}
+                        %\speedupline{black}{23}{$n=23,t=11$}{??$\times$ speedup}
+                        %\speedupline{black}{21}{$n=21,t=11$}{??$\times$ speedup}
+
+                \end{groupplot}
+        \end{tikzpicture}
+\caption{Scaling experiment, showing the wall clock time for the largest
+configuration $(n,|\coalition|,t) = (25, 25, 11)$ shown in Figure~\ref{fig:exp-nt} as we increase the number
+of CPU cores.}
+\label{fig:exp-scaling}
+\end{figure}
+
 
 In this section, we analyze the performance of \glitter.  In terms of
 the number of rounds of communication, \glitter matches the state of the
