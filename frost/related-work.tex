@@ -134,12 +134,17 @@ protocol.
 \subsection{Subsequent Work}
 
 Since the publication of FROST,
-the insecurity of the ROS problem has been underscored~\cite{BenhamoudaLLOR20}.,
+the insecurity of the ROS problem has been underscored~\cite{BenhamoudaLLOR20},
 and additional concurrently secure threshold Schnorr signature schemes have been proposed.
 We now review subsequent works.
 
 \paragraph{Efficient Algorithms for Solving ROS Problems.}
-Benhamouda et al.~\cite{BenhamoudaLLOR20} TODO
+Benhamouda et al.~\cite{BenhamoudaLLOR20} give a polynomial-time algorithm for
+solving the ROS (Random inhomogeneities in a Overdetermined Solvable system of linear equation) problem,
+which was first introduced by Schnorr~\cite{Schnorr06}.
+We discuss the ROS problem more in Section~\ref{background:ros}.
+Benhamouda et al. then show how the ROS problem can be applied to blind and threshold Schnorr signatures,
+to produce a forgery in polynomial time.
 
 \paragraph{Concurrently Secure Threshold Schnorr Signatures.}
 FROST2, proposed by Crites, Komlo, and Maller~\cite{CritesKM21} and refined by Bellare, Tessaro, and Zhu~\cite{BellareTZ22} and BCKMTZ~\cite{BellareCKMTZ22}, is an optimized version of FROST that reduces the number of exponentiations required for signing from $\thresh$ to one.

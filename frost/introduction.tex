@@ -50,8 +50,7 @@ We discuss the ROS problem more in Section~\ref{background:ros}.
 In this work, we present FROST,
 a Flexible
 Round-Optimized Schnorr Threshold
-signature scheme\footnote{Signatures generated using the FROST protocol can also be
-referred to as ''FROSTy signatures''.} that addresses the need for efficient
+signature scheme that addresses the need for efficient
 threshold signing operations while improving upon the state of the art to
 ensure strong security properties \emph{without} limiting the parallelism of
 signing operations.
@@ -93,11 +92,8 @@ following contributions.
     operation with a preprocessing stage.
     Unlike many prior Schnorr threshold schemes, FROST remains secure against
     known forgery attacks without limiting concurrency of signing operations.
-  \item We present a proof of security and correctness for
-    an interactive two-round variant of FROST, building upon proofs of security for prior
-    related threshold schemes.
-    We then discuss how this proof extends to plain FROST in the single-rounnd
-    setting.
-Note that subsequent works have given a direct proof for FROST~\cite{BellareCKMTZ22}.
+  \item We then present a proof of security and correctness for FROST.
+Note that subsequent works have also given a direct proof for FROST~\cite{BellareCKMTZ22} to the One-More Discrete Logarithm (OMDL) problem;
+we present a slightly modified variant which shows a reduction to the Algebraic One-More Discrete Logarithm (AOMDL) problem.
 \end{itemize}
 
