@@ -1,0 +1,85 @@
+#!/bin/bash
+
+tottime() {
+    # Add the three timing fields and convert from us to ms
+    ( echo $* | cut -d' ' -f6,9,12 ; echo "3k++1000/p" ) | dc
+}
+
+totstddev() {
+    # Compute the square root of the sum of the squares of the three
+    # timing stddev fields and convert from us to ms
+    ( echo $* | cut -d' ' -f8,11,14; echo "5kd*3Rd*3Rd*++v1000/p" ) | dc
+}
+
+fixedt() {
+    tv=$1
+    echo "n t Csize reps delta sign1_us pm s1sd sign2_us pm s2sd combine_us pm combsd tot_ms pm totsd"
+    grep -P '^(\d+) '$tv' \1 ' squish.out | while read line; do
+        tt=`tottime $line`
+        ts=`totstddev $line`
+        echo "$line $tt ± $ts"
+    done
+}
+
+core() {
+    nthreads=$1
+    datafile=$2
+    echo "nthreads n t Csize reps delta sign1_us pm s1sd sign2_us pm s2sd combine_us pm combsd tot_ms pm totsd"
+    grep -P '^(\d+) 11 \1 ' sizzle.core${nthreads}.out | while read line; do
+        tt=`tottime $line`
+        ts=`totstddev $line`
+        echo "$nthreads $line $tt ± $ts"
+    done
+}
+
+squishspeedup() {
+    n=$1
+    echo "nthreads n t Csize reps delta sign1_us pm s1sd sign2_us pm s2sd combine_us pm combsd tot_ms pm totsd"
+    for cores in {1..4} ; do
+        grep -P '^'$n' 11 '$n' ' squish.core${cores}.out | while read line; do
+            tt=`tottime $line`
+            ts=`totstddev $line`
+            echo "$cores $line $tt ± $ts"
+        done
+    done
+}
+
+speedup() {
+    n=$1
+    echo "nthreads n t Csize reps delta sign1_us pm s1sd sign2_us pm s2sd combine_us pm combsd tot_ms pm totsd"
+    for cores in {1..8} 10 12 14 16 18 20 24 28 32 ; do
+        grep -P '^'$n' 11 '$n' ' sizzle.core${cores}.out | while read line; do
+            tt=`tottime $line`
+            ts=`totstddev $line`
+            echo "$cores $line $tt ± $ts"
+        done
+    done
+}
+
+bullet() {
+    echo "n tot_ms"
+    prove_us=`grep -oP 'bulletproof_prove_purify.*avg \K(\d+)' squish.bullet.out`
+    for n in 5 7 9 11 13 15 17 19 21 23 25; do
+        verf_us=`grep -oP 'bulletproof_verify_purify, '$n', .*avg \K(\d+)' squish.bullet.out`
+        tot_ms=$(( (prove_us + verf_us) / 1000 ))
+        echo "$n $tot_ms"
+    done
+}
+
+for t in 2 3 4 5 6 7 8 9 10 11 12 13; do
+    fixedt ${t} > t${t}.dat
+done
+
+for c in {1..20} 24 28 32 36 40; do
+    core ${c} > c${c}.dat
+done
+
+for n in 21 23 25; do
+    squishspeedup ${n} > s${n}.squish.dat
+done
+
+for n in 21 23 25; do
+    speedup ${n} > s${n}.dat
+done
+
+bullet > bullet.dat

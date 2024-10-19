@@ -1,0 +1,47 @@
+\documentclass{standalone}
+\usepackage{pgfplots}
+\usepackage{relsize}
+\usepackage{versions}
+\usetikzlibrary{pgfplots.groupplots}
+\pgfplotsset{compat=1.3}
+
+\begin{document}
+        \begin{tikzpicture}
+                \begin{groupplot}[group style = {group size = 5 by 1, horizontal sep = 35pt}, width = 7.0cm, height = 6.0cm]
+                        \nextgroupplot[ title = {},
+                        xmax=29.9,
+                        ymin=0.2,
+                        xlabel={\textsf{Number of parties ($|C| = n$)}},
+                        ylabel={\textsf{Wall clock time (ms)}},
+                        ymode=log,
+                        grid=major,
+                        legend columns=1,
+                        legend style={nodes={scale=0.575},draw=black, fill=white, text=black, anchor=north west,at={(1,1)}},
+                        ]
+
+                        \newcommand\tline[2]{
+                        \addplot [color=#1, mark=*,mark options=solid,mark size=1.25pt,
+                            error bars/.cd, y dir=both, y explicit,
+                            error bar style={color=black,line width=0.75pt,solid},
+                            error mark options={line width=1pt,mark size=1.75pt,rotate=90}]
+                            table [x=n, y=tot_ms, y error=totsd]{t#2.dat}
+                            node[right,pos=1,font=\scriptsize] {$t=#2$};
+                            }
+
+                        \tline{red}{3}
+                        \tline{orange}{5}
+                        \tline{olive}{6}
+                        \tline{blue}{7}
+                        \tline{purple}{8}
+                        \tline{brown}{9}
+                        \tline{black}{11}
+
+                        \addplot [color=black!80!white, mark=+,mark options=solid,mark size=1.25pt,
+                            error bars/.cd, y dir=both, y explicit,
+                            error bar style={color=black,line width=0.75pt,solid},
+                            error mark options={line width=1pt,mark size=1.75pt,rotate=90}]
+                            table [x=n, y=tot_ms]{bullet.dat}
+                            node[below,pos=0.1,font=\scriptsize] {MuSig-DN};
+                \end{groupplot}
+        \end{tikzpicture}
+\end{document}
