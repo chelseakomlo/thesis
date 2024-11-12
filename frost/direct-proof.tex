@@ -440,7 +440,9 @@ then this event occurs only when there is a collision in $c_i$.
 If this event occurs,
 then $\ddv$ must abort.
 We refer to this bad event as $\BadEventTwo$,
-which occurs with total probability $\numsignq^2/q$.
+which occurs with total probability $\numsignq^2/q$,
+Recall that $\SIM$ programs $\HashSig$ at the same time as it programs $\HashNon$,
+and so this bad event will occur only when the random oracle inputs to $\SIM$ fork in between programming $\HashNon$ and $\HashSig$.
 
 As such, this case occurs with low probability.
 \end{case}
