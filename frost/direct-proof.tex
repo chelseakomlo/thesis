@@ -268,7 +268,7 @@ queried by $\A$ to honest signers,
   $\SIM$'s simulation of the random oracles is perfect,
   with exception of when it aborts due to a bad event.
   $\SIM$ responds to random oracle queries by lazy sampling;
-  $\SIM$ aborts due to $\BadEvent$ with probability $1/q$ for each query to $\HashNon$,
+  $\SIM$ aborts due to $\BadEventOne$ with probability $1/q$ for each query to $\HashNon$,
   for a total of $\rototal$ possible queries,
   hence;
   it aborts with total probability $\rototal/q$ each time $\SIM$ is exeucted.
@@ -299,7 +299,7 @@ the set of signature shares in $Q_1$ output by $\SIM$ on behalf of honest partie
 and the adversary's forgery with respect to $\pkgroup=\dlchal$.
 
   \paragraph{Difference between Game~1 and Game~2.}
-  The only additional advantage introduced in Game~5 is that $\SIM$ aborts on  $\BadEvent$
+  The only additional advantage introduced in Game~5 is that $\SIM$ aborts on   $\BadEventOne$
   with probability $\rototal/q$ total probability.
   Let $W_2$ be the event that $\adv$ wins in Game~2.
   Then
@@ -521,13 +521,14 @@ with total probability $q_s^2/q$.
 \advant{aomdl}{\ddv}(\secp)
         & \geq
         \frac{\advant{uf}{\adv,\frost}(\lambda, n, t, t-1)^2}{\rototal}
+        - 2 \cdot \frac{\rototal^2}{2q}
         - 2 \cdot \BadEventOne
         - \BadEventTwo
         - \BadEventThree \\
         & \geq
         \frac{\advant{uf}{\adv,\frost}(\lambda, n, t, t-1)^2}{\rototal}
         - \frac{2 \qnon}{q}
-        - \frac{2\rototal^2}{q}
+        - \frac{3\rototal^2}{q}
     \end{split}
     \end{align}
 
