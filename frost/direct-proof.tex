@@ -48,6 +48,7 @@ Concretely, in the setting where $\adv$ is allowed up to $\tcor$ corruptions, th
 \advant{$\uf$}{\A,\frost}(\secp, n, \thresh, \tcor)  & \leq
         \advant{$\uf$}{\adv,\SIM}(\lambda, n, t, t-1)
         + \frac{\rototal}{q}
+        + \frac{\rototal^2}{2q}
   \end{split}
 \end{align}
 \end{lemma}
@@ -63,21 +64,50 @@ Concretely,
         \advant{aomdl}{\ddv}(\lambda) & \geq
         \frac{\advant{uf}{\adv,\frost}(\lambda, n, t, t-1)^2}{\rototal}
         - \frac{2\rototal}{q}
-        - \frac{2\rototal^2}{q}
+        - \frac{3\rototal^2}{q}
     \end{split}
     \end{align}
 \end{lemma}
 
 \begin{proof}[Proof of Lemma~\ref{lem:frost-simulation}]
-  Let $\A$ be an adversary playing the static unforgeability game as defined in Figure~\ref{fig:euf-cma-threshold},
+  We give the proof by one game hop and then describing the simulator $\SIM$.
+
+  \paragraph{Game~0.}
+  This is the unforgeability game as defined in Figure~\ref{fig:euf-cma-threshold},
   instantiated with FROST.
+
+  Let $\A$ be an adversary playing the static unforgeability game.
   $\A$ is allowed to query $\HashNon$ $\qnon$ number of times,
   $\HashSig$ $\qsigh$ number of times,
   and is allowed to make $q_s$ signing queries.
   Without loss of generality, we assume $\A$ queries $\HashSig$ on its forgery $(\threshpk, m^*, R^*)$.
   Finally, let $\rototal = \qnon + \qsigh + q_s + 1$.
 
+  Let $W_0$ be the event that $\adv$ wins Game~0.
+  Then, the advantage of $\adv$ is simply
 
+  \begin{equation} \label{eq:game0-frost}
+    \advant{uf}{\frost, \adv}(\lambda) = \Pr[W_0]
+  \end{equation}
+
+  \paragraph{Game~1.}
+  The only difference between Game~0 and Game~1 is as follows.
+  If $\adv$ queries $\HashSig$ or $\HashNon$ on any input that produces a colliding output with another query,
+  then the environment aborts.
+
+  \paragraph{Difference between Game~1 and Game~0.}
+  Let $W_1$ be the event that $\adv$ wins Game~1.
+  Because we model $\HashSig$ and $\HashNon$ as random oracles,
+  then
+
+  \begin{equation} \label{eq:game1-frost}
+    \lvert \Pr[W_1] - \Pr[W_0] \rvert \leq \frac{\rototal^2}{2q}
+  \end{equation}
+
+  \paragraph{Game~2.}
+  We now describe a simulating algorithm $\SIM$ that simulates FROST to  $\adv$.
+
+  \medskip
 
   \noindent\textit{Setup.}
   $\SIM$ is initialized with parameters $\pp = (\Gr, g, p)$,
@@ -268,7 +298,24 @@ including the corrupted parties' secret key shares,
 the set of signature shares in $Q_1$ output by $\SIM$ on behalf of honest parties during its simulation,
 and the adversary's forgery with respect to $\pkgroup=\dlchal$.
 
-This completes the proof.
+  \paragraph{Difference between Game~1 and Game~2.}
+  The only additional advantage introduced in Game~5 is that $\SIM$ aborts on  $\BadEvent$
+  with probability $\rototal/q$ total probability.
+  Let $W_2$ be the event that $\adv$ wins in Game~2.
+  Then
+
+  \begin{equation} \label{eq:game2-frost}
+    \lvert \Pr[W_2] - \Pr[W_1] \rvert \leq  \frac{\rototal}{q}
+  \end{equation}
+
+
+\medskip
+
+  \paragraph{Finishing the Proof.}
+  The advantage of $\adv$ against $\SIM$ is given by Game~2.
+  Combining Equations~\ref{eq:game0-frost}, \ref{eq:game1-frost},
+  and \ref{eq:game2-frost}  gives Equation~\ref{eq:simulation}.
+  This completes the proof.
 \end{proof}
 
 
