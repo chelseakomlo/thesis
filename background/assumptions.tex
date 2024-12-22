@@ -1,10 +1,12 @@
 \subsection{Assumptions} \label{assumptions}
 
+We next review the various cryptographic assumptions that we will need in the remainder of this thesis.
+
 \begin{figure*}[t]
 \begin{pchstack}[boxed,center,space=1em]
 
 \begin{pchstack}
-  \procedure{$\main$ $\mathcal{G}^{\dl}_{\A}(\secp)$}{
+  \procedure{$\main$ $\textsf{Exp}^{\dl}_{\A}(\secp)$}{
   (\Gr, p , g) \randpick \GroupGen(\usecp) \\
   x \randpick \Zq;~X \gets g^{x} \\
   x' \randpick \A((\Gr, p , g), X) \\
@@ -17,7 +19,7 @@
 \begin{pchstack}
   \vline
       \pchspace
-  \procedure{$\main$ $\G^{\ell\hbox{-}\protect\fbox{$\mathsf{a}$}\omdl}_{\A}(\secp)$ }{
+  \procedure{$\main$ $\textsf{Exp}^{\ell\hbox{-}\protect\fbox{$\mathsf{a}$}\omdl}_{\A}(\secp)$ }{
   (\Gr, p , g) \randpick \GroupGen(\usecp) \\
   Q \gets \emptyset \\
   q \gets 0 \\
