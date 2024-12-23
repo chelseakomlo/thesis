@@ -6,7 +6,7 @@ We next review the various cryptographic assumptions that we will need in the re
 \begin{pchstack}[boxed,center,space=1em]
 
 \begin{pchstack}
-  \procedure{$\main$ $\textsf{Exp}^{\dl}_{\A}(\secp)$}{
+  \procedure{$\textsf{Exp}^{\dl}_{\A}(\secp)$}{
   (\Gr, q , g) \randpick \GroupGen(\usecp) \\
   x \randpick \Zq;~X \gets g^{x} \\
   x' \randpick \A((\Gr, q , g), X) \\
@@ -19,7 +19,7 @@ We next review the various cryptographic assumptions that we will need in the re
 \begin{pchstack}
   \vline
       \pchspace
-  \procedure{$\main$ $\textsf{Exp}^{\ell\hbox{-}\protect\fbox{$\mathsf{a}$}\omdl}_{\A}(\secp)$ }{
+  \procedure{$\textsf{Exp}^{\ell\hbox{-}\protect\fbox{$\mathsf{a}$}\omdl}_{\A}(\secp)$ }{
   (\Gr, q , g) \randpick \GroupGen(\usecp) \\
   Q \gets \emptyset \\
   q \gets 0 \\
@@ -132,6 +132,11 @@ The AOMDL assumption holds if the advantage to any PPT adversary in winning the
 AOMDL game is a negligible function of $\lambda$.
 
 \paragraph{Algebraic Group Model (AGM).}
+We next review the Algebraic Group Model (AGM).
+The AGM is relevant when discussing related work and prior proofs of security for FROST,
+as presented in Chapter~\ref{chp:frost}.
+
+
 Introduced by Fuchsbauer, Kiltz, and Loss~\cite{FuchsbauerKL18},
 the Algebraic Group Model (AGM) gives an idealized representation of a group,
 by requiring the adversary to act algebraically.
