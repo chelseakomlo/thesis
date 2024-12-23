@@ -132,7 +132,8 @@ The AOMDL assumption holds if the advantage to any PPT adversary in winning the
 AOMDL game is a negligible function of $\lambda$.
 
 \paragraph{Algebraic Group Model (AGM).}
-We next review the Algebraic Group Model (AGM).
+
+We next introduce the Algebraic Group Model (AGM).
 The AGM is relevant when discussing related work and prior proofs of security for FROST,
 as presented in Chapter~\ref{chp:frost}.
 
@@ -150,9 +151,11 @@ such that $X = g^\alpha A_1^{b_1} A_2^{b_2} \ldots$.
 
 \paragraph{Knowledge of Exponent Assumption (KoE).}
 
-The Knowledge of Exponent (KoE) assumption~\cite{Damgard91,BellareP04} is an unfalsifiable assumption.
-In short,
-the assumption says that for an adversary that is given input $(g, h=g^s, q)$,
+We next introduce the Knowledge of Exponent (KoE) assumption.
+KoE is employed in related work to Storm,
+which we discuss in Chapter~\ref{chp:storm}.
+
+The KoE assumption says that for an adversary that is given input $(g, h=g^s, q)$,
 if the adversary outputs a value $(C, Y) \in \GG^2$ such that $C^s = Y$,
 then there exists an extractor algorithm that given $(g, h=g^s, q)$,
 %the adversary's state and $(C, Y) \in \GG^2$,
@@ -160,4 +163,7 @@ the extractor can output $x$ such that $C = g^x$ (and, consequently $Y = C^x$).
 Intuitively, KoE assumes that in order to output such a $(C, Y)$,
 the adversary must know $x$.
 
+The Knowledge of Exponent (KoE) assumption~\cite{Damgard91,BellareP04} is an unfalsifiable assumption,
+as it is impossible to show that such an extractor must exist.
+However, this assumption is useful to prove security for both SNARKS~\cite{Groth10} and threshold schemes~\cite{BellareCKMTZ22}.
 
