@@ -36,6 +36,10 @@
 
 We review the general forking lemma by Bellare and Neven~\cite{BellareN06},
 which itself is a formalization of the forking lemma  introduced by Pointcheval and Stern~\cite{PointchevalS96}.
+The forking lemma is a useful tool to proving the security of signature schemes in the random oracle model (ROM).
+We use the forking lemma to prove the security of FROST in the ROM in Chapter~\ref{chp:frost},
+and Storm in Chapter~\ref{chp:storm}.
+
 We show the general forking algorithm in Figure~\ref{fg:gen-fork-mod},
 as well as a slight modification,
 which we describe in Section~\ref{sec:modified-forking}.
@@ -44,6 +48,8 @@ The algorithms are defined with respect to an algorithm $\cdv$ and instance $X$.
 The difference between the general forking algorithm and modified variant is shown in a box, for emphasis.
 In summary,
 the modified general forking algorithm aborts if \emph{any} of the $(h_1, \ldots, h_\forkhashes, h_j', \ldots, h_\forkhashes')$ collide.
+The modified variant allows us to account for hash collisions in a generalized manner,
+as the forking algorithm aborts on any hash collision.
 
 
 
@@ -87,7 +93,7 @@ The modification to the forking experiment is natural;
 intuitively,
 we add an additional abort condition if any of the values $h_1, \ldots, h_\forkhashes, h_j', \ldots, h_\forkhashes'$ collide.
 Because there are at most $2\forkhashes$ values, and they are all sampled uniformly at random from the set $H$,
-the probability that any of them collide is at most $2\forkhashes^2/\abs{H}$.
+the probability that any of them collide is at most $(2\forkhashes)^2/\abs{H}$.
 By considering this case here,
 we can be sure that such collisions are considered in our proof of security for \glitter.
 
@@ -97,11 +103,17 @@ we can be sure that such collisions are considered in our proof of security for 
     \begin{align} \label{eq:bound-mod-fork}
     \begin{split}
         \accept(\modgenfork^\cdv) & \geq \accept(\genfork^\cdv) - \Pr[\badhashevent]   \\
-        & \geq \accept(\genfork^\cdv) - 2\forkhashes^2/\lvert H \rvert
+        & \geq \accept(\genfork^\cdv) - (2\forkhashes)^2/\lvert H \rvert
     \end{split}
     \end{align}
     Where $\badhashevent$ denotes the event that $\modgenfork^\cdv$ returns $\bot$ due to the boxed lines in Figure~\ref{fg:gen-fork-mod}.
 \end{corollary}
 
+\paragraph{Proof Intuition for Corollary~\ref{cor:modified-fork}.}
+The intuition for Corollary~\ref{cor:modified-fork} is straightforward,
+as it simply counts the number of times two values sampled uniformly at random from a $H$ (with replacement) might collide.
+As such,
+it counts the number of times the same value might be sampled twice,
+when $\forkhashes $ total sampling events are performed.
 
 
