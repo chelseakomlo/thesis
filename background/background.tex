@@ -22,7 +22,8 @@ A digital signature scheme consists of polynomial-time algorithms $(\Setup, \Key
   \begin{itemize}
 
     \item $\Setup(1^\secp) \rightarrow \pp$:
-    On input a security parameter $1^\secp$, this algorithm outputs public parameters $\pp$ (which are given implicitly as input to all other algorithms).
+    On input a security parameter $1^\secp$,
+    this deterministic algorithm outputs public parameters $\pp$ (which are given implicitly as input to all other algorithms).
 
   \item $\KeyGen() \rightarrow (\pk, \sk)$:
   This probabilistic algorithm outputs a public key $\pk$ and secret key $\sk$.
@@ -43,8 +44,8 @@ A digital signature scheme consists of polynomial-time algorithms $(\Setup, \Key
 	%\begin{linedgamespec}
 	\begin{pchstack}[boxed,space=1em]
 		\begin{pcvstack}[space=1em]
-			\procedure{$\main$ $\G^{\eufcma}_{\A,\dsig}(\kappa)$}{
-				\pp \leftarrow \ParGen(1^\kappa) \\
+			\procedure{$\\textsf{Exp}^{\eufcma}_{\A,\dsig}(\lambda)$}{
+				\pp \leftarrow \Setup(1^\lambda) \\
 				Q_m \gets \emptyset \\
 				(\pk, \sk) \randpick \KeyGen()\\
 				(m^*, \sigma^*) \randpick \A^{\BigO^{\Sign}}(\pk)\\
