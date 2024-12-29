@@ -131,7 +131,7 @@ The Schnorr signature scheme consists of polynomial-time algorithms $(\Setup, \K
 \section{Threshold Secret Sharing Schemes} \label{tss}
 
 \begin{definition}
-  A $(n, \thresh)$-\defn{threshold secret sharing scheme} $\tss$ is a tuple of
+  An $(n, \thresh)$-\defn{threshold secret sharing scheme} $\tss$ is a tuple of
   algorithms   $\tss=(\Setup, \IssueShares, \Recover)$, such that:
   \begin{itemize}
     \item  $\Setup(1^\secp) \rightarrow \pp$: On input the security parameter,
@@ -160,8 +160,8 @@ For correctness, for all security parameters $\lambda$ and $n, \thresh, \coaliti
       the following must hold:
     \begin{align*}
       & \tss.\Recover(\thresh, \{ (i, \share_i)\}_{ i \in \coalition}) = s,
-      \text{ where }   \\
-      & \tss.\IssueShares(\secpar, s, n, \thresh) \rightarrow ( \{ (i, \share_i) \}_{i \in \set{n}})
+      \text{ where }   \
+       \tss.\IssueShares(s, n, \thresh) \rightarrow ( \{ (i, \share_i) \}_{i \in \set{n}})
     \end{align*}
 
 \begin{remark}[Required number of shares for recovery]
@@ -174,12 +174,12 @@ number of shares for recovery.
 We now define Shamir secret sharing as one concrete instantiation of a threshold secret sharing scheme.
 
 \begin{definition}[Shamir secret sharing~\cite{Shamir79}] \label{defn:shamir}
-Shamir secret sharing $\shamir$ is concrete instance of a threshold secret sharing scheme that consists of the following algorithms:
+The Shamir secret sharing scheme is a concrete instantiation of a threshold secret sharing scheme that consists of the following algorithms:
 
 \begin{itemize}
-    \item  $\Setup(1^\secp) \rightarrow \pp$: On input the security parameter,
-      run $(\Gr, p, g) \gets \GroupGen(1^\secp)$.
-      Output public parameters $\pp = (\Gr, p, g)$ which are given implicitly as input to all other algorithms.
+    \item  $\shamir.\Setup(1^\secp) \rightarrow \pp$: On input the security parameter,
+      run $(\Gr, q, g) \gets \GroupGen(1^\secp)$.
+      Output public parameters $\pp = (\Gr, q, g)$ which are given implicitly as input to all other algorithms.
 
     \item $\shamir.\IssueShares(s, n, \thresh) \rightarrow \{ (1, \share_1), \ldots, (n, \share_n)\}$:
       On input a secret $s$,
