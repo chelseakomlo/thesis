@@ -34,7 +34,7 @@ however, introducing a weaker variant allows us to define a more efficient const
 \begin{figure}[!ht]
   \begin{pchstack}[boxed,center,space=1em]
   \begin{pcvstack}
-    \procedure[linenumbering]{\protect\fbox{$\StrongRobustnessExp_{\dkg,\adv}(\lambda)$} \protect\dbox{$\WeakRobustnessExp_{\dkg,\adv}(\lambda)$} }{
+    \procedure[]{\protect\fbox{$\StrongRobustnessExp_{\dkg,\adv}(\lambda)$} \protect\dbox{$\WeakRobustnessExp_{\dkg,\adv}(\lambda)$} }{
     \roundcounter \gets 0 \text{\algcom Ensure rounds are queried in order}\\
     \invecp_{11} \gets \emptyset, \ldots, \invecp_{1n} \gets \emptyset \text{\algcom Simulate peer-to-peer channels} \\
     (n, t, \corrupt, \advstate) \gets \adv(\lambda);\
@@ -153,7 +153,7 @@ the resulting keypair is invalid with respect to the target key generation algor
     %\chelsea{TODO: this needs to be script size for the proceedings version}
   }
 	\pseudocode[codesize=\scriptsize]{
-    \procedure[linenumbering]{$\oraclekg(\{\{ \pmsg_{i,j}\}_{j \in \honest}, \bmsg_{ri} \}_{i \in \corrupt})
+    \procedure[]{$\oraclekg(\{\{ \pmsg_{i,j}\}_{j \in \honest}, \bmsg_{ri} \}_{i \in \corrupt})
     $}{
       \text{\algcom Executes round  } \\
       \text{\algcom $r \in \set{\numrounds-1}$ } \\
@@ -176,7 +176,7 @@ the resulting keypair is invalid with respect to the target key generation algor
   }
   \pchspace
   \begin{pcvstack}
-  \procedure[linenumbering]{$\oraclefinalize(\{\{ \pmsg_{i,j}\}_{j \in \honest}, \bmsg_{ri} \}_{i \in \corrupt})$}{
+  \procedure[]{$\oraclefinalize(\{\{ \pmsg_{i,j}\}_{j \in \honest}, \bmsg_{ri} \}_{i \in \corrupt})$}{
     \pcreturn \bot\ \pcif \roundcounter \neq \numrounds - 1 \\
     \roundcounter \gets \roundcounter + 1 \\
     \pcfor i \in \corrupt, j \in \honest \pcdo \\

@@ -1,0 +1,83 @@
+\subsubsection{Aggregated Security.}
+
+We formalize the aggregated security experiment of a \AVSS in Figure~\ref{fg:avss-security1}.
+When $b=1$, the environment simulates one secret sharing operation with respect to a challenge from the secret space $\secret \in \secretspace$,
+that is chosen by $\adv$.
+
+\begin{figure}[!ht]
+  \begin{pchstack}[boxed,center,space=1em]
+    \procedure[]{$\AggSecurityExp_{\avss[\Hash], \adv,\simgettweak}(\lambda)$}{
+    b \rgets \zo \\
+    \issuedchal \gets 0 \\
+    \secret \rgets \adv() ;\ \vsschal \gets \avss.\vfunc(\secret) \\
+    \pcif b=1 \\
+    \auxstring \rgets \avss.\auxdistr \\
+    \total \gets 0 \text{\algcom Total number of non-simulated shares}  \\
+    Q_1 \gets \emptyset \\
+    (n, t, \corrupt, \advstate) \rgets \adv(\lambda) \\
+    \pcif t > n \vee \corrupt \not\subseteq \set{n} \vee \lvert \corrupt \rvert \geq t \\
+    \pcind \randcoin \rgets \zo;\ \pcreturn \randcoin \\
+    % CK- we already define t, n to be natural numbers.
+    %\textbf{ or } t < 1\\
+    %
+    \advstate' \rgets \adv^{\getshare(),\recvshare(\cdot,\cdot), \Ogettweak(\cdot,\cdot)}(\advstate) \\
+    \pcif \issuedchal = 0 \\
+    \pcind \randcoin \rgets \zo;\ \pcreturn \randcoin \\
+    \pcif b=1 \\
+    \pcind \{(\{(i,\share_{ji})\}_{i \in \honest},\vsscommit_j) \}_{j \in \set{\total}} \gets Q_1 \\
+    \pcind \pubaggregateset \gets \{\vsscommit_j \}_{j \in \set{\total}} \\
+    \pcind \avss.\gettweak(\pubaggregateset, \auxstring) \\
+    \pcind \pcfor i \in \honest \pcdo \\
+    \pcind \pcind \privaggregateset_i \gets \{ (\share_{ij})\}_{j \in \set{\total}} \\
+    \pcind \pcind \ashare_i \gets \aggregatepriv(\privaggregateset_i, \tweak) \\
+    \pcind \mathsf{in} \gets ( (\{\vsscommit_j \}_{j \in \set{\total}} \cup \{\vsscommit^* \}), \tweak) \\
+    \pcind \avsscommit \gets \avss[\Hash].\aggregatepub(\mathsf{in}) \\
+    \pcind \pcif \avss[\Hash].\recover(t, \{\ashare_i \}_{i \in \honest}, \avsscommit) \neq \secret \\
+    \pcind \textbf{or } \avss[\Hash].\derivepshare(0, \avsscommit) \neq \vsschal \\
+    \pcind \pcind \pcreturn 1 \\
+    b' \rgets \adv^{\Ogettweak(\cdot,\cdot)}(\advstate', \auxstring) \\
+    \text{\algcom $\adv$ performs aggregation directly} \\
+    \pcreturn 1\ \pcif b' = b \\
+    \pcreturn 0
+  }
+  \pchspace
+  \begin{pcvstack}
+  \pcvspace
+    \procedure[]{$\getshare() \text{\algcom Performs secret sharing}$}{
+      \issuedchal \gets 1 \\
+      \total \gets \total + 1 \\
+      s_\total \rgets \secretspace \\
+      (\{(j,\share_{\total j})\}_{j \in \set{n}}, \vsscommit_\total) \rgets \avss[\Hash].\issueshares(\lambda, s_\total, n, t) \\
+      Q_1 \gets  Q_1 \cup   \{ (\{(j,\share_{\total j})\}_{j \in \honest},, \vsscommit_\total) \} \\
+      \pcreturn (\{(j,\share_{\total j})\}_{j \in \corrupt}, \vsscommit_\total)
+  }
+  \pcvspace
+  \procedure[]{$\recvshare(\{ (j, \share_{\total j}) \}_{j \in \honest}, \vsscommit_\total)$}{
+    \text{\algcom Receives shares from $\adv$} \\
+    \total \gets \total + 1 \\
+	  \pcfor j \in \honest \\
+    \pcind \pcif \avss[\Hash].\verify(j, \share_{\total j}, \vsscommit_\total) \neq 1 \\
+    \pcind \pcind \pcreturn \bot \\
+    Q_1 \gets  Q_1 \cup  \{ (\{(j,\share_{\total j})\}_{j \in \honest}, \vsscommit_\total) \}
+  }
+  \pcvspace
+    \procedure[]{$\Ogettweak(\pubaggregateset_i, \auxstring_i) $}{
+    \pcif b=1 \\
+    \pcind \pcreturn \simgettweak(\pubaggregateset_i, \auxstring_i,\{\share_{kj} \}_{j \in \honest, k \in \set{\total}}, \secret) \\
+    \pcreturn \avss.\gettweak(\pubaggregateset_i, \auxstring_i)
+  }
+  \end{pcvstack}
+  \end{pchstack}
+
+  \caption{Aggregated Security experiment defining the advantage of an adversary $\adv$ against a zero-indexed Aggregatable Verifiable Secret Sharing scheme (\AVSS) $\avss$.
+}
+  \label{fg:avss-security1}
+\end{figure}
+
+
+The advantage of an adversary $\adv$ against $\avss$ in the aggregated security experiment as defined in Figure~\ref{fg:avss-security} with respect to the algorithm $\simgettweak$ is then as follows.
+
+\[
+  \advantaggsecurity{\avss[\Hash], \adv, \simgettweak}(\lambda) = \bigabs{\Pr[\AggSecrecyExp_{\avss[\Hash], \adv,\simgettweak}(\lambda) = 1 ] - 1/2 }
+\]
+

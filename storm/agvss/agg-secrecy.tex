@@ -17,7 +17,7 @@ which we formalize in Figure~\ref{fg:avss-secrecy}.
 \begin{figure}[!ht]
   \begin{pchstack}[boxed,center,space=1em]
   \begin{pcvstack}
-    \procedure[linenumbering]{$\AggSecrecyExp_{\avss[\Hash], \adv, \simshare}(\lambda, \secret)$}{
+    \procedure[]{$\AggSecrecyExp_{\avss[\Hash], \adv, \simshare}(\lambda, \secret)$}{
     b \rgets \zo \\
     \vsschal \rgets \avss.\vfunc(\secret) \\
     \issuedchal \gets 0 \\
@@ -51,7 +51,7 @@ which we formalize in Figure~\ref{fg:avss-secrecy}.
   \end{pcvstack}
   \pchspace
   \begin{pcvstack}
-    \procedure[linenumbering]{$\getshare() \text{\algcom Performs secret sharing}$}{
+    \procedure[]{$\getshare() \text{\algcom Performs secret sharing}$}{
       \pcif \issuedchal = 0 \\
       \pcind \issuedchal \gets 1 \\
       \pcind \pcif b=0 \\
@@ -71,7 +71,7 @@ which we formalize in Figure~\ref{fg:avss-secrecy}.
       \pcreturn (\{(j,\share_{\simtotal j})\}_{j \in \corrupt}, \vsscommit_\simtotal)
   }
   \pcvspace
-    \procedure[linenumbering]{$\recvshare(\{ (j, \share_{\simtotal j}) \}_{j \in \honest}, \vsscommit_\simtotal)$}{
+    \procedure[]{$\recvshare(\{ (j, \share_{\simtotal j}) \}_{j \in \honest}, \vsscommit_\simtotal)$}{
     %\text{\algcom Receives shares from $\adv$} \\
     \simtotal \gets \simtotal + 1 \\
 	  \pcfor j \in \honest \\
@@ -80,7 +80,7 @@ which we formalize in Figure~\ref{fg:avss-secrecy}.
     Q_2 \gets  Q_2 \cup  \{ (\{(j,\share_{\simtotal j})\}_{j \in \honest}, \vsscommit_\simtotal) \}
   }
   \pcvspace
-  \procedure[linenumbering]{$\Ogettweak(\pubaggregateset_i, \auxstring_i) $}{
+  \procedure[]{$\Ogettweak(\pubaggregateset_i, \auxstring_i) $}{
     \pcif b=1 \\
     \pcind \tweak \gets \simgettweak(\pubaggregateset_i, \auxstring_i, Q_1, Q_2) \\
     \pcelse \\

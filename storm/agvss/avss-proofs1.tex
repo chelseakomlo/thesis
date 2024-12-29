@@ -108,7 +108,7 @@ Without loss of generality, we assume $\lvert \corrupt \rvert = t-1$.
 
 \begin{figure} [!ht]
   \begin{pchstack}[boxed,center,space=1em]
-  \procedure[linenumbering]{$\simshare(\lambda, \corrupt, \vsschal)$}{
+  \procedure[]{$\simshare(\lambda, \corrupt, \vsschal)$}{
     \secretone \rgets \Zq;\ A_0 = \vsschal \cdot g^{\secretone} \\
     \pcfor j \in \corrupt \pcdo \\
     \pcind \share_j \rgets \Zq \\
@@ -118,7 +118,7 @@ Without loss of generality, we assume $\lvert \corrupt \rvert = t-1$.
    \pcreturn (\secretone, \{(j,\share_j)\}_{j \in \corrupt}, \vsscommit)
 }
 \pchspace
-  \procedure[linenumbering]{$\Hash(\pubaggregateset_i, \auxstring_i)$}{
+  \procedure[]{$\Hash(\pubaggregateset_i, \auxstring_i)$}{
     \text{\algcom $Q_1,Q_2,Q_3$ are defined} \\
     \text{\algcom by the experiment} \\
     \pcif  Q_3[\pubaggregateset_i, \auxstring_i] \neq \bot \\

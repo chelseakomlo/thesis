@@ -14,7 +14,7 @@ We present a concrete constructions in Section~\ref{storm-gen}.
 \begin{pchstack}[boxed,center,space=1em]
 \begin{pcvstack}
 	%\pseudocode[codesize=\scriptsize]{
-\procedure[linenumbering]{$\dkgkeygen_0[\Hash](\lambda, n, t, i)$} {
+\procedure[]{$\dkgkeygen_0[\Hash](\lambda, n, t, i)$} {
     (\secretone_i, A_i) \rgets \enike.\keygen(\lambda) \\
     \mathsf{in} \gets (\lambda, \secretone_i, n, t) \\
     \{ (j, \share_{ij}) \}_{j =1}^n, \vsscommit_i \rgets \avss[\Hash_1].\issueshares(\mathsf{in}) \\
@@ -32,7 +32,7 @@ We present a concrete constructions in Section~\ref{storm-gen}.
   \pcreturn (\party_i, \mathsf{out}_p,  \bmsg_{0,i})
 }
 \pcvspace
-\procedure[linenumbering]{$\dkgkeygen_1[\Hash](\party_i, \invecp_1, \invecb_1)$} {
+\procedure[]{$\dkgkeygen_1[\Hash](\party_i, \invecp_1, \invecb_1)$} {
   \parse \{(i, \share_{ji}) \}_{j =1}^n \gets \invecp_1 \\
   \parse \{ (A_j, \commitment_j, \vsscommit_j) \}_{j =1}^n \gets \invecb_1 \\
   %
@@ -48,7 +48,7 @@ We present a concrete constructions in Section~\ref{storm-gen}.
   \pcreturn (\party_i, \bot, \bmsg_{1,i})
 }
 \pcvspace
-\procedure[linenumbering]{$\dkgkeygen_2[\Hash](\party_i, \emptyset, \invecb_2)$} {
+\procedure[]{$\dkgkeygen_2[\Hash](\party_i, \emptyset, \invecb_2)$} {
   \pcif \fail \in \invecb_2 \\
     \pcind \party_i.\status = \abort \\
     %\text{\algcom If any participant fails, abort} \\
@@ -60,7 +60,7 @@ We present a concrete constructions in Section~\ref{storm-gen}.
 \end{pcvstack}
 \pchspace
 \begin{pcvstack}
-\procedure[linenumbering]{$\finalize[\Hash](\party_i, \emptyset, \invecb_3)$} {
+\procedure[]{$\finalize[\Hash](\party_i, \emptyset, \invecb_3)$} {
   \pcif \party_i.\status = \abort \\
   \pcind \pcreturn (\bot, \bot,\bot), (\abort, \bot) \\
   \parse \{ \witness_j \}_{j \in \set{n}, j \neq i} \gets \invecb_3 \\

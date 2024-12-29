@@ -3,7 +3,7 @@
     % chelsea- make full size for eprint
 \begin{pchstack}[boxed,center,space=1em]
 \begin{pcvstack}
-\procedure[linenumbering]{$\setup(\usecp)$} {
+\procedure[]{$\setup(\usecp)$} {
 	(\GG, q, g) \leftarrow \GroupGen(\usecp) \\
 	\pp \gets ((\GG, q, g), \HashOne, \HashThree, \HashTwo) \\
 	\pcreturn \pp \\
@@ -11,7 +11,7 @@
   \text{\algcom  to all other algorithms}
 }
 \pcvspace
-\procedure[linenumbering]{$\keygen(n,t,\minsigners) $ } {
+\procedure[]{$\keygen(n,t,\minsigners) $ } {
   \text{\algcom Performed by a trusted} \\
   \text{\algcom dealer, or DKG} \\
   \pcif \minsigners < 2t-1 \text{ or } \minsigners > n\\
@@ -28,7 +28,7 @@
   \pcreturn  (\pkgroup, \{ (\pkparty_i, \sk_i) \}_{i \in \set{n}}  )
 }
 \pcvspace
-  \procedure[linenumbering]{$\sign_1(\partyid, \skparty_\partyid, \msg)$} {
+  \procedure[]{$\sign_1(\partyid, \skparty_\partyid, \msg)$} {
     (\skrand_\partyid, \sksign_\partyid, \pkgroup) \gets \skparty_\partyid \\
     y_\partyid \gets \HashThree(\pkgroup, \msg) \\
     (r_\partyid, R_\partyid) \gets \DVRFOnem[\HashOne].\generate(\partyid, \skrand_\partyid,  y_\partyid) \\
@@ -37,7 +37,7 @@
 \end{pcvstack}
   \pchspace
 \begin{pcvstack}
-\procedure[linenumbering]{$\sign_2(\partyid, \skparty_\partyid, \msg, \coalition, \{(y_j, R_{j} )\}_{j \in \coalition})$} {
+\procedure[]{$\sign_2(\partyid, \skparty_\partyid, \msg, \coalition, \{(y_j, R_{j} )\}_{j \in \coalition})$} {
   \pcreturn \bot\ \pcif \lvert \coalition \rvert < 2t-1 \\
   (\skrand_\partyid, \sksign_\partyid, \pkgroup) \gets \skparty_\partyid \\
   y' \gets \HashThree(\pk, \msg) \\
@@ -59,7 +59,7 @@
   \pcreturn z_\partyid
 }
 \pcvspace
-  \procedure[linenumbering]{$\combine(\pkgroup, \msg, \coalition, \{(y_j, R_{j}), z_j \}_{j \in \coalition}))$} {
+  \procedure[]{$\combine(\pkgroup, \msg, \coalition, \{(y_j, R_{j}), z_j \}_{j \in \coalition}))$} {
   \mathsf{input} \gets (t, \minsigners, \coalition, \{ R_j\}_{j \in \coalition}) \\
   R \gets \DVRFOnem[\HashOne].\combinepub(\mathsf{input}) \\
   c \gets \HashTwo(R, \pkgroup, \msg) \\
