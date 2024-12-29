@@ -105,7 +105,7 @@ but formalized in game-based notation.
 \begin{figure}[t]
   \begin{pchstack}[boxed,center,space=1em]
   \begin{pcvstack}
-    \procedure[linenumbering]{$\SecrecyExp_{\vess, \adv, \simshare}(\lambda,\secret)$}{
+    \procedure[]{$\SecrecyExp_{\vess, \adv, \simshare}(\lambda,\secret)$}{
     b \rgets \zo \\
     (n, t, \corrupt, \advstate) \rgets \adv(\lambda) \\
     \pcreturn 0\ \pcif t > n \textbf{ or } \corrupt \not\subseteq \set{n} \textbf{ or } \lvert \corrupt \rvert \geq t  \\
@@ -133,7 +133,7 @@ but formalized in game-based notation.
 \begin{figure}[!ht]
   \begin{pchstack}[boxed,center,space=1em]
   \begin{pcvstack}
-    \procedure[linenumbering]{$\UniquenessExp_{\vess,\adv}(\lambda)$}{
+    \procedure[]{$\UniquenessExp_{\vess,\adv}(\lambda)$}{
     (t^*, \recoveryset_1^*, \recoveryset_2^*, \vsscommit^*) \rgets \adv(\lambda) \\
     \text{\algcom $\adv$ chooses two recovery sets and a commitment} \\
     \text{\algcom with respect to the same threshold} \\

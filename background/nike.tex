@@ -36,15 +36,14 @@ We discuss both properties next.
 A  \ENIKE that is \emph{session-key unrecoverable} ensures that given the public keys of two parties $\PK_1, \PK_2$,
 it should be hard for an adversary to obtain the shared secret.
 While prior security notions for non-interactive key exchange exist in the literature~\cite{CashKS08,FreireHKP13},
-these notions allow an adversary to act as an active participant,
-and assume a distinguishing game.
+these notions allow an adversary to act as an active participant.
 Our constructions require only the more restricted model where the adversary learns key material but does not contribute itself,
 and must compute the shared secret directly.
 We present this restricted notion in Figure~\ref{fg:enike-recovery}.
 
 \begin{figure}[t]
   \begin{pchstack}[boxed,center,space=1em]
-  \procedure[linenumbering]{$\UnrecoverabilityExp_{\enike,\adv}(\lambda)$}{
+  \procedure[]{$\UnrecoverabilityExp_{\enike,\adv}(\lambda)$}{
     (\sk_1, \pk_1) \rgets \enike.\keygen(\lambda) \\
     (\sk_2, \pk_2) \rgets \enike.\keygen(\lambda) \\
     \sharedkey \gets \enike.\getsharedkey(\sk_1, \pk_2) \\
@@ -82,7 +81,7 @@ We formalize this requirement in Figure~\ref{fg:enike-binding}.
 
 \begin{figure}[t]
   \begin{pchstack}[boxed,center,space=1em]
-    \procedure[linenumbering]{$\BindingExp_{\enike,\adv}(\lambda)$}{
+    \procedure[]{$\BindingExp_{\enike,\adv}(\lambda)$}{
     (\sk_1^*, \pk_1^*, \sk_2^*, \pk_2^*) \rgets \adv(\lambda) \\
     \pcreturn 0\ \pcif \enike.\verifykeypair(\sk_1^*, \pk_1^*) \neq 1 \\
     \pcreturn 0\ \pcif \enike.\verifykeypair(\sk_2^*, \pk_2^*) \neq 1 \\
