@@ -29,7 +29,8 @@ A digital signature scheme consists of polynomial-time algorithms $(\Setup, \Key
   This probabilistic algorithm outputs a public key $\pk$ and secret key $\sk$.
 
   \item $\Sign(\sk, m) \rightarrow \sigma$:
-    On input a secret key $\sk$ and a message $m$, this algorithm outputs a signature $\sigma$.
+    On input a secret key $\sk$ and a message $m$,
+      this (possibly probabilistic) algorithm outputs a signature $\sigma$.
 
   \item $\Verify(\pk, m, \sigma) \rightarrow 0/1$:
   On input a public key $\pk$,
@@ -72,7 +73,8 @@ A digital signature scheme consists of polynomial-time algorithms $(\Setup, \Key
 chosen-message attacks (EUF-CMA).
 
 \begin{definition}[Correctness]
-A digital signature scheme $(\Setup, \KeyGen, \Sign, \allowbreak \Verify)$ is \emph{correct} if for all security parameters $\secp \in \mathbb{N}$, all key pairs $(\pk, \sk) \in [\KeyGen()]$, and all messages $m$, we have:
+A digital signature scheme $(\Setup, \KeyGen, \Sign, \allowbreak \Verify)$ is \emph{correct} if for all security parameters $\secp \in \mathbb{N}$,
+all key pairs $(\pk, \sk) \rgets [\KeyGen()]$, and all messages $m$, we have:
 \[ \Pr[ \Verify(\pk, m, \Sign(\sk, m)) = 1 ] = 1 \]
 \end{definition}
 
@@ -89,7 +91,11 @@ A digital signature scheme $\dsig = (\Setup, \KeyGen, \Sign, \allowbreak \Verify
 \subsection{Schnorr Signatures}
 \label{background:schnorr}
 
-A Schnorr signature is a Sigma protocol zero-knowledge proof of knowledge of the discrete logarithm of the public key $\pk$, made non-interactive and bound to the message $m$ by the Fiat-Shamir transform~\cite{FiatS86}.
+A Schnorr signature~\cite{Schnorr91} is a Sigma protocol zero-knowledge proof of knowledge of the discrete logarithm of the public key $\pk$.
+A Sigma protocol is characterized by the prover first outputting a commitment,
+the verifier then sending a random challenge to the prover,
+and then the prover outputting a response.
+The Schnorr signature scheme is made non-interactive and bound to the message $m$ by the Fiat--Shamir transform~\cite{FiatS86}.
 Schnorr signatures are secure under the discrete logarithm assumption in the random oracle model~\cite{PointchevalS00}.
 
 
