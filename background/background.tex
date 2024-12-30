@@ -207,7 +207,7 @@ The Shamir secret sharing scheme is a concrete instantiation of a threshold secr
 
 \include{background/vss}
 
-\subsection{Feldman's VSS}
+\subsubsection{Feldman's VSS}
 \label{feldman-vss}
 
 As a concrete VSS in the discrete logarithm setting,
@@ -222,7 +222,7 @@ $a \in \Zq$.
 We now define the scheme more precisely.
 
 \begin{itemize}
-    \item $\IssueShares(\lambda, s, n, t) \rightarrow (\{ (1,\share_1), \ldots, (n,\share_n)\}, \vsscommit)$.
+    \item $\IssueShares(s, n, t) \rightarrow (\{ (1,\share_1), \ldots, (n,\share_n)\}, \vsscommit)$.
       Accepts as input the security parameter $\lambda$,
       a secret $s \in \Zq$,
       the number of participants $n \in \mathbb{N}$,
@@ -243,7 +243,7 @@ We now define the scheme more precisely.
       and a VSS commitment $\vsscommit$ that is a tuple of group elements, such that $\lvert \vsscommit \rvert = t$.
       Verifies that $(i,\share_i)$ is a valid point on $f$ as follows:
     \begin{enumerate}
-        \item Parse $\langle A_0, \ldots, A_{t-1} \rangle \gets \vsscommit$.
+        \item Parse $(A_0, \ldots, A_{t-1} ) \gets \vsscommit$.
         \item Output 1 if Equation~\ref{eq:vss-verify} holds; otherwise, output $0$.
           \begin{equation} \label{eq:vss-verify}
             g^{\share_i} \iseq \prod_{k=0}^{t-1} A_k^{i^k}
@@ -270,6 +270,12 @@ We now define the scheme more precisely.
       Outputs $\pshare_i = g^{f(i)}$ by computing
       $\pshare_i \gets \prod_{k=0}^{|\vsscommit|-1} A_k^{i^k}$.
 \end{itemize}
+
+
+
+
+\input{background/threshold-schnorr.tex}
+\include{background/ros}
 
 
 
@@ -334,5 +340,3 @@ the coordinator would be trusted to reliably route messages,
 but in the case that the coordinator is malicious,
 the coordinator is only capable of performing denial of service attacks.
 
-\input{background/threshold-schnorr.tex}
-\include{background/ros}
