@@ -1,5 +1,34 @@
 \subsection{Verifiable Secret Sharing} \label{verifiable-tss}
 
+\begin{figure}[!ht]
+  \begin{pchstack}[boxed,center,space=1em]
+  \begin{pcvstack}
+    \procedure[]{$\SecrecyExp_{\vess, \adv, \simshare}(\lambda,\secret)$}{
+    b \rgets \zo \\
+    (n, t, \corrupt, \advstate) \rgets \adv(\lambda) \\
+    \pcreturn 0\ \pcif t > n \textbf{ or } \corrupt \not\subseteq \set{n} \textbf{ or } \lvert \corrupt \rvert \geq t  \\
+    %
+    \pcif b=0 \\
+    \pcind (\{(j, \share_j)\}_{j \in \set{n}}, \vsscommit) \gets \vess.\issueshares(\lambda, \secret, n, t) \\
+    \pcelse \text{\algcom $b=1$ case} \\
+    \pcind \vsschal \gets \vess.\vfunc(\secret) \\
+    \pcind (\{(j, \share_j)\}_{j \in \corrupt}, \vsscommit) \rgets \simshare(\vsschal, n, t, \corrupt) \\
+    \pcind \pcfor j \in \corrupt \pcdo
+    \text{\algcom The simulation must produce $\lvert \corrupt \rvert$ valid shares} \\
+    \pcind \pcind \pcreturn 1\ \pcif \vess.\verify(j, \share_j, \vsscommit) \neq 1 \\
+    \pcind \pcreturn 1\ \pcif \vess.\derivepshare(0, \vsscommit) \neq \vsschal
+    \text{\algcom The commitment must be valid with respect to $\vsschal$} \\
+    b' \rgets \adv(\advstate, \{(j, \share_j)\}_{j \in \corrupt}, \vsscommit) \\
+    \pcreturn 1\ \pcif b' = b \\
+    \pcreturn 0
+  }
+  \end{pcvstack}
+  \end{pchstack}
+  \caption{Secrecy experiment defining the advantage of an adversary $\adv$ against a Verifiable Secret Sharing scheme (VSS) $\vess$ that is zero-indexed.}
+  \label{fg:vss-secrecy}
+\end{figure}
+
+
 \emph{Verifiable Secret Sharing} (VSS) allows a dealer to share a secret $s$ in such a way that
 participants can ensure that combining their shares allows for recovery of a secret that corresponds to a public commitment to $s$, without learning $s$ in the process.
 %
@@ -67,7 +96,7 @@ For the purposes of our definitions, we additionally require that a VSS be \emph
 
 A prototypical example of a zero-indexed VSS is Feldman's secret sharing~\cite{Feldman87},
 which itself builds on Shamir secret sharing~\cite{Shamir79}.
-Zero-indexing is important later in our generic construction,
+Zero-indexing is important later in our generic construction given in Chapter~\ref{chp:storm},
 to demonstrate a relation between the VSS and a NIKE,
 where the secret that is input to the VSS is the secret key output from the
 NIKE key generation algorithm.
@@ -102,50 +131,21 @@ but formalized in game-based notation.
 %simulation-based notion is hard to compare, but I'll just remove this because
 %it isn't used.}
 
-\begin{figure}[t]
-  \begin{pchstack}[boxed,center,space=1em]
-  \begin{pcvstack}
-    \procedure[]{$\SecrecyExp_{\vess, \adv, \simshare}(\lambda,\secret)$}{
-    b \rgets \zo \\
-    (n, t, \corrupt, \advstate) \rgets \adv(\lambda) \\
-    \pcreturn 0\ \pcif t > n \textbf{ or } \corrupt \not\subseteq \set{n} \textbf{ or } \lvert \corrupt \rvert \geq t  \\
-    %
-    \pcif b=0 \\
-    \pcind (\{(j, \share_j)\}_{j \in \set{n}}, \vsscommit) \gets \vess.\issueshares(\lambda, \secret, n, t) \\
-    \pcelse \text{\algcom $b=1$ case} \\
-    \pcind \vsschal \rgets \vess.\vfunc(\secret) \\
-    \pcind (\{(j, \share_j)\}_{j \in \corrupt}, \vsscommit) \rgets \simshare(\vsschal, n, t, \corrupt) \\
-    \pcind \pcfor j \in \corrupt \pcdo \\
-    \pcind \pcind \pcreturn 1\ \pcif \vess.\verify(j, \share_j, \vsscommit) \neq 1 \\
-    \pcind \text{\algcom The simulation must produce $\lvert \corrupt \rvert$ valid shares} \\
-    \pcind \pcreturn 1\ \pcif \vess.\derivepshare(0, \vsscommit) \neq \vsschal  \\
-    \pcind \text{\algcom The commitment must be valid with respect to $\vsschal$} \\
-    b' \rgets \adv(\advstate, \{(j, \share_j)\}_{j \in \corrupt}, \vsscommit) \\
-    \pcreturn 1\ \pcif b' = b \\
-    \pcreturn 0
-  }
-  \end{pcvstack}
-  \end{pchstack}
-  \caption{Secrecy experiment defining the advantage of an adversary $\adv$ against a Verifiable Secret Sharing scheme (VSS) $\vess$ that is zero-indexed.}
-  \label{fg:vss-secrecy}
-\end{figure}
-
 \begin{figure}[!ht]
   \begin{pchstack}[boxed,center,space=1em]
   \begin{pcvstack}
     \procedure[]{$\UniquenessExp_{\vess,\adv}(\lambda)$}{
+    \text{\algcom $\adv$ chooses two recovery sets and a commitment with respect to the same threshold} \\
     (t^*, \recoveryset_1^*, \recoveryset_2^*, \vsscommit^*) \rgets \adv(\lambda) \\
-    \text{\algcom $\adv$ chooses two recovery sets and a commitment} \\
-    \text{\algcom with respect to the same threshold} \\
     \pcfor (i, \share_i) \in \recoveryset_1^* \pcdo \\
     \pcind \pcreturn 0\ \pcif \vess.\verify(i, \share_i, \vsscommit^*) \neq 1 \\
     \pcfor (i', \share_i') \in \recoveryset_2^* \pcdo \\
     \pcind \pcreturn 0\ \pcif \vess.\verify(i', \share_i', \vsscommit^*) \neq 1 \\
     \pcreturn 0\ \pcif \vess.\recover(t^*, \recoveryset_1^*) = \fail \vee
     \vess.\recover(t^*, \recoveryset_2^*) = \fail \\
-    \pcreturn 1\ \pcif \vess.\recover(t^*, \recoveryset_1^*) \neq \vess.\recover(t^*, \recoveryset_2^*) \\
     \text{\algcom $\adv$ wins if it can generate two different recovery sets for the same} \\
     \text{\algcom commitment, but which recover distinct secrets} \\
+    \pcreturn 1\ \pcif \vess.\recover(t^*, \recoveryset_1^*) \neq \vess.\recover(t^*, \recoveryset_2^*) \\
     \pcreturn 0
   }
   \end{pcvstack}
@@ -168,7 +168,12 @@ We formalize this notion in Figure~\ref{fg:vss-secrecy},
 with respect to an algorithm $\simshare$ that is defined in the context of the concrete construction.
 The experiment takes as input any secret $\secret$ from the secret space
 $\secretspace$.
-Importantly, we do not restrict secrets to be sampled uniformly at random; even degenerate cases should hold.
+Importantly, we do not restrict secrets to be sampled uniformly at random;
+even degenerate cases should hold.
+In other words,
+even ``seemingly bad'' cases,
+such as the identity element or values whose last bit is zero,
+are allowed.
 
 
 The advantage of an adversary $\adv$ against a VSS scheme $\vess$ in the secrecy experiment as defined in Figure~\ref{fg:vss-secrecy} is
