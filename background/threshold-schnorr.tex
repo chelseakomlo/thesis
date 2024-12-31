@@ -1,11 +1,24 @@
 \section{Threshold Signatures}
 \label{threshold-sig-background}
 
-This chapter defines threshold signature schemes.
-Portions of this chapter are adapted from previous work by Crites et al.~\cite{CritesKM2023}.
+This section defines threshold signature schemes.
+Portions of this section are adapted from previous work by this thesis author~\cite{CritesKM2023}.
 
-To simplify notation, the syntax assumes a centralized key generation algorithm to generate the joint public key representing all $n$ signers and the shares of the corresponding secret key.
+A threshold signature scheme allows a set of signers---$t$ at minimum, out of $n$ possible signers---to jointly
+produce a signature on a message such that the signature verifies under a public key that
+represents the set of all $n$ signers,
+A threshold signature scheme should remain unforgeable even if $\tcor$ signers are corrupted.
+
+Note that our definition of threshold signatures simply assumes that participants exchange messages $ \{\msg_{ 1, j}$ where $i$ represents participant $i$  and $j$ represents the $j$\supth signing round.
+We model threshold signatures assuming a coordinator role,
+and so do not distinguish between peer-to-peer and broadcast messages.
+Our notion of unforgeability assumes that the adversary can play the role of the coordinator,
+and so can selectively choose which messages each participant receives in each round of signing.
+
+To simplify notation,
+the below definition assumes a centralized key generation algorithm to generate the joint public key representing all $n$ signers and the shares of the corresponding secret key.
 However, a distributed key generation (DKG) protocol may replace this trusted dealer.
+We discuss DKGs further in Chapter~\ref{chp:storm}.
 
 
 \begin{definition} \label{def:threshold-sig}
@@ -15,7 +28,9 @@ However, a distributed key generation (DKG) protocol may replace this trusted de
 
 \begin{itemize}
 
-  \item $\Setup(\usecp) \rightarrow \pp$: Takes as input a security parameter and outputs public parameters $\pp$ (which are given implicitly as input to all other algorithms).
+  \item $\Setup(\usecp) \rightarrow \pp$:
+    A deterministic algorithm that accepts as input a security parameter $\lambda$,
+    and outputs public parameters $\pp$ (which are given implicitly as input to all other algorithms).
 
   \item $\KeyGen(n,\thresh) \rightarrow (\aggpk, \{ \aggpk_i \}_{i \in \set{n}}, \{ \sk_i \}_{i \in \set{n}})$:
     A probabilistic algorithm that takes as input the number of signers $n$ and the threshold $\thresh$ and outputs the public key $\aggpk$ representing the set of $n$

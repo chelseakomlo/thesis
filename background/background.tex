@@ -261,12 +261,13 @@ We now define the scheme more precisely.
       \item Derive Lagrange coefficients for each identifier $\{ L_j(0)\}_{j \in C}$.
         %\ian{Even if $|K| > t$?  What if the shares are inconsistent?}
         % CK: I added verification as a step, which prohibits this case. Same in the definition.
-        \item Derive $\secret = \sum_{j \in C} \share_j \cdot L_j(0)$.
+        \item Derive $\secret \gets \sum_{j \in C} \share_j \cdot L_j(0)$.
         \item Output $\secret$.
     \end{enumerate}
 
     \item $\derivepshare(i, \vsscommit) \rightarrow \pshare_i$:
       Accepts as input a participant identifier $i$ and a VSS commitment.
+      Parse $(A_0, \ldots, A_{t-1} ) \gets \vsscommit$.
       Outputs $\pshare_i = g^{f(i)}$ by computing
       $\pshare_i \gets \prod_{k=0}^{|\vsscommit|-1} A_k^{i^k}$.
 \end{itemize}
@@ -298,7 +299,7 @@ and is guaranteed to deliver all messages to the intended recipients within a fi
 A broadcast channel sends one message to all other players,
 Messages sent and received over a broadcast channel are denoted as $\invecb_i$, which is
 the set of broadcast messages that is received as input for the $i\supth$ protocol round.
-$\invecb_i$ consists of broadcast messages $\bmsg_1, \ldots, \bmsg_n$,
+The vector $\invecb_i$ consists of broadcast messages $\bmsg_1, \ldots, \bmsg_n$,
 sent by participants $1, \ldots,n$.
 Participant $k$ is the sender of a broadcast message $\bmsg_k$,
 and all other participants are the receivers of this message.
@@ -314,9 +315,9 @@ Broadcast channels have the following properties:
 
 \paragraph{Peer-to-peer channels.}
 Messages sent and received over this channel are denoted as $\invecp_i$ and $\outvecp_i$,
-$\invecp_i$ is the vector of peer-to-peer messages that is received as input for protocol round $i$,
+where $\invecp_i$ is the vector of peer-to-peer messages that is received as input for protocol round $i$,
 and $\outvecp_i$ is the vector of peer-to-peer messages that is output at the end of network round $i$.
-$\invecp_i$ and $\outvecp_i$ consist of peer-to-peer messages which we denote as $\pmsg_{i,j}$,
+The channels $\invecp_i$ and $\outvecp_i$ consist of peer-to-peer messages which we denote as $\pmsg_{i,j}$,
 where here, participant $i$ is the sender and participant $j$ is the receiver.
 
 Peer-to-peer channels are authenticated, reliable, and unordered.
@@ -328,9 +329,14 @@ only participants $i$ and $j$ are allowed to know the contents of $\pmsg_{i,j}$.
 \paragraph{Rushing Adversary.}
 A \defn{rushing adversary} is one that ``speaks last'';
 i.e., it waits to receive inputs from honest participants before publishing its own.
+Such an adversary models the capabilities of a real-world adversary,
+as threshold schemes assume any participant can be malicious,
+and honest participants may not be able to distinguish corrupt from honest parties.
 Importantly, a rushing adversary may be able to choose its input \emph{adaptively} after observing inputs from all other participants.
+
 Security definitions consider such an adversary,
 by allowing the adversary to query for honest participants' contributions in a round before publishing its own.
+We consider rushing adversary in the proofs of security given in Chapters~\ref{chp:frost}, \ref{chp:stprm}, and \ref{chp:arctic}.
 
 \paragraph{Coordinator Role.}
 In lieu of a broadcast channel,
@@ -340,3 +346,4 @@ the coordinator would be trusted to reliably route messages,
 but in the case that the coordinator is malicious,
 the coordinator is only capable of performing denial of service attacks.
 
+We consider the coordinator role in Chapter~\ref{chp:frost} and \ref{chp:arctic} as a mechanism to reliably route messages among signing participants.
