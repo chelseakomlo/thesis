@@ -89,15 +89,15 @@ The syntax assumes that the signing set $\coalition$, message $m$, and secret ke
   While this recovery algorithm is defined explicitly for centralized and decentralized threshold secret sharing schemes~\cite{BonehS2020,GennaroJKR07},
   its use for threshold signatures is often implicit.
   We define this recovery algorithm explicitly,
-  and later employ it to prove our results.
+  and employ it next to define correctness.
 \end{remark}
 
 \paragraph{Correctness.}
-A threshold signature scheme is \emph{correct} if for all security parameters $\secp$, all allowable $1 \leq \thresh \leq n$,
+A threshold signature scheme is \emph{correct} if for all security parameters $\secp$, all $1 \leq \thresh \leq n$,
 all $\coalition \subseteq [n]$ such that $| \coalition | \geq \thresh$,
 all messages $m$ and
 for $(\aggpk, \{ \aggpk_i \}_{i \in \set{n}}, \{ \sk_i \}_{i \in \set{n}}) \allowbreak \randpick \KeyGen(n, \allowbreak \thresh)$,
-the $\Recover$ algorithm outputs $\sk$ and the experiment in (\ref{eqn:protocol-messages}) returns signature shares that, when combined with all other shares, produce a signature $\sigma$
+the $\Recover$ algorithm outputs $\sk$ and the experiment in Equation~\ref{eqn:protocol-messages} returns signature shares that, when combined with all other shares, produce a signature $\sigma$
 such that $\Verify(\pk, m, \sigma) = 1$.
 
 \subsection{Static Security}
@@ -105,7 +105,7 @@ such that $\Verify(\pk, m, \sigma) = 1$.
 \begin{figure}[!htb]
 	\begin{pchstack}[boxed]
 		\begin{pcvstack}
-      \procedure{$\TUnforgExp_{\A,\threshsig}(\secp, n, \thresh, \tcornew)$}{
+      \procedure{$\TUnforgExp_{\threshsig, \adv}(\secp, n, \thresh, \tcornew)$}{
 		%\protect\dashbox[3.5cm][c]{$\G^{\aduf}_{\A,\threshsig}(\secp, \hmulp)$}}{
 			\sessions \gets \emptyset \\
 			\pp \leftarrow  \ParGen(\usecp) \\
@@ -119,7 +119,7 @@ such that $\Verify(\pk, m, \sigma) = 1$.
        			(\threshpk, \{ \aggpk_i, \sk_i \}_{i \in \set{n}}) \randpick  \KeyGen(n,\thresh) \\
         			\mathsf{input} \gets (\threshpk, \{ \aggpk_i \}_{i \in \set{n}},  \{\sk_j \}_{j \in \corrupt}, \state_\A) \\
               		%\fbox{ $(m^*, \sig^*) \randpick \A^{\BigO^{\Sign, \Sign', \Sign''}}(\mathsf{input}) $}\\
-              		(m^*, \sig^*) \randpick \A^{\BigO^{\tiny{\Sign_1, \Sign_2, \dots, \Sign_\numrounds, \fbox{$\Corrupt$}}}}(\mathsf{input}) \\
+              		(m^*, \sig^*) \randpick \A^{\BigO^{\tiny{\Sign_1, \Sign_2, \dots, \Sign_\numrounds }}}(\mathsf{input}) \\
       \pcreturn 1~\pcif m^* \notin Q_m \\
       ~~~\wedge  \Verify(\threshpk, m^*, \sig^*) = 1\\
 			\pcreturn 0
@@ -185,6 +185,14 @@ such that $\Verify(\pk, m, \sigma) = 1$.
 
 Most threshold signature schemes in the literature are proven in the \emph{static} security model,
 which captures a limited adversary that can only corrupt parties at the onset of the protocol.
+A stronger adversarial model is one that considers an \emph{adaptive} adversary,
+which we describe in Section~\ref{adaptive-security}.
+However, proving security assuming an adaptive adversary is more challenging,
+and often requires tradeoffs in the performance overhead of the scheme,
+or stronger security models~\cite{CritesKM2023,BachoL22 }.
+For this reason,
+we focus on proving the security of FROST in Chapter~\ref{chp:frost} and Arctic in Chapter~\ref{chp:arctic} assuming a static adversary.
+
 We provide a game-based definition in \ref{fig:euf-cma-threshold}, inspired by the definitions in \cite{CritesKM23,LibertJY16}.
 The static security game contains all but the boxes and is analogous to existential unforgeability under chosen message attack (EUF-CMA)~\cite{GoldwasserMR88} for standard, single-party signature schemes;
 adaptive game adds the boxes.
@@ -197,7 +205,7 @@ and a corruption threshold $\tcornew$ as input,
 such that $\tcornew < t \leq n$.
 %The number of parties that the adversary corrupts must stay within the bound $\hmulp \cdot \tcor$.
 %Typically, a static adversary corrupts a full $\tcor$ (i.e., $\hmulp = 1$) signers out of at least $\thresh$ signers in a session.
-$\tcornew$ specifies the number of signers that the adversary may corrupt,
+The threshold $\tcornew$ specifies the number of signers that the adversary may corrupt,
 and $\tcor$ the reconstruction threshold,
 such that $\tcornew \leq \tcor \leq n$.
 
@@ -228,10 +236,11 @@ We model concurrency explicitly in our definition to ensure that our notion of s
 
 \begin{definition}[Static Security]
 Let the advantage of an adversary $\A$ playing the static security game
-$\G^{\uf}_{\A,\threshsig}(\secp, n, \tcor, \hmulp)$, as defined in Figure~\ref{fig:euf-cma-threshold}, be as follows:
+$\UnforgExp_{\A,\threshsig}(\secp, n, \tcor, \tcornew)$, as defined in Figure~\ref{fig:euf-cma-threshold}, be as follows:
 %
 \[
-  \advant{$\uf$}{\A,\threshsig}(\secp, n, \tcor, \tcornew) = \bigabs{\Pr[\G^{\uf}_{\A,\threshsig}(\secp, n, \tcor, \tcornew) = 1]}
+  \advant{$\uf$}{\threshsig, \adv}(\secp, n, \tcor, \tcornew) =
+  \bigabs{\Pr[\UnforgExp_{\threshsig,\adv}(\secp, n, \tcor, \tcornew) = 1]}
 \]
 
 A threshold signature scheme $\threshsig$ is \emph{statically secure} if for all PPT adversaries $\A$,
@@ -241,10 +250,14 @@ for $(n, \tcor, \tcornew) \in \mathbb{N}, \tcor \leq n$, $\tcornew < \tcor$.
 
 
 \subsection{Adaptive Security}
+\label{adaptive-security}
 
 In this work,
 we consider only static security for our threshold Schnorr signature constructions.
-We provide a high-level discussion of adaptive security here,
+While adaptive adversaries are certainly closer to a real-world setting,
+the complexity of modeling adversarial corruptions in a proof of security introduces challenging complexities.
+We leave proving the adaptive security of both FROST in Chapter~\ref{chp:frost} and Arctic in Chapter~\ref{chp:arctic} to future work.
+We however next provide a high-level discussion of adaptive security here,
 for comparison.
 
 
