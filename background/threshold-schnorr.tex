@@ -193,7 +193,8 @@ or stronger security models~\cite{CritesKM2023,BachoL22 }.
 For this reason,
 we focus on proving the security of FROST in Chapter~\ref{chp:frost} and Arctic in Chapter~\ref{chp:arctic} assuming a static adversary.
 
-We provide a game-based definition in \ref{fig:euf-cma-threshold}, inspired by the definitions in \cite{CritesKM23,LibertJY16}.
+We provide a game-based definition in Figure~\ref{fig:euf-cma-threshold},
+inspired by the definitions in \cite{CritesKM23,LibertJY16}.
 The static security game contains all but the boxes and is analogous to existential unforgeability under chosen message attack (EUF-CMA)~\cite{GoldwasserMR88} for standard, single-party signature schemes;
 adaptive game adds the boxes.
 The public parameters $\pp$ are implicitly given as input to all algorithms, and $\PM_1, \PM_2, \dots, \PM_\numrounds$ represent protocol messages defined within the construction.
