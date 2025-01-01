@@ -1,6 +1,9 @@
 \section{ROS Attacks}
 \label{background:ros}
 
+Unlike prior schemes in the literature~\cite{DrijversEFKLNS19,BenhamoudaLLOR20},
+both FROST in Chapter~\ref{chp:frost} and Arctic in Chapter~\ref{chp:arctic} are secure against concurrent adversaries which may attempt ROS-style attacks.
+%
 The ROS (Random Inhomogeneities in a Overdetermined Solvable System of Linear Equations) problem~\cite{schnorr06,BenhamoudaLLOR20,Schnorr01,FuchsbauerPS20}
 over $\Zq$ in dimension $\ell$
 is defined as follows.
@@ -11,19 +14,17 @@ In other words,
 given a random oracle $\HROS$ and a set of arbitrary functions $f_1, \ldots, f_{\ell+1}$
 where $f_i(\Zq^\ell) \rightarrow \Zq$,
 the goal is to find coefficients $a_{k, i} \in \Zq, i \in \set{\ell}$ such that
-
 \[
   a_{k,1} c_1 + a_{k,2} c_2 + \ldots + a_{k,\ell} c_\ell = \HROS(f_{\ell+1}((a_{k,i})_{i \in \set{\ell}}, \aux))
 \]
 
-where $c_i = \HROS(f_i((a_{k,i})_{i \in \set{\ell}}, \aux))$.
+\noindent where $c_i = \HROS(f_i((a_{k,i})_{i \in \set{\ell}}, \aux))$.
 It is always possible to find the first $\ell$ values simply by setting
 $a_{ki} = 1, i \in \set{\ell}$;
 the challenge is to find the $\ell+1\supth$ solution.
 
 Wagner~\cite{Wagner02} and Benhamouda et al.~\cite{BenhamoudaLLOR20} showed how to solve the ROS problem in subexponential time,
 and demonstrated its applicability to the forgeability in a range of blind and multi-party
-signature schemes,
-assuming a \emph{concurrent adversary},
+signature schemes---including blind and threshold Schnorr signatures--- assuming a \emph{concurrent adversary},
 which may open an arbitrary number of signing sessions simultaneously.
 
