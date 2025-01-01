@@ -7,7 +7,8 @@ Portions of this section are adapted from previous work by this thesis author~\c
 A threshold signature scheme allows a set of signers---$t$ at minimum, out of $n$ possible signers---to jointly
 produce a signature on a message such that the signature verifies under a public key that
 represents the set of all $n$ signers,
-A threshold signature scheme should remain unforgeable even if $\tcor$ signers are corrupted.
+A threshold signature scheme should remain unforgeable even if $\tcornew$ signers are corrupted,
+where $\tcornew \leq \tcor$.
 
 Note that our definition of threshold signatures simply assumes that participants exchange messages $ \{\msg_{ 1, j}$ where $i$ represents participant $i$  and $j$ represents the $j$\supth signing round.
 We model threshold signatures assuming a coordinator role,
