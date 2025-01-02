@@ -1,3 +1,73 @@
+
+\begin{figure*}[!ht]
+  \begin{framed}
+
+    \begin{flushleft}
+    \textbf{Round 1}
+\begin{description}
+  \item[1.] Every participant $P_i$ samples $t$ random values
+        $(a_{i0}, \dots, a_{i(t-1))}) \rgets \mathbb{Z}_q$, and uses these values as
+        coefficients to define a degree $t-1$ polynomial $f_i(x) =
+        \sum_{j=0}^{t-1} a_{ij} x^j$.
+      \item[2.] Every $P_i$ computes a proof of knowledge to the
+        corresponding secret $a_{i0}$ by calculating
+        $\sigma_i = (R_i, \mu_i)$,
+        such that
+        $k \rgets \mathbb{Z}_q$, $R_i = g^k$,
+        $c_i = H(i, \Phi, g^{a_{i0}}, R_i)$,
+        $\mu_i = k + a_{i0}\cdot c_i$,
+        with $\Phi$ being a context string to prevent
+        replay attacks.
+      \item[3.] Every participant $P_i$ computes a public commitment
+        $\Vec{C_i} = \langle \phi_{i0}, \dots, \phi_{i(t-1)} \rangle$, where $\phi_{ij}
+          = g^{a_{ij}}$, $0 \leq j \leq t-1$
+      \item[4.] Every $P_i$ broadcasts $\Vec{C_i}, \sigma_i$ to all other
+        participants.
+      \item[5.] Upon receiving $\Vec{C_\ell}, \sigma_\ell$ from
+        participants $1 \leq \ell \leq n, \ell \neq i$, participant $P_i$ verifies
+        $\sigma_\ell = (R_\ell, \mu_\ell)$, aborting on failure, by
+        checking
+          \(R_\ell \stackrel{?}{=} g^{\mu_\ell} \cdot
+           \phi_{\ell0}^{-c_\ell}\), where
+          \(c_\ell = H\left(\ell, \Phi, \phi_{\ell 0}, R_\ell \right)\).
+
+        Upon success, participants delete $\{ \sigma_\ell : 1 \le \ell \le n \} $.
+\end{description}
+
+    \smallskip
+
+    \textbf{Round 2}
+    \begin{description}
+      \item[1.] Each $P_i$ securely sends to each other
+      participant $P_\ell$
+        a secret share $(\ell, f_i(\ell))$, deleting $f_i$ and each share
+        afterward except for $(i, f_i(i))$, which they keep for themselves.
+      \item[2.] Each $P_i$ verifies their shares by calculating:
+          $g^{f_\ell(i)} \iseq \prod_{k=0}^{t-1} \phi_{\ell k}^{i^k}$, aborting on failure.
+
+      \item[3.] Each $P_i$ calculates their long-lived private
+        signing share by computing $s_i = \sum_{\ell=1}^n f_\ell(i)$, stores
+        $s_i$ securely, and deletes each $f_\ell(i)$.
+      \item[4.] Each $P_i$ calculates their public verification
+        share $\pk_i = g^{s_i}$, and the group's public key
+        $\pk = \prod_{j=1}^n \phi_{j0}$.
+        Any participant can compute the public verification share of
+        any other participant by calculating
+        \( \displaystyle
+        \pk_i = \prod_{j=1}^n \prod_{k=0}^{t-1} \phi_{jk}^{i^k }
+        \).
+
+    \end{description}
+    \end{flushleft}
+  \end{framed}
+    \caption{A distributed
+    key generation (DKG) protocol PedPop.
+    }
+  \label{fg:pedpop}
+\end{figure*}
+
+
+
 \section{Distributed Key Generation and FROST Signatures}
 
 We present this section in two parts.
@@ -101,73 +171,6 @@ values \emph{without} utilizing a DKG, as discussed next.
 
 
 
-
-\begin{figure*}[!ht]
-  \begin{framed}
-
-    \begin{flushleft}
-    \textbf{Round 1}
-\begin{description}
-  \item[1.] Every participant $P_i$ samples $t$ random values
-        $(a_{i0}, \dots, a_{i(t-1))}) \rgets \mathbb{Z}_q$, and uses these values as
-        coefficients to define a degree $t-1$ polynomial $f_i(x) =
-        \sum_{j=0}^{t-1} a_{ij} x^j$.
-      \item[2.] Every $P_i$ computes a proof of knowledge to the
-        corresponding secret $a_{i0}$ by calculating
-        $\sigma_i = (R_i, \mu_i)$,
-        such that
-        $k \rgets \mathbb{Z}_q$, $R_i = g^k$,
-        $c_i = H(i, \Phi, g^{a_{i0}}, R_i)$,
-        $\mu_i = k + a_{i0}\cdot c_i$,
-        with $\Phi$ being a context string to prevent
-        replay attacks.
-      \item[3.] Every participant $P_i$ computes a public commitment
-        $\Vec{C_i} = \langle \phi_{i0}, \dots, \phi_{i(t-1)} \rangle$, where $\phi_{ij}
-          = g^{a_{ij}}$, $0 \leq j \leq t-1$
-      \item[4.] Every $P_i$ broadcasts $\Vec{C_i}, \sigma_i$ to all other
-        participants.
-      \item[5.] Upon receiving $\Vec{C_\ell}, \sigma_\ell$ from
-        participants $1 \leq \ell \leq n, \ell \neq i$, participant $P_i$ verifies
-        $\sigma_\ell = (R_\ell, \mu_\ell)$, aborting on failure, by
-        checking
-          \(R_\ell \stackrel{?}{=} g^{\mu_\ell} \cdot
-           \phi_{\ell0}^{-c_\ell}\), where
-          \(c_\ell = H\left(\ell, \Phi, \phi_{\ell 0}, R_\ell \right)\).
-
-        Upon success, participants delete $\{ \sigma_\ell : 1 \le \ell \le n \} $.
-\end{description}
-
-    \smallskip
-
-    \textbf{Round 2}
-    \begin{description}
-      \item[1.] Each $P_i$ securely sends to each other
-      participant $P_\ell$
-        a secret share $(\ell, f_i(\ell))$, deleting $f_i$ and each share
-        afterward except for $(i, f_i(i))$, which they keep for themselves.
-      \item[2.] Each $P_i$ verifies their shares by calculating:
-          $g^{f_\ell(i)} \iseq \prod_{k=0}^{t-1} \phi_{\ell k}^{i^k}$, aborting on failure.
-
-      \item[3.] Each $P_i$ calculates their long-lived private
-        signing share by computing $s_i = \sum_{\ell=1}^n f_\ell(i)$, stores
-        $s_i$ securely, and deletes each $f_\ell(i)$.
-      \item[4.] Each $P_i$ calculates their public verification
-        share $\pk_i = g^{s_i}$, and the group's public key
-        $\pk = \prod_{j=1}^n \phi_{j0}$.
-        Any participant can compute the public verification share of
-        any other participant by calculating
-        \( \displaystyle
-        \pk_i = \prod_{j=1}^n \prod_{k=0}^{t-1} \phi_{jk}^{i^k }
-        \).
-
-    \end{description}
-    \end{flushleft}
-  \end{framed}
-    \caption{A distributed
-    key generation (DKG) protocol PedPop.
-    }
-  \label{fg:pedpop}
-\end{figure*}
 
 
 \subsection{The FROST Signature Scheme}
@@ -317,8 +320,7 @@ After receiving $(m, B)$ from the coordinator to initialize a signing operation,
 each participant checks that $m$ is a message they are willing to sign.
 Then, using $m$ and $B$,
 all participants derive the ``binding values'' $\rho_i, i \in C$ such that
-$\rho_i = H_1(i, m, B)$, where $H_1$ is a hash function whose outputs are in
-$\mathbb{Z}_q^*$.
+$\rho_i = \HashNon(i, m, B)$, where $\HashNon$ is a hash function whose outputs are in $\mathbb{Z}_q^*$.
 
 Each participant then
 computes the commitment $R_i$ for each participant in $\coalition$ by
@@ -333,7 +335,7 @@ commitments for each signer.
 The commitment for the set of signers
 is then simply $R = \prod_{i \in \coalition} R_i$.
 As in single-party Schnorr signatures, each participant computes the challenge
-$c = H_2(R, \pk, m)$.
+$c = \HashSig(R, \pk, m)$.
 
 The resulting secret nonce is
 $k = \sum_{i \in \coalition} k_i$, where each $k_i = d_i + e_i \cdot \rho_i$,
@@ -394,14 +396,14 @@ During the signature phase,
 each of the
 participants in the coalition $\coalition$ selected for signing use a pair of nonces $(d_i, e_i)$ to
 define a degree $\lvert\coalition-1 \rvert$ polynomial $F_2(x)$, interpolating the
-values $(i,\frac{d_i + e_i \cdot H_1(i, m, B)}{\lambda_i})$,
+values $(i,\frac{d_i + e_i \cdot \HashNon(i, m, B)}{\lambda_i})$,
 such that $F_2(0) = \sum_{i \in \coalition} d_i + e_i \cdot \rho_i$.
 
 Then let $F_3(x) = F_2(x) + c \cdot F_1(x)$, where
-$c = H_2(R, \pk, m)$.  Now $z_i$
+$c = \HashSig(R, \pk, m)$.  Now $z_i$
 equals $d_i + (e_i \cdot \rho_i) + \lambda_i \cdot s_i \cdot c =
 \lambda_i (F_2(i) + c \cdot F_1(i)) = \lambda_i F_3(i)$, so $z = \sum_{i \in \coalition} z_i$
 is simply the Lagrange interpolation of $F_3(0) = (\sum_{i \in \coalition} d_i + e_{ij} \cdot \rho_i) + c
 \cdot s$.  Because $R = g^{\sum_{i \in \coalition} d_i + e_i \cdot \rho_i}$ and $c
-= H_2(R, \pk, m)$, $(R, z)$ is a
+= \HashSig(R, \pk, m)$, $(R, z)$ is a
 correct Schnorr signature on $m$.
