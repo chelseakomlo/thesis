@@ -47,14 +47,16 @@ thereby generating $\ell$
 random nonces. The signers can then store these pre-processed values to later perform
 $\ell$ single-round signing operations.
 
-Our work builds upon the key generation stage of Gennaro et
+We define a distributed key generation (DKG) scheme that builds upon the key generation stage of Gennaro et
 al.~\cite{GennaroJK02}; we use a variant of Pedersen's DKG for
 key generation with a requirement
-that in the case of misbehaviour, the protocol aborts and the cause investigated
-out of band.
-However, FROST \emph{does not} perform a DKG
-during signing operations as is done in both of the above schemes, but instead
-make use of additive secret sharing and share conversion.
+that in the case of misbehaviour, the protocol aborts and the cause investigated out of band.
+Our variant, which we will refer to as PedPop,
+simply requires participants to additionally include proofs of knowledge for their secret key,
+thereby preventing rogue key attacks~\cite{RistenpartY07}.
+However, the signing operation defined by FROST \emph{does not} perform a DKG
+during signing operations as is done in both of the above schemes~\cite{StinsonR01,GennaroJK02},
+but instead make use of additive secret sharing and share conversion.
 Consequently, FROST trades off robustness for more efficient signing
 operations,
 such that a misbehaving participant can cause the signing operation to abort.
@@ -87,16 +89,17 @@ preprocessing phase entirely
 non-interactively. Further,
 participants can ``mix'' preprocessed values across different signing
 coalitions, as FROST requires that the choice for the signing coalition be made
-only during the signing stage.
+only during the second and final round of signing.
 
 Recent work by Damg\aa{}rd et al.~\cite{fast-threshold-ecdsa} define an efficient
-threshold ECDSA construction that similarly requires aborting in the case of
-misbehaviour. Their design relies on generating a blinding factor
-$d + m \cdot e$ such that
-where $d$ and $e$ are $2t$ secret sharings of zero, such
-that the entire binding factor evaluates to zero when all signing parties
-are honest and agree on $m$. This approach is similar to FROST in that signature
-shares are bound to the message and to the set of signing parties.
+threshold ECDSA construction that similarly to FROST requires aborting in the case of misbehaviour.
+%Their design relies on generating a blinding factor
+%$d + m \cdot e$ where
+%where $d$ and $e$ are $2t$ secret sharings of zero, such
+%that the entire binding factor evaluates to zero when all signing parties
+%are honest and agree on $m$.
+%Their approach is similar to FROST in that signature
+%shares are bound to the message and to the set of signing parties.
 However, the security of their
 scheme requires the majority of participants to be honest, and $n \geq 2t+1$.
 Further, their scheme requires all $n$ participants take part in signing
@@ -109,8 +112,9 @@ and use additive secret sharing to generate the nonce for Schnorr
 signatures in a threshold setting, a technique
 also used by FROST.
 However, the authors do not consider the
-Drijvers attack and consequently their design is similarly limited to
-restricted levels of parallelism. Further, their design does
+Drijvers attack~\cite{DrijversEFKLNS19} and consequently their design is similarly limited to restricted levels of parallelism;
+i.e., it is not secure against a concurrent adversary.
+Further, their design does
 not include validity checks for responses submitted by participants when
 generating signatures and consequently does not detect nor identify
 misbehaving participants.
@@ -120,8 +124,7 @@ providing a single-round signing variant with a preprocessing stage that is
 agnostic to the choice of the signing coalition. Further, the number of signing
 participants in FROST is required to be simply some $t\leq n$,
 while remaining secure against the
-Drijvers attack and misbehaving participants who do not correctly follow the
-protocol.
+Drijvers attack~\cite{DrijversEFKLNS19} and other ROS~\cite{schnorr06}. attacks.
 
 
 
@@ -147,9 +150,10 @@ Benhamouda et al. then show how the ROS problem can be applied to blind and thre
 to produce a forgery in polynomial time.
 
 \paragraph{Concurrently Secure Threshold Schnorr Signatures.}
-FROST2, proposed by Crites, Komlo, and Maller~\cite{CritesKM21} and refined by Bellare, Tessaro, and Zhu~\cite{BellareTZ22} and BCKMTZ~\cite{BellareCKMTZ22}, is an optimized version of FROST that reduces the number of exponentiations required for signing from $\thresh$ to one.
-A further optimization of FROST2, called FROST3, is introduced by RRJSS~\cite{RuffingRJSS22} and proven secure with a DKG by Chu, Gerhart, Ruffing, and Schr{\"{o}}der~\cite{ChuGRS23}.
-All three of FROST, FROST2, FROST3 are only proven statically secure, under the algebraic one-more discrete logarithm assumption (AOMDL)~\cite{BellareCKMTZ22}.
+FROST2~\cite{BellareCKMTZ22} is an optimized version of FROST that reduces the number of exponentiations required for signing from $\thresh$ to one.
+A further optimization of FROST2, called FROST3, is introduced by Ruffing et al.~\cite{RuffingRJSS22},
+and proven secure with a DKG by Chu et al.r~\cite{ChuGRS23}.
+All three of FROST, FROST2, FROST3 are proven statically secure under the algebraic one-more discrete logarithm assumption (AOMDL)~\cite{BellareCKMTZ22}.
 
 Lindell presents a three-round threshold Schnorr signature~\cite{Lindell22} with the goal of
 defining a scheme that is both secure against ROS attacks and
