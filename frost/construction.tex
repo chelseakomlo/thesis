@@ -200,15 +200,14 @@ values \emph{without} utilizing a DKG, as discussed next.
 				d_k, e_k \randpick \Z_p^2 \\
         D_k \gets g^{d_k};\ E_k \gets g^{e_k};\\
 				\state_k \gets (D_k, d_k, E_k, e_k) \\
-        \rho_k \gets (D_k, E_k) \\
-				\pcreturn (\rho_k, \state_k)
+        \pcreturn ((D_k, E_k), \state_k)
 			}
 		\end{pcvstack}
 		\begin{pcvstack}[space=1em]
-			\procedure{$\Sign_2(\state_k, \sk_k,  m, \{ \rho_i \}_{i \in \coalition})$}{
+			\procedure{$\Sign_2(\state_k, \sk_k,  m, \PM_1)$}{
         \text{\algcom $\Sign_2$ must be called at most once per $\state_k$} \\
         \text{parse}~(  D_k, d_k, E_k, e_k )  \gets \state_k \\
-        \text{parse}~ \{ D_i, E_i \}_{i \in \coalition} \gets \{ \rho_i \}_{i \in \coalition}\\
+        \text{parse}~ \{ D_i, E_i \}_{i \in \coalition} \gets \PM_1 \\
         \pcreturn \bot\ \pcif (D_k, E_k) \not\in \{ D_i,E_i \}_{i \in \coalition} \\
         \pcfor i \in \coalition \pcdo \\
         \pcind a_i \gets \HashNon(k, \threshpk, m, \{ (i, D_i, E_i)\}_{i \in \coalition}) \\
