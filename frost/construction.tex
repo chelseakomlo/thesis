@@ -46,10 +46,10 @@
           $g^{f_\ell(i)} \iseq \prod_{k=0}^{t-1} \phi_{\ell k}^{i^k}$, aborting on failure.
 
       \item[3.] Each $P_i$ calculates their long-lived private
-        signing share by computing $s_i = \sum_{\ell=1}^n f_\ell(i)$, stores
-        $s_i$ securely, and deletes each $f_\ell(i)$.
+        signing share by computing $\sk_i = \sum_{\ell=1}^n f_\ell(i)$, stores
+        $\sk_i$ securely, and deletes each $f_\ell(i)$.
       \item[4.] Each $P_i$ calculates their public verification
-        share $\pk_i = g^{s_i}$, and the group's public key
+        share $\pk_i = g^{\sk_i}$, and the group's public key
         $\pk = \prod_{j=1}^n \phi_{j0}$.
         Any participant can compute the public verification share of
         any other participant by calculating
@@ -130,8 +130,8 @@ To begin the key generation protocol, a set of participants must be formed
 using some out-of-band mechanism decided upon by the implementation.
 After participating in PedPop, each participant $P_i$
 holds a value
-$(i, s_i)$ that is their long-lived secret signing share.
-Participant $P_i$'s public key share $\pk_i = g^{s_i}$ is
+$(i, \sk_i)$ that is their long-lived secret signing share.
+Participant $P_i$'s public key share $\pk_i = g^{\sk_i}$ is
 used by other participants to verify the correctness of $P_i$'s
 signature shares in the following signing phase, while
 the group public key $\pk$ can be used by parties external to the group
@@ -348,9 +348,9 @@ E_i=g^{e_i})$ values published during the Preprocess stage.
 
 Each participant's response $z_i$ to the challenge
 can be computed using the single-use nonces $(d_i, e_i)$ and the
-long-term secret shares $s_i$, converted to additive form:
+long-term secret shares $\sk_i$, converted to additive form:
 \[
-  z_i = d_i + (e_i \cdot \rho_i) + \lambda_i \cdot s_i \cdot c
+  z_i = d_i + (e_i \cdot \rho_i) + \lambda_i \cdot \sk_i \cdot c
 \]
 
 The coordinator finally checks the consistency of each participant's reported
@@ -369,7 +369,7 @@ commitment share generated during the first round of signing described in Figure
 must be used \emph{at most once},
 participants should delete these values after using them in a signing operation,.
 An accidentally reused $(d_{ij}, e_{ij})$ can lead to exposure of the participant's
-long-term secret $s_i$.
+long-term secret $\sk_i$.
 
 However, if the coordinator chooses to re-use a commitment set $(D_i,
 E_i)$ during the signing protocol,  doing so simply results in
@@ -381,7 +381,7 @@ the participant $P_i$ aborting the protocol, and consequently does not increase 
 Signatures in FROST
 are constructed from two polynomials;
 the first polynomial $F_1(x)$ defines the secret sharing of the private
-signing key $s$ (such that $\pk = g^s$) and the
+signing key $\sk$ (such that $\pk = g^{\sk}$) and the
 second polynomial $F_2(x)$ defines the secret sharing of the nonce $k$
 such that
 \(
@@ -390,7 +390,7 @@ k = \sum_{i \in \coalition} d_i + e_i \cdot \rho_i
 using the associated public data $(m, B)$ to determine $\rho_i$.
 During the key generation phase,
 the first polynomial $F_1(x) = \sum_{j=1}^n f_j(x)$ is generated
-such that the secret key shares are $s_i = F_1(i)$ and the secret key is $s = F_1(0)$.
+such that the secret key shares are $\sk_i = F_1(i)$ and the secret key is $\sk = F_1(0)$.
 
 During the signature phase,
 each of the
@@ -401,7 +401,7 @@ such that $F_2(0) = \sum_{i \in \coalition} d_i + e_i \cdot \rho_i$.
 
 Then let $F_3(x) = F_2(x) + c \cdot F_1(x)$, where
 $c = \HashSig(R, \pk, m)$.  Now $z_i$
-equals $d_i + (e_i \cdot \rho_i) + \lambda_i \cdot s_i \cdot c =
+equals $d_i + (e_i \cdot \rho_i) + \lambda_i \cdot \sk_i \cdot c =
 \lambda_i (F_2(i) + c \cdot F_1(i)) = \lambda_i F_3(i)$, so $z = \sum_{i \in \coalition} z_i$
 is simply the Lagrange interpolation of $F_3(0) = (\sum_{i \in \coalition} d_i + e_{ij} \cdot \rho_i) + c
 \cdot s$.  Because $R = g^{\sum_{i \in \coalition} d_i + e_i \cdot \rho_i}$ and $c
