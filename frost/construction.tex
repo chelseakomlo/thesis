@@ -242,26 +242,25 @@ We now introduce the signing protocol for FROST. This operation builds upon
 known techniques in the literature~\cite{AbidinAM20,SchroderU17} by employing additive secret sharing and share
 conversion to non-interactively generate the nonce value for each
 signature.
-However, signing operations in FROST additionally leverage a binding
+However, signing operations in FROST additionally leverage a novel binding
 technique to avoid known forgery attacks without limiting concurrency.
 Verification of signatures is identical to (single-party) Schnorr signatures.
 
 We present FROST signing in two parts: a pre-processing phase and a
-single-round signing phase. However, these stages can be combined for a single
-two-round protocol if desired.
+single-round signing phase. However, these stages can be combined into a two-round protocol if desired.
 
-As a reminder, the attack of
-Drijvers et al.~\cite{DrijversEFKLNS19} requires the adversary to either
-see the victim's $T$ commitment values
-before selecting their own commitment, or to adaptively choose the message to
-be signed, so that the adversary can manipulate the resulting challenge $c$
+At a high level,
+the ROS-style attack of Drijvers et al.~\cite{DrijversEFKLNS19} requires the adversary to either
+see the victim's commitment values in the first round before selecting their own commitment,
+or to adaptively choose the message to
+be signed, so that the adversary can manipulate the resulting challenge
 for the set of participants performing a group signing operation.
 To prevent this attack without limiting concurrency,
 FROST ``binds'' each participant's response to a specific
 message as well as the set of participants and their commitments used for that
 particular signing operation. In doing so, combining responses
 over different messages or participant/commitment pairs results in an invalid
-signature, thwarting attacks such as those of Drijvers et al.
+signature, thwarting ROS-style attacks such as those of Drijvers et al.
 
 \paragraph{Coordinator Role.}
 FROST assumes an external mechanism to choose the set
@@ -269,7 +268,9 @@ $\coalition \subseteq \{1, \ldots, n \}$ of signers, where $t \leq \abs{\coaliti
 The coordinator is trusted to not perform denial of service attacks,
 but otherwise is untrusted.
 Even if the coordinator were untrusted,
-FROST would remain unforgeable.
+FROST remains unforgeable.
+The coordinator can be a stand-alone entity,
+or may also be a signer as well.
 
 
 \paragraph{Preprocessing Stage.}
@@ -278,10 +279,10 @@ The coalition $\coalition$ is required to be ordered to ensure consistency.
 
 In this setting, $\ell$ determines the number of
 nonces that are generated and their corresponding commitments that are
-published in a single preprocess step.
+published in a single preprocessing step.
 Implementations that do not wish to cache commitments can instead
 use a two-round signing protocol, where participants publish a single
-commitment to each other in the first round.
+commitment in the first round.
 
 Each participant $P_i$ begins by generating a list of
 \emph{single-use} private nonce pairs and corresponding public commitment shares
@@ -297,9 +298,8 @@ the coordinator role during signing.
 
 \paragraph{Online Signing Protocol.}
 At the beginning of the signing protocol in Figure~\ref{fig:frost},
-the coordinator selects  a coalition of parties $\coalition \subseteq \set{n}, \lvert \coalition \rvert \geq t$
-participants (possibly including itself) to participate in the signing.  Let
-$\coalition$ be the set of those $\alpha$ participants.
+the coordinator selects  a coalition of parties $\coalition \subseteq \set{n}, \lvert \coalition \rvert \geq t$ to perform signing.
+Let $\coalition$ be the set of those $\alpha$ participants.
 The coordinator then selects the next available commitment
 $(D_i, E_i) : i \in \coalition$,
 which are later used to generate a secret share to a random commitment $R$ for
