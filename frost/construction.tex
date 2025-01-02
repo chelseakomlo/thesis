@@ -1,16 +1,27 @@
 \section{Distributed Key Generation and FROST Signatures}
 
-\subsection{$\pedpop$: Key Generation for FROST}
+We present this section in two parts.
+First, we give a distributed key generation (DKG) construction,
+that is a variant of Pedersen DKG~\cite{Pedersen91},
+with zero-knowledge proofs of knowledge of each participant's contribution.
+We refer to this DKG as PedPop,
+following convention of subsequent work by this thesis author~\cite{BellareCKMTZ22}.
+In the second part,
+we present the FROST signature scheme,
+which is a threshold Schnorr signature,
+outputting a signature that is valid under the Schnorr signature verification
+algorithm~\cite{Schnorr91}.
 
-In addition to presenting the FROST threshold signature scheme,
-this chapter presents
+\subsection{PedPop: Key Generation for FROST}
+
+We next present PedPop,
 a simplified two-round DKG that builds on Schnorr signatures and Pedersen's VSS.
-In later work,
-this DKG was given the name $\pedpop$,
+In later work~\cite{BellareCKMTZ22},
+this DKG was given the name PedPop,
 which will also be used here.
-
-$\pedpop$ is a two-round distributed key generation scheme shown in Figure~\ref{fg:pedpop}.
-$\pedpop$ builds upon the DKG by Pedersen~\cite{Pedersen91},
+%
+We show PedPop in Figure~\ref{fg:pedpop}.
+PedPop builds upon the DKG by Pedersen~\cite{Pedersen91},
 with a proof of knowledge to protect against against rogue key attacks.
 
 Each participant performs the role of a dealer,
@@ -23,7 +34,7 @@ and sends the commitment to all participants.
 Additionally,
 each participant sends a proof of knowledge (specifically, a
 Schnorr signature) that demonstrates knowledge of the secret that is shared. In
-doing so, $\pedpop$ protects against rogue key attacks~\cite{RistenpartY07}.
+doing so, PedPop  protects against rogue key attacks~\cite{RistenpartY07}.
 Without this proof of knowledge,
 a rushing adversary (i.e., one that can speak last) could perform a rogue key
 attack by picking  their public key with respect to any other participant's public key,
@@ -32,7 +43,7 @@ value.
 
 \paragraph{Protocol Description.}
 To generate long-lived key shares,
-$\pedpop$ builds upon Pedersen's DKG for key generation; we detail
+PedPop builds upon Pedersen's DKG for key generation; we detail
 these protocol steps in
 Figure~\ref{fg:pedpop}.
 Note that Pedersen's DKG is
@@ -41,14 +52,13 @@ executes Feldman's VSS as the dealer in parallel, and derives their
 secret share as the sum of the shares received from each of the $n$
 VSS executions. In addition to the
 base Pedersen DKG protocol, FROST additionally requires each
-participant to demonstrate knowledge of their secret $a_{i0}$ by providing
+participant to demonstrate knowledge of their secret by providing
 other participants with proof in zero knowledge, instantiated as a Schnorr
-signature, to protect against rogue-key attacks~\cite{BellareBS03}
-in the setting where $t \geq n/2$.
+signature, to protect against rogue-key attacks~\cite{BellareBS03}.
 
 To begin the key generation protocol, a set of participants must be formed
 using some out-of-band mechanism decided upon by the implementation.
-After participating in $\pedpop$, each participant $P_i$
+After participating in PedPop, each participant $P_i$
 holds a value
 $(i, s_i)$ that is their long-lived secret signing share.
 Participant $P_i$'s public key share $\pk_i = g^{s_i}$ is
@@ -59,10 +69,10 @@ to verify signatures issued by the group in the future.
 
 \textbf{View of Commitment Values.} As required for \emph{any} multi-party
 protocol using Feldman's VSS,
-the key generation stage in $\pedpop$
+the key generation stage in PedPop
 similarly requires participants to maintain a consistent view of commitments
 $\Vec{C_i}, 1 \leq i \le n$
-issued during the execution of $\pedpop$. In this work, we
+issued during the execution of PedPop. In this work, we
 assume participants broadcast the
 commitment values honestly (e.g., participants do not provide different
 commitment values to a subset of participants).
@@ -154,7 +164,7 @@ values \emph{without} utilizing a DKG, as discussed next.
     \end{flushleft}
   \end{framed}
     \caption{A distributed
-    key generation (DKG) protocol $\pedpop$.
+    key generation (DKG) protocol PedPop.
     }
   \label{fg:pedpop}
 \end{figure*}
