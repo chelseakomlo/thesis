@@ -202,23 +202,23 @@ values \emph{without} utilizing a DKG, as discussed next.
 			}
 		\end{pcvstack}
 		\begin{pcvstack}[space=1em]
-			\procedure{$\Sign_2(\state_k, \sk_k,  m, \{ \rho_i \}_{i \in \S})$}{
+			\procedure{$\Sign_2(\state_k, \sk_k,  m, \{ \rho_i \}_{i \in \coalition})$}{
         \text{\algcom $\Sign_2$ must be called at most once per $\state_k$} \\
         \text{parse}~(  D_k, d_k, E_k, e_k )  \gets \state_k \\
-        \text{parse}~ \{ D_i, E_i \}_{i \in S} \gets \{ \rho_i \}_{i \in \S}\\
-        \pcreturn \bot\ \pcif (D_k, E_k) \not\in \{ D_i,E_i \}_{i \in S} \\
-        \pcfor i \in \S \pcdo \\
-        \pcind a_i \gets \HashNon(k, \threshpk, m, \{ (i, D_i, E_i)\}_{i \in \S}) \\
-        \aggR \gets \prod_{i \in \S} D_i \cdot {E_i}^{a_i}\\
+        \text{parse}~ \{ D_i, E_i \}_{i \in \coalition} \gets \{ \rho_i \}_{i \in \coalition}\\
+        \pcreturn \bot\ \pcif (D_k, E_k) \not\in \{ D_i,E_i \}_{i \in \coalition} \\
+        \pcfor i \in \coalition \pcdo \\
+        \pcind a_i \gets \HashNon(k, \threshpk, m, \{ (i, D_i, E_i)\}_{i \in \coalition}) \\
+        \aggR \gets \prod_{i \in \coalition} D_i \cdot {E_i}^{a_i}\\
         c \gets \HashSig(\threshpk, m, \aggR) \\
 				z_k \gets d_k + e_k a_k + c \lambda_k \sk_k\\
-				\text{\algcom $\lagrange_k$ is the $k^{th}$ Lagrange coefficient for $\S$}\\
+				\text{\algcom $\lagrange_k$ is the $k^{th}$ Lagrange coefficient for $\coalition$}\\
 				\rho'_k \gets z_k \\
 				\pcreturn \rho'_k
 			}
-			\procedure{$\Combine(\{(\rho_i, \rho_i')\}_{i \in \S})$}{
-        \text{parse}~(D_i, E_i) \gets \rho_i, z_i \gets \rho'_i, i \in \S\\
-        \aggR \gets \prod_{i \in \S} D_i\cdot{E_i}^{a_i};~z \gets \sum_{i \in \S} z_i \\
+			\procedure{$\Combine(\{(\rho_i, \rho_i')\}_{i \in \coalition})$}{
+        \text{parse}~(D_i, E_i) \gets \rho_i, z_i \gets \rho'_i, i \in \coalition\\
+        \aggR \gets \prod_{i \in \coalition} D_i\cdot{E_i}^{a_i};~z \gets \sum_{i \in \coalition} z_i \\
 				\sigma \gets (\aggR, z)\\
         \pcreturn \sigma
 			}
@@ -308,31 +308,20 @@ contributes to the group commitment $R$, which corresponds to the
 commitment $g^k$ to the nonce $k$
 in step 1 of the single-party Schnorr signature scheme in
 Section~\ref{background:schnorr}.}
-
-The resulting secret nonce is
-$k = \sum_{i \in S} k_i$, where each $k_i = d_i + e_i \cdot \rho_i$
-(we next describe how participants calculate $\rho_i$),
-and $(d_i, e_i)$ correspond to the $(D_i = g^{d_i},
-E_i=g^{e_i})$ values published during the Preprocess stage.
-Recall that if the $k_i$ are
-\emph{additive} shares of $k$, then the $\frac{k_i}{\lambda_i}$ are
-\emph{Shamir} shares of $k$, such that each $\lambda_i$ is the Lagrange
-coefficient for the $i\supth$ participant over the set $S$.
-
-After these steps,
-the coordinator then creates the set $B$, where
+%
+The coordinator then creates the set $B$, where
 $B$ is the ordered list of tuples $\langle(i, D_i, E_i)\rangle_{i \in S}$.
-The coordinator then sends $(m, B)$ to every $P_i, i \in S$.
+The coordinator then sends $(m, B)$ to every $P_i, i \in \coalition$.
 
 After receiving $(m, B)$ from the coordinator to initialize a signing operation,
 each participant checks that $m$ is a message they are willing to sign.
 Then, using $m$ and $B$,
-all participants derive the ``binding values'' $\rho_i, i \in S$ such that
+all participants derive the ``binding values'' $\rho_i, i \in C$ such that
 $\rho_i = H_1(i, m, B)$, where $H_1$ is a hash function whose outputs are in
 $\mathbb{Z}_q^*$.
 
 Each participant then
-computes the commitment $R_i$ for each participant in $S$ by
+computes the commitment $R_i$ for each participant in $\coalition$ by
 deriving $R_i = D_i \cdot (E_i)^{\rho_i}$.
 Doing so binds the
 message, the set of signing participants, and each participant's commitment
@@ -342,9 +331,18 @@ as attackers cannot combine signature shares across disjoint signing operations 
 commitments for each signer.
 
 The commitment for the set of signers
-is then simply $R = \prod_{i \in S} R_i$.
+is then simply $R = \prod_{i \in \coalition} R_i$.
 As in single-party Schnorr signatures, each participant computes the challenge
 $c = H_2(R, \pk, m)$.
+
+The resulting secret nonce is
+$k = \sum_{i \in \coalition} k_i$, where each $k_i = d_i + e_i \cdot \rho_i$,
+and $(d_i, e_i)$ correspond to the $(D_i = g^{d_i},
+E_i=g^{e_i})$ values published during the Preprocess stage.
+%Recall that if the $k_i$ are
+%\emph{additive} shares of $k$, then the $\frac{k_i}{\lambda_i}$ are
+%\emph{Shamir} shares of $k$, such that each $\lambda_i$ is the Lagrange
+%coefficient for the $i\supth$ participant over the set $S$.
 
 Each participant's response $z_i$ to the challenge
 can be computed using the single-use nonces $(d_i, e_i)$ and the
@@ -357,7 +355,7 @@ The coordinator finally checks the consistency of each participant's reported
 $z_i$ with their commitment share $(D_i, E_i)$ and their public key share
 $\pk_i$.
 If every participant issued a correct $z_i$, the group's response is
-$z = \sum_{i \in S} z_i$, and the group signature on $m$ is $\sigma=(R, z)$.
+$z = \sum_{i \in \coalition} z_i$, and the group signature on $m$ is $\sigma=(R, z)$.
 This signature is
 verifiable to anyone performing a standard Schnorr verification operation
 with $\pk$ as the public key (Section~\ref{background:schnorr}).
@@ -385,7 +383,7 @@ signing key $s$ (such that $\pk = g^s$) and the
 second polynomial $F_2(x)$ defines the secret sharing of the nonce $k$
 such that
 \(
-k = \sum_{i \in S} d_i + e_i \cdot \rho_i
+k = \sum_{i \in \coalition} d_i + e_i \cdot \rho_i
 \)
 using the associated public data $(m, B)$ to determine $\rho_i$.
 During the key generation phase,
@@ -397,13 +395,13 @@ each of the
 participants in the coalition $\coalition$ selected for signing use a pair of nonces $(d_i, e_i)$ to
 define a degree $\lvert\coalition-1 \rvert$ polynomial $F_2(x)$, interpolating the
 values $(i,\frac{d_i + e_i \cdot H_1(i, m, B)}{\lambda_i})$,
-such that $F_2(0) = \sum_{i \in S} d_i + e_i \cdot \rho_i$.
+such that $F_2(0) = \sum_{i \in \coalition} d_i + e_i \cdot \rho_i$.
 
 Then let $F_3(x) = F_2(x) + c \cdot F_1(x)$, where
 $c = H_2(R, \pk, m)$.  Now $z_i$
 equals $d_i + (e_i \cdot \rho_i) + \lambda_i \cdot s_i \cdot c =
-\lambda_i (F_2(i) + c \cdot F_1(i)) = \lambda_i F_3(i)$, so $z = \sum_{i \in S} z_i$
-is simply the Lagrange interpolation of $F_3(0) = (\sum_{i \in S} d_i + e_{ij} \cdot \rho_i) + c
-\cdot s$.  Because $R = g^{\sum_{i \in S} d_i + e_i \cdot \rho_i}$ and $c
+\lambda_i (F_2(i) + c \cdot F_1(i)) = \lambda_i F_3(i)$, so $z = \sum_{i \in \coalition} z_i$
+is simply the Lagrange interpolation of $F_3(0) = (\sum_{i \in \coalition} d_i + e_{ij} \cdot \rho_i) + c
+\cdot s$.  Because $R = g^{\sum_{i \in \coalition} d_i + e_i \cdot \rho_i}$ and $c
 = H_2(R, \pk, m)$, $(R, z)$ is a
 correct Schnorr signature on $m$.
