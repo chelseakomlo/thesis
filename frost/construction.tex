@@ -200,7 +200,8 @@ values \emph{without} utilizing a DKG, as discussed next.
 				d_k, e_k \randpick \Z_p^2 \\
         D_k \gets g^{d_k};\ E_k \gets g^{e_k};\\
 				\state_k \gets (D_k, d_k, E_k, e_k) \\
-        \pcreturn ((D_k, E_k), \state_k)
+        \gmsg_{1,k} \gets (D_k, E_k) \\
+        \pcreturn (\gmsg_{1,k} \state_k)
 			}
 		\end{pcvstack}
 		\begin{pcvstack}[space=1em]
@@ -210,17 +211,18 @@ values \emph{without} utilizing a DKG, as discussed next.
         \text{parse}~ \{ D_i, E_i \}_{i \in \coalition} \gets \PM_1 \\
         \pcreturn \bot\ \pcif (D_k, E_k) \not\in \{ D_i,E_i \}_{i \in \coalition} \\
         \pcfor i \in \coalition \pcdo \\
-        \pcind a_i \gets \HashNon(k, \threshpk, m, \{ (i, D_i, E_i)\}_{i \in \coalition}) \\
-        \aggR \gets \prod_{i \in \coalition} D_i \cdot {E_i}^{a_i}\\
+        \pcind \bindingf_i \gets \HashNon(k, \threshpk, m, \{ (i, D_i, E_i)\}_{i \in \coalition}) \\
+        \aggR \gets \prod_{i \in \coalition} D_i \cdot {E_i}^{\bindingf_i}\\
         c \gets \HashSig(\threshpk, m, \aggR) \\
-				z_k \gets d_k + e_k a_k + c \lambda_k \sk_k\\
+				z_k \gets d_k + e_k \bindingf_k + c \lambda_k \sk_k\\
 				\text{\algcom $\lagrange_k$ is the $k^{th}$ Lagrange coefficient for $\coalition$}\\
-				\rho'_k \gets z_k \\
-				\pcreturn \rho'_k
+        \gmsg_{2,k} \gets z_k \\
+        \pcreturn \gmsg_{2,k}
 			}
-			\procedure{$\Combine(\{(\rho_i, \rho_i')\}_{i \in \coalition})$}{
-        \text{parse}~(D_i, E_i) \gets \rho_i, z_i \gets \rho'_i, i \in \coalition\\
-        \aggR \gets \prod_{i \in \coalition} D_i\cdot{E_i}^{a_i};~z \gets \sum_{i \in \coalition} z_i \\
+      \procedure{$\Combine(\{(\gmsg_{1,i}, \gmsg_{2,i})\}_{i \in \coalition})$}{
+        \text{parse}~(D_i, E_i) \gets \gmsg_{1,i},
+        z_i \gets \gmsg_{2,i}, i \in \coalition\\
+        \aggR \gets \prod_{i \in \coalition} D_i\cdot{E_i}^{\bindingf_i};~z \gets \sum_{i \in \coalition} z_i \\
 				\sigma \gets (\aggR, z)\\
         \pcreturn \sigma
 			}
@@ -318,12 +320,12 @@ The coordinator then sends $(m, B)$ to every $P_i, i \in \coalition$.
 After receiving $(m, B)$ from the coordinator to initialize a signing operation,
 each participant checks that $m$ is a message they are willing to sign.
 Then, using $m$ and $B$,
-all participants derive the ``binding values'' $\rho_i, i \in C$ such that
-$\rho_i = \HashNon(i, m, B)$, where $\HashNon$ is a hash function whose outputs are in $\mathbb{Z}_q^*$.
+all participants derive the ``binding values'' $\bindingf_i, i \in C$ such that
+$\bindingf_i = \HashNon(i, m, B)$, where $\HashNon$ is a hash function whose outputs are in $\mathbb{Z}_q^*$.
 
 Each participant then
 computes the commitment $R_i$ for each participant in $\coalition$ by
-deriving $R_i = D_i \cdot (E_i)^{\rho_i}$.
+deriving $R_i = D_i \cdot (E_i)^{\bindingf_i}$.
 Doing so binds the
 message, the set of signing participants, and each participant's commitment
 to each signature share.
@@ -337,7 +339,7 @@ As in single-party Schnorr signatures, each participant computes the challenge
 $c = \HashSig(R, \pk, m)$.
 
 The resulting secret nonce is
-$k = \sum_{i \in \coalition} k_i$, where each $k_i = d_i + e_i \cdot \rho_i$,
+$k = \sum_{i \in \coalition} k_i$, where each $k_i = d_i + e_i \cdot \bindingf_i$,
 and $(d_i, e_i)$ correspond to the $(D_i = g^{d_i},
 E_i=g^{e_i})$ values published during the Preprocess stage.
 %Recall that if the $k_i$ are
@@ -349,7 +351,7 @@ Each participant's response $z_i$ to the challenge
 can be computed using the single-use nonces $(d_i, e_i)$ and the
 long-term secret shares $\sk_i$, converted to additive form:
 \[
-  z_i = d_i + (e_i \cdot \rho_i) + \lambda_i \cdot \sk_i \cdot c
+  z_i = d_i + (e_i \cdot \bindingf_i) + \lambda_i \cdot \sk_i \cdot c
 \]
 
 The coordinator finally checks the consistency of each participant's reported
@@ -384,9 +386,9 @@ signing key $\sk$ (such that $\pk = g^{\sk}$) and the
 second polynomial $F_2(x)$ defines the secret sharing of the nonce $k$
 such that
 \(
-k = \sum_{i \in \coalition} d_i + e_i \cdot \rho_i
+k = \sum_{i \in \coalition} d_i + e_i \cdot \bindingf_i
 \)
-using the associated public data $(m, B)$ to determine $\rho_i$.
+using the associated public data $(m, B)$ to determine $\bindingf_i$.
 During the key generation phase,
 the first polynomial $F_1(x) = \sum_{j=1}^n f_j(x)$ is generated
 such that the secret key shares are $\sk_i = F_1(i)$ and the secret key is $\sk = F_1(0)$.
@@ -396,13 +398,14 @@ each of the
 participants in the coalition $\coalition$ selected for signing use a pair of nonces $(d_i, e_i)$ to
 define a degree $\lvert\coalition-1 \rvert$ polynomial $F_2(x)$, interpolating the
 values $(i,\frac{d_i + e_i \cdot \HashNon(i, m, B)}{\lambda_i})$,
-such that $F_2(0) = \sum_{i \in \coalition} d_i + e_i \cdot \rho_i$.
+such that $F_2(0) = \sum_{i \in \coalition} d_i + e_i \cdot \bindingf_i$.
 
 Then let $F_3(x) = F_2(x) + c \cdot F_1(x)$, where
 $c = \HashSig(R, \pk, m)$.  Now $z_i$
-equals $d_i + (e_i \cdot \rho_i) + \lambda_i \cdot \sk_i \cdot c =
+equals $d_i + (e_i \cdot \bindingf_i) + \lambda_i \cdot \sk_i \cdot c =
 \lambda_i (F_2(i) + c \cdot F_1(i)) = \lambda_i F_3(i)$, so $z = \sum_{i \in \coalition} z_i$
-is simply the Lagrange interpolation of $F_3(0) = (\sum_{i \in \coalition} d_i + e_{ij} \cdot \rho_i) + c
-\cdot s$.  Because $R = g^{\sum_{i \in \coalition} d_i + e_i \cdot \rho_i}$ and $c
+is simply the Lagrange interpolation of $F_3(0) = (\sum_{i \in \coalition} d_i + e_{ij} \cdot \bindingf_i) + c
+\cdot \sk$.
+Because $R = g^{\sum_{i \in \coalition} d_i + e_i \cdot \bindingf_i}$ and $c
 = \HashSig(R, \pk, m)$, $(R, z)$ is a
 correct Schnorr signature on $m$.

@@ -10,7 +10,8 @@ represents the set of all $n$ signers,
 A threshold signature scheme should remain unforgeable even if $\tcornew$ signers are corrupted,
 where $\tcornew \leq \tcor$.
 
-Note that our definition of threshold signatures simply assumes that participants exchange messages $ \{\msg_{ 1, j}$ where $i$ represents participant $i$  and $j$ represents the $j$\supth signing round.
+Note that our definition of threshold signatures simply assumes that
+participants exchange messages $ \{\gmsg_{ 1, j}$ where $i$ represents participant $i$  and $j$ represents the $j$\supth signing round.
 We model threshold signatures assuming a coordinator role,
 and so do not distinguish between peer-to-peer and broadcast messages.
 Our notion of unforgeability assumes that the adversary can play the role of the coordinator,
@@ -44,21 +45,21 @@ signers and the set $\{ \aggpk_i \}_{i \in \set{n}}$ of public keys for each sig
     Each $\sk_i$ is given to participant $i$, for $i \in \set{n}$.
     It is assumed that participant $i$ is sent its respective share $\sk_i$ privately.
 
-  \item $(\Sign_1, \ldots, \Sign_\numrounds) \rightarrow \{\msg_{ 1, i},
-    \ldots, \msg_{\numrounds, i} \}_{i \in \coalition}$:
+  \item $(\Sign_1, \ldots, \Sign_\numrounds) \rightarrow \{\gmsg_{ 1, i},
+    \ldots, \gmsg_{\numrounds, i} \}_{i \in \coalition}$:
     A set of probabilistic algorithms where each subsequent algorithm represents a single stage in an interactive signing protocol,
     performed by each signing party in a signing set
     $\coalition \subseteq \set{n}, |\coalition| \geq \thresh$,
     with respect to a message $m$, defined as follows:
   \begin{align}\label{eqn:protocol-messages}
     \begin{split}
-    (\msg_{1,i}, \state_{1,i}) &\gets \Sign_1(i, \sk_i, \coalition, m)   \\
-    (\msg_{2,i}, \state_{2,i}) &\gets \Sign_2(\state_{1,i}, \PM_{1})   \\
+    (\gmsg_{1,i}, \state_{1,i}) &\gets \Sign_1(i, \sk_i, \coalition, m)   \\
+    (\gmsg_{2,i}, \state_{2,i}) &\gets \Sign_2(\state_{1,i}, \PM_{1})   \\
     \vdots \\
-    \msg_{\numrounds, i} &\gets \Sign_\numrounds(\state_{\numrounds-1,i}, \PM_{\numrounds-1}) \\
+    \gmsg_{\numrounds, i} &\gets \Sign_\numrounds(\state_{\numrounds-1,i}, \PM_{\numrounds-1}) \\
     \end{split}
   \end{align}
-    where $\msg_{ 1, i}, \ldots, \msg_{\numrounds, i}$ are protocol messages for each signing round,
+    where $\gmsg_{ 1, i}, \ldots, \gmsg_{\numrounds, i}$ are protocol messages for each signing round,
      $\PM$ is a set of protocol messages, and
   $\state_{j,i}$ is the state of signing party $i$ in $\coalition$ in round $j$.
   The signing set $\coalition$ and message $m$ are shown here as inputs to the first round,
