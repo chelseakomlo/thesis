@@ -219,12 +219,12 @@ queried by $\A$ to honest signers,
   \item Checks if this signing session has already started by checking if $(k, \ssid) \in W$,
   returning $\bot$ if the check holds.
   \item Otherwise, it opens a new signing session for participant $k$ by storing $W \gets W \cup \{(k, \ssid) \} $.
-  \item Next, $\SIM$ sets $R_k \gets X_\counter$ and $S_k \gets X_{\counter+1}$,
+  \item Next, $\SIM$ sets $D_k \gets X_\counter$ and $E_k \gets X_{\counter+1}$,
   where $\counter$ represents the next-unused value from the set of challenges $(X_1, \ldots, X_{2 q_S})$.
   It then increments $\counter \gets \counter + 2$.
-  \item $\SIM$ then sets $\state_{k,\ssid} \gets (k, \ssid, R_k, S_k)$,
-  and stores $Q_1[(k, \ssid)] = (R_k, S_k)$,
-  \item Finally, $\B$ returns $(R_k, S_k)$ to $\A$.
+  \item $\SIM$ then sets $\state_{k,\ssid} \gets (k, \ssid, D_k, E_k)$,
+  and stores $Q_1[(k, \ssid)] = (D_k, E_k)$,
+  \item Finally, $\B$ returns $(D_k, E_k)$ to $\A$.
   \end{enumerate}
 
 \item{Round 2 ($\BigO^{\Sign_2}(k, \ssid, m, \S, \{ (D_i, E_i) \}_{i \in \coalition})$):}
@@ -236,27 +236,27 @@ queried by $\A$ to honest signers,
   \item Checks if this signing session has already closed by checking if $(k, \ssid) \in W'$,
   \item Checks if this signing session has not yet been opened, by if $(k, \ssid) \not\in W$,
   returning $\bot$ if the check holds.
-\item Checks that $(k, \ssid, R_k, S_k) \in Q_1$ and $Q_2[(R_k, S_k)] = \bot$
+\item Checks that $(k, \ssid, D_k, E_k) \in Q_1$ and $Q_2[(D_k, E_k)] = \bot$
     to ensure that they were indeed issued in Round 1 and have not yet been used,
     returning $\bot$ if the check does not hold.
   \item Otherwise, $\SIM$ follows the protocol honestly to derive each $a_i, i \in \coalition$,
   and then the group commitment
   $\aggR \gets \prod_{i \in \coalition} D_i \cdot {E_i}^{a_i}$
   and the challenge $c \gets \HashSig(\threshpk, m, \aggR)$.
-  \item $\B$ then sets $Z_k \gets R_k \cdot S_k^{a_k} \cdot {\pk_k}^{c \lambda_k}$,
+  \item $\B$ then sets $Z_k \gets D_k \cdot E_k^{a_k} \cdot {\pk_k}^{c \lambda_k}$,
   and queries the AOMDL oracle $\odlsol$ on $Z_k$ and
   coefficients $(\alpha, ( \beta_i)_{i \in \set{2q_s + 1}})$,
   where each coefficient is set to zero,
   with the exception of
   $\alpha = c \lambda_k \cdot \sum_{i \in \corrupt} \sk_i L_i'$,
   and $(\beta_0 = c \lambda_k \cdot L_0', \beta_i = 1, \beta_{i+1} = a_i)$.
-  Here, $(i, i+1)$ corresponds to the AOMDL challenges $(R_k=X_i, S_k=X_{i+1})$ for this signing query,
+  Here, $(i, i+1)$ corresponds to the AOMDL challenges $(D_k=X_i, E_k=X_{i+1})$ for this signing query,
   where $L_i'$ is the Lagrange coefficient for $i \in \corrupt$ associated with the set $\{ 0\} \cup \corrupt$,
   such that $\pk_k^c = \pk^{L_0' c} \cdot g^{c \alpha}$.
   \item $\SIM$ then receives $z_k$ in return from its AOMDL oracle,
     which is the discrete logarithm of $Z_k$.
   \end{enumerate}
-  \item $\SIM$ then stores $Q_2[(R_k, S_k)] = (z_k, c \lambda_k)$.
+  \item $\SIM$ then stores $Q_2[(D_k, E_k)] = (z_k, c \lambda_k)$.
   \item $\SIM$ then returns $z_k$ to $\A$.
   \end{itemize}
 
@@ -278,7 +278,7 @@ queried by $\A$ to honest signers,
   where $\pk_i = g^{f(i)}$.
   For signing, simulation is perfect because $\SIM$ receives $z_k$ from its AOMDL oracle,
   which is the discrete logarithm of $Z_k$,
-  with respect to $R_k, S_k, \pk_k$.
+  with respect to $D_k, E_k, \pk_k$.
 
 
 \paragraph{Output.} At the end of the game,
