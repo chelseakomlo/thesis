@@ -326,7 +326,7 @@ and the adversary's forgery with respect to $\pkgroup=\dlchal$.
   as described in Lemma~\ref{lem:frost-simulation} that simulates FROST to $\adv$,
   then we can define a PPT adversary $\ddv$ that can efficiently solve for an AOMDL challenge instance.
 
-  $\ddv$ begins by accepting parameters $\pp = (\Gr, g, p)$ and a set  of $2q_s+1$ AOMDL challenges $\{ X_0, \ldots, X_{2q_s}\}$.
+  $\ddv$ begins by accepting parameters $\pp = (\Gr, q, g)$ and a set  of $2q_s+1$ AOMDL challenges $\{ X_0, \ldots, X_{2q_s}\}$.
   It then chooses a $(t, n)$ such that $n \geq t$.
 
   $\ddv$ then executes the modified forking algorithm $\modgenfork^{\SIM}(X)$ as described in Section~\ref{mod-fork} and shown in Figure~\ref{fg:gen-fork-mod},
@@ -395,8 +395,8 @@ and the adversary's forgery with respect to $\pkgroup=\dlchal$.
 
   \begin{align} \label{eq:two-executions}
     \begin{split}
-      & (\ssid_i, a_{i0}, c_{i0}, R_{i0}, S_{i0},  \resp_{i0}), i \in  \set{\numsignq},  \text{and} \\
-      & (\ssid_i, a_{i1}, c_{i1},  R_{i1}, S_{i1}, \resp_{i1}), i \in \set{\numsignq} \\
+      & (\ssid_i, a_{i0}, c_{i0}, D_{i0}, E_{i0},  \resp_{i0}), i \in  \set{\numsignq},  \text{and} \\
+      & (\ssid_i, a_{i1}, c_{i1},  D_{i1}, E_{i1}, \resp_{i1}), i \in \set{\numsignq} \\
     \end{split}
 \end{align}
 
@@ -404,9 +404,9 @@ and the adversary's forgery with respect to $\pkgroup=\dlchal$.
 Because (1) $\SIM$ is deterministic
 (as $\SIM$ is run on the same random tape for each execution)
 and (2) each commitment pair is associated with exactly one session identifier $\ssid_i$,
-the commitment pairs $(R_{ij}, S_{ij})$  will be issued with the same $\ssid_i$ each time $\SIM$ is executed.
+the commitment pairs $(D_{ij}, E_{ij})$  will be issued with the same $\ssid_i$ each time $\SIM$ is executed.
 %
-Hence, $R_{i0} = R_{i1}$ and $S_{i0} = S_{i1}$.
+Hence, $D_{i0} = D_{i1}$ and $E_{i0} = E_{i1}$.
 
 Consequently,
 the following cases depend only on  the relation between
