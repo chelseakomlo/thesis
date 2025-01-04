@@ -11,9 +11,9 @@ Prior work by this thesis author~\cite{BellareCKMTZ22} gives a direct proof for 
 
 
 \begin{theorem}\label{thm:FROST-aomdl}
-	FROST is statically unforgeable against an adversary $\adv$ that is allowed to corrupt up to $\tcor$ participants,
+	FROST is statically unforgeable   against an adversary $\adv$ that is allowed to corrupt up to $\tcor$ participants,
   assuming the AOMDL assumption holds for $\GroupGen$ in the ROM.
-  In other words, for every static unforgeability adversary $\adv$ that wins the adaptive unforgeability game against FROST,
+  In other words, for every static unforgeability adversary $\adv$ that wins the adaptive unforgeability game as shown in Figure~\ref{fig:euf-cma-threshold} against FROST,
   there exists a PPT adversary $\ddv$ that wins the AOMDL game.
 
   The advantage of $\adv$ is bounded by
@@ -24,7 +24,7 @@ Prior work by this thesis author~\cite{BellareCKMTZ22} gives a direct proof for 
     \leq \sqrt{\rototal \cdot \advant{aomdl}{\ddv}(\secp) } + \mathsf{negl}(\secp)
   \end{equation*}
 
-such that $\numsignq = \qnon + \qsigh +  \qsig + 1$ is the number of times $\adv$ is allowed to query the signing oracles,
+such that $\rototal = \qnon + \qsigh +  \qsig + 1$ is the number of times $\adv$ is allowed to query the random oracle,
 where $\qnon$ is the number of times $\adv$ is allowed to query $\HashNon$,
 $\qsigh$ is the number of times $\adv$ is allowed to query $\HashSig$,
 and $\qsig$ is the number of times $\adv$ is allowed to query its signing oracle.
@@ -109,7 +109,7 @@ Concretely,
   \medskip
 
   \noindent\textit{Setup.}
-  $\SIM$ is initialized with parameters $\pp = (\Gr, g, p)$,
+  $\SIM$ is initialized with parameters $\pp = (\Gr, q, g)$,
   a set  of $2q_s+1$ AOMDL challenges $\{ X_0, \ldots, X_{2q_s}\}$,
   and a set of values
   $\{h_1, \ldots, h_{\rototal} \}$ to program its random oracles.
@@ -162,8 +162,7 @@ queried by $\A$ to honest signers,
   \medskip
   \paragraph{Simulating Random Oracles.}
   To simulate $\adv$'s random oracle queries,
-  $\SIM$ simply performs lazy sampling.
-  It programs $\HashNon, \HashSig$ with values from its input
+  $\SIM$ programs $\HashNon, \HashSig$ with values from its input
   $\{h_1, \ldots, h_{\rototal} \}$,
   as follows.
 
