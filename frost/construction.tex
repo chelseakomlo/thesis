@@ -6,8 +6,9 @@
     \textbf{Round 1}
 \begin{description}
   \item[1.] Every participant $P_i$ samples $t$ random values
-        $(a_{i0}, \dots, a_{i(t-1))}) \rgets \mathbb{Z}_q$, and uses these values as
-        coefficients to define a degree $t-1$ polynomial $f_i(x) =
+        $(a_{i0}, \dots, a_{i(t-1))}) \rgets \mathbb{Z}_q$,
+        and performs Shamri secret sharing,
+        by using these values as coefficients to define a degree $t-1$ polynomial $f_i(x) =
         \sum_{j=0}^{t-1} a_{ij} x^j$.
       \item[2.] Every $P_i$ computes a proof of knowledge to the
         corresponding secret $a_{i0}$ by calculating
@@ -201,7 +202,7 @@ values \emph{without} utilizing a DKG, as discussed next.
         D_k \gets g^{d_k};\ E_k \gets g^{e_k};\\
 				\state_k \gets (D_k, d_k, E_k, e_k) \\
         \gmsg_{1,k} \gets (D_k, E_k) \\
-        \pcreturn (\gmsg_{1,k} \state_k)
+        \pcreturn (\gmsg_{1,k}, \state_k)
 			}
 		\end{pcvstack}
 		\begin{pcvstack}[space=1em]
@@ -219,9 +220,9 @@ values \emph{without} utilizing a DKG, as discussed next.
         \gmsg_{2,k} \gets z_k \\
         \pcreturn \gmsg_{2,k}
 			}
-      \procedure{$\Combine(\{(\gmsg_{1,i}, \gmsg_{2,i})\}_{i \in \coalition})$}{
-        \text{parse}~(D_i, E_i) \gets \gmsg_{1,i},
-        z_i \gets \gmsg_{2,i}, i \in \coalition\\
+      \procedure{$\Combine(\coalition, m, \PM_1, \PM_2)$}{
+        \text{parse}~\{ (D_i, E_i) \}_{i \in \coalition}  \gets \PM_1,
+        \{ z_i \}_{i \in \coalition} \gets \PM_2 \\
         \aggR \gets \prod_{i \in \coalition} D_i\cdot{E_i}^{\bindingf_i};~z \gets \sum_{i \in \coalition} z_i \\
 				\sigma \gets (\aggR, z)\\
         \pcreturn \sigma
