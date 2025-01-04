@@ -167,19 +167,20 @@ queried by $\A$ to honest signers,
   as follows.
 
   \begin{itemize}
-  \item{}\underline{$\HashNon:$} When $\A$ queries $\HashNon$ on $(k, \threshpk, m, \{   (i, R_i, S_i)\}_{i \in \coalition})$,
+  \item{}\underline{$\HashNon:$} When $\A$ queries $\HashNon$ on $(k, \threshpk, m, \{   (i, D_i, E_i)\}_{i \in \coalition})$,
   To respond,
   $\SIM$ does the following:
   \begin{enumerate}
-    \item First, $\SIM$ checks if $\QNon[(k, \threshpk, \allowbreak m,\allowbreak \{ (i, R_i, S_i)\}_{i \in \coalition})] \neq  \bot$.
-      If not, $\SIM$ simply returns $\QNon[(k, \threshpk, \allowbreak m,\allowbreak \{ (i, R_i, S_i)\}_{i \in \coalition})] $,
+    \item First, $\SIM$ checks if $\QNon[(k, \threshpk, \allowbreak m,\allowbreak \{ (i, D_i, E_i)\}_{i \in \coalition})] \neq  \bot$.
+      If not, $\SIM$ simply returns $\QNon[(k, \threshpk, \allowbreak m,\allowbreak \{ (i, D_i, E_i)\}_{i \in \coalition})] $,
     \item Otherwise, for all $j \in \coalition$, $\SIM$ does the following:
   \begin{enumerate}
     \item $\SIM$ sets $a_j \gets h_j $ and
-      $\QNon[(j, \threshpk, m, \{(i, R_i, S_i)\}_{i \in \coalition})] = a_j$
+      $\QNon[(j, \threshpk, m, \{(i, D_i, E_i)\}_{i \in \coalition})] = a_j$
       where $h_j$ is the next-unused hash value provided to $\SIM$ on initialization.
   \end{enumerate}
-    \item Then, $\SIM$ derives $\aggR \gets \prod_{i \in \coalition} R_i \cdot S_i^{a_i}$.
+    \item Then, $\SIM$ derives
+    $\aggR \gets \prod_{i \in \coalition} D_i \cdot E_i^{a_i}$.
     \item $\SIM$ checks if $\QSig[(\threshpk, m, \aggR)] = \bot$;
       if the check does not hold,
       $\SIM$ returns $\BadEventOne$.
@@ -226,10 +227,10 @@ queried by $\A$ to honest signers,
   \item Finally, $\B$ returns $(R_k, S_k)$ to $\A$.
   \end{enumerate}
 
-\item{Round 2 ($\BigO^{\Sign_2}(k, \ssid, m, \S, \{ (R_i, S_i) \}_{i \in \coalition})$):}
+\item{Round 2 ($\BigO^{\Sign_2}(k, \ssid, m, \S, \{ (D_i, E_i) \}_{i \in \coalition})$):}
 	When $\A$ queries $\BigO^{\Sign_2}$ for honest participant identifier $k \in \honest$,
   session identifier $\ssid$, message $m$, signing set $\coalition$,
-  and set of nonce commitments $\{ (R_i, S_i) \}_{i \in \coalition}$,
+  and set of nonce commitments $\{ (D_i, E_i) \}_{i \in \coalition}$,
   $\SIM$ does as follows:
   \begin{enumerate}
   \item Checks if this signing session has already closed by checking if $(k, \ssid) \in W'$,
@@ -239,7 +240,8 @@ queried by $\A$ to honest signers,
     to ensure that they were indeed issued in Round 1 and have not yet been used,
     returning $\bot$ if the check does not hold.
   \item Otherwise, $\SIM$ follows the protocol honestly to derive each $a_i, i \in \coalition$,
-  and then the group commitment $\aggR \gets \prod_{i \in \coalition} R_i \cdot {S_i}^{a_i}$
+  and then the group commitment
+  $\aggR \gets \prod_{i \in \coalition} D_i \cdot {E_i}^{a_i}$
   and the challenge $c \gets \HashSig(\threshpk, m, \aggR)$.
   \item $\B$ then sets $Z_k \gets R_k \cdot S_k^{a_k} \cdot {\pk_k}^{c \lambda_k}$,
   and queries the AOMDL oracle $\odlsol$ on $Z_k$ and
@@ -378,7 +380,7 @@ and the adversary's forgery with respect to $\pkgroup=\dlchal$.
 
 
  \paragraph{Extracting the Discrete Logarithms of $X_1, \ldots, X_{2q_s}$.}
-  Finally, $\ddv$ must solve for all remaining $(R_i=X_i, S_i=X_{i+1})$ AOMDL challenges.
+  Finally, $\ddv$ must solve for all remaining $(D_i=X_i, E_i=X_{i+1})$ AOMDL challenges.
   $\ddv$ can do so in a same manner as prior reductions to OMDL~\cite{BellareCKMTZ22}.
   since $\ddv$ has already made its AOMDL queries and obtained valid solutions.
   We give these techniques below, for completeness.
@@ -422,32 +424,32 @@ then
 $\resp_{i0} \neq \resp_{i1}$.
 Hence,  $\odlsol$ will have been queried twice during the two executions of $\SIM$ to obtain $\resp_{i0} $ and $\resp_{i1}$
 However,
-$\ddv$ can solve for both  $x_i=r_i$ and $x_{i+1} = s_i$ without making any additional $\odlsol$ queries, by performing the following steps:
+$\ddv$ can solve for both  $x_i=d_i$ and $x_{i+1} = e_i$ without making any additional $\odlsol$ queries, by performing the following steps:
 
 \begin{itemize}
-    \item \textbf{Step One.} Derive $\resp_{i0} -\resp_{i1} $, resulting in Equation~\ref{eq:s_i-solve-1}, after cancelling out the $r_i$ term:
+    \item \textbf{Step One.} Derive $\resp_{i0} -\resp_{i1} $, resulting in Equation~\ref{eq:s_i-solve-1}, after cancelling out the $d_i$ term:
 
        \begin{equation} \label{eq:s_i-solve-1}
-       \resp_{i0} - \resp_{i1} = \underline{s_i}\cdot a_{i0} + \SK \cdot c_{i0} - \underline{s_i}\cdot a_{i1} - \SK \cdot c_{i1}
+       \resp_{i0} - \resp_{i1} = \underline{e_i}\cdot a_{i0} + \SK \cdot c_{i0} - \underline{e_i}\cdot a_{i1} - \SK \cdot c_{i1}
    \end{equation}
 
-    \item \textbf{Step Two.} $\ddv$ can then solve efficiently for $s_i$, by Equation~\ref{eq:solve-s_i-2}
+    \item \textbf{Step Two.} $\ddv$ can then solve efficiently for $e_i$, by Equation~\ref{eq:solve-s_i-2}
 
     \begin{equation} \label{eq:solve-s_i-2}
-        \underline{s_i} = \frac{ \resp_{i0} - \resp_{i1} + \SK ( c_{i1} - c_{i0})}{a_{i0}  - a_{i1}}
+        \underline{e_i} = \frac{ \resp_{i0} - \resp_{i1} + \SK ( c_{i1} - c_{i0})}{a_{i0}  - a_{i1}}
     \end{equation}
 
     Because $a_{i0} \neq a_{i1}$,
     Equation~\ref{eq:solve-s_i-2} is solveable.
 
-    \item \textbf{Step Three.} $\ddv$ can then solve efficiently for $r_i$, as follows:
+    \item \textbf{Step Three.} $\ddv$ can then solve efficiently for $d_i$, as follows:
 
-    \[ \underline{r_i} = z_{i0} - s_i \cdot a_{i0} - c_{i0} \cdot \SK_k  \]
+    \[ \underline{d_i} = z_{i0} - e_i \cdot a_{i0} - c_{i0} \cdot \SK_k  \]
 
 \end{itemize}
 
-So, in this case, exactly two $\odlsol$ queries were made for the two challenges $(X_i = R_i, X_{i+1} = S_i)$,
-and $\ddv$ can efficiently solve for $y_i=r_i$ and $y_{i+1} = s_i$.
+So, in this case, exactly two $\odlsol$ queries were made for the two challenges $(X_i = D_i, X_{i+1} = E_i)$,
+and $\ddv$ can efficiently solve for $y_i=d_i$ and $y_{i+1} = e_i$.
 \end{case}
 
 \begin{case}[$
@@ -464,15 +466,15 @@ $\SIM$ will have made only one unique $\odlsol$ to obtain $\resp_{i0} = \resp_{i
 leaving one additional query available in the allowed ``budget.''
 
 
-$\ddv$ can then query $\odlsol$ one additional time on $R_i$ to obtain $r_i=x_i$.
-$\ddv$ can then solve for $x_{i+1} = s_i$ directly, by solving the linear relation in
-Equation~\ref{eq:solve-s_i-2} where the single unknown term $s_i$ is underlined for emphasis:
+$\ddv$ can then query $\odlsol$ one additional time on $D_i$ to obtain $d_i=x_i$.
+$\ddv$ can then solve for $x_{i+1} = e_i$ directly, by solving the linear relation in
+Equation~\ref{eq:solve-s_i-2} where the single unknown term $e_i$ is underlined for emphasis:
 
 \begin{equation} \label{eq:solve-s_i-2}
- \underline{s_i} = \frac{ \resp_{i0} - r_i - \SK_k \cdot c_{i0} }{a_{i0}}
+ \underline{e_i} = \frac{ \resp_{i0} - d_i - \SK_k \cdot c_{i0} }{a_{i0}}
 \end{equation}
 
-So, again, in this case,  exactly two $\odlsol$ queries were made for the two challenges  $(X_i = R_i, X_{i+1} = S_i)$, and $\ddv$ has solved for $y_i=r_i$ and $y_{i+1} = s_i$.
+So, again, in this case,  exactly two $\odlsol$ queries were made for the two challenges  $(X_i = D_i, X_{i+1} = E_i)$, and $\ddv$ has solved for $y_i=d_i$ and $y_{i+1} = e_i$.
 \end{case}
 
 \begin{case}[$
