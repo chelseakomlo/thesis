@@ -22,9 +22,14 @@ In particular,
 the security of the scheme assumes $t-1$ players are corrupted,
 and so can deviate arbitrarily from the protocol.
 The security of the scheme ensures that in spite of a subset of corrupted players,
-the scheme can provide important properties such as robustness,
-unforgeability,
-or indistiguishability from some target distribution.
+the scheme remains unforgeable.
+%
+As such,
+threshold signatures offer practical security benefits,
+allowing for dynamic key management and defense in depth against potential adversarial corruptions.
+While threshold signatures can be instantiated by simply concatenating multiple individual signatures into a single joint signature,
+a practical goal for threshold signatures is to preserve compatibility with existing single-party signature schemes,
+to minimize implementation complexity.
 
 \paragraph{Motivation.}
 Interest in threshold schemes is growing in practice.

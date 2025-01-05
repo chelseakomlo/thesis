@@ -37,9 +37,10 @@ Our generic construction simply aborts the protocol,
 requiring the implementation to investigate the set of cheating players outside
 the protocol, a reasonable assumption in practice.
 
-Komlo and Goldberg~\cite{KomloG20} introduce a variant of Pedersen-DKG that we refer to as $\pedpop$,
+In Chapter~\ref{chp:frost},
+we introduce a variant of Pedersen-DKG that we refer to as PedPop,
 where the dealer additionally sends a Schnorr proof of possession to prevent rogue-key attacks.
-Bellare et al.~\cite{BellareCKMTZ22} present an alternative proof of security for $\pedpop$,
+Bellare et al.~\cite{BellareCKMTZ22} present an alternative proof of security for PedPop,
 in the context of the FROST threshold signature,
 but this proof does not extend to the use of $\pedpop$ in other settings.
 

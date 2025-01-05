@@ -1,14 +1,7 @@
-\section{Introduction}
-
-Threshold signature schemes allow a subset of at least $\minsigners$ out of $n$ possible parties to cooperate to produce a signature over a single message,
+As a reminder,
+threshold signature schemes allow a subset of at least $\minsigners$ out of $n$ possible parties to cooperate to produce a signature over a single message,
 while preserving security when up to $t-1$ signers may be corrupted,
 where $\minsigners \leq n$ and  $t \leq \minsigners$.
-Threshold signatures offer practical security benefits,
-allowing for dynamic key management and defense in depth against potential adversarial corruptions.
-While threshold signatures can be instantiated by simply concatenating multiple individual signatures into a single joint signature,
-a practical goal for threshold signatures is to preserve compatibility with existing single-party signature schemes,
-%Compatibility with existing single-party signature schemes is particularly important in practice,
-to minimize implementation complexity.
 
 %The trivial threshold signature scheme
 %represents the public key as the set of $n$ public keys for each party.
@@ -24,12 +17,11 @@ to minimize implementation complexity.
 %Second,
 %the verification algorithm of the trivial threshold scheme is not compatible with existing single-party threshold signature schemes.
 
-In this work,
-we focus our attention on threshold Schnorr signatures;
+In this chapter,
+we focus our attention on deterministic threshold Schnorr signatures;
 i.e,
-a threshold signature scheme that is compatible with the (single-party) Schnorr signature verification algorithm~\cite{Schnorr91}.
-Efficient (two-round) threshold Schnorr signatures exist in the randomized
-setting~\cite{KomloG20,BellareCKMTZ22,RuffingRJSS22},
+a deterministic threshold signature scheme that is compatible with the (single-party) Schnorr signature verification algorithm~\cite{Schnorr91}.
+Efficient (two-round) threshold Schnorr signatures exist in the randomized setting~\cite{KomloG20,BellareCKMTZ22,RuffingRJSS22},
 where each party is assumed to securely maintain state between signing rounds and have access to good sources of randomness.
 However,
 efficient and \emph{deterministic} threshold Schnorr signatures has thus far remained an elusive goal.

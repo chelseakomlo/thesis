@@ -12,7 +12,8 @@ where $t \leq n$.
 Despite widespread interest in DKGs,
 existing constructions fall short in either their complexity or composability.
 Most glaringly is Pedersen-DKG~\cite{Pedersen91} and variants of Pedersen DKG
-such as PedPop~\cite{KomloG20,BellareCKMTZ22}.
+such as PedPop~\cite{KomloG20,BellareCKMTZ22},
+discussed in Chapter~\ref{chp:frost}.
 While Pedersen-DKG is appealing because of its simplicity and efficiency,
 its security to date has only been proven in the context of specific applications~\cite{GennaroJK02,GurkanJMMST21,BellareCKMTZ22},
 as it cannot be proven secure in a standalone fashion~\cite{GennaroJKR07}.
@@ -26,6 +27,7 @@ Conversely, growing interest in threshold schemes points
 towards the need for DKGs that are friendly to standardization efforts~\cite{NIST22,NIST23} and
 composable across a range of use cases.
 For example, the FROST Schnorr threshold signature scheme~\cite{KomloG20,BellareCKMTZ22},
+introduced in Chapter~\ref{chp:frost},
 for which an IETF draft exists~\cite{Connolly22},
 is written in a way to be agnostic to any particular key generation scheme.
 Ideally, a candidate DKG to be standardized should be applicable not only to
