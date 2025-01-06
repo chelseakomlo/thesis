@@ -166,7 +166,7 @@ we say that a VPSS is \emph{secure} if it is unique, verifiable, and pseudorando
 	%\begin{linedgamespec}
 	\begin{pchstack}[boxed]
 		\begin{pcvstack}
-		\procedure{ $\UniqExp_{\adv,\dvrf}(\secp, n, t, \minparticipants)$ }{
+		\procedure{ $\UniqExp_{\dvrf,\adv}(\secp, n, t, \minparticipants)$ }{
       \pp \gets \dvrf.\setup(\usecp) \\
       (\corrupt, \advstate) \rgets \adv(\pp, n, t, \minparticipants) \\
       \pcreturn \bot\ \pcif \lvert \corrupt \rvert \geq t \\
@@ -250,12 +250,12 @@ Let the advantage of an adversary $\adv$ playing the uniqueness game as defined 
 
 \[
   \advant{unq}{\adv,\dvrf}(\secp, n, t, \minparticipants)
-  = \bigabs{\Pr[ \UniqExp_{\adv,\dvrf}(\secp, n, t, \minparticipants)= 1]}
+  = \bigabs{\Pr[ \UniqExp_{\dvrf,\adv}(\secp, n, t, \minparticipants)= 1]}
 \]
 
 
   A VPSS $\dvrf$ is \defn{unique} if for all PPT adversaries $\adv$,
-  $\advant{unq}{\adv,\dvrf}$ is a negligible function of $\secp$,
+  $\advant{unq}{\dvrf,\adv}$ is a negligible function of $\secp$,
   for $n, t, \minparticipants \in \mathbb{N}$,
   $t \leq \minparticipants \leq n$.
 \end{definition}
@@ -267,7 +267,7 @@ Let the advantage of an adversary $\adv$ playing the uniqueness game as defined 
   \centering
 	\begin{pchstack}[boxed]
 		\begin{pcvstack}
-		\procedure{ $\VerifExp_{\adv,\dvrf}(\secp, n, t, \minparticipants)$ }{
+		\procedure{ $\VerifExp_{\dvrf,\adv}(\secp, n, t, \minparticipants)$ }{
       \pp \gets \dvrf.\setup(\usecp) \\
       (\corrupt, \advstate) \rgets \adv(\pp, n, t, \minparticipants) \\
       \pcreturn \bot\ \pcif \lvert \corrupt \rvert \geq t \\
@@ -336,8 +336,8 @@ Let the advantage of an adversary $\adv$ playing the verifiability game as
 defined in Figure~\ref{fig:dcvrf-verif} be as follows:
 
 \[
-  \advant{verf}{\adv,\dvrf}(\secp, n, t, \minparticipants)
-  = \bigabs{\Pr[ \VerifExp_{\adv,\dvrf}(\secp, n, t, \minparticipants)= 1]}
+  \advant{verf}{\dvrf,\adv}(\secp, n, t, \minparticipants)
+  = \bigabs{\Pr[ \VerifExp_{\dvrf,\adv}(\secp, n, t, \minparticipants)= 1]}
 \]
 
   A VPSS $\dvrf$ is \defn{verifiable} if for all PPT adversaries $\adv$,
@@ -350,7 +350,7 @@ defined in Figure~\ref{fig:dcvrf-verif} be as follows:
   \centering
 	\begin{pchstack}[boxed]
 		\begin{pcvstack}
-		\procedure{ $\PseudoExp_{\adv,\dvrf}(\secp, n, t, \minparticipants)$ }{
+		\procedure{ $\PseudoExp_{\dvrf,\adv}(\secp, n, t, \minparticipants)$ }{
      b \rgets \zo \\
      z \rgets \zo \\
       \text{\algcom random coin for trivial losing conditions}\\
@@ -448,12 +448,12 @@ Let the advantage of an adversary $\adv$ playing the pseudorandomness game as
 defined in Figure~\ref{fig:dcvrf-pseudo} be as follows:
 
 \[
-  \advant{psdr}{\adv,\dvrf}(\secp, n, t, \minparticipants)
-  = \bigabs{\Pr[ \PseudoExp_{\adv,\dvrf}(\secp, n, t, \minparticipants) = 1]  - 1/2}
+  \advant{psdr}{\dvrf,\adv}(\secp, n, t, \minparticipants)
+  = \bigabs{\Pr[ \PseudoExp_{\dvrf,\adv}(\secp, n, t, \minparticipants) = 1]  - 1/2}
 \]
 
   A VPSS $\dvrf$ is \defn{pseudorandom} if for all PPT adversaries $\adv$,
-  $\advant{psdr}{\adv,\dvrf}$ is a negligible function of $\secp$,
+  $\advant{psdr}{\dvrf,\adv}$ is a negligible function of $\secp$,
   for $n, t, \minparticipants \in \mathbb{N}$,
   $t \leq \minparticipants \leq n$.
 \end{definition}

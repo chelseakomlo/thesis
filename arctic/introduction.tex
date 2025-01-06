@@ -1,7 +1,3 @@
-As a reminder,
-threshold signature schemes allow a subset of at least $\minsigners$ out of $n$ possible parties to cooperate to produce a signature over a single message,
-while preserving security when up to $t-1$ signers may be corrupted,
-where $\minsigners \leq n$ and  $t \leq \minsigners$.
 
 %The trivial threshold signature scheme
 %represents the public key as the set of $n$ public keys for each party.
@@ -21,6 +17,12 @@ In this chapter,
 we focus our attention on deterministic threshold Schnorr signatures;
 i.e,
 a deterministic threshold signature scheme that is compatible with the (single-party) Schnorr signature verification algorithm~\cite{Schnorr91}.
+As a reminder,
+threshold signature schemes allow a subset of at least $\minsigners$ out of $n$ possible parties to cooperate to produce a signature over a single message,
+while preserving security when up to $t-1$ signers may be corrupted,
+where $\minsigners \leq n$ and  $t \leq \minsigners$.
+
+
 Efficient (two-round) threshold Schnorr signatures exist in the randomized setting~\cite{KomloG20,BellareCKMTZ22,RuffingRJSS22},
 where each party is assumed to securely maintain state between signing rounds and have access to good sources of randomness.
 However,
@@ -100,7 +102,7 @@ the scheme by Kondi et al.~\cite{KondiOR23} supports only the $t=\minsigners=n=2
 %otherwise all security is lost.
 
 Therefore
-in this work,
+in this chapter,
 we address the following question:
 
 \begin{quote}

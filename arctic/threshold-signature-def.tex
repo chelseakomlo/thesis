@@ -200,11 +200,11 @@ or choose not to complete a signing session.
 Let the advantage of a static adversary $\adv$ playing the unforgeability game against a deterministic threshold signature scheme $\dthreshsig$ as defined in Figure~\ref{fig:euf-cma-threshold} be as follows:
 
 \[
-  \advant{uf}{\adv, \dthreshsig}(\lambda, n, \thresh,\minsigners) = \bigabs{\Pr[ \UnforgExp_{\adv,\dthreshsig}(\lambda,n,t,\minsigners)= 1]}
+  \advant{uf}{\dthreshsig, \adv}(\lambda, n, \thresh,\minsigners) = \bigabs{\Pr[ \UnforgExp_{\dthreshsig,\adv}(\lambda,n,t,\minsigners)= 1]}
 \]
 %
 A deterministic threshold signature scheme $\dthreshsig$ is \emph{unforgeable} if for all PPT adversaries $\adv$,
-$\advant{uf}{\adv, \dthreshsig}(\lambda, n, t,\minsigners) $ is negligible
+$\advant{uf}{\dthreshsig,\adv}(\lambda, n, t,\minsigners) $ is negligible
 in $\lambda$,
 for all allowable $n, t,\minsigners \in \mathbb{N}$.
 \end{definition}
