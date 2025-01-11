@@ -4,6 +4,27 @@
 \chapter{Introduction}
 %======================================================================
 
+While the goal of cryptography can be described in many ways,
+one primary motivation is often the goal of \emph{authorization} in a digital environment;
+i.e., only a designated party may be allowed to perform some pre-determined action online.
+The goal of authorization is generally accomplished by granting the authorized party \emph{knowledge} of some hard-to-guess secret,
+and then later challenging the party to demonstrate knowledge of this secret value.
+The formalization of this intuition is then notion underlying interactive identification protocols and digital signature schemes.
+
+A core challenge emerges when considering the possibility that this authorized party may either later be corrupted,
+or might simply fail.
+A core example is that of certificate authorities,
+which have been long-documented to fail to perform trusted actions~\cite{SSLMate}
+In this setting,
+even if the designated party correctly demonstrates knowledge of a secret key,
+the party may still violate trust.
+In other words,
+the cryptography may be correct,
+but the spirit of trust is still violated.
+
+As cryptographers,
+the question then emerges as to how new cryptographic primitives might be designed to better reflect the trust required in a real-world setting.
+
 Threshold schemes are a critical cryptographic primitive that allows a set of
 $n$ total parties and at least a threshold $t$ of parties to collaborate to
 perform some function.
