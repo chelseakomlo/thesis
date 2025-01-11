@@ -13,7 +13,7 @@ The formalization of this intuition is then notion underlying interactive identi
 
 A core challenge emerges when considering the possibility that this authorized party may either later be corrupted,
 or might simply fail.
-A core example is that of certificate authorities,
+One prominant example is that of certificate authorities,
 which have been long-documented to fail to perform trusted actions~\cite{SSLMate}
 In this setting,
 even if the designated party correctly demonstrates knowledge of a secret key,
@@ -24,7 +24,12 @@ but the spirit of trust is still violated.
 
 As cryptographers,
 the question then emerges as to how new cryptographic primitives might be designed to better reflect the trust required in a real-world setting.
+In other words,
+instead of distributing one secret value to authorize a designated party,
+is it possible instead to designate multiple parties that must cooperate to perform some trusted action?
 
+In this dissertation,
+we address this question by investigating the real-world utility of \emph{threshold} scheme.
 Threshold schemes are a critical cryptographic primitive that allows a set of
 $n$ total parties and at least a threshold $t$ of parties to collaborate to
 perform some function.
@@ -113,16 +118,20 @@ low number of communication rounds among parties,
 and computational and bandwidth efficiency.
 \end{quote}
 
-\section{Contributions}
+\section{Overview of Results}
 
-At a high level,
-this dissertation presents new techniques to simplify and improve practicality of threshold Schnorr signatures and discrete-logarithm based distributed key generation.
-The most notable contributions of this dissertation are as follows.
+This dissertation presents new techniques to simplify and improve practicality of threshold Schnorr signatures and discrete-logarithm based distributed key generation.
+The first part gives an efficient randomized threshold Schnorr signature scheme.
+The second part gives a generic construction for a distributed key generation (DKG) scheme.
+The third part gives an efficient deterministic threshold Schnorr signature scheme.
 
-\begin{enumerate}
-  \item \textbf{A new two-round threshold Schnorr signature scheme.}
-  \item \textbf{A new generic DKG construction and discrete-logarithm instantiation.}
-  \item \textbf{A new two-round deterministic threshold Schnorr signature scheme.}
-\end{enumerate}
+\subsection{Part 1: An Efficient Randomized Threshold Schnorr Signature Scheme}
 
-%\section{Thesis Organization}
+\subsection{Part 2: A Generic Construction for a Distributed Key Generation (DKG) Scheme}
+
+\subsection{Part 3: An Efficient Deterministic Threshold Schnorr Signature Scheme}
+
+
+\section{Impact in Practice}
+
+The Zcash Foundation has implemented FROST and incorporated FROST into the core Zcash protocol~\cite{ZcashFROSTImpl},ZcashFROSTZip .
