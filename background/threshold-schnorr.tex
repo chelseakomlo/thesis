@@ -94,6 +94,12 @@ The syntax assumes that the signing set $\coalition$, message $m$, and secret ke
   and employ it next to define correctness.
 \end{remark}
 
+\begin{remark}[On Protocol Message Types]
+  Our definition of threshold signatures does not distinguish between broadcast messages or peer-to-peer messages,
+  and simplify defines protocol messages $\gmsg$.
+  The concrete construction of the threshold signature scheme will provide the necessary structures to realize any necessary assumptions for protocol messages delivery.
+\end{remark}
+
 \paragraph{Correctness.}
 A threshold signature scheme is \emph{correct} if for all security parameters $\secp$, all $1 \leq \thresh \leq n$,
 all $\coalition \subseteq [n]$ such that $| \coalition | \geq \thresh$,
