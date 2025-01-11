@@ -52,14 +52,7 @@ thereby generating $\ell$
 random nonces. The signers can then store these pre-processed values to later perform
 $\ell$ single-round signing operations.
 
-We define a distributed key generation (DKG) scheme that builds upon the key generation stage of Gennaro et
-al.~\cite{GennaroJK02}; we use a variant of Pedersen's DKG for
-key generation with a requirement
-that in the case of misbehaviour, the protocol aborts and the cause investigated out of band.
-Our variant, which we will refer to as PedPop,
-simply requires participants to additionally include proofs of knowledge for their secret key,
-thereby preventing rogue key attacks~\cite{RistenpartY07}.
-However, the signing operation defined by FROST \emph{does not} perform a DKG
+Importantly, the signing operation defined by FROST \emph{does not} perform a DKG
 during signing operations as is done in both of the above schemes~\cite{StinsonR01,GennaroJK02},
 but instead make use of additive secret sharing and share conversion.
 Consequently, FROST trades off robustness for more efficient signing
