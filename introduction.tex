@@ -145,5 +145,15 @@ on the other hand,
 simply concatenates $t$ signatures into one joint signature,
 where the public key is the set of $n$ public keys.
 
-FROST is defined as an informational RFC for the Crypto Forum Research Group (CFRG) within the IETF~\cite{Connolly22}.
+FROST has been defined as an informational RFC for the Crypto Forum Research Group (CFRG) within the IETF~\cite{Connolly22}.
 FROST is the first threshold signature scheme to be defined within an IETF RFC.
+The scheme is defined to be agnostic to any particular choice of parameters,
+and supports a range of parameter choices.
+
+Other blockchains beyond Zcash have investigated the use of FROST to perform multi-party signing,
+most notably, Bitcoin.
+There is existing effort to define FROST as a Bitcoin Improvement Proposal (BIP)~\cite{FROSTBip} and build additional infrastructure with FROST in mind,
+including distributed key generation~\cite{ChillDKG}.
+FROST is also used within the context of bridging mechanisms,
+allowing funds to flow from Bitcoin to other blockchain networks~\cite{ArchFROST}.
+The security of FROST has also been discussed within the Ethereum community~\cite{FROSTEthereum}.
