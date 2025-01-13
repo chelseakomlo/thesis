@@ -127,6 +127,25 @@ The third part gives an efficient deterministic threshold Schnorr signature sche
 
 \subsection{Part 1: An Efficient Randomized Threshold Schnorr Signature Scheme}
 
+The first contribution of this dissertation is to define FROST,
+a Flexible Round-Optimized Schnorr Threshold Signature scheme,
+which is a two-round randomized threshold Schnorr signature scheme,
+which can optionally be used in the preprocessing setting.
+In other words,
+FROST can be used in the setting where the first round is performed in a batched manner,
+such that signing requires only a single online round of interaction among all parties.
+
+While prior threshold Schnorr signature schemes existed prior to FROST,
+all schemes fell into one of two categories.
+The schemes either required more than two rounds of interaction among all parties~\cite{StinsonR01},
+or the scheme was insecure in a concurrent setting~\cite{GennaroJKR03}
+due to a polynomial-time forgery attack~\cite{DrijversEFKLNS19,BenhamoudaLLOR20}.
+
+We prove the security of FROST with respect to the Algebraic One-More Discrete
+Logarithm  (AOMDL) assumption,
+formalized by Jonas, Ruffing, and Seurin~\cite{NickRS21}.
+which is a falsifiable variant of the One-More Discrete Logarithm (OMDL) assumption~\cite{BellareNPS03,BauerFP21}.
+
 \subsection{Part 2: A Generic Construction for a Distributed Key Generation (DKG) Scheme}
 
 \subsection{Part 3: An Efficient Deterministic Threshold Schnorr Signature Scheme}
@@ -134,7 +153,7 @@ The third part gives an efficient deterministic threshold Schnorr signature sche
 
 \section{Impact in Practice}
 
-The Zcash Foundation has implemented FROST and incorporated FROST into the core Zcash protocol~\cite{ZcashFROSTImpl},ZcashFROSTZip .
+The Zcash Foundation has implemented FROST and incorporated FROST into the core Zcash protocol~\cite{ZcashFROSTImpl,ZcashFROSTZip}.
 FROST is used to partition a spending key for a Zcash wallet into multiple shares.
 As such,
 FROST allows a Zcash user to issue a transaction only after a threshold number of signing shares are used to produce a signature.
@@ -149,6 +168,10 @@ FROST has been defined as an informational RFC for the Crypto Forum Research Gro
 FROST is the first threshold signature scheme to be defined within an IETF RFC.
 The scheme is defined to be agnostic to any particular choice of parameters,
 and supports a range of parameter choices.
+Furthermore,
+the RFC does not define how key generation is performed,
+and simply assumes that participants are initialized with secret signing shares that are Shamir secret shares of a signing key.
+The RFC therefore is compatible with any key generation RFC that might be defined in the future which outputs keys of this form.
 
 Other blockchains beyond Zcash have investigated the use of FROST to perform multi-party signing,
 most notably, Bitcoin.
