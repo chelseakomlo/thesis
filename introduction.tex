@@ -158,8 +158,13 @@ therefore making it a weaker assumption than OMDL.
 
 \subsection{Part 2: A Generic Construction for a Distributed Key Generation (DKG) Scheme}
 
-The second contribution of this dissertation is to define a simple generic DKG construction that is composable with existing discrete-logarithm based threshold signature schemes such as FROST.
-This generic construction relies on three cryptographic building blocks:
+The second contribution of this dissertation is to define a simple generic distributed key generation (DKG) construction that is composable with existing discrete-logarithm based threshold signature schemes such as FROST.
+While key generation for threshold signature schemes can be performed in a centralized manner using a trusted dealer,
+often distribution of trust is likewise required during the generation of key material.
+As such,
+DKG schemes allow participants to collaborate to generate asymmetric key material in such a way that the secret key is unknown and secret shared among all participants.
+
+Our generic DKG construction relies on three cryptographic building blocks:
 a secure hash function,
 an \emph{Aggregatable Verifiable Secret Sharing} (AgVSS) scheme,
 and a \emph{Non-Interactive Key Exchange} (NIKE) scheme.
@@ -175,6 +180,14 @@ so long as each individual building block is secure.
 
 \subsection{Part 3: An Efficient Deterministic Threshold Schnorr Signature Scheme}
 
+The third contribution of this dissertation is to define a \emph{deterministic} threshold Schnorr signature scheme.
+While FROST is desirable in practice,
+one downside is that participants cannot re-use secret state across signing sessions,
+otherwise risk complete exposure of their secret signing key.
+In the real-world setting where machines can go offline and reboot at random,
+such a strong requirement can prove challenging in practice.
+The goal of a deterministic scheme is to protect against such cases,
+as participants no longer are required to sample random values when performing signing.
 
 \section{Impact in Practice}
 
