@@ -128,18 +128,34 @@ The third part gives an efficient deterministic threshold Schnorr signature sche
 \subsection{Part 1: An Efficient Randomized Threshold Schnorr Signature Scheme}
 
 The first contribution of this dissertation is to define FROST,
-a Flexible Round-Optimized Schnorr Threshold Signature scheme,
-which is a two-round randomized threshold Schnorr signature scheme,
+a Flexible Round-Optimized Schnorr Threshold Signature scheme.
+FROST is a two-round randomized threshold Schnorr signature scheme,
 which can optionally be used in the preprocessing setting.
 In other words,
 FROST can be used in the setting where the first round is performed in a batched manner,
 such that signing requires only a single online round of interaction among all parties.
 
-While prior threshold Schnorr signature schemes existed prior to FROST,
-all schemes fell into one of two categories.
+While prior threshold Schnorr signature schemes existed in the literature prior to FROST,
+all prior schemes fell into one of two categories.
 The schemes either required more than two rounds of interaction among all parties~\cite{StinsonR01},
 or the scheme was insecure in a concurrent setting~\cite{GennaroJKR03}
 due to a polynomial-time forgery attack~\cite{DrijversEFKLNS19,BenhamoudaLLOR20}.
+
+One might ask why having a two-round signing scheme is desirable,
+over prior schemes that required more rounds of interaction~\cite{StinsonR01}.
+What we have learned from practitioners is that round efficiency is highly desirable for implementations in practice,
+due to the complexities that arise when coordinating communication rounds among multiple parties.
+In the setting where parties may fail to reply or reply in a slow manner,
+managing timeouts and session state across concurrent signing sessions becomes highly complex when signing is performed at scale.
+
+We note that FROST achieves improved round efficiency in the optimistic case that no participant fails to respond or misbehaves.
+However, in the case where a participant contributes malformed
+values during the protocol or simply fails to respond,
+honest parties can identify and exclude the misbehaving participant, and re-run the protocol.
+In other words,
+FROST does allow for some form of identifiable abort,
+but is not robust,
+in that any deviation from the protocol requires aborting and re-running.
 
 We prove the security of FROST with respect to the Algebraic One-More Discrete
 Logarithm  (AOMDL) assumption,
@@ -156,7 +172,7 @@ AOMDL on the other hand requires the adversary to additionally give as input the
 and so the oracle can be guaranteed to run in polynomial time,
 therefore making it a weaker assumption than OMDL.
 
-\subsection{Part 2: A Generic Construction for a Distributed Key Generation (DKG) Scheme}
+\subsection{Part 2: A Generic Distributed Key Generation (DKG) Construction}
 
 The second contribution of this dissertation is to define a simple generic distributed key generation (DKG) construction that is composable with existing discrete-logarithm based threshold signature schemes such as FROST.
 While key generation for threshold signature schemes can be performed in a centralized manner using a trusted dealer,
@@ -175,8 +191,12 @@ Future implementations may wish to opt for different building blocks,
 and so a generic construction allows for different choices while maintaining formal guarantees of security.
 Further,
 this flexibility may be worthwhile to ongoing NIST standardization efforts for threshold schemes~\cite{NIST23}.
-The utility of a generic DKG is that any instantiation of the DKG will remain secure.
-so long as each individual building block is secure.
+The utility of a generic DKG is that any instantiation of the DKG will remain secure,
+so long as each underlying building block is secure.
+
+We give a concrete construction of our generic DKG which we call Storm,
+which builds upon Feldman's VSS~\cite{Feldman87}  and a straightforward discrete-logarithm NIKE,
+which we define in Section~\ref{concrete-nike}.
 
 \subsection{Part 3: An Efficient Deterministic Threshold Schnorr Signature Scheme}
 
@@ -208,6 +228,9 @@ signers in Arctic are required to generate and maintain secret keys,
 but otherwise do not need to manage secret state.
 
 \section{Impact in Practice}
+
+The main impact this thesis has had in practice is the implementation and standardization of FROST,
+which we now describe.
 
 The Zcash Foundation has implemented FROST and incorporated FROST into the core Zcash protocol~\cite{ZcashFROSTImpl,ZcashFROSTZip}.
 FROST is used to partition a spending key for a Zcash wallet into multiple shares.
