@@ -189,6 +189,24 @@ such a strong requirement can prove challenging in practice.
 The goal of a deterministic scheme is to protect against such cases,
 as participants no longer are required to sample random values when performing signing.
 
+Towards this goal, we present Arctic,
+a deterministic and stateless threshold Schnorr signature scheme.
+The primary goal of Arctic is simplicity.
+While prior deterministic threshold Schnorr signature schemes have been defined~\cite{NickRSW20,GarillotKMN21,KondiOR23},
+these schemes rely on complex generic multi-party computation techniques.
+The observation underlying Arctic is that in settings where the expected number of honest parties far outnumbers the expected number of corrupt parties,
+we can define a simple and efficient deterministic threshold Schnorr signature scheme.
+
+In particular,
+for moderately sized groups (i.e., when $n \leq 20$),
+Arctic is more than an order of magnitude more efficient than existing deterministic schemes in the literature~\cite{NickRSW20,GarillotKMN21,KondiOR23}
+Arctic is three orders of magnitude more efficient when $n \leq 10$.
+For larger groups,
+Arctic scales linearly relative to the number of processing cores.
+Importantly,
+signers in Arctic are required to generate and maintain secret keys,
+but otherwise do not need to manage secret state.
+
 \section{Impact in Practice}
 
 The Zcash Foundation has implemented FROST and incorporated FROST into the core Zcash protocol~\cite{ZcashFROSTImpl,ZcashFROSTZip}.
