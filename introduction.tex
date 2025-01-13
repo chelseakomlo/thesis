@@ -145,8 +145,33 @@ We prove the security of FROST with respect to the Algebraic One-More Discrete
 Logarithm  (AOMDL) assumption,
 formalized by Jonas, Ruffing, and Seurin~\cite{NickRS21}.
 which is a falsifiable variant of the One-More Discrete Logarithm (OMDL) assumption~\cite{BellareNPS03,BauerFP21}.
+OMDL defines an interactive discrete-logarithm assumption,
+in which the adversary is given $\ell+1$ discrete logarithm challenges,
+and is required to output $\ell+1$ solutions,
+while being given $\ell$ queries to a discrete-logarithm solution oracle.
+OMDL is not falsifiable because it defines a discrete-logarithm solution oracle
+which must output solutions to arbitrary queries,
+and so cannot be guaranteed to run in polynomial time.
+AOMDL on the other hand requires the adversary to additionally give as input the representation of the input group element with respect to all challenge group elements,
+and so the oracle can be guaranteed to run in polynomial time,
+therefore making it a weaker assumption than OMDL.
 
 \subsection{Part 2: A Generic Construction for a Distributed Key Generation (DKG) Scheme}
+
+The second contribution of this dissertation is to define a simple generic DKG construction that is composable with existing discrete-logarithm based threshold signature schemes such as FROST.
+This generic construction relies on three cryptographic building blocks:
+a secure hash function,
+an \emph{Aggregatable Verifiable Secret Sharing} (AgVSS) scheme,
+and a \emph{Non-Interactive Key Exchange} (NIKE) scheme.
+We show how Feldman's VSS~\cite{Feldman87}  can be augmented to by used as an AgVSS.
+
+The goal for presenting a generic DKG is to enable flexibility for implementations and standardization efforts.
+Future implementations may wish to opt for different building blocks,
+and so a generic construction allows for different choices while maintaining formal guarantees of security.
+Further,
+this flexibility may be worthwhile to ongoing NIST standardization efforts for threshold schemes~\cite{NIST23}.
+The utility of a generic DKG is that any instantiation of the DKG will remain secure.
+so long as each individual building block is secure.
 
 \subsection{Part 3: An Efficient Deterministic Threshold Schnorr Signature Scheme}
 
