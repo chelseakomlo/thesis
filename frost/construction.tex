@@ -134,24 +134,22 @@ Implementations that do not wish to cache commitments can instead
 use a two-round signing protocol, where participants publish a single
 commitment in the first round.
 
-Each participant $P_i$ begins by generating a list of
+Each participant $i \in \coalition$ begins by generating a list of
 \emph{single-use} private nonce pairs and corresponding public commitment shares
-$\langle((d_{ij}, D_{ij} = g^{d_{ij}}), (e_{ij}, E_{ij} = g^{e_{ij}})) \rangle_{j=1}^\ell$,
+$((d_{ij}, D_{ij} = g^{d_{ij}}), (e_{ij}, E_{ij} = g^{e_{ij}}))_{j=1}^\ell$,
 where
 $j$ is a counter that identifies the next nonce/commitment share pair available
 to use for signing.
-Each $P_i$ then publishes $(i, L_i)$, where $L_i$ is their list of
-commitment shares
-$L_i  = \langle(D_{ij}, E_{ij}) \rangle_{j=1}^\ell$.
-The set of $(i, L_i)$ tuples are then stored by any entity that might perform
+Each participant $i \in \coalition$ then publishes its set of commitments
+$(i, D_{ij}, E_{ij} )_{j=1}^\ell$.
+These sets are then stored by any entity that might perform
 the coordinator role during signing.
 
 \paragraph{Online Signing Protocol.}
 At the beginning of the signing protocol in Figure~\ref{fig:frost},
 the coordinator selects  a coalition of parties $\coalition \subseteq \set{n}, \lvert \coalition \rvert \geq t$ to perform signing.
-Let $\coalition$ be the set of those $\alpha$ participants.
 The coordinator then selects the next available commitment
-$(D_i, E_i) : i \in \coalition$,
+$(i, D_i, E_i) : i \in \coalition$,
 which are later used to generate a secret share to a random commitment $R$ for
 the signing group.\footnote{Each participant
 contributes to the group commitment $R$, which corresponds to the
@@ -161,12 +159,12 @@ Section~\ref{background:schnorr}.}
 %
 The coordinator then creates the set $B$, where
 $B$ is the ordered list of tuples $\langle(i, D_i, E_i)\rangle_{i \in \coalition}$.
-The coordinator then sends $(m, B)$ to every $P_i, i \in \coalition$.
+The coordinator then sends $(m, B)$ to every participant $i \in \coalition$.
 
 After receiving $(m, B)$ from the coordinator to initialize a signing operation,
 each participant checks that $m$ is a message they are willing to sign.
 Then, using $m$ and $B$,
-all participants derive the ``binding values'' $\bindingf_i, i \in C$ such that
+all participants derive the ``binding values'' $\bindingf_i, i \in \coalition$ such that
 $\bindingf_i = \HashNon(i, m, B)$, where $\HashNon$ is a hash function whose outputs are in $\mathbb{Z}_q^*$.
 
 Each participant then
@@ -187,7 +185,7 @@ $c = \HashSig(R, \pk, m)$.
 The resulting secret nonce is
 $k = \sum_{i \in \coalition} k_i$, where each $k_i = d_i + e_i \cdot \bindingf_i$,
 and $(d_i, e_i)$ correspond to the $(D_i = g^{d_i},
-E_i=g^{e_i})$ values published during the Preprocess stage.
+E_i=g^{e_i})$ values published during the preprocessing stage.
 %Recall that if the $k_i$ are
 %\emph{additive} shares of $k$, then the $\frac{k_i}{\lambda_i}$ are
 %\emph{Shamir} shares of $k$, such that each $\lambda_i$ is the Lagrange
