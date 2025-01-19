@@ -24,12 +24,12 @@ Then the Lagrange polynomial $L_i(x)$ has the form:
 L_i(x) = \prod_{j \in \eta; j \neq i } \frac{x-x_j}{x_i - x_j}
 \end{equation}
 
-Given a set of $\thresh$ points $(x_i, f(x_i))_{i \in [\thresh]}$, any point $f(x_\ell)$ on the polynomial $f$ can be determined by Lagrange interpolation as follows:
+Given a set of $\thresh$ points $(x_i, f(x_i))_{i \in [\eta]}$, any point $f(x_\ell)$ on the polynomial $f$ can be determined by Lagrange interpolation as follows:
 
 \[ f(x_\ell) = \sum_{k \in \eta} f(x_k) \cdot L_k(x_\ell) \]
 
 \paragraph{Game-Based Security.}
-An experiment (or game) $\textsf{Exp}_{\adv, \mathcal{C}}^{\mathsf{sec}}$ is
+An experiment (or game) $\textsf{Exp}_{\mathcal{C}, \adv}^{\mathsf{sec}}$ is
 played with respect to a security notion $\mathsf{sec}$,
 an adversary $\adv$ modeled by a probabilistic (randomized) algorithm,
 and a cryptographic primitive $\mathcal{C}$.
@@ -43,7 +43,7 @@ The probability of $\adv$'s success thus defines how secure $\mathcal{C}$ is wit
 We say that an adversary $\adv$ is probabilistic polynomial-time (PPT) if it is run on
 random coins and its execution is performed in time that is polynomial relative to the size of its input.
 In other words,
-for every input $x \in \zo^n$,
-$\adv(x)$ terminates within at most $f(n)$ steps,
-for some polynomial $f$.
+there exists a polynomial $f$,
+such that for every input $x \in \zo^n$,
+$\adv(x)$ terminates within at most $f(n)$ steps.
 
