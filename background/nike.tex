@@ -8,11 +8,14 @@ We additionally define a verification algorithm that checks whether a tuple is i
 
 \begin{definition} \label{defn:enike}
   A \defn{Non-Interactive Key Exchange (\ENIKE)} $\enike$ with verification is the tuple
-  $\enike = (\keygen, \verifykeypair, \getsharedkey)$, where
+  $\enike = (\Setup,\keygen, \verifykeypair, \getsharedkey)$, where
 
 \begin{itemize}
-  \item $\keygen(\lambda) \rightarrow (\sk, \pk)$: On input the security parameter $\lambda$,
-    this probabilistic algorithm generates a secret key $\sk$ and corresponding public key $\pk$ with respect to the security parameter $\lambda$.
+    \item $\Setup(1^\secp) \rightarrow \pp$:
+    On input a security parameter $1^\secp$,
+    this deterministic algorithm outputs public parameters $\pp$ (which are given implicitly as input to all other algorithms).
+  \item $\keygen() \rightarrow (\sk, \pk)$: On input the security parameter $\lambda$,
+    this probabilistic algorithm generates a secret key $\sk$ and corresponding public key $\pk$.
   \item $\verifykeypair(\sk, \pk) \rightarrow \zo$:
     On input the secret key $\sk$ and public key $\pk$,
     this deterministic algorithm verifies that $(\sk,\PK)$ is a valid output from $\enike.\keygen$.
@@ -22,7 +25,7 @@ We additionally define a verification algorithm that checks whether a tuple is i
 \end{itemize}
 \end{definition}
 
-For correctness, we require that, for all $(\SK_1, \PK_1) \rgets \enike.\keygen(\lambda), (\SK_2, \PK_2) \rgets \enike.\keygen(\lambda)$, the following conditions hold:
+For correctness, we require that, for all $(\SK_1, \PK_1) \rgets \enike.\keygen(), (\SK_2, \PK_2) \rgets \enike.\keygen()$, the following conditions hold:
 \begin{align*}
   & \enike.\verifykeypair(\sk_i, \pk_i) = 1, \text{ for } i \in \{1,2 \} \text{ and} \\[1mm]
   & \enike.\getsharedkey(\sk_1, \pk_2) = \enike.\getsharedkey(\sk_2, \pk_1)
@@ -43,9 +46,9 @@ We present this restricted notion in Figure~\ref{fg:enike-recovery}.
 
 \begin{figure}[t]
   \begin{pchstack}[boxed,center,space=1em]
-  \procedure[]{$\UnrecoverabilityExp_{\enike,\adv}(\lambda)$}{
-    (\sk_1, \pk_1) \rgets \enike.\keygen(\lambda) \\
-    (\sk_2, \pk_2) \rgets \enike.\keygen(\lambda) \\
+  \procedure[]{$\UnrecoverabilityExp_{\enike,\adv}(1^\lambda)$}{
+    (\sk_1, \pk_1) \rgets \enike.\keygen() \\
+    (\sk_2, \pk_2) \rgets \enike.\keygen() \\
     \sharedkey \gets \enike.\getsharedkey(\sk_1, \pk_2) \\
     \sharedkey' \rgets \adv(\pk_1, \pk_2) \\
     \pcreturn 1\ \pcif \sharedkey' = \sharedkey \\
@@ -108,14 +111,14 @@ the function $\advant{bind}{\enike, \adv}(\lambda)$  is negligible.
 
 
 
-\subsection{A Concrete \ENIKE.} \label{enike:concrete}
+\subsection{A Concrete \ENIKE} \label{enike:concrete}
 \label{concrete-nike}
 
 We now describe a concrete \ENIKE which is a non-interactive Diffie--Hellman key exchange,
 with additionally a verification check to ensure that $\pk = g^{\sk}$.
 
 \begin{itemize}
-  \item $\enike.\keygen(\lambda) \rightarrow (\sk, \pk)$: Sample secret key $\sk \rgets \Zq$; derive public key $\pk\in \GG$ as $\pk = g^\sk$.
+  \item $\enike.\keygen() \rightarrow (\sk, \pk)$: Sample secret key $\sk \rgets \Zq$; derive public key $\pk\in \GG$ as $\pk = g^\sk$.
 	    Output $(\sk, \pk)$.
   \item $\enike.\verifykeypair(\SK, \PK) \rightarrow \zo$: Output $1$ if $\PK = g^\SK$; otherwise, output $0$.
   \item $\enike.\getsharedkey(\sk_1, \pk_2) \rightarrow \sharedkey $: Derive the shared key $\sharedkey \in \GG$ as $\sharedkey \gets \pk_2^{\sk_1}$.
