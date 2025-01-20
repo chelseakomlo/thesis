@@ -137,8 +137,9 @@ but formalized in game-based notation.
   \begin{pchstack}[boxed,center,space=1em]
   \begin{pcvstack}
     \procedure[]{$\UniquenessExp_{\vess,\adv}(\lambda)$}{
+    \pp \gets \Setup(1^\lambda) \\
     \text{\algcom $\adv$ chooses two recovery sets and a commitment with respect to the same threshold} \\
-    (t^*, \recoveryset_1^*, \recoveryset_2^*, \vsscommit^*) \rgets \adv(\lambda) \\
+    (t^*, \recoveryset_1^*, \recoveryset_2^*, \vsscommit^*) \rgets \adv(\pp) \\
     \pcfor (i, \share_i) \in \recoveryset_1^* \pcdo \\
     \pcind \pcreturn 0\ \pcif \vess.\verify(i, \share_i, \vsscommit^*) \neq 1 \\
     \pcfor (i', \share_i') \in \recoveryset_2^* \pcdo \\
