@@ -45,7 +45,7 @@ A digital signature scheme consists of polynomial-time algorithms $(\Setup, \Key
 	%\begin{linedgamespec}
 	\begin{pchstack}[boxed,space=1em]
 		\begin{pcvstack}[space=1em]
-			\procedure{$\textsf{Exp}^{\eufcma}_{\A,\dsig}(\lambda)$}{
+			\procedure{$\textsf{Exp}^{\uf}_{\A,\dsig}(\lambda)$}{
 				\pp \leftarrow \Setup(1^\lambda) \\
 				Q_m \gets \emptyset \\
 				(\pk, \sk) \randpick \KeyGen()\\
@@ -65,7 +65,6 @@ A digital signature scheme consists of polynomial-time algorithms $(\Setup, \Key
 	\end{pchstack}
 	%\end{linedgamespec}
 	\caption{The EUF-CMA security game for a digital signature scheme $\dsig$.}
-	\hrulefill
 	\label{fig:euf-cma}
 \end{figure}
 
@@ -73,19 +72,20 @@ A digital signature scheme consists of polynomial-time algorithms $(\Setup, \Key
 chosen-message attacks (EUF-CMA).
 
 \begin{definition}[Correctness]
-A digital signature scheme $(\Setup, \KeyGen, \Sign, \allowbreak \Verify)$ is \emph{correct} if for all security parameters $\secp \in \mathbb{N}$,
-all key pairs $(\pk, \sk) \rgets [\KeyGen()]$, and all messages $m$, we have:
+A digital signature scheme $(\Setup, \KeyGen, \Sign, \allowbreak \Verify)$ is \emph{correct}
+if for all security parameters $\pp \leftarrow \Setup(1^\lambda)$,
+all key pairs $(\pk, \sk) \rgets \KeyGen()$, and all messages $m$, we have:
 \[ \Pr[ \Verify(\pk, m, \Sign(\sk, m)) = 1 ] = 1 \]
 \end{definition}
 
 \begin{definition}[EUF-CMA]\label{defn:euf-cma}
 Let the advantage of an adversary $\A$ playing the Existential Unforgeability under Chosen-Message Attack (EUF-CMA) game,
-$\G^{\suf}$, as defined in Figure~\ref{fig:euf-cma}, be as follows:
+  $\textsf{Exp}^{\uf}$, as defined in Figure~\ref{fig:euf-cma}, be as follows:
 %
 \[
-  \advant{$\suf$}{\A,\dsig}(\secp) = \bigabs{\Pr[\G^{\suf}_{\A,\dsig}(\secp) = 1]}
+  \advant{$\uf$}{\dsig,\adv}(\secp) = \bigabs{\Pr[\textsf{Exp}^{\uf}_{\A,\dsig}(\secp) = 1]}
 \]
-A digital signature scheme $\dsig = (\Setup, \KeyGen, \Sign, \allowbreak \Verify)$ is \emph{existentially unforgeable under chosen-message attacks} if for all PPT adversaries $\A$, $\advant{$\suf$}{\A,\dsig}(\secp)$ is negligible.
+A digital signature scheme $\dsig = (\Setup, \KeyGen, \Sign, \allowbreak \Verify)$ is \emph{existentially unforgeable under chosen-message attacks} if for all PPT adversaries $\A$, $\advant{$\uf$}{\A,\dsig}(\secp)$ is negligible.
 \end{definition}
 
 \subsection{Schnorr Signatures}
@@ -106,15 +106,15 @@ The Schnorr signature scheme consists of polynomial-time algorithms $(\Setup, \K
 
     \item $\Setup(1^\secp) \rightarrow \pp$:
     On input a security parameter $1^\secp$,
-    run $(\Gr, q, g) \gets \GroupGen(\usecp)$ and select a hash function $\Hash: \{0,1\}^* \rightarrow \Z_p$.
+    run $(\Gr, q, g) \gets \GroupGen(\usecp)$ and select a hash function $\Hash: \{0,1\}^* \rightarrow \Zq$.
     Output public parameters $\pp \gets ((\Gr, q, g), \Hash)$ (which are given implicitly as input to all other algorithms).
 
   \item $\KeyGen() \rightarrow (\pk, \sk)$:
-  Sample a secret key $\sk \randpick \Z_p$ and compute the public key as $\pk \gets g^x$.
-    Output key pair $(\pk, \sk) \gets (\pk, \sk)$.
+  Sample a secret key $\sk \randpick \Zq$ and compute the public key as $\pk \gets g^x$.
+    Output key pair $(\pk, \sk)$.
 
   \item $\Sign(\sk, m) \rightarrow \sigma$:
-    On input a secret key $\sk = x$ and a message $m$, sample a nonce $r \randpick \Z_p$. Then, compute a
+    On input a secret key $\sk = x$ and a message $m$, sample a nonce $r \randpick \Zq$. Then, compute a
     nonce commitment $R \gets g^r$, the challenge $c \gets \Hash(\pk, m, R)$, and the
     response $z \gets r + cx$. Output a signature $\sigma \gets (R,z)$.
 
@@ -187,7 +187,7 @@ The Shamir secret sharing scheme is a concrete instantiation of a threshold secr
       On input a secret $s$,
       the number of participants $n$,
       and a threshold $\thresh$, perform the following.
-      First, define a polynomial $f(Z) = s + a_1 + a_2 Z^2 + \cdots + a_{\tcor} Z^{\tcor}$ by sampling $\tcor$ coefficients at random $(a_1, \ldots, a_{\tcor}) \randpick \Z_p$.
+      First, define a polynomial $f(Z) = s + a_1 + a_2 Z^2 + \cdots + a_{\tcor} Z^{\tcor}$ by sampling $\tcor$ coefficients at random $(a_1, \ldots, a_{\tcor}) \randpick \Zq$.
       Then, set each participant's share $\share_i, i \in \set{n}$, to be the evaluation of $f(i)$:
     \begin{equation*} \label{eq:issueshares}
         \share_i \gets s + \sum_{j \in \set{\tcor}} a_j i^j
