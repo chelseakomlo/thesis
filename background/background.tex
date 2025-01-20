@@ -140,17 +140,17 @@ The Schnorr signature scheme consists of polynomial-time algorithms $(\Setup, \K
       this deterministic algorithm outputs public parameters $\pp$ which are given implicitly as input to all other algorithms.
 
     \item $\IssueShares(s, n, \thresh) \rightarrow (\{ (1, \share_1), \ldots, (n, \share_n)\})$:
-      A probabilistic algorithm performed that accepts as input
+      A probabilistic algorithm that accepts as input
       the security parameter $\secp$,
       the secret $s$,
       the number of participants $n$, and the threshold $\thresh$,
       where $n$ and $t$ are positive integers, and $n \geq \thresh$.
       Outputs the list of shares $\{ (1, \share_1), \ldots, (n, \share_n) \}$.
 
-    \item $\Recover(\thresh, \{ (i, \share_i)\}_{ i \in \coalition}) \rightarrow \sk/\fail$:
+    \item $\Recover(\thresh, \{ (i, \share_i)\}_{ i \in \coalition}) \rightarrow s/\fail$:
       A deterministic algorithm that accepts a threshold $\thresh$ and a set of shares $\{(i, \share_i) \}_{i \in \coalition}$.
       Output $\fail$ if $\coalition \not\subseteq \set{n}$ or if $\lvert \coalition \rvert < \thresh$.
-      Otherwise, recover $\sk$ using the set of shares.
+      Otherwise, recover $s$ using the set of shares.
 \end{itemize}
 \end{definition}
 
@@ -195,7 +195,7 @@ The Shamir secret sharing scheme is a concrete instantiation of a threshold secr
 
     Output $\{(i, \share_i) \}_{i \in \set{n}}$.
 
-  \item $\shamir.\Recover(\thresh, \{ (i, \share_i)\}_{ i \in \coalition}) \rightarrow \sk/\fail$:
+  \item $\shamir.\Recover(\thresh, \{ (i, \share_i)\}_{ i \in \coalition}) \rightarrow s/\fail$:
     On input a threshold $\thresh$ and a set of shares $\{(i, \share_i) \}_{i \in \coalition}$,
     output $\fail$ if $\coalition \not\subseteq \set{n}$ or if $\lvert \coalition \rvert < \thresh$.
     Otherwise, recover $s$ as follows:

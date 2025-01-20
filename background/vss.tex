@@ -1,33 +1,5 @@
 \subsection{Verifiable Secret Sharing} \label{verifiable-tss}
 
-\begin{figure}[!ht]
-  \begin{pchstack}[boxed,center,space=1em]
-  \begin{pcvstack}
-    \procedure[]{$\SecrecyExp_{\vess, \adv, \simshare}(\lambda,\secret)$}{
-    b \rgets \zo \\
-    (n, t, \corrupt, \advstate) \rgets \adv(\lambda) \\
-    \pcreturn 0\ \pcif t > n \textbf{ or } \corrupt \not\subseteq \set{n} \textbf{ or } \lvert \corrupt \rvert \geq t  \\
-    %
-    \pcif b=0 \\
-    \pcind (\{(j, \share_j)\}_{j \in \set{n}}, \vsscommit) \gets \vess.\issueshares(\lambda, \secret, n, t) \\
-    \pcelse \text{\algcom $b=1$ case} \\
-    \pcind \vsschal \gets \vess.\vfunc(\secret) \\
-    \pcind (\{(j, \share_j)\}_{j \in \corrupt}, \vsscommit) \rgets \simshare(\vsschal, n, t, \corrupt) \\
-    \pcind \pcfor j \in \corrupt \pcdo
-    \text{\algcom The simulation must produce $\lvert \corrupt \rvert$ valid shares} \\
-    \pcind \pcind \pcreturn 1\ \pcif \vess.\verify(j, \share_j, \vsscommit) \neq 1 \\
-    \pcind \pcreturn 1\ \pcif \vess.\derivepshare(0, \vsscommit) \neq \vsschal
-    \text{\algcom The commitment must be valid with respect to $\vsschal$} \\
-    b' \rgets \adv(\advstate, \{(j, \share_j)\}_{j \in \corrupt}, \vsscommit) \\
-    \pcreturn 1\ \pcif b' = b \\
-    \pcreturn 0
-  }
-  \end{pcvstack}
-  \end{pchstack}
-  \caption{Secrecy experiment defining the advantage of an adversary $\adv$ against a Verifiable Secret Sharing scheme (VSS) $\vess$ that is zero-indexed.}
-  \label{fg:vss-secrecy}
-\end{figure}
-
 
 \emph{Verifiable Secret Sharing} (VSS) allows a dealer to share a secret $s$ in such a way that
 participants can ensure that combining their shares allows for recovery of a secret that corresponds to a public commitment to $s$, without learning $s$ in the process.
@@ -71,7 +43,7 @@ This notion has been employed implicitly in prior DKGs~\cite{KomloG20}, and we f
   \end{itemize}
 \end{definition}
 
-For correctness, for all security parameters $\lambda$,
+For correctness, for all security parameters $\pp \gets \Setup(1^\lambda)$,
 for all $s \in \secretspace$, and $n, t, C$,
 such that $n \geq t$, $t \geq 1$, $C \subseteq \set{n}$, and $\lvert C \rvert \geq t$,
 the following must hold:
@@ -80,7 +52,7 @@ the following must hold:
       & \vess.\derivepshare(i, \vsscommit) = \vess.\vfunc(\share_i) \text{ for all } i \in \set{n}, \text{ and}  \\
       & \vess.\recover(t, \recoveryset) = \secret,
       \text{ where }   \\
-      & \vess.\issueshares(\lambda, \secret, n, t) \rightarrow ( \{ (i, \share_i) \}_{i \in \set{n}}, \vsscommit) \text{ and } \recoveryset = \{ (i, \share_i)\}_{i \in C}
+      & \vess.\issueshares(\secret, n, t) \rightarrow ( \{ (i, \share_i) \}_{i \in \set{n}}, \vsscommit) \text{ and } \recoveryset = \{ (i, \share_i)\}_{i \in C}
     \end{align*}
 
 
@@ -134,6 +106,36 @@ but formalized in game-based notation.
 \begin{figure}[!ht]
   \begin{pchstack}[boxed,center,space=1em]
   \begin{pcvstack}
+    \procedure[]{$\SecrecyExp_{\vess, \adv, \simshare}(\lambda,\secret)$}{
+    b \rgets \zo \\
+    \pp \gets \Setup(1^\lambda) \\
+    (n, t, \corrupt, \advstate) \rgets \adv(\pp) \\
+    \pcreturn 0\ \pcif t > n \textbf{ or } \corrupt \not\subseteq \set{n} \textbf{ or } \lvert \corrupt \rvert \geq t  \\
+    %
+    \pcif b=0 \\
+    \pcind (\{(j, \share_j)\}_{j \in \set{n}}, \vsscommit) \gets \vess.\issueshares(\secret, n, t) \\
+    \pcelse \text{\algcom $b=1$ case} \\
+    \pcind \vsschal \gets \vess.\vfunc(\secret) \\
+    \pcind (\{(j, \share_j)\}_{j \in \corrupt}, \vsscommit) \rgets \simshare(\vsschal, n, t, \corrupt) \\
+    \pcind \pcfor j \in \corrupt \pcdo
+    \text{\algcom The simulation must produce $\lvert \corrupt \rvert$ valid shares} \\
+    \pcind \pcind \pcreturn 1\ \pcif \vess.\verify(j, \share_j, \vsscommit) \neq 1 \\
+    \pcind \pcreturn 1\ \pcif \vess.\derivepshare(0, \vsscommit) \neq \vsschal
+    \text{\algcom The commitment must be valid with respect to $\vsschal$} \\
+    b' \rgets \adv(\advstate, \{(j, \share_j)\}_{j \in \corrupt}, \vsscommit) \\
+    \pcreturn 1\ \pcif b' = b \\
+    \pcreturn 0
+  }
+  \end{pcvstack}
+  \end{pchstack}
+  \caption{Secrecy experiment defining the advantage of an adversary $\adv$ against a Verifiable Secret Sharing scheme (VSS) $\vess$ that is zero-indexed.}
+  \label{fg:vss-secrecy}
+\end{figure}
+
+
+\begin{figure}[!ht]
+  \begin{pchstack}[boxed,center,space=1em]
+  \begin{pcvstack}
     \procedure[]{$\UniquenessExp_{\vess,\adv}(\lambda)$}{
     \text{\algcom $\adv$ chooses two recovery sets and a commitment with respect to the same threshold} \\
     (t^*, \recoveryset_1^*, \recoveryset_2^*, \vsscommit^*) \rgets \adv(\lambda) \\
@@ -172,8 +174,7 @@ Importantly, we do not restrict secrets to be sampled uniformly at random;
 even degenerate cases should hold.
 In other words,
 even ``seemingly bad'' cases,
-such as the identity element or values whose last bit is zero,
-are allowed.
+such as the identity element.
 
 
 The advantage of an adversary $\adv$ against a VSS scheme $\vess$ in the secrecy experiment as defined in Figure~\ref{fg:vss-secrecy} is
