@@ -93,7 +93,7 @@ The modification to the forking experiment is natural;
 intuitively,
 we add an additional abort condition if any of the values $h_1, \ldots, h_\forkhashes, h_j', \ldots, h_\forkhashes'$ collide.
 Because there are at most $2\forkhashes$ values, and they are all sampled uniformly at random from the set $H$,
-the probability that any of them collide is at most $(2\forkhashes)^2/\abs{H}$.
+the probability that any of them collide is at most $2\forkhashes^2/\abs{H}$.
 By considering this case here,
 we can be sure that such collisions are considered in our proof of security for \glitter.
 
@@ -103,7 +103,7 @@ we can be sure that such collisions are considered in our proof of security for 
     \begin{align} \label{eq:bound-mod-fork}
     \begin{split}
         \accept(\modgenfork^\cdv) & \geq \accept(\genfork^\cdv) - \Pr[\badhashevent]   \\
-        & \geq \accept(\genfork^\cdv) - (2\forkhashes)^2/\lvert H \rvert
+        & \geq \accept(\genfork^\cdv) - 2\forkhashes^2/\lvert H \rvert
     \end{split}
     \end{align}
     Where $\badhashevent$ denotes the event that $\modgenfork^\cdv$ returns $\bot$ due to the boxed lines in Figure~\ref{fg:gen-fork-mod}.
@@ -111,9 +111,9 @@ we can be sure that such collisions are considered in our proof of security for 
 
 \paragraph{Proof Intuition for Corollary~\ref{cor:modified-fork}.}
 The intuition for Corollary~\ref{cor:modified-fork} is straightforward,
-as it simply counts the number of times two values sampled uniformly at random from a $H$ (with replacement) might collide.
+as it simply counts the probability that two values sampled uniformly at random from a set (with replacement) might collide.
 As such,
-it counts the number of times the same value might be sampled twice,
-when $\forkhashes $ total sampling events are performed.
+it counts the probability that the same value might be sampled twice,
+when $2\forkhashes $ total sampling events are performed.
 
 
