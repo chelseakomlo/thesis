@@ -11,7 +11,9 @@ A threshold signature scheme should remain unforgeable even if $\tcornew$ signer
 where $\tcornew \leq \tcor$.
 
 Note that our definition of threshold signatures simply assumes that
-participants exchange messages $ \{\gmsg_{ 1, j}$ where $i$ represents participant $i$  and $j$ represents the $j$\supth signing round.
+participants exchange protocol messages $ \gmsg_{ i, j}$,
+where $i$ represents the $j$\supth signing round,
+and $j$ represents participant $j$.
 We model threshold signatures assuming a coordinator role,
 and so do not distinguish between peer-to-peer and broadcast messages.
 Our notion of unforgeability assumes that the adversary can play the role of the coordinator,
@@ -45,10 +47,11 @@ signers and the set $\{ \aggpk_i \}_{i \in \set{n}}$ of public keys for each sig
     Each $\sk_i$ is given to participant $i$, for $i \in \set{n}$.
     It is assumed that participant $i$ is sent its respective share $\sk_i$ privately.
 
-  \item $(\Sign_1, \ldots, \Sign_\numrounds) \rightarrow \{\gmsg_{ 1, i},
-    \ldots, \gmsg_{\numrounds, i} \}_{i \in \coalition}$:
-    A set of probabilistic algorithms where each subsequent algorithm represents a single stage in an interactive signing protocol,
-    performed by each signing party in a signing set
+  \item $\Sign_1 \rightarrow \gmsg_{1, i},  \ldots,
+    \Sign_\numrounds \rightarrow \gmsg_{ \numrounds, i}$:
+    A set of probabilistic algorithms where each subsequent algorithm represents a single stage
+    from rounds $1, \ldots, \numrounds$ in an interactive signing protocol,
+    performed by each signing party $i$ in a signing set
     $\coalition \subseteq \set{n}, |\coalition| \geq \thresh$,
     with respect to a message $m$, defined as follows:
   \begin{align}\label{eqn:protocol-messages}
@@ -96,8 +99,8 @@ The syntax assumes that the signing set $\coalition$, message $m$, and secret ke
 
 \begin{remark}[On Protocol Message Types]
   Our definition of threshold signatures does not distinguish between broadcast messages or peer-to-peer messages,
-  and simplify defines protocol messages $\gmsg$.
-  The concrete construction of the threshold signature scheme will provide the necessary structures to realize any necessary assumptions for protocol messages delivery.
+  and simply defines protocol messages $\gmsg$.
+  The concrete construction of the threshold signature scheme will provide the necessary structures to realize any necessary assumptions for protocol message delivery.
 \end{remark}
 
 \paragraph{Correctness.}
