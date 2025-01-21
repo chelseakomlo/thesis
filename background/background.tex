@@ -331,7 +331,11 @@ Peer-to-peer channels are authenticated, reliable, and unordered.
 Additionally, peer-to-peer channels are \emph{confidential}; i.e.,
 only participants $i$ and $j$ are allowed to know the contents of $\pmsg_{i,j}$.
 
-\section{Additional Roles and Adversaries.}
+\section{Additional Roles and Adversaries}
+
+In this section,
+we discuss additional considerations for adversarial power in the multi-party setting.
+We also discuss an additional role for multi-party protocols beyond a participant.
 
 \paragraph{Rushing Adversary.}
 A \defn{rushing adversary} is one that ``speaks last'';
@@ -343,7 +347,7 @@ Importantly, a rushing adversary may be able to choose its input \emph{adaptivel
 
 Security definitions consider such an adversary,
 by allowing the adversary to query for honest participants' contributions in a round before publishing its own.
-We consider rushing adversary in the proofs of security given in Chapters~\ref{chp:frost}, \ref{chp:stprm}, and \ref{chp:arctic}.
+We consider rushing adversaries in the proofs of security given in Chapters~\ref{chp:frost}, \ref{chp:storm}, and \ref{chp:arctic}.
 
 \paragraph{Coordinator Role.}
 In lieu of a broadcast channel,
@@ -353,4 +357,4 @@ the coordinator would be trusted to reliably route messages,
 but in the case that the coordinator is malicious,
 the coordinator is only capable of performing denial of service attacks.
 
-We consider the coordinator role in Chapter~\ref{chp:frost} and \ref{chp:arctic} as a mechanism to reliably route messages among signing participants.
+We consider the coordinator role in Chapters~\ref{chp:frost} and \ref{chp:arctic} as a mechanism to reliably route messages among signing participants.

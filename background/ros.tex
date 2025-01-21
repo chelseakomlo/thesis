@@ -11,21 +11,22 @@ At a high level,
 the goal is to find a solution to $\ell+1$ linear equations modulo $q$,
 where some elements in the equations are output from a random oracle.
 In other words,
-given a random oracle $\HROS$ and a set of arbitrary functions $f_1, \ldots, f_{\ell+1}$
-where $f_i(\Zq^\ell) \rightarrow \Zq$,
-the goal is to find coefficients $a_{k, i} \in \Zq, i \in \set{\ell}$ such that
+given a random oracle $\HROS$ and a set of arbitrary functions
+$f_j, j \in \{ j, \ldots, f_{\ell+1} \}$,
+where $f_j(\Zq^\ell) \rightarrow \Zq$,
+the goal is to find coefficients $a_{i} \in \Zq, i \in \set{\ell}$ such that
 \[
-  a_{k,1} c_1 + a_{k,2} c_2 + \ldots + a_{k,\ell} c_\ell = \HROS(f_{\ell+1}((a_{k,i})_{i \in \set{\ell}}, \aux))
+  a_{1} c_1 + a_{2} c_2 + \ldots + a_{\ell} c_\ell = \HROS(f_{\ell+1}((a_{i})_{i \in \set{\ell}}, \aux))
 \]
 
-\noindent where $c_i = \HROS(f_i((a_{k,i})_{i \in \set{\ell}}, \aux))$.
-It is always possible to find the first $\ell$ values simply by setting
-$a_{ki} = 1, i \in \set{\ell}$;
-the challenge is to find the $\ell+1\supth$ solution.
+\noindent where $c_j = \HROS(f_j((a_{i})_{i \in \set{\ell}}, \aux))$.
+It is always possible to find the first $\ell-1$ values simply by setting
+$a_{i} = 1, i \in \set{\ell-1}$;
+the challenge is to find the $\ell\supth$ solution.
 
 Wagner~\cite{Wagner02} and Benhamouda et al.~\cite{BenhamoudaLLOR20} showed how to solve the ROS problem in subexponential time,
 and demonstrated its applicability to the forgeability in a range of blind and multi-party
-signature schemes---including blind and threshold Schnorr signatures--- assuming a concurrent adversary,
+signature schemes---including blind and threshold Schnorr signatures---assuming a concurrent adversary,
 which may open an arbitrary number of signing sessions simultaneously.
 The proofs for prior multi-party Schnorr signature schemes shown to be insecure by
 Drijvers et al.~\cite{DrijversEFKLNS19} and Benhamouda et al.~\cite{BenhamoudaLLOR20} either considered only a sequential adversary which opened only one signing session at a time,

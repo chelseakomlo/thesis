@@ -137,6 +137,15 @@ Each participant's public key share $\pkparty_i$ is just one public key,
 where $\pkparty_i = \pksign_i$.
 Each participant's secret key share is the tuple $\skparty_i = (\skrand_i, \sksign_i, \pkgroup)$.
 
+\paragraph{Coordinator Role.}
+Arctic assumes an external mechanism to choose the set
+$\coalition \subseteq \{1, \ldots, n \}$ of signers,
+such that $t \leq \abs{\coalition} \leq n$.
+The coordinator may perform denial of service attacks,
+but otherwise cannot impact the security of Arctic.
+The coordinator can be a stand-alone entity,
+or may also be a signer as well.
+
 \paragraph{\bf Signing.}
 In the first round of signing,
 each participant $\partyid$ receive as input a message $\msg$.

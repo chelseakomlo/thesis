@@ -260,7 +260,7 @@ $\TUnforgExp_{\A,\threshsig}(\secp, n, \thresh, \tcornew)$, as defined in Figure
 \]
 
 A threshold signature scheme $\threshsig$ is \emph{statically secure} if for all PPT adversaries $\A$,
-$\advant{$\tuf$}{\A}(\secp, n, \thresh,\tcornew)$ is negligible,
+$\advant{$\tuf$}{\threshsig, \adv}(\secp, n, \thresh,\tcornew)$ is negligible,
 for $(n, \thresh, \tcornew) \in \mathbb{N}, \tcor \leq n$, $\tcornew < \tcor$.
 \end{definition}
 
@@ -282,9 +282,10 @@ for comparison.
 %As in static security, the adversary can corrupt a \emph{full} $\tcor$ out of $\thresh$ parties, and it is assumed that there is at least one honest signer.
 In the adaptive setting, the adversary is given the added capability to corrupt parties \emph{at any point during the protocol}, based on all protocol messages it has seen.
 This is in contrast to the static setting, where the adversary must declare the set of corrupt parties at the onset of the protocol, before any messages have been sent.
-Adaptive corruption means the adversary receives not only the honest party's secret key, but also its \emph{state across all signing sessions.}
+Adaptive corruption means the adversary receives not only the corrupted party's secret key,
+but also its \emph{state across all signing sessions.}
 
-At any time throughout the experiment, the adversary may query $\BigO^{\Corrupt}$ to corrupt
+At any time throughout the experiment, the adversary may query an additional oracle $\BigO^{\Corrupt}$ to corrupt
 up to $\tcornew$ honest signers,
 obtaining \emph{both} their secret key and as well as state across all signing sessions.
 As such,
