@@ -226,7 +226,7 @@ and $\thresh$ the reconstruction threshold,
 such that $\tcornew \leq \tcor \leq n$.
 
 The environment generates public parameters $\pp$
-and initializes the adversary with $(\pp, n, \tcor)$.
+and initializes the adversary with $(\pp, n, \thresh)$.
 The adversary chooses a set of corrupted parties $\corrupt$,
 and the challenger sets the honest parties $\honest \gets [n] \setminus \corrupt$.
 The challenger then runs $\KeyGen$ to derive the joint public key $\aggpk$ representing all $n$ signers, the individual public key shares $\{ \aggpk_i \}_{i \in \set{n}}$, and the secret key shares $ \{ \sk_i \}_{i \in \set{n}}$.
@@ -238,7 +238,7 @@ the adversary can then query signing oracles $\BigO^{\Sign_1}, \ldots, \BigO^{\S
 The environment performs various checks during the signing rounds to ensure each participant being called is in fact uncorrupted,
 is in the correct signing round,
 and that their protocol message in each round is faithfully carried to the next.
-Each of these checks is carried out with respect to the signing session identifier, denoted by $\ssid$.
+Each of these checks is carried out with respect to the execution identifier, denoted by $\ssid$.
 %
 The adversary wins if it can produce a valid forgery $\sigma^* = (R^*, z^*)$ with
 respect to the joint public key $\aggpk$ on a message $m^*$ that has not been previously queried.
@@ -251,17 +251,17 @@ or choose not to complete a signing session.
 We model concurrency explicitly in our definition to ensure that our notion of security protects against practical attacks which can occur under a concurrent adversary~\cite{BenhamoudaLLOR20}.
 
 \begin{definition}[Static Security]
-Let the advantage of an adversary $\A$ playing the static security game
-$\UnforgExp_{\A,\threshsig}(\secp, n, \tcor, \tcornew)$, as defined in Figure~\ref{fig:euf-cma-threshold}, be as follows:
+Let the advantage of an adversary $\A$ playing the static security game against a threshold signature scheme
+$\TUnforgExp_{\A,\threshsig}(\secp, n, \thresh, \tcornew)$, as defined in Figure~\ref{fig:euf-cma-threshold}, be as follows:
 %
 \[
-  \advant{$\uf$}{\threshsig, \adv}(\secp, n, \tcor, \tcornew) =
-  \bigabs{\Pr[\UnforgExp_{\threshsig,\adv}(\secp, n, \tcor, \tcornew) = 1]}
+  \advant{$\tuf$}{\threshsig, \adv}(\secp, n, \thresh, \tcornew) =
+  \bigabs{\Pr[\UnforgExp_{\threshsig,\adv}(\secp, n, \thresh, \tcornew) = 1]}
 \]
 
 A threshold signature scheme $\threshsig$ is \emph{statically secure} if for all PPT adversaries $\A$,
-$\advant{$\uf$}{\A}(\secp, n, \tcor,\tcornew)$ is negligible,
-for $(n, \tcor, \tcornew) \in \mathbb{N}, \tcor \leq n$, $\tcornew < \tcor$.
+$\advant{$\tuf$}{\A}(\secp, n, \thresh,\tcornew)$ is negligible,
+for $(n, \thresh, \tcornew) \in \mathbb{N}, \tcor \leq n$, $\tcornew < \tcor$.
 \end{definition}
 
 
@@ -272,7 +272,9 @@ In this work,
 we consider only static security for our threshold Schnorr signature constructions.
 While adaptive adversaries are certainly closer to a real-world setting,
 the complexity of modeling adversarial corruptions in a proof of security introduces challenging complexities.
-We leave proving the adaptive security of both FROST in Chapter~\ref{chp:frost} and Arctic in Chapter~\ref{chp:arctic} to future work.
+We leave proving the adaptive security of FROST in Chapter~\ref{chp:frost},
+STORM in Chapter~\ref{chp:storm},
+and Arctic in Chapter~\ref{chp:arctic} to future work.
 We however next provide a high-level discussion of adaptive security here,
 for comparison.
 
