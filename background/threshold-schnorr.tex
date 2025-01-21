@@ -57,8 +57,7 @@ signers and the set $\{ \aggpk_i \}_{i \in \set{n}}$ of public keys for each sig
   \begin{align}\label{eqn:protocol-messages}
     \begin{split}
     (\gmsg_{1,i}, \state_{1,i}) &\gets \Sign_1(i, \sk_i, \coalition, m)   \\
-    (\gmsg_{2,i}, \state_{2,i}) &\gets \Sign_2(\state_{1,i}, \PM_{1})   \\
-    \vdots \\
+    (\gmsg_{j,i}, \state_{j,i}) &\gets \Sign_2(\state_{j-1,i}, \PM_{j-1}) \text{for } 2 \leq j \leq \numrounds-1   \\
     \gmsg_{\numrounds, i} &\gets \Sign_\numrounds(\state_{\numrounds-1,i}, \PM_{\numrounds-1}) \\
     \end{split}
   \end{align}
@@ -163,19 +162,19 @@ produce a signature $\sigma$ such that $\Verify(\pk, m, \sigma) = 1$.
         \pcreturn \PM_{1, k}
 			}
     		\pcvspace
-    		\procedure{$\BigO^{\Sign_2}(\ssid, k, \PM_1)$}{
+        \procedure{$\BigO^{\Sign_j}(\ssid, k, \PM_{j-1}) \text{ for } 2 \leq j \leq \numrounds-1$}{
 			\pcreturn \bot~\pcif \ssid \notin \sessions \\
 			~~~\vee k \notin \honest \cap \coalition[\ssid] \vee \round[\ssid, k] \neq 1 \\
-			\pcparse \{\PM_{1,i}\}_{i \in \coalition} \gets \PM_1 \\
-			\pcreturn \bot~\pcif \PM_{1, k} \neq \PM_1[\ssid, k] \\
+      \pcparse \{\PM_{j-1,i}\}_{i \in \coalition} \gets \PM_{j-1} \\
+      \pcreturn \bot~\pcif \PM_{j-1, k} \neq \PM_{j-1}[\ssid, k] \\
 			%\state_1 \gets \state_1[\ssid, k] \\
-				(\PM_2[\ssid, k], \state_2[\ssid, k]) \\
-				~~~~~~~~~~~\gets  \Sign_2(\state_1[\ssid, k], \PM_1) \\
+				(\PM_j[\ssid, k], \state_j[\ssid, k]) \\
+        ~~~~~~~~~~~\gets  \Sign_j(\state_{j-1}[\ssid, k], \PM_{j-1}) \\
 				%\PM_2[\ssid, k] \gets \PM_2;~\state_2[\ssid, k] \gets \state_2 \\
-				\PM_{2, k} \gets \PM_2[\ssid, k];~\round[\ssid, k] \gets 2 \\
-       		 	\pcreturn \PM_{2,k}
+				\PM_{j, k} \gets \PM_j[\ssid, k];~\round[\ssid, k] \gets j \\
+       		 	\pcreturn \PM_{j,k}
 		}
-		\vdots
+    \pcvspace
 		\procedure{$\BigO^{\Sign_\numrounds}(\ssid, k, \PM_{\numrounds-1})$}{
 			\pcreturn \bot~\pcif \ssid \notin \sessions \\
 			~~~\vee k \notin \honest \cap \coalition[\ssid] \vee \round[\ssid, k] \neq \numrounds-1 \\
