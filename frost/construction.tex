@@ -25,25 +25,25 @@ or in a distributed manner via a distributed key generation (DKG) protocol.
 	%\begin{linedgamespec}
 	\begin{pchstack}[boxed,center,space=1em]
 		\begin{pcvstack}[space=1em]
-			\procedure{$\Setup(\usecp)$}{
+			\procedure{$\Setup(1^\usecp)$}{
 				(\Gr, q, g) \leftarrow \GroupGen(\usecp) \\
 				\text{\algcom Select two hash functions} \\
-				\HashNon, \HashSig : \{0,1\}^* \rightarrow \Z_p \\
+				\HashNon, \HashSig : \{0,1\}^* \rightarrow \Zq  \\
 				\pp \gets ((\Gr, q, g), \HashNon, \HashSig) \\
 				\pcreturn \pp
 			}
 			\procedure{${\KeyGen}(n, t)$}{
         \text{\algcom Shown in the centralized setting,} \\
         \text{\algcom but a DKG can likewise be used.} \\
-        \sk \randpick \Z_p; \threshpk \gets g^{\sk} \\
-        \{(i, \sk_i) \}_{i \in \set{n}} \randpick \tss.\IssueShares(\sk, n, t) \\
+        \sk \randpick \Zq; \threshpk \gets g^{\sk} \\
+        \{(i, \sk_i) \}_{i \in \set{n}} \randpick \shamir.\IssueShares(\sk, n, t) \\
         \text{\algcom Shamir secret sharing of $\sk$} \\
-        \pcfor i \in \set{n}~\aggpk_i \gets g^{\sk_i}\\
+        \pcfor i \in \set{n} \pcdo \\
+        \pcind \aggpk_i \gets g^{\sk_i}\\
         \pcreturn (\threshpk, \{ \aggpk_i \}_{i \in \set{n}},  \{ \sk_i\}_{i \in \set{n}})
 			}
-			\procedure{$\Sign_1()$}{
-        \text{\algcom Local signer has index $k$} \\
-				d_k, e_k \randpick \Z_p^2 \\
+			\procedure{$\Sign_1()$ \algcom For party $k$ }{
+				d_k, e_k \randpick \Zq^2 \\
         D_k \gets g^{d_k};\ E_k \gets g^{e_k};\\
 				\state_k \gets (D_k, d_k, E_k, e_k) \\
         \gmsg_{1,k} \gets (D_k, E_k) \\
@@ -51,7 +51,7 @@ or in a distributed manner via a distributed key generation (DKG) protocol.
 			}
 		\end{pcvstack}
 		\begin{pcvstack}[space=1em]
-			\procedure{$\Sign_2(\state_k, \sk_k,  m, \PM_1)$}{
+			\procedure{$\Sign_2(\state_k, \sk_k,  m, \PM_1)$ \algcom For party $k$ }{
         \text{\algcom $\Sign_2$ must be called at most once per $\state_k$} \\
         \text{parse}~(  D_k, d_k, E_k, e_k )  \gets \state_k \\
         \text{parse}~ \{ D_i, E_i \}_{i \in \coalition} \gets \PM_1 \\
@@ -68,8 +68,10 @@ or in a distributed manner via a distributed key generation (DKG) protocol.
       \procedure{$\Combine(\coalition, m, \PM_1, \PM_2)$}{
         \text{parse}~\{ (D_i, E_i) \}_{i \in \coalition}  \gets \PM_1,
         \{ z_i \}_{i \in \coalition} \gets \PM_2 \\
-        \aggR \gets \prod_{i \in \coalition} D_i\cdot{E_i}^{\bindingf_i};~z \gets \sum_{i \in \coalition} z_i \\
-				\sigma \gets (\aggR, z)\\
+        \pcfor i \in \coalition \pcdo \\
+        \pcind \bindingf_i \gets \HashNon(k, \threshpk, m, \{ (i, D_i, E_i)\}_{i \in \coalition}) \\
+        \aggR \gets \prod_{i \in \coalition} D_i\cdot{E_i}^{\bindingf_i};~z
+        \gets \sum_{i \in \coalition} z_i;~\sigma \gets (\aggR, z)\\
         \pcreturn \sigma
 			}
 			\procedure{$\Verify(\threshpk, m, \sigma)$}{
@@ -77,7 +79,7 @@ or in a distributed manner via a distributed key generation (DKG) protocol.
 				c \gets \HashSig(\threshpk, m, \aggR)\\
 				\pcif \aggR \cdot \threshpk^c = g^z \\
 				\pcind \pcreturn 1\\
-				\pcreturn 0
+				\pcelse \pcreturn 0
 			}
 		\end{pcvstack}
 	\end{pchstack}

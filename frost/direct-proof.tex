@@ -4,6 +4,8 @@
 We now present a direct proof for the FROST signature construction given in Figure~\ref{fig:frost}.
 This proof builds on prior proofs of security for FROST~\cite{BellareCKMTZ22},
 but gives a reduction to AOMDL, as opposed to OMDL.
+As discussed in Section~\ref{assumptions},
+AOMDL is a falsifiable and hence weaker assumption than OMDL.
 
 Our proof assumes a centralized key generation mechanism.
 
@@ -12,18 +14,18 @@ Our proof assumes a centralized key generation mechanism.
 \begin{theorem}\label{thm:FROST-aomdl}
 	FROST is statically unforgeable   against an adversary $\adv$ that is allowed to corrupt up to $\tcor$ participants,
   assuming the AOMDL assumption holds for $\GroupGen$ in the ROM.
-  In other words, for every static unforgeability adversary $\adv$ that wins the adaptive unforgeability game as shown in Figure~\ref{fig:euf-cma-threshold} against FROST,
+  In other words, for every static unforgeability adversary $\adv$ that wins the (static) unforgeability game as given in Definition~\ref{defn:thresh-static-unforg},
   there exists a PPT adversary $\ddv$ that wins the AOMDL game.
 
   The advantage of $\adv$ is bounded by
 
 
   \begin{equation*} \label{eq:frost-aomdl}
-\advant{$\uf$}{\A,\frost}(\secp, n, \thresh, \tcor)
+\advant{$\uf$}{\frost,\A}(\secp, n, \thresh, \tcor)
     \leq \sqrt{\rototal \cdot \advant{aomdl}{\ddv}(\secp) } + \mathsf{negl}(\secp)
   \end{equation*}
 
-such that $\rototal = \qnon + \qsigh +  \qsig + 1$ is the number of times $\adv$ is allowed to query the random oracle,
+\noindent such that $\rototal = \qnon + \qsigh +  \qsig + 1$ is the number of times $\adv$ is allowed to query the random oracle,
 where $\qnon$ is the number of times $\adv$ is allowed to query $\HashNon$,
 $\qsigh$ is the number of times $\adv$ is allowed to query $\HashSig$,
 and $\qsig$ is the number of times $\adv$ is allowed to query its signing oracle.
@@ -43,7 +45,7 @@ interacting with $\SIM$ that it does when playing against FROST directly.
 Concretely, in the setting where $\adv$ is allowed up to $\tcor$ corruptions, then
 \begin{align} \label{eq:simulation-frost}
   \begin{split}
-\advant{$\uf$}{\A,\frost}(\secp, n, \thresh, \tcor)  & \leq
+\advant{$\uf$}{\frost,\A}(\secp, n, \thresh, \tcor)  & \leq
         \advant{$\uf$}{\adv,\SIM}(\lambda, n, t, t-1)
         + \frac{\rototal}{q}
         + \frac{\rototal^2}{2q}
@@ -60,7 +62,7 @@ Concretely,
     \begin{align} \label{eq:ddv-dl}
     \begin{split}
         \advant{aomdl}{\ddv}(\lambda) & \geq
-        \frac{\advant{uf}{\adv,\frost}(\lambda, n, t, t-1)^2}{\rototal}
+        \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
         - \frac{2\rototal}{q}
         - \frac{3\rototal^2}{q}
     \end{split}
@@ -71,7 +73,7 @@ Concretely,
   We give the proof by one game hop and then describing the simulator $\SIM$.
 
   \paragraph{Game~0.}
-  This is the unforgeability game as defined in Figure~\ref{fig:euf-cma-threshold},
+  This is the unforgeability game as defined in Definition~\ref{defn:thresh-static-unforg},
   instantiated with FROST.
 
   Let $\A$ be an adversary playing the static unforgeability game.
@@ -112,7 +114,7 @@ Concretely,
   a set  of $2q_s+1$ AOMDL challenges $\{ X_0, \ldots, X_{2q_s}\}$,
   and a set of values
   $\{h_1, \ldots, h_{\rototal} \}$ to program its random oracles.
-  $\SIM$ can query the AOMDL oracle $\odlsol$ up to $q_s$ times.
+  $\SIM$ can query the AOMDL solution oracle $\odl$ up to $q_s$ times.
 
   \medskip
 
@@ -519,13 +521,13 @@ with total probability $q_s^2/q$.
     \begin{split}
 \advant{aomdl}{\ddv}(\secp)
         & \geq
-        \frac{\advant{uf}{\adv,\frost}(\lambda, n, t, t-1)^2}{\rototal}
+        \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
         - 2 \cdot \frac{\rototal^2}{2q}
         - 2 \cdot \BadEventOne
         - \BadEventTwo
         - \BadEventThree \\
         & \geq
-        \frac{\advant{uf}{\adv,\frost}(\lambda, n, t, t-1)^2}{\rototal}
+        \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
         - \frac{2 \qnon}{q}
         - \frac{3\rototal^2}{q}
     \end{split}

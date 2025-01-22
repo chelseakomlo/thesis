@@ -253,6 +253,7 @@ or choose not to complete a signing session.
 We model concurrency explicitly in our definition to ensure that our notion of security protects against practical attacks which can occur under a concurrent adversary~\cite{BenhamoudaLLOR20}.
 
 \begin{definition}[Static Security]
+  \label{defn:thresh-static-unforg}
 Let the advantage of an adversary $\A$ playing the static security game against a threshold signature scheme
 $\TUnforgExp_{\A,\threshsig}(\secp, n, \thresh, \tcornew)$, as defined in Figure~\ref{fig:euf-cma-threshold}, be as follows:
 %
