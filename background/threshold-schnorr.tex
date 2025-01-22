@@ -165,7 +165,7 @@ produce a signature $\sigma$ such that $\Verify(\pk, m, \sigma) = 1$.
     		\pcvspace
         \procedure{$\BigO^{\Sign_j}(\ssid, k, \PM_{j-1}) \text{ for } 2 \leq j \leq \numrounds-1$}{
 			\pcreturn \bot~\pcif \ssid \notin \sessions \\
-			~~~\vee k \notin \honest \cap \allcoalitions[\ssid] \vee \round[\ssid, k] \neq 1 \\
+			~~~\vee k \notin \honest \cap \allcoalitions[\ssid] \vee \round[\ssid, k] \neq j-1 \\
       \pcparse \{\PM_{j-1,i}\}_{i \in \coalition} \gets \PM_{j-1} \\
       \pcreturn \bot~\pcif \PM_{j-1, k} \neq \PM_{j-1}[\ssid, k] \\
 			%\state_1 \gets \state_1[\ssid, k] \\
