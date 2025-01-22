@@ -120,6 +120,7 @@ produce a signature $\sigma$ such that $\Verify(\pk, m, \sigma) = 1$.
       \procedure{$\TUnforgExp_{\threshsig, \adv}(\secp, n, \thresh, \tcornew)$}{
 		%\protect\dashbox[3.5cm][c]{$\G^{\aduf}_{\A,\threshsig}(\secp, \hmulp)$}}{
 			\sessions \gets \emptyset;\ Q_m \gets \emptyset \\
+      \allcoalitions \gets \emptyset;\ \round \gets \emptyset \\
 			\pp \leftarrow  \Setup(1^\secp) \\
       			%Q \gets \emptyset \pccomment{set of queried messages} \\ Liz: Do all or none?
  	    		(\corrupt, \state_\A) \randpick \A(\pp, n, \thresh, \tcornew)   \\
@@ -138,15 +139,15 @@ produce a signature $\sigma$ such that $\Verify(\pk, m, \sigma) = 1$.
 		}
    		\pcvspace
 		\procedure{$\Init(\ssid, k, \coalition, m)$}{
-		\pcif \ssid \notin \sessions \\
-		~~~\pcreturn \bot~\pcif \coalition \not\subseteq [n]
-      \vee |\coalition| < \thresh\\
-		~~~~\vee k \notin \honest \cap \coalition \\
+      \pcif k \notin \honest \cap \coalition\ \vee \\
+      ~~ \pcif \coalition \not\subseteq [n] \vee |\coalition| < \thresh \ \vee \\
+      ~~~~ \pcif \round[\ssid, k] \neq \bot \\
+      ~~~~~~ \pcreturn \bot \\
+		\pcif \ssid \not\in \sessions \\
 		~~~\sessions \gets \sessions \cup \{\ssid\} \\
-		~~~\coalition \gets \coalition[\ssid];~m \gets m[\ssid] \\
-		~~~Q_m \gets Q_m \cup \{m[\ssid]\} \\
-		\pcreturn \bot~\pcif k \notin \honest \cap \coalition[\ssid] \\
-		~~~\vee \round[\ssid, k] \neq \bot
+    \allcoalitions[\ssid] \gets \coalition \\
+    \round[\ssid,k] \gets 1 \\
+	  Q_m \gets Q_m \cup \{ m \}
 		}
 		\end{pcvstack}
     		\pchspace
@@ -156,7 +157,7 @@ produce a signature $\sigma$ such that $\Verify(\pk, m, \sigma) = 1$.
 				\pcreturn \bot~\pcif \bot \gets \Init(\ssid, k, \coalition, m) \\
 				%\S \gets \signers[\ssid];~m \gets m[\ssid] \\
 				(\PM_1[\ssid, k], \state_1[\ssid, k]) \\
-				~~~~~~~~~~~\gets  \Sign_1(k, \sk_k, \coalition[\ssid], m[\ssid]) \\
+				~~~~~~~~~~~\gets  \Sign_1(k, \sk_k, \coalition, m) \\
 				%\PM_1[\ssid, k] \gets \PM_1;~\state_1[\ssid, k] \gets \state_1 \\
 				\PM_{1, k} \gets \PM_1[\ssid, k];~\round[\ssid, k] \gets 1 \\
         \pcreturn \PM_{1, k}
@@ -164,7 +165,7 @@ produce a signature $\sigma$ such that $\Verify(\pk, m, \sigma) = 1$.
     		\pcvspace
         \procedure{$\BigO^{\Sign_j}(\ssid, k, \PM_{j-1}) \text{ for } 2 \leq j \leq \numrounds-1$}{
 			\pcreturn \bot~\pcif \ssid \notin \sessions \\
-			~~~\vee k \notin \honest \cap \coalition[\ssid] \vee \round[\ssid, k] \neq 1 \\
+			~~~\vee k \notin \honest \cap \allcoalitions[\ssid] \vee \round[\ssid, k] \neq 1 \\
       \pcparse \{\PM_{j-1,i}\}_{i \in \coalition} \gets \PM_{j-1} \\
       \pcreturn \bot~\pcif \PM_{j-1, k} \neq \PM_{j-1}[\ssid, k] \\
 			%\state_1 \gets \state_1[\ssid, k] \\
