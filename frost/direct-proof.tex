@@ -176,9 +176,9 @@ queried by $\A$ to honest signers,
       If not, $\SIM$ simply returns $\QNon[(k, \threshpk, \allowbreak m,\allowbreak \{ (i, D_i, E_i)\}_{i \in \coalition})] $,
     \item Otherwise, for all $j \in \coalition$, $\SIM$ does the following:
   \begin{enumerate}
-    \item $\SIM$ sets $a_j \gets h_j $ and
+    \item $\SIM$ sets $a_j \gets h_\ell $ and
       $\QNon[(j, \threshpk, m, \{(i, D_i, E_i)\}_{i \in \coalition})] = a_j$
-      where $h_j$ is the next-unused hash value provided to $\SIM$ on initialization.
+      where $h_\ell, \ell \in \set{\rototal}$ is the next-unused hash value provided to $\SIM$ on initialization.
   \end{enumerate}
     \item Then, $\SIM$ derives
     $\aggR \gets \prod_{i \in \coalition} D_i \cdot E_i^{a_i}$.
@@ -228,7 +228,7 @@ queried by $\A$ to honest signers,
   \item Finally, $\B$ returns $(D_k, E_k)$ to $\A$.
   \end{enumerate}
 
-\item{Round 2 ($\BigO^{\Sign_2}(k, \ssid, m, \S, \{ (D_i, E_i) \}_{i \in \coalition})$):}
+\item{Round 2 ($\BigO^{\Sign_2}(k, \ssid, m, \coalition, \{ (D_i, E_i) \}_{i \in \coalition})$):}
 	When $\A$ queries $\BigO^{\Sign_2}$ for honest participant identifier $k \in \honest$,
   session identifier $\ssid$, message $m$, signing set $\coalition$,
   and set of nonce commitments $\{ (D_i, E_i) \}_{i \in \coalition}$,

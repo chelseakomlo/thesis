@@ -51,7 +51,7 @@ or in a distributed manner via a distributed key generation (DKG) protocol.
 			}
 		\end{pcvstack}
 		\begin{pcvstack}[space=1em]
-			\procedure{$\Sign_2(\state_k, \sk_k,  m, \PM_1)$ \algcom For party $k$ }{
+			\procedure{$\Sign_2(\state_k, \sk_k,  m, \coalition, \PM_1)$ \algcom For party $k$ }{
         \text{\algcom $\Sign_2$ must be called at most once per $\state_k$} \\
         \text{parse}~(  D_k, d_k, E_k, e_k )  \gets \state_k \\
         \text{parse}~ \{ D_i, E_i \}_{i \in \coalition} \gets \PM_1 \\
