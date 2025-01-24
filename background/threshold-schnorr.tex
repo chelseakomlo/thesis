@@ -27,7 +27,7 @@ We discuss DKGs further in Chapter~\ref{chp:storm}.
 
 \begin{definition} \label{def:threshold-sig}
   A \defn{threshold signature scheme} $\threshsig$ whose signing protocol consists of \numrounds~rounds is a tuple of the following algorithms
-  $\threshsig = (\Setup, \KeyGen, \allowbreak (\Sign_1, \ldots, \Sign_\numrounds ), \allowbreak \Combine, \allowbreak \Verify, \Recover)$, defined as follows:
+  $\threshsig = (\Setup, \KeyGen, \allowbreak (\Sign_1, \ldots, \Sign_\numrounds ), \allowbreak \Combine, \allowbreak \Verify)$, defined as follows:
 
 
 \begin{itemize}
@@ -75,26 +75,26 @@ signers and the set $\{ \aggpk_i \}_{i \in \set{n}}$ of public keys for each sig
 
   \item $\Verify(\threshpk, m, \sigma) \rightarrow 0/1$: A deterministic algorithm that takes as input the public key $\threshpk$, a message $m$, and a purported signature $\sigma$ and outputs $1$ (accept) if the signature verifies; else, it outputs $0$ (reject).
 
-  \item $\Recover(\thresh, \{ (i, \sk_i)\}_{ i \in \coalition}) \rightarrow \bot / \sk$:
-    A deterministic algorithm that takes as input a threshold $\thresh$ and a set of secret key shares $\{(i, \sk_i) \}_{i \in \coalition}$.
-    If $\coalition \not\subseteq \set{n}$ or $\lvert \coalition \rvert < \thresh$,
-    it outputs $\bot$; else, it recovers $\sk$ using the set of shares.
+  %\item $\Recover(\thresh, \{ (i, \sk_i)\}_{ i \in \coalition}) \rightarrow \bot / \sk$:
+  %  A deterministic algorithm that takes as input a threshold $\thresh$ and a set of secret key shares $\{(i, \sk_i) \}_{i \in \coalition}$.
+  %  If $\coalition \not\subseteq \set{n}$ or $\lvert \coalition \rvert < \thresh$,
+  %  it outputs $\bot$; else, it recovers $\sk$ using the set of shares.
 \end{itemize}
 \end{definition}
 
-\begin{remark}
+\begin{remark} \label{rem:defer}
 The syntax assumes that the signing set $\coalition$, message $m$, and secret key share $\sk_i$ are given as input in the first round of signing.
   However, constructions may defer these values to later rounds of signing,
   if the proof of security so allows.
 \end{remark}
 
-\begin{remark}[On the Inclusion of an Explicit Recovery Algorithm]
-  We define a threshold signature scheme with an explicit recovery algorithm.
-  While this recovery algorithm is defined explicitly for centralized and decentralized threshold secret sharing schemes~\cite{BonehS2020,GennaroJKR07},
-  its use for threshold signatures is often implicit.
-  We define this recovery algorithm explicitly,
-  and employ it next to define correctness.
-\end{remark}
+%\begin{remark}[On the Inclusion of an Explicit Recovery Algorithm]
+%  We define a threshold signature scheme with an explicit recovery algorithm.
+%  While this recovery algorithm is defined explicitly for centralized and decentralized threshold secret sharing schemes~\cite{BonehS2020,GennaroJKR07},
+%  its use for threshold signatures is often implicit.
+%  We define this recovery algorithm explicitly,
+%  and employ it next to define correctness.
+%\end{remark}
 
 \begin{remark}[On Protocol Message Types]
   Our definition of threshold signatures does not distinguish between broadcast messages or peer-to-peer messages,
@@ -178,7 +178,7 @@ produce a signature $\sigma$ such that $\Verify(\pk, m, \sigma) = 1$.
     \pcvspace
 		\procedure{$\BigO^{\Sign_\numrounds}(\ssid, k, \PM_{\numrounds-1})$}{
 			\pcreturn \bot~\pcif \ssid \notin \sessions \\
-			~~~\vee k \notin \honest \cap \coalition[\ssid] \vee \round[\ssid, k] \neq \numrounds-1 \\
+      ~~~\vee k \notin \honest \cap \hat{coalition}[\ssid] \vee \round[\ssid, k] \neq \numrounds-1 \\
 			\pcparse \{\PM_{\numrounds-1,i}\}_{i \in \coalition} \gets \PM_{\numrounds-1} \\
 			\pcreturn \bot~\pcif \PM_{\numrounds-1, k} \neq \PM_{\numrounds-1}[\ssid, k] \\
 			%\state_2 \gets \state_2[\ssid, k] \\

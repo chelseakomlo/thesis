@@ -97,6 +97,8 @@ signature.
 However, signing operations in FROST additionally leverage a novel binding
 technique to avoid known forgery attacks without limiting concurrency.
 Verification of signatures is identical to (single-party) Schnorr signatures.
+As discussed in Remark~\ref{rem:defer},
+giving the coalition $\coalition$ and message $\msg$ can be safely deferred to Round~2.
 
 We present FROST signing in two parts: a pre-processing phase and a
 single-round signing phase. However, these stages can be combined into a two-round protocol if desired.
