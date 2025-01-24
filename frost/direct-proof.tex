@@ -46,7 +46,7 @@ Concretely, in the setting where $\adv$ is allowed up to $\tcor$ corruptions, th
 \begin{align} \label{eq:simulation-frost}
   \begin{split}
 \advant{$\uf$}{\frost,\A}(\secp, n, \thresh, \tcor)  & \leq
-        \advant{$\uf$}{\adv,\SIM}(\lambda, n, t, t-1)
+        \Pr [\ \SIM^\adv(\lambda, n, t, t-1) \neq \bot \ ]
         + \frac{\rototal}{q}
         + \frac{\rototal^2}{2q}
   \end{split}
