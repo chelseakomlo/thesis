@@ -64,8 +64,11 @@ Interest in threshold schemes is growing in practice.
 For example,
 NIST will soon issue a call for threshold schemes ranging from distributed key
 generation to threshold zero-knowledge proofs~\cite{NIST22,NIST23}.
-Another example is the FROST Schnorr threshold signature scheme~\cite{KomloG20,BellareCKMTZ22},
-for which an IRTF RFC exists~\cite{Connolly22}.
+The NIST call specifically requests threshold variants of single-party signature schemes,
+including Schnorr signatures~\cite{Schnorr91},
+which is a core focus of this thesis.
+%Another example is the FROST Schnorr threshold signature scheme~\cite{KomloG20,BellareCKMTZ22},
+%for which an IRTF RFC exists~\cite{Connolly22}.
 
 However,
 significant challenges arise when using threshold schemes in practice,
@@ -122,7 +125,7 @@ and computational and bandwidth efficiency.
 \section{Overview of Results}
 
 This dissertation presents new techniques to simplify and improve practicality of threshold Schnorr signatures and discrete-logarithm based distributed key generation.
-The first part gives an efficient randomized threshold Schnorr signature scheme.
+The first part gives an efficient randomized threshold Schnorr signature scheme,
 The second part gives a generic construction for a distributed key generation (DKG) scheme.
 The third part gives an efficient deterministic threshold Schnorr signature scheme.
 
@@ -132,9 +135,14 @@ The first contribution of this dissertation is to define FROST,
 a Flexible Round-Optimized Schnorr Threshold Signature scheme.
 FROST is a two-round randomized threshold Schnorr signature scheme,
 which can optionally be used in the preprocessing setting.
+FROST defines a multi-party signing protocol that outputs a signature that is
+verifiable under the single-party Schnorr signature verification algorithm~\cite{Schnorr91}.
+
+By saying that FROST can be used in the preprocessing setting,
+we mean that FROST can be used in the setting where the first round is performed in a batched manner.
 In other words,
-FROST can be used in the setting where the first round is performed in a batched manner,
-such that performing the threshold signing protocol requires only a single online round of interaction among all parties.
+performing the threshold signing protocol may require only a single online round of interaction among all parties,
+if the first round is performed in a batched manner by each signing party.
 
 While threshold Schnorr signature schemes certainly existed in the literature prior to FROST,
 all prior schemes fall into one of two categories.
@@ -204,19 +212,20 @@ which we define in Section~\ref{concrete-nike}.
 The third contribution of this dissertation is to define a \emph{deterministic} threshold Schnorr signature scheme.
 While FROST is desirable in practice,
 one downside is that participants cannot re-use secret state across signing sessions,
-otherwise risk complete exposure of their secret signing key.
-In the real-world setting where machines can go offline and reboot at random,
+as doing so will result in complete exposure of their secret signing key.
+In the real-world setting where machines can go offline and reboot without warning,
 such a strong requirement can prove challenging in practice.
-The goal of a deterministic scheme is to protect against such cases,
-as participants no longer are required to sample random values when performing signing.
+The goal of a deterministic threshold signature scheme is to protect against such cases,
+as participants are no longer required to maintain state when performing signing.
 
 Towards this goal, we present Arctic,
 a deterministic and stateless threshold Schnorr signature scheme.
 The primary goal of Arctic is simplicity.
-While prior deterministic threshold Schnorr signature schemes have been defined~\cite{NickRSW20,GarillotKMN21,KondiOR23},
-these schemes rely on complex generic multi-party computation techniques.
+While prior deterministic threshold Schnorr signature schemes have been defined~\cite{NickRSW20,GarillotKMN21,KondiOR23} in the literature,
+these prior schemes rely on generic multi-party computation techniques,
+and therefore incur complexity and performance overhead.
 The observation underlying Arctic is that in settings where the expected number of honest parties far outnumbers the expected number of corrupt parties,
-we can define a simple and efficient deterministic threshold Schnorr signature scheme.
+we can define a simpler and more efficient deterministic threshold Schnorr signature scheme.
 
 In particular,
 for moderately sized groups (i.e., when $n \leq 20$),
@@ -227,6 +236,10 @@ Arctic scales linearly relative to the number of processing cores.
 Importantly,
 signers in Arctic are required to generate and maintain secret keys,
 but otherwise do not need to manage secret state.
+
+We prove the security of Arctic by showing a reduction to the Discrete-Logarithm (DL) problem in the Random Oracle Model (ROM).
+Showing a reduction to standard security assumptions in the ROM is highly desirable,
+as these assumptions are the same as is required for the security of the single-party Schnorr signature scheme~\cite{Schnorr91}.
 
 \section{Impact in Practice}
 
