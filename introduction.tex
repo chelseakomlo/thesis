@@ -134,25 +134,24 @@ FROST is a two-round randomized threshold Schnorr signature scheme,
 which can optionally be used in the preprocessing setting.
 In other words,
 FROST can be used in the setting where the first round is performed in a batched manner,
-such that signing requires only a single online round of interaction among all parties.
+such that performing the threshold signing protocol requires only a single online round of interaction among all parties.
 
-While prior threshold Schnorr signature schemes existed in the literature prior to FROST,
-all prior schemes fell into one of two categories.
-The schemes either required more than two rounds of interaction among all parties~\cite{StinsonR01},
-or the scheme was insecure in a concurrent setting~\cite{GennaroJKR03}
+While threshold Schnorr signature schemes certainly existed in the literature prior to FROST,
+all prior schemes fall into one of two categories.
+Prior schemes either require more than two rounds of interaction among all parties~\cite{StinsonR01},
+or are insecure in a concurrent setting~\cite{GennaroJKR03}
 due to a polynomial-time forgery attack~\cite{DrijversEFKLNS19,BenhamoudaLLOR20}.
 
-One might ask why having a two-round signing scheme is desirable,
-over prior schemes that required more rounds of interaction~\cite{StinsonR01}.
+One might ask why limiting the number of communication rounds when performing signing is in fact desirable.
 What we have learned from practitioners is that round efficiency is highly desirable for implementations in practice,
 due to the complexities that arise when coordinating communication rounds among multiple parties.
-In the setting where parties may fail to reply or reply in a slow manner,
+In the setting where parties could fail to reply or respond in a delayed manner,
 managing timeouts and session state across concurrent signing sessions becomes highly complex when signing is performed at scale.
 
 We note that FROST achieves improved round efficiency in the optimistic case that no participant fails to respond or misbehaves.
 However, in the case where a participant contributes malformed
 values during the protocol or simply fails to respond,
-honest parties can identify and exclude the misbehaving participant, and re-run the protocol.
+honest parties can identify and exclude the misbehaving participant, and then re-run the protocol.
 In other words,
 FROST does allow for some form of identifiable abort,
 but is not robust,
@@ -161,17 +160,18 @@ in that any deviation from the protocol requires aborting and re-running.
 We prove the security of FROST with respect to the Algebraic One-More Discrete
 Logarithm  (AOMDL) assumption,
 formalized by Jonas, Ruffing, and Seurin~\cite{NickRS21}.
-which is a falsifiable variant of the One-More Discrete Logarithm (OMDL) assumption~\cite{BellareNPS03,BauerFP21}.
+which is a weaker variant of the One-More Discrete Logarithm (OMDL) assumption~\cite{BellareNPS03,BauerFP21}.
+While FROST was proven secure with respect to OMDL~\cite{BellareCKMTZ22},
+we additionally show how this proof extends to AOMDL.
 OMDL defines an interactive discrete-logarithm assumption,
 in which the adversary is given $\ell+1$ discrete logarithm challenges,
 and is required to output $\ell+1$ solutions,
 while being given $\ell$ queries to a discrete-logarithm solution oracle.
-OMDL is not falsifiable because it defines a discrete-logarithm solution oracle
-which must output solutions to arbitrary queries,
-and so cannot be guaranteed to run in polynomial time.
-AOMDL on the other hand requires the adversary to additionally give as input the representation of the input group element with respect to all challenge group elements,
-and so the oracle can be guaranteed to run in polynomial time,
-therefore making it a weaker assumption than OMDL.
+OMDL is a stronger security assumption the OMDL oracle must output solutions to arbitrary group elements,
+and so is guaranteed to run in polynomial time.
+AOMDL additionally requires the adversary to give as input the representation of the input group element with respect to all challenge group elements.
+As such, the AOMDL solution oracle is guaranteed to run in polynomial time,
+therefore making AOMDL a weaker assumption than OMDL.
 
 \subsection{Part 2: A Generic Distributed Key Generation (DKG) Construction}
 
