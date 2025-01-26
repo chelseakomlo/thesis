@@ -5,41 +5,43 @@
 %======================================================================
 
 While the goal of cryptography can be described in many ways,
-one primary motivation is often the goal of \emph{authorization} in a digital environment;
-i.e., only a designated party may be allowed to perform some pre-determined action online.
-The goal of authorization is generally accomplished by granting the authorized party \emph{knowledge} of some hard-to-guess secret,
+one primary motivation is often \emph{authorization} within a digital environment;
+i.e., the assurance that only a designated party is allowed to perform some pre-determined action.
+The goal of authorization is generally accomplished by granting the authorized party \emph{knowledge} of a secret,
 and then later challenging the party to demonstrate knowledge of this secret value.
-The formalization of this intuition is then notion underlying interactive identification protocols and digital signature schemes.
+This intuition describes the strategy underlying interactive identification protocols and digital signature schemes;
+a common cryptographic building block in secure protocols.
 
-A core challenge emerges when considering the possibility that this authorized party may either later be corrupted,
+A challenge emerges when considering the possibility that this authorized party may later become compromised by an adversarial party,
 or might simply fail.
-One prominant example is that of certificate authorities,
+For example,
+a database holding a secret value might become corrupted.
+One real-world example is that of certificate authorities,
 which have been long-documented to fail to perform trusted actions~\cite{SSLMate}
 In this setting,
 even if the designated party correctly demonstrates knowledge of a secret key,
-the party may still violate trust.
+the party may still intuitively violate trust.
 In other words,
-the cryptography may be correct,
+the cryptography may be acted upon correctly,
 but the spirit of trust is still violated.
 
 As cryptographers,
-the question then emerges as to how new cryptographic primitives might be designed to better reflect the trust required in a real-world setting.
-In other words,
+the question then emerges as whether new cryptographic primitives can be designed to better reflect the trust required in a real-world setting.
+For this particular example,
 instead of distributing one secret value to authorize a designated party,
-is it possible instead to designate multiple parties that must cooperate to perform some trusted action?
+one might ask whether is it possible to instead designate multiple parties that must cooperate to perform a trusted action.
 
 In this dissertation,
-we address this question by investigating the real-world utility of \emph{threshold} scheme.
+we address this question by investigating the real-world utility of \emph{threshold} schemes.
 Threshold schemes are a critical cryptographic primitive that allows a set of
-$n$ total parties and at least a threshold $t$ of parties to collaborate to
-perform some function.
+$n$ total parties and at least a threshold $t$ parties to collaborate to perform some function.
 This function depends on the use case.
 For example,
 the parties might perform threshold signing~\cite{KomloG20,BellareCKMTZ22,Lindell22},
-outputting a signature at the end of the protocol.
-Alternatively, participants might participate to jointly generate asymmetric key
+outputting a joint signature at the end of the protocol.
+Alternatively, participants might participate to jointly generate cryptographic key
 material~\cite{Pedersen91,GennaroJKR07,KomloG20,Groth21,GurkanJMMST21,BonehS2020,NejiBR16,Lindell22,DasYXMKR21,BachoL22,AbrahamJMMS2022}.
-This key material may then be used for other threshold schemes,
+This key may then be used within the context of other threshold schemes,
 such as evaluating a pseudorandom function (PRF) in a threshold manner~\cite{JareckiKR18}.
 
 Threshold schemes are an appealing primitive due to their ability to ensure robustness in the case of failure,
@@ -48,14 +50,14 @@ In particular,
 the security of the scheme assumes $t-1$ players are corrupted,
 and so can deviate arbitrarily from the protocol.
 The security of the scheme ensures that in spite of a subset of corrupted players,
-the scheme remains unforgeable.
+the scheme remains secure.
 %
 As such,
-threshold signatures offer practical security benefits,
+threshold schemes offer practical security benefits,
 allowing for dynamic key management and defense in depth against potential adversarial corruptions.
-While threshold signatures can be instantiated by simply concatenating multiple individual signatures into a single joint signature,
-a practical goal for threshold signatures is to preserve compatibility with existing single-party signature schemes,
-to minimize implementation complexity.
+While threshold schemes can be instantiated by each party simply performing a single-party protocol in parallel,
+a practical goal for threshold schemes is to preserve compatibility with existing single-party schemes,
+to minimize implementation complexity and to ensure efficiency.
 
 \paragraph{Motivation.}
 Interest in threshold schemes is growing in practice.
@@ -88,11 +90,10 @@ While threshold schemes offer benefits such as redundancy and increasing the
 cost to a potential adversary,
 the downside to threshold schemes in practice is their complexity and
 performance overhead.
-Multi-round, multi-entity protocols incur additional performance and complexity challenges beyond the single-signer setting.
+Multi-round, multi-entity protocols incur additional performance and complexity challenges beyond the single-party setting.
 These challenges are compounded when considering real-world failures,
 such as network failures and timeouts.
-As such, even though efficient threshold signatures incur stronger security
-assumptions,
+As such, even though efficient threshold schemes might possibly incur stronger security assumptions,
 these tradeoffs are often practically worthwhile when considering the positive tradeoffs in reduced complexity and increased performance.
 
 With the goals of efficiency, simplicity, and security in mind,
