@@ -17,7 +17,7 @@ but is publicly verifiable given a public key.
 In particular, in addition to outputting the evaluation of the VRF,
 it also outputs a zero-knowledge proof that the VRF was evaluated correctly.
 A \emph{distributed} VRF~\cite{NaorPR99,Dodis03,GalindoLOW21} allows the evaluation algorithm to be partitioned among a set of participants,
-all whom are equally trusted.
+all of whom are equally trusted.
 
 %The efficiency of a VRF depends on its domain and co-domain.
 %For example,
@@ -42,7 +42,7 @@ Such an observation leads naturally to employing a pseudorandom secret sharing s
 which is categorized by all parties holding a set of secret key shares,
 and individually and non-interactively being able to generate secret shares
 of additional pseudorandom values.
-We show that pseudorandom secret sharing schemes has a natural extension to the publicly verifiability setting.
+We show that pseudorandom secret sharing schemes have a natural extension to the publicly verifiability setting.
 Finally,
 we give a concrete and efficient VPSS scheme,
 where all participants can publish commitments to their generated shares,
@@ -70,7 +70,7 @@ $\dvrf = (\setup, \keygen, \generate, \verify, \combinepub, \recover)$,
 such that:
 
 \begin{itemize}
-  \item $\setup(\usecp)$: Accepts as input the security parameter $\secp$,
+  \item $\setup(1^\usecp)$: Accepts as input the security parameter $\secp$,
 and outputs public parameters $\pp$,
 where $\pp$ is given as implicit input to all other algorithms.
   \item $\keygen(n, t,\minparticipants) \rightarrow \bot/(\SK_1, \ldots, \SK_n)$:
@@ -137,7 +137,7 @@ where $t \le \minparticipants \le n$,
 %\chelsea{allowable is defined by the construction, we cannot define what is
 %allowable here. E.e, we shouldn't enforce honest majority at this level.}
 %and all $\coalition  \subseteq \set{n}$ with $|\coalition| \ge \minparticipants, $,
-when $\pp \gets \dvrf.\setup(\usecp)$
+when $\pp \gets \dvrf.\setup(1^\usecp)$
 and $(\SK_1, \ldots, \SK_n) \rgets \dvrf.\keygen(n, t, \minparticipants)$,
 there exists $\vrfprivout \in \vrfprivdomain, \vrfpubout \in \vrfpubdomain$ such that Equation~\ref{eq:vrf-correct} holds:
 
@@ -167,7 +167,7 @@ we say that a VPSS is \emph{secure} if it is unique, verifiable, and pseudorando
 	\begin{pchstack}[boxed]
 		\begin{pcvstack}
 		\procedure{ $\UniqExp_{\dvrf,\adv}(\secp, n, t, \minparticipants)$ }{
-      \pp \gets \dvrf.\setup(\usecp) \\
+      \pp \gets \dvrf.\setup(1^\usecp) \\
       (\corrupt, \advstate) \rgets \adv(\pp, n, t, \minparticipants) \\
       \pcreturn \bot\ \pcif \lvert \corrupt \rvert \geq t \\
       \honest \gets \set{n} \setminus \corrupt \\
@@ -268,7 +268,7 @@ Let the advantage of an adversary $\adv$ playing the uniqueness game as defined 
 	\begin{pchstack}[boxed]
 		\begin{pcvstack}
 		\procedure{ $\VerifExp_{\dvrf,\adv}(\secp, n, t, \minparticipants)$ }{
-      \pp \gets \dvrf.\setup(\usecp) \\
+      \pp \gets \dvrf.\setup(1^\usecp) \\
       (\corrupt, \advstate) \rgets \adv(\pp, n, t, \minparticipants) \\
       \pcreturn \bot\ \pcif \lvert \corrupt \rvert \geq t \\
       \honest \gets \set{n} \setminus \corrupt \\
@@ -356,7 +356,7 @@ defined in Figure~\ref{fig:dcvrf-verif} be as follows:
       \text{\algcom random coin for trivial losing conditions}\\
 %     z \rgets \zo \text{\algcom random coin for losing conditions} \\
      Q \gets \emptyset \\
-     \pp \gets \dvrf.\setup(\usecp) \\
+     \pp \gets \dvrf.\setup(1^\usecp) \\
       (\corrupt, \advstate) \rgets \adv(\pp, n, t, \minparticipants) \\
       \pcreturn \bot\ \pcif \lvert \corrupt \rvert \geq t \\
      \honest \gets \set{n} \setminus \corrupt \\

@@ -34,7 +34,7 @@ the set $\{ \pk_i, \sk_i \}_{i \in \set{n}}$ of public and secret key shares for
 %\ian{Nowhere in the paper do we use the $\pk_i$. Do we want to keep them?}
 %\chelsea{it is fairly standard at this point to include them...}
 
-  \item $(\sign_1, \ldots, \sign_\numrounds) \rightarrow \{\tsigmsg_1, \ldots \tsigmsg_\numrounds\}_{i \in \coalition}$:
+  \item $(\sign_1, \ldots, \sign_\numrounds) \rightarrow \{\tsigmsg_1, \ldots \tsigmsg_\numrounds\}_{k \in \coalition}$:
 A set of deterministic algorithms where each algorithm represents a single stage in an interactive signing protocol
 performed by signing party $\partyid \in \set{n}$ in a signing set $\coalition \subseteq \set{n},
 |\coalition| \geq \minsigners$ with respect to a message $\msg$, defined as follows:
@@ -74,13 +74,13 @@ otherwise, it outputs $0$ to indicate reject.
   However, our scheme and proofs can be adapted to use a fully decentralized distributed key generation protocol (DKG).
 \end{remark}
 
-\begin{remark}[Deferring the Choice of Coalition to Later Rounds.]
-  Our definition likewise assumes that the coalition of signers $\coalition$ is provided in the first round of signing $\Sign_1$.
+\begin{remark}[Deferring the Choice of Coalition to Later Rounds]
+  Our definition assumes that the coalition of signers $\coalition$ is provided in the first round of signing $\Sign_1$.
   However, some constructions (as is the case with \glitter) may defer the choice of $\coalition$ to later rounds.
 \end{remark}
 
 \paragraph{Correctness.} A deterministic threshold signature scheme $\dthreshsig$ is \emph{correct} if for all security parameters $\lambda$,
-all allowable $1 \leq \thresh \leq \minsigners \leq n$,
+all $1 \leq \thresh \leq \minsigners \leq n$,
 all $\coalition \subseteq \set{n}$ such that $\minsigners \leq | \coalition | \leq n$,
 and for all messages $m \in \{0,1\}^*$,
 the following relation holds:
@@ -100,7 +100,7 @@ the following relation holds:
 	%\begin{linedgamespec}
 	\begin{pchstack}[boxed]
 		\begin{pcvstack}
-		\procedure{ $\UnforgExp_{\adv,\dthreshsig}(\lambda, n, t,\minsigners)$ }{
+		\procedure{ $\UnforgExp_{\dthreshsig,\adv}(\lambda, n, t,\minsigners)$ }{
 			\pp \leftarrow \dthreshsig.\setup(1^\lambda) \\
       Q \gets \emptyset \pccomment{set of queried messages} \\
       (\corrupt, \advstate) \rgets \adv(\pp, n, t, \minsigners) \\
@@ -149,7 +149,7 @@ the following relation holds:
 
 
 
-\subsubsection{Unforgeability}
+\subsection{Unforgeability}
 %
 We present a game-based definition of unforgeability for a deterministic threshold signature scheme in Figure~\ref{fig:euf-cma-threshold}.
 This notion of unforgeability is analogous to the standard notion of chosen message attack (EUF-CMA) for standard signature schemes~\cite{GoldwasserMR88}.
@@ -167,7 +167,7 @@ and the adversary provides as input the message $\msg$ and coalition of signers 
 
 In the static unforgeability game for a deterministic threshold signature scheme,
 the environment allows the adversary to sample the corrupt parties $\corrupt \subset \set{n}$.
-If the set of corrupt parties is less than the corruption threshold $t$,
+If the set of corrupt parties is fewer than the corruption threshold $t$,
 it derives the set of honest parties $\honest \subseteq \set{n}$ as the remaining parties in $\set{n}$.
 The environment then runs $\keygen$ to derive the joint public key $\pkgroup$ representing the set of $n$ signers,
 the set of public key shares $\{ \pk_i \}_{i \in \set{n}}$,
@@ -183,7 +183,7 @@ Additionally, the adversary may query the signing round oracles in arbitrary ord
 %This gives substantially more power to the adversary than in the randomized stateful case.
 %\chelsea{this is also possible in the randomized steting.}
 However,
-unlike in the randomized setting,
+unlike in the randomized setting as shown in Figure~\ref{fig:euf-cma-threshold},
 the environment for a deterministic threshold signature scheme does not maintain any session identifiers,
 or state about ongoing signing sessions.
 %
@@ -200,11 +200,12 @@ or choose not to complete a signing session.
 Let the advantage of a static adversary $\adv$ playing the unforgeability game against a deterministic threshold signature scheme $\dthreshsig$ as defined in Figure~\ref{fig:euf-cma-threshold} be as follows:
 
 \[
-  \advant{uf}{\dthreshsig, \adv}(\lambda, n, \thresh,\minsigners) = \bigabs{\Pr[ \UnforgExp_{\dthreshsig,\adv}(\lambda,n,t,\minsigners)= 1]}
+  \advant{uf}{\dthreshsig, \adv}(\lambda, n, \thresh,\minsigners) = \Pr[ \UnforgExp_{\dthreshsig,\adv}(\lambda,n,t,\minsigners)= 1]
 \]
 %
 A deterministic threshold signature scheme $\dthreshsig$ is \emph{unforgeable} if for all PPT adversaries $\adv$,
 $\advant{uf}{\dthreshsig,\adv}(\lambda, n, t,\minsigners) $ is negligible
 in $\lambda$,
-for all allowable $n, t,\minsigners \in \mathbb{N}$.
+for all $n, t,\minsigners \in \mathbb{N}$,
+where $t \leq \minsigners \leq n$.
 \end{definition}
