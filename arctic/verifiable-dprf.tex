@@ -117,10 +117,9 @@ Outputs the commitment to the aggregated pseudorandom secret $\vrfpubout$.
     \item $\recover(t, \minparticipants, \coalition, \{ \vrfprivout_j \}_{ j \in \coalition}) \rightarrow \bot /  (\vrfprivout, \vrfpubout )$:
       A deterministic algorithm that accepts a corruption threshold $\thresh$,
       the minimum number of participants $\minparticipants$,
-      a coalition $\coalition \subseteq \set{n}, \lvert \coalition \rvert \geq \minparticipants$,
+      a coalition $\lvert \coalition \rvert \geq \minparticipants$,
       and a set of shares  $\{ \vrfprivout_j \}_{j \in \coalition}$.
-      It outputs $\bot$ if $\coalition \not\subseteq \set{n}$,
-      $\lvert \coalition \rvert < \minparticipants$,
+      It outputs $\bot$ if $\lvert \coalition \rvert < \minparticipants$
       or if the shares are inconsistent.
       Otherwise, it recovers $\vrfprivout$ using the set of shares,
       derives the corresponding commitment $\vrfpubout$, and
@@ -156,7 +155,7 @@ there exists $\vrfprivout \in \vrfprivdomain, \vrfpubout \in \vrfpubdomain$ such
 \end{align}
 
 % TODO cite NaorPR99,Dodis03
-\subsubsection{Security.}
+\subsubsection{Security}
 Similarly to verifiable random functions~\cite{MicaliRV99,NaorPR99,Dodis03,GalindoLOW21},
 we say that a VPSS is \emph{secure} if it is unique, verifiable, and pseudorandom.
 %\chelsea{These notions do not come from the PSS paper, they come from the dodis paper. The PSS paper never defined these.}
@@ -249,7 +248,7 @@ We define uniqueness for a VPSS more formally in Definition~\ref{def:dcvrf-uniqu
 Let the advantage of an adversary $\adv$ playing the uniqueness game as defined in Figure~\ref{fig:dcvrf-unique} be as follows:
 
 \[
-  \advant{unq}{\adv,\dvrf}(\secp, n, t, \minparticipants)
+  \advant{uq}{\adv,\dvrf}(\secp, n, t, \minparticipants)
   = \bigabs{\Pr[ \UniqExp_{\dvrf,\adv}(\secp, n, t, \minparticipants)= 1]}
 \]
 
