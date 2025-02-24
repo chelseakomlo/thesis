@@ -5,7 +5,7 @@ We next demonstrate the unforgeability of \glitter,
 via Theorem~\ref{thm:unforgeability}.
 
 \begin{theorem}\label{thm:unforgeability}
-	\glitter is unforgeable against a PPT adversary $\adv$ playing the static unforgeability game as shown in Figure~\ref{fig:euf-cma-threshold} against \glitter,
+	\glitter is unforgeable in the ROM against a PPT adversary $\adv$ playing the static unforgeability game as shown in Figure~\ref{fig:euf-cma-threshold} against \glitter,
   assuming $\adv$ can make up to $\tcor$ corruptions,
   the number of honest parties is at least $t$,
   the discrete logarithm assumption holds in the ROM,
@@ -18,7 +18,7 @@ via Theorem~\ref{thm:unforgeability}.
 
 
   \begin{equation*} \label{eq:glitter-adv}
-    \advant{uf}{\adv,\glitterm}(\lambda, n, t, \minsigners) \leq
+    \advant{uf}{\glitterm,\adv}(\lambda, n, t, \minsigners) \leq
     \sqrt{ \rototal \advant{dl}{\ddv}(\lambda)
     + \frac{2(\honetotal + \qchal)}{q}
     + \frac{3\rototal^2}{q}
@@ -70,7 +70,7 @@ Concretely, in the honest majority setting with authenticated channels,
     \begin{align} \label{eq:ddv-dl}
     \begin{split}
         \advant{dl}{\ddv}(\lambda) & \geq
-        \frac{\advant{uf}{\adv,\glitterm}(\lambda, n, t, \minsigners)^2}{\rototal}
+        \frac{\advant{uf}{\glitterm,\adv}(\lambda, n, t, \minsigners)^2}{\rototal}
         - \frac{2(\honetotal + \qchal)}{q}
         - \frac{3\rototal^2}{q}
     \end{split}
@@ -254,13 +254,13 @@ $\ddv$ can use the two forgeries output by $\adv$ in its first and second execut
   The additional advantage to $\adv$ in Game~2 is upper-bounded by the
   advantage that $\bdv_2$ wins its VPSS verifiability game against $\DVRFOnem$.
   Let $W_2$ be the event that $\adv$ wins in Game~2,
-  and let $\advant{verf}{\bdv_2, \DVRFOnem}$ be the advantage that $\bdv_2$ has in the verifiability experiment against $\DVRFOnem$.
+  and let $\advant{verf}{\DVRFOnem,\bdv_2}$ be the advantage that $\bdv_2$ has in the verifiability experiment against $\DVRFOnem$.
   Because $\DVRFOnem$ is information-theoretically verifiable in the honest majority setting,
   and \glitter likewise assumes an honest majority
   then
 
   \begin{equation} \label{eq:game2}
-  \lvert \Pr[W_2] - \Pr[W_1] \rvert \leq  \advant{verf}{\bdv_2, \DVRFOnem} = 0
+  \lvert \Pr[W_2] - \Pr[W_1] \rvert \leq  \advant{verf}{\DVRFOnem,\bdv_2} = 0
   \end{equation}
 
 
@@ -492,12 +492,12 @@ $\ddv$ can use the two forgeries output by $\adv$ in its first and second execut
     re-obtaining $(\vrfprivout_\partyid, \vrfpubout_\partyid)$.
     \item It then follows the remainder of the protocol honestly,
     deriving $z_\partyid = r_\partyid + c \cdot \sksign_\partyid$.
-    \item $\bdv_4$ then outputs $z_\partyid$ as its output.
+    \item $\bdv_4$ then outputs to $\adv$ the signature share $z_\partyid$ for party $k$ as its output.
   \end{enumerate}
 
 %
-  Finally, when $\adv$ terminates,
-  $\bdv_4$ outputs $1$.
+  Finally, when $\adv$ terminates and outputs its forgery $(R^*, z^*)$,
+  $\bdv_4$ outputs $1$, along with $(R^*, z^*)$ and the index associated with $c^*$.
 
   \paragraph{Difference between Game~4 and Game~3.}
   Because we assume $\lvert \corrupt \rvert < t$,
@@ -569,7 +569,7 @@ $\ddv$ can use the two forgeries output by $\adv$ in its first and second execut
     \pksign_j = (\pksign)^{L_0(j)} \cdot \prod_{i \in \corrupt} g^{\sksign_i L_i(j)}
 	\end{align}
         where $L_i(x)$ is the $i\supth$ Lagrange polynomial defined by $\corrupt \cup \{0\}$.
-      \item To simulate key generation for the randomness keys,
+      \item To simulate key generation for the \DVRFOne keys,
   $\SIM$ simply performs key generation honestly,
   deriving $(\skrand_1, \ldots, \skrand_n) \rgets \DVRFOnem.\keygen(n, t)$.
 \item $\SIM$ then sets $\skparty_j = (\skrand_j, \sksign_j, \pk)$, for $j \in \corrupt$,
@@ -831,7 +831,7 @@ and $\aux=(m^*, \sigma^*)$ is the adversary's forgery with respect to $\pkgroup=
       \label{eq:ddv-fork-acc}
     \begin{split}
         \accept(\modgenfork^\SIM) & \geq
-        \frac{\advant{uf}{\adv,\glitterm}(\lambda, n, t, \minsigners)^2}{\rototal}
+        \frac{\advant{uf}{\glitterm,\adv}(\lambda, n, t, \minsigners)^2}{\rototal}
         - \frac{2(\honetotal + \qchal)}{q}
         - \frac{3\rototal^2}{q}
     \end{split}

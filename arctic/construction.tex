@@ -48,13 +48,13 @@
   \qquad \gets \DVRFOnem[\HashOne].\generate(\partyid, \skrand_\partyid, y') \\
   \text{\algcom Re-derive state from $\sign_1$} \\
   %\chelsea{$R^*$ is used as the adversarial output in the proof; please do not change this notation}
-  \pcif \partyid \not\in \coalition \text{ or } R_k' \not\in \{R_{j} \}_{j \in \coalition} \\
+  \pcif \partyid \not\in \coalition \text{ or } R_k' \neq  R_{j}  \\
   \pcind \pcreturn \bot \\
   \mathsf{input} \gets (t, \minsigners, \coalition, \{ R_j\}_{j \in \coalition}) \\
   \pcif \DVRFOnem[\HashOne].\verify(\mathsf{input}) \neq 1 \\
   \pcind \pcreturn \bot \\
   R \gets \DVRFOnem[\HashOne].\combinepub(\mathsf{input}) \\
-  c \gets \HashTwo(R, \pkgroup, \msg) \\
+  c \gets \HashTwo(\pkgroup, \msg, R) \\
   z_\partyid \gets r_\partyid + c \cdot \sksign_\partyid \\
   \pcreturn z_\partyid
 }
@@ -87,8 +87,7 @@ As a building block,
 and to verify that all other participants followed the protocol honestly.
 \glitter is secure assuming fewer than $t$ participants are corrupted,
 and at least $\minsigners$ participated in the signing protocol,
-where $\minsigners \leq n$ but  $\minsigners \geq 2t-1$,
-and where $t$ is the tolerated corruption threshold.
+where $\minsigners \leq n$ but  $\minsigners \geq 2t-1$.
 
 We further require that messages exchanged between participants are sent over an authenticated channel.
 \glitter builds upon the verifiable pseudorandom secret sharing scheme \DVRFOne defined in Section~\ref{dvrf-concrete},
@@ -116,7 +115,7 @@ We discuss one possible DKG in Section~\ref{extensions}.
   we require that the participant aborts.
 \end{remark}
 
-\subsection{The Construction.}
+\subsection{The Construction}
 
 We now give more detail for each stage in \glitter;
 see Figure~\ref{fg:construction} for a high-level overview.
@@ -140,7 +139,7 @@ Each participant's secret key share is the tuple $\skparty_i = (\skrand_i, \sksi
 \paragraph{Coordinator Role.}
 Arctic assumes an external mechanism to choose the set
 $\coalition \subseteq \{1, \ldots, n \}$ of signers,
-such that $t \leq \abs{\coalition} \leq n$.
+such that $\minsigners \leq \abs{\coalition} \leq n$.
 The coordinator may perform denial of service attacks,
 but otherwise cannot impact the security of Arctic.
 The coordinator can be a stand-alone entity,
@@ -177,8 +176,7 @@ Otherwise, if all consistency checks succeed,
 each participant re-derives their nonce and commitment using \DVRFOne,
 again performing
 $(r_\partyid, R_\partyid') \rgets \DVRFOnem.\generate(\partyid, \allowbreak \skrand_\partyid, \allowbreak y')$.
-Then, the participant checks its identifier is in the coalition $C$ and that $R_\partyid'$ is in the set of commitments
-$(R_j)_{j \in \coalition}$,
+Then, the participant checks its identifier is in the coalition $C$ and that $R_\partyid' = R_j$,
 aborting if either check does not hold.
 Then,
 each participant verifies that all other participants followed the protocol to derive  their  commitment,
@@ -188,7 +186,7 @@ they abort the protocol.
 
 Finally, if all of the above checks pass,
 each participant $\partyid \in \coalition$ will then derive the group commitment $R \gets \DVRFOnem.\combinepub(t, \minsigners, \coalition, \{ R_j\}_{j \in \coalition})$,
-and the challenge $c \gets \HashTwo(R, \pkgroup, \msg)$.
+and the challenge $c \gets \HashTwo(\pkgroup, \msg, R)$.
 Finally,
 each participant derives their signature share $z_\partyid \gets r_\partyid + c \cdot \sksign_\partyid$.
 Each participant outputs $z_\partyid$ as its output for $\sign_2$.
@@ -199,7 +197,7 @@ To perform the $\combine$ algorithm,
 the group commitment $R$ is first derived using values output by participants from $\sign_1$.
 Then, the response $z$ is derived by finding $z \gets \sum_{j \in \coalition} z_j \lambda_j$, where the $\lambda_j$ are the Lagrange coefficients for the set $\coalition$.
 The output from $\combine$ is the Schnorr signature $\sigma = (R, z)$,
-which can be verified using the single-party Schnorr verification algorithm given in Definition~\ref{def:schnorr}.
+which can be verified using the single-party Schnorr verification algorithm given in Section~\ref{background:schnorr}.
 
 
 \subsection{Possible Extensions}
@@ -223,7 +221,7 @@ by requiring that the minimum number of participants $\minparticipants$ be of si
 \DVRFOne and \glitter can be securely used in a robust manner.
 The requirement that $\minparticipants \geq 3t-2$ is referred to as the \emph{honest supermajority} setting.
 %
-We give further details on how robustness can be achieved in Chapter~\ref{robust-shine}.
+We give further details on how robustness can be achieved in Section~\ref{robust-shine}.
 %
 In this setting,
 $\DVRFOnem.\verify$ can both detect any inconsistencies as well as identify the misbehaving players.
@@ -255,8 +253,7 @@ and $R_i = g^{r_i}$.
 
 In the second round of signing,
 each participant receives the set of tuples $\{(y_j, R_j) \}_{j \in \coalition}$.
-Because $\HashThree$ is correct,
-then after deriving $y' \gets \HashThree(\pkgroup, \msg)$,
+After deriving $y' \gets \HashThree(\pkgroup, \msg)$,
 then the check that $y_j = y'$ for each $j \in \coalition$ will succeed.
 
 Because \DVRFOne is correct,

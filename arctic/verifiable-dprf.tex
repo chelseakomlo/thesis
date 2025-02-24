@@ -248,8 +248,8 @@ We define uniqueness for a VPSS more formally in Definition~\ref{def:dcvrf-uniqu
 Let the advantage of an adversary $\adv$ playing the uniqueness game as defined in Figure~\ref{fig:dcvrf-unique} be as follows:
 
 \[
-  \advant{uq}{\adv,\dvrf}(\secp, n, t, \minparticipants)
-  = \bigabs{\Pr[ \UniqExp_{\dvrf,\adv}(\secp, n, t, \minparticipants)= 1]}
+  \advant{uq}{\dvrf,\adv}(\secp, n, t, \minparticipants)
+  = \Pr[ \UniqExp_{\dvrf,\adv}(\secp, n, t, \minparticipants)= 1]
 \]
 
 
@@ -336,11 +336,11 @@ defined in Figure~\ref{fig:dcvrf-verif} be as follows:
 
 \[
   \advant{verf}{\dvrf,\adv}(\secp, n, t, \minparticipants)
-  = \bigabs{\Pr[ \VerifExp_{\dvrf,\adv}(\secp, n, t, \minparticipants)= 1]}
+  = \Pr[ \VerifExp_{\dvrf,\adv}(\secp, n, t, \minparticipants)= 1]
 \]
 
   A VPSS $\dvrf$ is \defn{verifiable} if for all PPT adversaries $\adv$,
-  $\advant{verf}{\adv,\dvrf}$ is a negligible function of $\secp$,
+  $\advant{verf}{\dvrf,\adv}$ is a negligible function of $\secp$,
   for $n, t, \minparticipants \in \mathbb{N}$,
   $t \leq \minparticipants \leq n$.
 \end{definition}
@@ -352,7 +352,6 @@ defined in Figure~\ref{fig:dcvrf-verif} be as follows:
 		\procedure{ $\PseudoExp_{\dvrf,\adv}(\secp, n, t, \minparticipants)$ }{
      b \rgets \zo \\
      z \rgets \zo \\
-      \text{\algcom random coin for trivial losing conditions}\\
 %     z \rgets \zo \text{\algcom random coin for losing conditions} \\
      Q \gets \emptyset \\
      \pp \gets \dvrf.\setup(1^\usecp) \\
@@ -392,8 +391,8 @@ defined in Figure~\ref{fig:dcvrf-verif} be as follows:
        \pcind  \mathsf{in} \gets(\vrfin, \vrfprivout', \corrupt, n, (\sk_j)_{j \in \corrupt})   \\
        \pcind (\vrfpubout, \{ (\vrfprivout_i, \vrfpubout_i ) \}_{i \in \honest} ) \gets \SIMEval(\mathsf{in}) \\
        \pcind Q[\vrfin] = (\vrfpubout, \{ (\vrfprivout_i, \vrfpubout_i ) \}_{i \in \honest}) \\
-    \text{ \algcom $\SIMEval$ is a simulating algorithm} \\
-    \text{ \algcom defined by the VPSS construction.} \\
+   % \text{ \algcom $\SIMEval$ is a simulating algorithm} \\
+   % \text{ \algcom defined by the VPSS construction.} \\
         \pcreturn (\vrfprivout_\partyid, \vrfpubout_\partyid)
         % the adversary shouldn't be allowed to query this oracle for its
         % challenge, but it should be allowed to learn the public honest commitments?
@@ -414,7 +413,7 @@ We show the VPSS pseudorandomness experiment in Figure~\ref{fig:dcvrf-pseudo}.
 In the pseudorandomness experiment,
 the environment begins by picking a random bit $b \rgets \zo$.
 It then performs key generation,
-and initializes the adversary with the public parameters and the corrupted parties secret key shares.
+and initializes the adversary with the public parameters and the corrupted parties' secret key shares.
 
 The adversary is allowed to query $\oracle^{\generate}$ on honest participants for shares and commitments on inputs of the adversary's choosing.
 If $b=0$,
