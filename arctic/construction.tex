@@ -3,7 +3,7 @@
     % chelsea- make full size for eprint
 \begin{pchstack}[boxed,center,space=1em]
 \begin{pcvstack}
-\procedure[]{$\setup(\usecp)$} {
+\procedure[]{$\setup(1^\usecp)$} {
 	(\GG, q, g) \leftarrow \GroupGen(\usecp) \\
 	\pp \gets ((\GG, q, g), \HashOne, \HashThree, \HashTwo) \\
 	\pcreturn \pp \\
@@ -62,9 +62,9 @@
   \procedure[]{$\combine(\pkgroup, \msg, \coalition, \{(y_j, R_{j}), z_j \}_{j \in \coalition}))$} {
   \mathsf{input} \gets (t, \minsigners, \coalition, \{ R_j\}_{j \in \coalition}) \\
   R \gets \DVRFOnem[\HashOne].\combinepub(\mathsf{input}) \\
-  c \gets \HashTwo(R, \pkgroup, \msg) \\
-  %\text{\algcom{$\lambda_j$ are Lagrange}} \\
-  %\text{\algcom{coefficients for $\coalition$}} \\
+  c \gets \HashTwo(\pkgroup, \msg, R) \\
+  \text{\algcom $\lambda_j$ are Lagrange} \\
+  \text{\algcom coefficients for $\coalition$} \\
   z \gets \sum_{j \in \coalition} z_{j} \lambda_j\\
   \pcif g^z \neq R \cdot \pk^c \\
   \pcind \pcreturn \bot \\
@@ -269,7 +269,7 @@ will output the same $(r_\partyid, R_\partyid)$ as derived in the first round of
 After deriving $(r_\partyid, R_\partyid)$,
 all signers in a coalition $\coalition$ output valid signature shares $z_\partyid$
 with respect to $R$
-and challenge $c = \HashTwo(\pkgroup, R, m)$,
+and challenge $c = \HashTwo(\pkgroup, m, R)$,
 where $z_\partyid =  r_\partyid + c \cdot \sksign_\partyid$.
 The aggregated signature is then $\sigma = (R, z)$,
 where $z = \sum_{j \in \coalition} z_j \cdot \lambda_j$.

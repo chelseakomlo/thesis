@@ -1,4 +1,4 @@
-\section{Details on Extending \DVRFOne and \glitter to be Robust}
+\section{Extending \DVRFOne and \glitter to be Robust}
 \label{robust-shine}
 
 As presented, \DVRFOne is not a robust algorithm: if corrupt players
@@ -10,8 +10,9 @@ necessarily be able to identify \emph{which} party or parties
 misbehaved.  This is because it is possible for the $t-1$ corrupt
 parties to output commitments that are wrong, but consistent with up to
 $t-1$ of the honest players' commitments, making it look like the
-remaining honest player was the outlier.  Therefore, as we will see in
-the next section, \glitter will have to just abort in the case that
+remaining honest player was the outlier.  Therefore, as we see in
+Figure~\ref{fg:construction},
+\glitter will have to just abort in the case that
 $\DVRFOnem.\verify$ outputs 0.
 
 However, we observe that in the \emph{honest supermajority} case, where
