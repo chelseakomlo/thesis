@@ -1,14 +1,15 @@
-\section{Security of \glitter}
-\label{app:arctic-proofs}
+\subsection{Security}
+\label{arctic-security}
 
 We next demonstrate the unforgeability of \glitter,
 via Theorem~\ref{thm:unforgeability}.
 
 \begin{theorem}\label{thm:unforgeability}
-	\glitter is unforgeable in the ROM against a PPT adversary $\adv$ playing the static unforgeability game as shown in Figure~\ref{fig:euf-cma-threshold} against \glitter,
+	\glitter is unforgeable in the ROM against a PPT adversary $\adv$ playing the static unforgeability game as shown in
+  Figure~\ref{fig:euf-cma-threshold-deterministic} against \glitter,
   assuming $\adv$ can make up to $\tcor$ corruptions,
   the number of honest parties is at least $t$,
-  the discrete logarithm assumption holds in the ROM,
+  the discrete logarithm assumption,
   participants exchange messages over an authenticated channel,
   \DVRFOne is a secure VPSS,
   and where $(n, t) \in \mathbb{N}$  are such that ${n-1\choose t-1} = \text{poly}(n)$.
@@ -39,7 +40,8 @@ we rely on two lemmas.
 
 \begin{lemma} \label{lem:simulation}
 There exists an algorithm $\SIM$ which can simulate \glitter with respect to a discrete logarithm challenge to an adversary $\adv$
-playing against the unforgeability game as in Figure~\ref{fig:euf-cma-threshold}.
+playing against the unforgeability game as in
+Figure~\ref{fig:euf-cma-threshold-deterministic}.
 In other words,
 $\adv$ has negligible additional advantage in winning the unforgeability game when
 interacting with $\SIM$ that it does when playing against \glitter directly.
@@ -84,7 +86,8 @@ and where $(n, t) \in \mathbb{N}$  are such that ${n-1\choose t-1} = \text{poly}
 \paragraph{\bf Proof Intuition.}
 We give the proof in two parts.
 First, Lemma~\ref{lem:simulation} shows that a simulating PPT algorithm $\SIM$ exists which can simulate \glitter to an unforgeability PPT adversary $\adv$ with respect to a public key  $\pkgroup$ for which $\SIM$ does not know the corresponding secret key.
-Recall that we give the unforgeability game in Figure~\ref{fig:euf-cma-threshold}.
+Recall that we give the unforgeability game in
+Figure~\ref{fig:euf-cma-threshold-deterministic}.
 We show that the advantage of $\adv$ with respect to $\SIM$ is negligibly different than its advantage against \glitter.
 
 We prove Lemma~\ref{lem:simulation} using a series of game hops,
@@ -153,7 +156,8 @@ $\ddv$ can use the two forgeries output by $\adv$ in its first and second execut
   We prove Lemma~\ref{lem:simulation} by a sequence of games.
 
   \paragraph{Game 0.}
-  This is the unforgeability game as defined in Figure~\ref{fig:euf-cma-threshold},
+  This is the unforgeability game as defined in
+  Figure~\ref{fig:euf-cma-threshold-deterministic},
   instantiated with \glitter.
   Let $\adv$ be an adversary playing against the unforgeability game.
 

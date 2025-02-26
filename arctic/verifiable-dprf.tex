@@ -117,7 +117,7 @@ Outputs the commitment to the aggregated pseudorandom secret $\vrfpubout$.
     \item $\recover(t, \minparticipants, \coalition, \{ \vrfprivout_j \}_{ j \in \coalition}) \rightarrow \bot /  (\vrfprivout, \vrfpubout )$:
       A deterministic algorithm that accepts a corruption threshold $\thresh$,
       the minimum number of participants $\minparticipants$,
-      a coalition $\lvert \coalition \rvert \geq \minparticipants$,
+      a coalition $\coalition$ with  $\lvert \coalition \rvert \geq \minparticipants$,
       and a set of shares  $\{ \vrfprivout_j \}_{j \in \coalition}$.
       It outputs $\bot$ if $\lvert \coalition \rvert < \minparticipants$
       or if the shares are inconsistent.

@@ -4,7 +4,7 @@
 \begin{pchstack}[boxed,center,space=1em]
 \begin{pcvstack}
 \procedure[]{$\setup(1^\usecp)$} {
-	(\GG, q, g) \leftarrow \GroupGen(\usecp) \\
+	(\GG, q, g) \leftarrow \GroupGen(1^\usecp) \\
 	\pp \gets ((\GG, q, g), \HashOne, \HashThree, \HashTwo) \\
 	\pcreturn \pp \\
   \text{\algcom $\pp$ is given implicitly} \\
@@ -48,7 +48,7 @@
   \qquad \gets \DVRFOnem[\HashOne].\generate(\partyid, \skrand_\partyid, y') \\
   \text{\algcom Re-derive state from $\sign_1$} \\
   %\chelsea{$R^*$ is used as the adversarial output in the proof; please do not change this notation}
-  \pcif \partyid \not\in \coalition \text{ or } R_k' \neq  R_{j}  \\
+  \pcif \partyid \not\in \coalition \text{ or } R_k' \neq  R_{k}  \\
   \pcind \pcreturn \bot \\
   \mathsf{input} \gets (t, \minsigners, \coalition, \{ R_j\}_{j \in \coalition}) \\
   \pcif \DVRFOnem[\HashOne].\verify(\mathsf{input}) \neq 1 \\
@@ -176,7 +176,7 @@ Otherwise, if all consistency checks succeed,
 each participant re-derives their nonce and commitment using \DVRFOne,
 again performing
 $(r_\partyid, R_\partyid') \rgets \DVRFOnem.\generate(\partyid, \allowbreak \skrand_\partyid, \allowbreak y')$.
-Then, the participant checks its identifier is in the coalition $C$ and that $R_\partyid' = R_j$,
+Then, the participant checks its identifier is in the coalition $C$ and that $R_\partyid' = R_k$,
 aborting if either check does not hold.
 Then,
 each participant verifies that all other participants followed the protocol to derive  their  commitment,
@@ -240,10 +240,8 @@ To ensure security against fully malicious adversaries,
 parties within each subset could perform a subsequent broadcast round to compare their received inputs,
 to ensure consistency.
 
-\subsection{Security}
-\label{arctic-security}
 
-\paragraph{\bf Correctness.}
+\paragraph{\bf Correctness of Arctic.}
 In the first round of signing,
 participants will output nonces and commitments
 $(r_i, R_i) \gets \DVRFOnem.\generate(i, \skrand_i, y_i)$,

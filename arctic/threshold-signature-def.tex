@@ -140,7 +140,7 @@ the following relation holds:
 	%\end{linedgamespec}
 \caption{Unforgeability experiment for a deterministic threshold signature scheme with a $\numrounds$-round signing protocol.
   }
-\label{fig:euf-cma-threshold}
+\label{fig:euf-cma-threshold-deterministic}
 \end{figure}
 %
 
@@ -151,7 +151,8 @@ the following relation holds:
 
 \subsection{Unforgeability}
 %
-We present a game-based definition of unforgeability for a deterministic threshold signature scheme in Figure~\ref{fig:euf-cma-threshold}.
+We present a game-based definition of unforgeability for a deterministic threshold signature scheme in
+Figure~\ref{fig:euf-cma-threshold-deterministic}.
 This notion of unforgeability is analogous to the standard notion of chosen message attack (EUF-CMA) for standard signature schemes~\cite{GoldwasserMR88}.
 We present the adversary as a static adversary,
 which is allowed to corrupt at most $\thresh-1$ signers.
@@ -167,7 +168,7 @@ and the adversary provides as input the message $\msg$ and coalition of signers 
 
 In the static unforgeability game for a deterministic threshold signature scheme,
 the environment allows the adversary to sample the corrupt parties $\corrupt \subset \set{n}$.
-If the set of corrupt parties is fewer than the corruption threshold $t$,
+If the set of corrupt parties is smaller than the corruption threshold $t$,
 it derives the set of honest parties $\honest \subseteq \set{n}$ as the remaining parties in $\set{n}$.
 The environment then runs $\keygen$ to derive the joint public key $\pkgroup$ representing the set of $n$ signers,
 the set of public key shares $\{ \pk_i \}_{i \in \set{n}}$,

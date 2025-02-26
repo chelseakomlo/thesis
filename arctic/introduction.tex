@@ -18,7 +18,7 @@ we focus our attention on deterministic threshold Schnorr signatures;
 i.e.,
 a deterministic threshold signature scheme that is compatible with the (single-party) Schnorr signature verification algorithm~\cite{Schnorr91}.
 In this chapter,
-we move to the setting where the minimum number of signers is generalized to some $t \leq \minsigners \leq n$,
+we move to the setting where the minimum number of signers $\minsigners$ is generalized to some $t \leq \minsigners \leq n$,
 while still preserving security when up to $t-1$ signers may be corrupted.
 
 
@@ -142,7 +142,7 @@ but incurs a crossover point as the signing set grows large.
 
 The final tradeoff is that \glitter as defined does not support identifiable abort.
 While the protocol allows honest participants to identify that misbehavior has occurred,
-the protocol does not support identifying which participant caused in the abort
+the protocol does not support identifying which participant caused the abort
 (which is possible for MuSig-DN~\cite{NickRSW20}, for example).
 However,
 we give a discussion on how \glitter can be extended to support identifiable abort,
