@@ -1,6 +1,46 @@
-\subsection{Security}
+\subsection{Correctness Security}
 \label{arctic-security}
 
+We next demonstrate the correctness and security of Arctic.
+
+\subsubsection{Correctness.}
+In the first round of signing,
+participants will output nonces and commitments
+$(r_i, R_i) \gets \DVRFOnem.\generate(i, \skrand_i, y_i)$,
+for $i \in \coalition$,
+where $y_i \gets \HashThree(\pkgroup, \msg)$,
+and $R_i = g^{r_i}$.
+
+In the second round of signing,
+each participant receives the set of tuples $\{(y_j, R_j) \}_{j \in \coalition}$.
+After deriving $y' \gets \HashThree(\pkgroup, \msg)$,
+then the check that $y_j = y'$ for each $j \in \coalition$ will succeed.
+
+Because \DVRFOne is correct,
+then
+$\DVRFOnem.\verify(t, \minsigners, \coalition, \{R_j\}_{j \in \coalition})$ will output $1$
+and the same group commitment $R = \prod_{j \in \coalition} R_j^{\lambda_j}$ will be computed regardless of the choice of $\coalition$.
+Because $\DVRFOnem.\generate$ is deterministic,
+then after deriving $y \gets \HashThree(\pkgroup, \msg)$,
+$\DVRFOnem.\generate(\partyid, \allowbreak \skrand_\partyid, y)$
+will output the same $(r_\partyid, R_\partyid)$ as derived in the first round of signing.
+
+
+After deriving $(r_\partyid, R_\partyid)$,
+all signers in a coalition $\coalition$ output valid signature shares $z_\partyid$
+with respect to $R$
+and challenge $c = \HashTwo(\pkgroup, m, R)$,
+where $z_\partyid =  r_\partyid + c \cdot \sksign_\partyid$.
+The aggregated signature is then $\sigma = (R, z)$,
+where $z = \sum_{j \in \coalition} z_j \cdot \lambda_j$.
+Because $\skgroup = \sum_{j \in \coalition} \sksign_j \lambda_j$,
+$\pkgroup = g^\skgroup = g^{\sum_{j \in \coalition} \sksign_j \lambda_j}$,
+and $R = \prod_{j \in \coalition} R_j^{\lambda_j} = g^{\sum_{j \in \coalition} r_j\cdot \lambda_j}$,
+we have that $g^z = R \cdot \pkgroup^c$, as required.
+
+
+
+\subsubsection{Unforgeability.}
 We next demonstrate the unforgeability of \glitter,
 via Theorem~\ref{thm:unforgeability}.
 
