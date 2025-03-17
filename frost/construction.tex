@@ -10,7 +10,7 @@ algorithm~\cite{Schnorr91}.
 
 \subsection{Key Generation}
 
-FROST assumes that all parties are given Shamir secret shares of a signing key $\sk \in \Zq$,
+The FROST threshold signature scheme assumes that all parties are given Shamir secret shares of a signing key $\sk \in \Zq$,
 such that the public key is $\pk = g^{\sk}$.
 In other words,
 we assume each participant $i \in \set{n}$ receives the secret signing key
@@ -26,7 +26,7 @@ or in a distributed manner via a distributed key generation (DKG) protocol.
 	\begin{pchstack}[boxed,center,space=1em]
 		\begin{pcvstack}[space=1em]
 			\procedure{$\Setup(1^\usecp)$}{
-				(\Gr, q, g) \leftarrow \GroupGen(\usecp) \\
+				(\Gr, q, g) \rgets \GroupGen(\usecp) \\
 				\text{\algcom Select two hash functions} \\
 				\HashNon, \HashSig : \{0,1\}^* \rightarrow \Zq  \\
 				\pp \gets ((\Gr, q, g), \HashNon, \HashSig) \\
