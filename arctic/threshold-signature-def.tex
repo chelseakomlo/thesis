@@ -198,7 +198,8 @@ meaning it can open simultaneous signing sessions at once,
 or choose not to complete a signing session.
 
 \begin{definition}[Unforgeability]
-Let the advantage of a static adversary $\adv$ playing the unforgeability game against a deterministic threshold signature scheme $\dthreshsig$ as defined in Figure~\ref{fig:euf-cma-threshold} be as follows:
+Let the advantage of a static adversary $\adv$ playing the unforgeability game
+  against a deterministic threshold signature scheme $\dthreshsig$ as defined in Figure~\ref{fig:euf-cma-threshold-deterministic} be as follows:
 
 \[
   \advant{uf}{\dthreshsig, \adv}(\lambda, n, \thresh,\minsigners) = \Pr[ \UnforgExp_{\dthreshsig,\adv}(\lambda,n,t,\minsigners)= 1]

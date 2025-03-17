@@ -142,15 +142,15 @@ there exists $\vrfprivout \in \vrfprivdomain, \vrfpubout \in \vrfpubdomain$ such
 
 \begin{align} \label{eq:vrf-correct}
   \begin{split}
-    \text{ for all } i \in \set{n} \text{ and for all } \coalition_\ell \subseteq \set{n}, \lvert \coalition_\ell \rvert \geq \minsigners,
+    \text{ for all } i \in \set{n} \text{ and for all } \coalition \subseteq \set{n}, \lvert \coalition \rvert \geq \minsigners,
     \text{ when } \\
     \dvrf.\generate(i, \SK_i, \vrfin) \rightarrow (\vrfprivout_i, \vrfpubout_i),
     \text{ then } \\
-    \dvrf.\verify(t, \minparticipants, \coalition_\ell, \{ \vrfpubout_j \}_{j \in \coalition}) = 1,
+    \dvrf.\verify(t, \minparticipants, \coalition \{ \vrfpubout_j \}_{j \in \coalition}) = 1,
     \text{ and } \\
-    \dvrf.\recover(t, \minparticipants, \coalition_\ell, (\vrfprivout_j)_{j \in \coalition})
+    \dvrf.\recover(t, \minparticipants, \coalition, (\vrfprivout_j)_{j \in \coalition})
     \rightarrow (\vrfprivout, \vrfpubout), \text{ and} \\
-    \dvrf.\combinepub(t, \minparticipants, \coalition_\ell, (\vrfpubout_j)_{j \in \coalition})  \rightarrow \vrfpubout
+    \dvrf.\combinepub(t, \minparticipants, \coalition, (\vrfpubout_j)_{j \in \coalition})  \rightarrow \vrfpubout
   \end{split}
 \end{align}
 
