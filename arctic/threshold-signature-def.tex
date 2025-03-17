@@ -20,8 +20,8 @@ $\threshsig = (\setup, \keygen, \allowbreak (\sign_1, \ldots, \sign_\numrounds),
 
 \begin{itemize}
 
-  \item $\setup(1^\lambda) \rightarrow \pp$: Accepts as input a security
-parameter $\lambda$ and outputs public parameters $\pp$,
+  \item $\setup(1^\lambda) \rightarrow \pp$:
+A probabilistic algorithm that accepts as input a security parameter $\lambda$ and outputs public parameters $\pp$,
 which are then implicitly given as input to all other algorithms.
 
   \item $\keygen(n,\thresh,\minsigners) \rightarrow (\pkgroup, \{ \pk_i, \sk_i\}_{i \in \set{n}})$:
@@ -81,6 +81,7 @@ otherwise, it outputs $0$ to indicate reject.
 
 \paragraph{Correctness.} A deterministic threshold signature scheme $\dthreshsig$ is \emph{correct} if for all security parameters $\lambda$,
 all $1 \leq \thresh \leq \minsigners \leq n$,
+all participant identifiers $k \in \set{n}$,
 all $\coalition \subseteq \set{n}$ such that $\minsigners \leq | \coalition | \leq n$,
 and for all messages $m \in \{0,1\}^*$,
 the following relation holds:
@@ -101,7 +102,7 @@ the following relation holds:
 	\begin{pchstack}[boxed]
 		\begin{pcvstack}
 		\procedure{ $\UnforgExp_{\dthreshsig,\adv}(\lambda, n, t,\minsigners)$ }{
-			\pp \leftarrow \dthreshsig.\setup(1^\lambda) \\
+			\pp \rgets \dthreshsig.\setup(1^\lambda) \\
       Q \gets \emptyset \pccomment{set of queried messages} \\
       (\corrupt, \advstate) \rgets \adv(\pp, n, t, \minsigners) \\
       \pcif \lvert \corrupt \rvert \geq t \\

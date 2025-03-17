@@ -44,9 +44,9 @@ where $F$ is a boolean circuit such as AES,
 and $\phi$ is standard exponentiation (or curve multiplication).
 The authors give efficiency estimates for a 256-bit curve  and using SHA-512 as
 the PRF $F$;
-the performance overhead is dominated by performing $132,000$ AES invocations and $256$ additions in $\Zq$ per proof generated and verified.
+the performance overhead is dominated by performing 132,000 AES invocations and $256$ additions in $\Zq$ per proof generated and verified.
 For a signing invocation involving $t$ parties,
-each party must then perform $256t$ field operations and $132,000t$ AES invocations,
+each party must then perform $256t$ field operations and 132,000t AES invocations,
 accounting for each proof a signer generates and the $t-1$ proof verifications for all other signers.
 
 Kondi, Orlandi, and Roy~\cite{KondiOR23} take a different approach,

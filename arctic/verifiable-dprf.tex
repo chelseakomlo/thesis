@@ -70,7 +70,8 @@ $\dvrf = (\setup, \keygen, \generate, \verify, \combinepub, \recover)$,
 such that:
 
 \begin{itemize}
-  \item $\setup(1^\usecp)$: Accepts as input the security parameter $\secp$,
+  \item $\setup(1^\usecp)$:
+A probabilistic algorithm that accepts as input the security parameter $\secp$,
 and outputs public parameters $\pp$,
 where $\pp$ is given as implicit input to all other algorithms.
   \item $\keygen(n, t,\minparticipants) \rightarrow \bot/(\SK_1, \ldots, \SK_n)$:
@@ -136,7 +137,7 @@ where $t \le \minparticipants \le n$,
 %\chelsea{allowable is defined by the construction, we cannot define what is
 %allowable here. E.e, we shouldn't enforce honest majority at this level.}
 %and all $\coalition  \subseteq \set{n}$ with $|\coalition| \ge \minparticipants, $,
-when $\pp \gets \dvrf.\setup(1^\usecp)$
+when $\pp \rgets \dvrf.\setup(1^\usecp)$
 and $(\SK_1, \ldots, \SK_n) \rgets \dvrf.\keygen(n, t, \minparticipants)$,
 there exists $\vrfprivout \in \vrfprivdomain, \vrfpubout \in \vrfpubdomain$ such that Equation~\ref{eq:vrf-correct} holds:
 
@@ -166,7 +167,7 @@ we say that a VPSS is \emph{secure} if it is unique, verifiable, and pseudorando
 	\begin{pchstack}[boxed]
 		\begin{pcvstack}
 		\procedure{ $\UniqExp_{\dvrf,\adv}(\secp, n, t, \minparticipants)$ }{
-      \pp \gets \dvrf.\setup(1^\usecp) \\
+      \pp \rgets \dvrf.\setup(1^\usecp) \\
       (\corrupt, \advstate) \rgets \adv(\pp, n, t, \minparticipants) \\
       \pcreturn \bot\ \pcif \lvert \corrupt \rvert \geq t \\
       \honest \gets \set{n} \setminus \corrupt \\
@@ -267,7 +268,7 @@ Let the advantage of an adversary $\adv$ playing the uniqueness game as defined 
 	\begin{pchstack}[boxed]
 		\begin{pcvstack}
 		\procedure{ $\VerifExp_{\dvrf,\adv}(\secp, n, t, \minparticipants)$ }{
-      \pp \gets \dvrf.\setup(1^\usecp) \\
+      \pp \rgets \dvrf.\setup(1^\usecp) \\
       (\corrupt, \advstate) \rgets \adv(\pp, n, t, \minparticipants) \\
       \pcreturn \bot\ \pcif \lvert \corrupt \rvert \geq t \\
       \honest \gets \set{n} \setminus \corrupt \\
@@ -354,7 +355,7 @@ defined in Figure~\ref{fig:dcvrf-verif} be as follows:
      z \rgets \zo \\
 %     z \rgets \zo \text{\algcom random coin for losing conditions} \\
      Q \gets \emptyset \\
-     \pp \gets \dvrf.\setup(1^\usecp) \\
+     \pp \rgets \dvrf.\setup(1^\usecp) \\
       (\corrupt, \advstate) \rgets \adv(\pp, n, t, \minparticipants) \\
       \pcreturn \bot\ \pcif \lvert \corrupt \rvert \geq t \\
      \honest \gets \set{n} \setminus \corrupt \\

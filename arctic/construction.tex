@@ -4,7 +4,7 @@
 \begin{pchstack}[boxed,center,space=1em]
 \begin{pcvstack}
 \procedure[]{$\setup(1^\usecp)$} {
-	(\GG, q, g) \leftarrow \GroupGen(1^\usecp) \\
+	(\GG, q, g) \rgets \GroupGen(1^\usecp) \\
 	\pp \gets ((\GG, q, g), \HashOne, \HashThree, \HashTwo) \\
 	\pcreturn \pp \\
   \text{\algcom $\pp$ is given implicitly} \\
