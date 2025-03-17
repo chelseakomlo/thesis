@@ -84,7 +84,7 @@ playing against the unforgeability game as in
 Figure~\ref{fig:euf-cma-threshold-deterministic}.
 In other words,
 $\adv$ has negligible additional advantage in winning the unforgeability game when
-interacting with $\SIM$ that it does when playing against \glitter directly.
+interacting with $\SIM$ that it does against \glitter directly.
 
 Concretely, in the honest majority setting with authenticated channels, then
   %\chelsea{That condition is super weird and it is an artifact of SIM. I don't think it is necessary to condition like that.}
@@ -299,7 +299,7 @@ $\ddv$ can use the two forgeries output by $\adv$ in its first and second execut
   advantage that $\bdv_2$ wins its VPSS verifiability game against $\DVRFOnem$.
   Let $W_2$ be the event that $\adv$ wins in Game~2,
   and let $\advant{verf}{\DVRFOnem,\bdv_2}$ be the advantage that $\bdv_2$ has in the verifiability experiment against $\DVRFOnem$.
-  Because $\DVRFOnem$ is information-theoretically verifiable in the honest majority setting,
+  Because $\DVRFOnem$ is perfectly verifiable in the honest majority setting,
   and \glitter likewise assumes an honest majority
   then
 
@@ -390,7 +390,7 @@ $\ddv$ can use the two forgeries output by $\adv$ in its first and second execut
   The additional advantage to $\adv$ in Game~2 is upper-bounded by the advantage that $\bdv_3$ wins its VPSS uniqueness game against $\DVRFOnem$.
   Let $W_3$ be the event that $\adv$ wins in Game~3,
   and let $\advant{unq}{\bdv_3, \DVRFOnem}$ be the advantage that $\bdv_3$ has in the verifiability experiment against $\DVRFOnem$.
-  Because $\DVRFOnem$ is information-theoretically unique in the honest majority setting with authenticated channels,
+  Because $\DVRFOnem$ is perfectly unique in the honest majority setting with authenticated channels,
   then
 
   \begin{equation} \label{eq:game3}

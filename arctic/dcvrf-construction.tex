@@ -189,7 +189,7 @@ Therefore, if all parties are honest, the coefficients of $x^t$, \dots, $x^{\lve
 We give the corresponding proofs next.
 
 \begin{theorem} \label{thm:dcvrf-verifiable}
-\DVRFOne is information-theoretically verifiable,
+\DVRFOne is perfectly verifiable,
 assuming the adversary controls at most $t-1$ participants,
 at least $t$ participants are honest, and
 participants exchange messages over an authenticated channel.
@@ -218,17 +218,18 @@ participants exchange messages over an authenticated channel.
   then Equation~\ref{eq:poly-check} must hold.
   But for Equation~\ref{eq:poly-check} to hold,
   then $(\vrfpubout_j)_{j \in \coalition}$ must define a degree $t-1$ polynomial in the exponent.
-  However, this polynomial is information-theoretically defined by the set of honest participant commitments  $(\vrfpubout_j)_{j \in \coalition \cap \honest}$,
+  However, this polynomial is completely defined by the set of honest participant commitments  $(\vrfpubout_j)_{j \in \coalition \cap \honest}$,
   because we assume $\lvert \honest \rvert \geq t$,
   and a degree $t-1$ polynomial is uniquely defined by $t$ points.
 
   Hence, when corrupted participants do not honestly follow the protocol,
   then the resulting polynomial committed to in $S$ will be of higher degree than $t-1$.
-  As such, \DVRFOne is information-theoretically verifiable.
+  As such, \DVRFOne is perfectly verifiable,
+  as the advantage to the adversary to win the game is zero.
 \end{proof}
 
 \begin{theorem} \label{thm:dcvrf-unique}
-\DVRFOne is information-theoretically unique,
+\DVRFOne is perfectly unique,
 assuming the adversary controls at most $t-1$ participants,
 at least $t$ participants are honest, and
 participants exchange messages over an authenticated channel.
@@ -265,7 +266,8 @@ participants exchange messages over an authenticated channel.
   Because $\DVRFOnem.\combinepub$ simply performs polynomial interpolation in the exponent to output the commitment to the constant term of the polynomial,
   then information-theoretically,
   it must be the case that $\DVRFOnem.\combinepub(S_1) = \DVRFOnem.\combinepub(S_2)$.
-  Therefore, uniqueness likewise holds information-theoretically for \DVRFOne.
+  Therefore, uniqueness likewise holds perfectly for \DVRFOne,
+  as the advantage to the adversary to win the game is zero.
 \end{proof}
 
 \begin{figure}[t]
