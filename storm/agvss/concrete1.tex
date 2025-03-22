@@ -1,4 +1,4 @@
-\subsubsection{A Discrete-Log Based \AVSS.} \label{avss:concrete}
+\subsection{A Discrete-Log Based \AVSS} \label{avss:concrete}
 We now present a concrete \AVSS scheme that is secure in the discrete logarithm
 setting,
 builds upon \FeldVariant, and assumes an honest majority of participants.
@@ -32,6 +32,8 @@ We now define the aggregation algorithms for this concrete \AVSS.
     \end{enumerate}
 
   \item[-] $\avss.\aggregatepub(\pubaggregateset, \tweak)$:
+      The input set $\pubaggregateset$ is as defined above,
+      and $\tweak$ is the output of $\avss.\gettweak$.
       Perform the following:
     \begin{enumerate}
       \item Derive the commitment to the aggregated constant coefficient by Equation~\ref{eq:const-agg}:

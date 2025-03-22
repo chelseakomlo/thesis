@@ -6,8 +6,9 @@ that is chosen by $\adv$.
 
 \begin{figure}[!ht]
   \begin{pchstack}[boxed,center,space=1em]
-    \procedure[]{$\AggSecurityExp_{\avss[\Hash], \adv,\simgettweak}(\lambda)$}{
+    \procedure[]{$\AggSecurityExp_{\avss, \adv,\simgettweak}(\lambda)$}{
     b \rgets \zo \\
+		\pp \leftarrow  \Setup(1^\secp) \\
     \issuedchal \gets 0 \\
     \secret \rgets \adv() ;\ \vsschal \gets \avss.\vfunc(\secret) \\
     \pcif b=1 \\
@@ -31,9 +32,9 @@ that is chosen by $\adv$.
     \pcind \pcind \privaggregateset_i \gets \{ (\share_{ij})\}_{j \in \set{\total}} \\
     \pcind \pcind \ashare_i \gets \aggregatepriv(\privaggregateset_i, \tweak) \\
     \pcind \mathsf{in} \gets ( (\{\vsscommit_j \}_{j \in \set{\total}} \cup \{\vsscommit^* \}), \tweak) \\
-    \pcind \avsscommit \gets \avss[\Hash].\aggregatepub(\mathsf{in}) \\
-    \pcind \pcif \avss[\Hash].\recover(t, \{\ashare_i \}_{i \in \honest}, \avsscommit) \neq \secret \\
-    \pcind \textbf{or } \avss[\Hash].\derivepshare(0, \avsscommit) \neq \vsschal \\
+    \pcind \avsscommit \gets \avss.\aggregatepub(\mathsf{in}) \\
+    \pcind \pcif \avss.\recover(t, \{\ashare_i \}_{i \in \honest}, \avsscommit) \neq \secret \\
+    \pcind \textbf{or } \avss.\derivepshare(0, \avsscommit) \neq \vsschal \\
     \pcind \pcind \pcreturn 1 \\
     b' \rgets \adv^{\Ogettweak(\cdot,\cdot)}(\advstate', \auxstring) \\
     \text{\algcom $\adv$ performs aggregation directly} \\
@@ -47,7 +48,7 @@ that is chosen by $\adv$.
       \issuedchal \gets 1 \\
       \total \gets \total + 1 \\
       s_\total \rgets \secretspace \\
-      (\{(j,\share_{\total j})\}_{j \in \set{n}}, \vsscommit_\total) \rgets \avss[\Hash].\issueshares(\lambda, s_\total, n, t) \\
+      (\{(j,\share_{\total j})\}_{j \in \set{n}}, \vsscommit_\total) \rgets \avss.\issueshares(\lambda, s_\total, n, t) \\
       Q_1 \gets  Q_1 \cup   \{ (\{(j,\share_{\total j})\}_{j \in \honest},, \vsscommit_\total) \} \\
       \pcreturn (\{(j,\share_{\total j})\}_{j \in \corrupt}, \vsscommit_\total)
   }
@@ -56,7 +57,7 @@ that is chosen by $\adv$.
     \text{\algcom Receives shares from $\adv$} \\
     \total \gets \total + 1 \\
 	  \pcfor j \in \honest \\
-    \pcind \pcif \avss[\Hash].\verify(j, \share_{\total j}, \vsscommit_\total) \neq 1 \\
+    \pcind \pcif \avss.\verify(j, \share_{\total j}, \vsscommit_\total) \neq 1 \\
     \pcind \pcind \pcreturn \bot \\
     Q_1 \gets  Q_1 \cup  \{ (\{(j,\share_{\total j})\}_{j \in \honest}, \vsscommit_\total) \}
   }
@@ -78,6 +79,6 @@ that is chosen by $\adv$.
 The advantage of an adversary $\adv$ against $\avss$ in the aggregated security experiment as defined in Figure~\ref{fg:avss-security} with respect to the algorithm $\simgettweak$ is then as follows.
 
 \[
-  \advantaggsecurity{\avss[\Hash], \adv, \simgettweak}(\lambda) = \bigabs{\Pr[\AggSecrecyExp_{\avss[\Hash], \adv,\simgettweak}(\lambda) = 1 ] - 1/2 }
+  \advantaggsecurity{\avss, \adv, \simgettweak}(\lambda) = \bigabs{\Pr[\AggSecrecyExp_{\avss, \adv,\simgettweak}(\lambda) = 1 ] - 1/2 }
 \]
 

@@ -3,7 +3,8 @@
 
 \noindent\textit{Synchronous VSS-Based Discrete-Logarithm Constructions.}
 Pedersen-DKG~\cite{Pedersen91dkg} is a two-round protocol among $n$ parties,
-such that each party plays the role of the dealer for Feldman Verifiable Secret Sharing (VSS)~\cite{Pedersen91}.
+such that each party plays the role of the dealer for Feldman Verifiable Secret
+Sharing (VSS)~\cite{Feldman87}.
 Gennaro et al.~\cite{GennaroJKR07} describe an attack against Pedersen-DKG, which we refer to as the \GJKRAttack attack,
 that considers a \emph{rushing adversary}, who is allowed to speak last.
 In this attack,
@@ -37,13 +38,6 @@ Our generic construction simply aborts the protocol,
 requiring the implementation to investigate the set of cheating players outside
 the protocol, a reasonable assumption in practice.
 
-In Chapter~\ref{chp:frost},
-we introduce a variant of Pedersen-DKG that we refer to as PedPop,
-where the dealer additionally sends a Schnorr proof of possession to prevent rogue-key attacks.
-Bellare et al.~\cite{BellareCKMTZ22} present an alternative proof of security for PedPop,
-in the context of the FROST threshold signature,
-but this proof does not extend to the use of $\pedpop$ in other settings.
-
 Lindell~\cite{Lindell22} introduced a DKG that builds
 upon Schnorr proofs of knowledge and online-extractable zero-knowledge proofs of knowledge.
 However, the protocol incurs computational costs due to the
@@ -65,18 +59,14 @@ without pairings.
 Our generic constructions assume VSS as a building block,
 and consequently incur an extra round of communication.
 It is possible to instead use a publicly verifiable secret sharing scheme (PVSS),
-as is demonstrated by alternative DKGs in the literate
-publicly verifiable secret sharing scheme (PVSS)~\cite{Groth21,BonehS2020,CascudoDSV23}.
-
+as is demonstrated by alternative DKGs in the literature.
 However,
 PVSS schemes require that secret key material be encrypted to receivers' public keys,
-thereby requiring a complicated decryption step (because receivers must recover
-the field element, not just the corresponding group element as is the case in
-hybrid public-key encryption).
+thereby requiring a complicated decryption step.
 For this reason,
 we define our construction to explicitly incur an additional network round.
-However, our construction could instead be adapted to use a PVSS and there by
-only two network rounds.
+However, our construction could instead be adapted to use a PVSS and thereby
+use only two network rounds.
 
 
 \medskip

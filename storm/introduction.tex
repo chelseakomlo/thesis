@@ -1,7 +1,11 @@
-Distributed Key Generation (DKG) schemes underlie many
-multi-party cryptographic primitives in use today,
-such as threshold signature schemes~\cite{KomloG20,BellareCKMTZ22,Lindell22} and distributed randomness beacons~\cite{le19}.
-A DKG allows a set of $n$ participants to cooperate to generate a keypair,
+Threshold signature schemes such as FROST generally require a distributed
+protocol to generate key material among all signing participants in an
+untrusted manner;
+such protocols are referred to as \emph{Distributed Key Generation} (DKG) schemes.
+DKG schemes underlie many
+multi-party cryptographic primitives in use today in addition to threshold signature schemes~\cite{KomloG20,BellareCKMTZ22,Lindell22};
+such as distributed randomness beacons~\cite{le19}.
+At a high leevel, a DKG allows a set of $n$ participants to cooperate to generate a keypair,
 such that the public key represents the entire set of participants,
 and each participant holds a share of the corresponding secret key.
 DKGs ensure that the public key is agreed upon by all (honest) parties at the end of the protocol,
@@ -11,8 +15,7 @@ where $t \leq n$.
 
 Despite widespread interest in DKGs,
 existing constructions fall short in either their complexity or composability.
-Most glaringly is Pedersen-DKG~\cite{Pedersen91} and variants of Pedersen DKG
-such as PedPop~\cite{KomloG20,BellareCKMTZ22},
+Most such example is Pedersen-DKG~\cite{Pedersen91} and variants of Pedersen DKG~\cite{KomloG20,BellareCKMTZ22},
 discussed in Chapter~\ref{chp:frost}.
 While Pedersen-DKG is appealing because of its simplicity and efficiency,
 its security to date has only been proven in the context of specific applications~\cite{GennaroJK02,GurkanJMMST21,BellareCKMTZ22},
@@ -28,7 +31,7 @@ towards the need for DKGs that are friendly to standardization efforts~\cite{NIS
 composable across a range of use cases.
 For example, the FROST Schnorr threshold signature scheme~\cite{KomloG20,BellareCKMTZ22},
 introduced in Chapter~\ref{chp:frost},
-for which an IETF draft exists~\cite{Connolly22},
+for which an IETF specification exists~\cite{Connolly22},
 is written in a way to be agnostic to any particular key generation scheme.
 Ideally, a candidate DKG to be standardized should be applicable not only to
 a specific threshold signature scheme,
@@ -133,7 +136,7 @@ which allows the parties to derive
 a ``tweaked'' key at the end of the protocol, preventing adaptive attacks.
 
 
-\paragraph{Comparing: \RG to Related Schemes.}
+\paragraph{Comparing \RG to Related Schemes.}
 We compare in Table~\ref{tbl:intro-comp} the practicality and security of \RG compared to related constructions in the literature that require only standard (i.e., non-pairing based) groups
 that are secure in the random oracle model,
 and have formal proofs of security.
@@ -152,7 +155,6 @@ Computational efficiency denotes the number of exponentiations required (i.e., s
 $n$ is the total number of participants in the protocol,
 $t$ is the threshold number required to recover the secret key,
 and the number of corrupted parties is assumed to be \emph{at most} $t-1$.
-$k$ is security parameters for the respective scheme~\cite{DasYXMKR21}.
 %$k,r$ are security parameters for their respective schemes~\cite{DasYXMKR21,Lindell22,Fischlin05}.
 DLP denotes the Discrete Logarithm Problem,
 KoE the Knowledge of Exponent model; AGM is the Algebraic Group Model,
@@ -246,7 +248,7 @@ In this work, we present the following contributions.
   \item We give a generic DKG construction,
     and prove its security using our new notions.
     Our generic construction requires a secure hash function, an AgVSS, and a NIKE.
-  \item We introduce \RG, a concrete instantiations of our generic
+  \item We introduce \RG, a concrete instantiation of our generic
     construction.
     The security of \RG reduces to the Computational Diffie-Hellman (CDH)
     problem in the random oracle model.

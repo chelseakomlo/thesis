@@ -1,4 +1,4 @@
-\section{Proofs for Discrete-Logarithm Based \AVSS}
+\subsubsection{Proofs for Discrete-Logarithm Based \AVSS}
 \label{appendix:avss-proofs}
 
 In Section~\ref{avss:concrete},
@@ -7,8 +7,7 @@ We demonstrate the correctness,
 aggregated secrecy,
 and uniqueness of that scheme now.
 
-\subsection{Correctness}
-
+\paragraph{Correctness.}
 The honest majority \AVSS scheme of Section~\ref{avss:concrete} fulfills the notion of correctness for the base VSS scheme,
 as the algorithms $\issueshares, \recover, \verify, \derivepshare$ are identical to \FeldVariant,
 as is the map $\vfunc$.
@@ -102,8 +101,7 @@ Hence, we simply prove aggregated secrecy, next.
 
 \end{comment}
 
-\subsection{Aggregated Secrecy}
-
+\paragraph{Aggregated Secrecy.}
 We now show that the concrete scheme of Section~\ref{avss:concrete} fulfills the notion of aggregated secrecy from Figure~\ref{fg:avss-secrecy}.
 To do so, we first show how the environment simulates $\simshare$ and $\Hash$.
 Without loss of generality, we assume $\lvert \corrupt \rvert = t-1$.
@@ -198,7 +196,6 @@ Without loss of generality, we assume $\lvert \corrupt \rvert = t-1$.
   which can be determined via Equation~\ref{eq:derive-coeff}.
   Hence, so long as the adversary controls fewer than $t-1$ players,
   $\avss.\verify(i, \share_i, \vsscommit)$ for all $i \in \corrupt$ will output $1$.
-  \qed
 \end{proof}
 
 \begin{lemma} \label{lem:avss-programtweak}
@@ -214,7 +211,7 @@ Without loss of generality, we assume $\lvert \corrupt \rvert = t-1$.
   it programs $\Hash$ to return $\tweak$ as in Equation~\ref{eq:programmed-tweak}.
   Recall that $\auxstring$ is provided to the adversary only after it has finished querying $\getshare$ and $\recvshare$,
   and so similarly $\pubaggregateset$ is fixed at the time that the adversary can query with $\auxstring$ as input
-  (i.e, the environment will never have to guess which query to program).
+  (i.e., the environment will never have to guess which query to program).
 
   \begin{equation} \label{eq:programmed-tweak}
    \tweak \gets -\secretone - \sum_{j \in \set{\simtotal}} \secret_j \\
@@ -264,7 +261,6 @@ Without loss of generality, we assume $\lvert \corrupt \rvert = t-1$.
   % CK- added this specification in the definition and that observation here.
 
   This completes the proof.
-  \qed
 \end{proof}
 
 \begin{theorem} \label{thm:avss-secrecy}
@@ -328,8 +324,7 @@ or simulated ($b=1$) setting.
 This concludes the proof.
 \end{proof}
 
-\subsection{Uniqueness}
-
+\paragraph{Uniqueness.}
 The uniqueness of the concrete \AVSS also follows from that of \FeldVariant, as we now show.
 
 \begin{theorem}
