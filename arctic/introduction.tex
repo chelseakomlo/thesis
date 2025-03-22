@@ -74,11 +74,11 @@ one party deviating from the protocol results in the challenge $c$ likewise chan
 
 If honest parties cannot verify that other parties followed the protocol,
 such a deviation would allow an adversary to perform a key recovery attack with as little as two signing queries.
-A key-recover attack is possible is because the adversary can force honest parties to re-use their nonces,
+A key-recovery attack is possible is because the adversary can force honest parties to re-use their nonces,
 while corrupted parties introduce fresh randomness by picking non-deterministic
 nonces.
 Doing so would lead to the group commitment $R$ changing,
-which in tern leads to the challenge $c$ changing.
+which in turn leads to the challenge $c$ changing.
 An honest participant's secret key share could then be obtained simply by
 solving the linear equation $\sk_i = \frac{z_1 - z_2}{c_1 - c_2}$,
 where $z_1, z_2$ are signature shares from two different signing sessions,
