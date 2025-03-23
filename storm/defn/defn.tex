@@ -14,7 +14,7 @@ We begin by defining a target single-party key generation scheme $\targetkeygen$
 \begin{definition}
 A \defn{target key generation scheme} $\targetkeygen$ is the tuple $\targetkeygen = (\keygen, \verify)$, where:
 \begin{itemize}
-    \item $\keygen(\lambda) \rightarrow (\SK, \PK)$: A probabilistic algorithm that
+    \item $\keygen(1^\lambda) \rightarrow (\SK, \PK)$: A probabilistic algorithm that
       accepts as input a security parameter $\lambda$ and outputs a secret and public keypair $(\SK, \PK)$, where $\SK$ is an element of a secret domain $\secretspace$ and $\PK$ is an element of the public domain $\publicspace$.
     \item $\verify(\SK, \PK) \rightarrow \zo$: A deterministic algorithm that accepts as input a secret and public keypair $(\SK, \PK)$,
   and outputs $0$ if the keypair is invalid; otherwise, outputs~$1$.
@@ -36,7 +36,7 @@ A \defn{target key generation scheme} $\targetkeygen$ is the tuple $\targetkeyge
   where:
 
   \begin{itemize}
-    \item $\keygen(\lambda, n, t) \rightarrow  \langle (\PK, \qual, \auxinfo), (\status_i,\sk_i)_{i \in \set{n}}\rangle$:
+    \item $\keygen(1^\lambda, n, t) \rightarrow  \langle (\PK, \qual, \auxinfo), (\status_i,\sk_i)_{i \in \set{n}}\rangle$:
       An interactive protocol between $n$ participants.
       Accepts as input the security parameter $\lambda$,
       and positive integers $n \geq t \geq 1$,
@@ -79,7 +79,7 @@ A \defn{target key generation scheme} $\targetkeygen$ is the tuple $\targetkeyge
       Internally to the $\keygen$ protocol, each participant performs the following:
 
       \begin{itemize}
-        \item $\dkgkeygen_0(\lambda, n, t, \id_i) \rightarrow (\party_i,\outvecp,\bmsg_i)$:
+        \item $\dkgkeygen_0(1^\lambda, n, t, \id_i) \rightarrow (\party_i,\outvecp,\bmsg_i)$:
           The algorithm run by the participant to initiate the protocol.
           Accepts the security parameter $\lambda$,
           the number of participants $n$, the threshold $t$, and the participant identifier $\id_i$.
@@ -92,7 +92,7 @@ A \defn{target key generation scheme} $\targetkeygen$ is the tuple $\targetkeyge
         \item $\dkgkeygen_k(\party_i, \invecp, \invecb) \rightarrow (\party_i, \outvecp, \bmsg_i)$:
           The algorithm run for each intermediate round $k \in \{ 1, \ldots, \numrounds-1\}$ in the protocol.
           Accepts as input the participant's internal state $\party_i$,
-          the vector $\outvecp$ of any peer-to-peer messages sent by other participants in the previous round,
+          the vector $\invecp$ of any peer-to-peer messages sent by other participants in the previous round,
           and the set $\invecb$ of any broadcast messages sent by other participants in the previous round.
           Outputs the tuple $(\party_i, \outvecp, \bmsg_i)$.
         \item $\finalize(\party_i, \invecp, \invecb) \rightarrow \langle(\PK, \qual,\auxinfo), (\status_i, \sk_i)_{i \in \set{n}}\rangle$:
@@ -101,7 +101,6 @@ A \defn{target key generation scheme} $\targetkeygen$ is the tuple $\targetkeyge
       \end{itemize}
 
     \item $\recover(\PK, t, \{ (i, \SK_i) \}_{i \in \coalition}) \rightarrow \SK/\fail$:
-      The algorithm run by the participant to finish its protocol execution.
       Accepts as input the public key $\PK$,
       the threshold $t$,
       and a set of secret key shares $\{(i,\sk_i) \}_{i \in C}$,
@@ -111,7 +110,7 @@ A \defn{target key generation scheme} $\targetkeygen$ is the tuple $\targetkeyge
       Otherwise, output $\SK$.
     \item For correctness, we require that, when all participants follow the protocol:
 \begin{align*}
-    \text{if } & \dkg.\keygen(\lambda, n, t) \rightarrow \left((\PK, \qual), \langle (\status_i, \sk_i)\rangle_{i \in \set{n}}\right) \\[1mm]
+    \text{if } & \dkg.\keygen(1^\lambda, n, t) \rightarrow \left((\PK, \qual), \langle (\status_i, \sk_i)\rangle_{i \in \set{n}}\right) \\[1mm]
     \text{then } & \dkg.\recover(\PK, t, \{(i,\SK_i)\}_{i \in \coalition}) \rightarrow \SK \text{ for all } \coalition \subseteq \set{n}, \lvert \coalition \rvert \geq t, \\[1mm]
     \text{and } &  \targetkeygen.\verify(\SK, \PK) \rightarrow 1
  \end{align*}

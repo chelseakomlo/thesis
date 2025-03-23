@@ -5,13 +5,16 @@ builds upon \FeldVariant, and assumes an honest majority of participants.
 The algorithms $\issueshares, \recover, \verify, \derivepshare$ are identical to \FeldVariant,
 as described in Section~\ref{feldman-vss}.
 
-Let $\Hash: \GG^* \times \Zq \rightarrow \Zq$ be a cryptographically secure hash function,
-whose inputs are a tuple consisting of a vector of group elements in $\GG$, and an element in $\Zq$.
-Finally, let the distribution $\auxdistr$ be the uniform distribution on $\Zq$.
-
-We now define the aggregation algorithms for this concrete \AVSS.
+Let the distribution $\auxdistr$ be the uniform distribution on $\Zq$.
+We now define the additional algorithms for this concrete \AVSS.
 
 \begin{itemize}
+    \item $\avss.\Setup(1^\secp) \rightarrow \pp$:
+    On input a security parameter $1^\secp$,
+    run $(\Gr, q, g) \gets \GroupGen(\usecp)$.
+    Let $\Hash: \GG^* \times \Zq \rightarrow \Zq$ be a cryptographically secure hash function,
+    whose inputs are a tuple consisting of a vector of group elements in $\GG$, and an element in $\Zq$.
+    Output public parameters $\pp \gets ((\Gr, q, g), \Hash)$ (which are given implicitly as input to all other algorithms).
   \item[-] $\avss.\gettweak(\pubaggregateset, \auxstring)$:
     Let $\pubaggregateset = \{ \vsscommit_j \}_{j \in \set{\total}}$
     be the public aggregation set of the corresponding $\total$ Feldman VSS commitments to $\privaggregateset$,
