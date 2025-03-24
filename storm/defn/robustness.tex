@@ -31,7 +31,7 @@ however, introducing a weaker variant allows us to define a more efficient const
   unless some additional structure is assumed, such as a public bulletin board.
 \end{remark}
 
-\begin{figure}[!ht]
+\begin{figure}[p]
   \begin{pchstack}[boxed,center,space=1em]
   \begin{pcvstack}
     \procedure[]{\protect\fbox{$\StrongRobustnessExp_{\dkg,\adv}(\lambda)$} \protect\dbox{$\WeakRobustnessExp_{\dkg,\adv}(\lambda)$} }{
@@ -77,12 +77,12 @@ however, introducing a weaker variant allows us to define a more efficient const
 
 
 \paragraph{Common Oracles.}
-First, we define common oracles that are used within the respective security
+We define common oracles that are used within the respective security
 experiments for a DKG in in Figure~\ref{fg:keygen-o}.
 Boxed algorithms are used by the robustness and indistinguishability games;
 dashed boxed algorithms are used by the zero-knowledge game.
 
-\subsubsection{Strong Robustness.}
+\subsubsection{Strong Robustness}
 We show the strong robustness attack experiment in Figure~\ref{fg:robustness},
 where its differences with weak robustness are outlined in a box.
 
@@ -101,7 +101,7 @@ the function $\advantstrrobust{\dkg,\adv}(\lambda)$  is negligible.
 The strong robustness attack game allows $\adv$ to participate in key generation and control up to $t-1$ players,
 the set of which we denote by $\corrupt$.
 We denote the set of honest players as $\honest$.
-The robustness attack game has oracles $\oraclekg, r \in \set{\numrounds-1}  $
+The robustness attack game has oracles $\oraclekg, \currentround \in (0, \ldots, \numrounds-1)  $
 and $\oraclefinalize$ in common with other games,
 so we show these oracles in Figure~\ref{fg:keygen-o}.
 % This requirement doesn't seem necessary in the definition
@@ -119,7 +119,7 @@ be different from any other honest player's view.
 Finally, $\adv$ wins if it can cause the resulting keypair to be invalid with
 respect to the target key generation algorithm (recall that $\dkg.\recover$ tests for validity of the keypair, and outputs $\fail$ if $\sk$ is invalid).
 
-\subsubsection{Weak Robustness.}
+\subsubsection{Weak Robustness}
 We similarly present the weak robustness attack experiment in Figure~\ref{fg:robustness},
 where its differences with strong robustness are outlined in a dashed box.
 Intuitively, weak robustness differs from strong robustness in that it

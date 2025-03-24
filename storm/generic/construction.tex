@@ -5,11 +5,9 @@ shown in Figure~\ref{fg:generic-perfect}.
 The DKG initialized with a NIKE $\enike$ as defined in Section~\ref{enike},
 an \AVSS $\avss$ as defined in Section~\ref{asym-vss},
 and a hash function $\Hash$.
-
-We present a concrete constructions in Section~\ref{storm-gen}.
+We present the concrete construction in Section~\ref{storm-gen}.
 
 \begin{figure}[p]
-  \label{fg:generic-perfect}
     % chelsea- make full size for eprint
 \begin{pchstack}[boxed,center,space=1em]
 \begin{pcvstack}
@@ -101,6 +99,7 @@ We present a concrete constructions in Section~\ref{storm-gen}.
 \end{pcvstack}
 \end{pchstack}
     \caption{A generic DKG protocol.}
+  \label{fg:generic-perfect}
 \end{figure}
 
 Our generic construction employs the following building blocks:
@@ -116,8 +115,10 @@ Our generic construction employs the following building blocks:
   and outputs an auxiliary element $\auxstring$.
 \end{itemize}
   \item An aggregatable verifiable secret sharing scheme
-    $\avss[\Hash_1]~=~(\issueshares,\verify,\allowbreak\recover,\allowbreak\derivepshare, \aggregatepriv, \aggregatepub)$ that is zero-indexed.
-  \item A non-interactive key exchange (NIKE) $\enike~=~(\keygen,\verifykeypair,\getsharedkey)$.
+    $\avss[\Hash_1]~=~(\Setup,
+    \issueshares,\verify,\allowbreak\recover,\allowbreak\derivepshare,
+    \aggregatepriv, \aggregatepub,\gettweak)$ that is zero-indexed.
+  \item A non-interactive key exchange (NIKE) $\enike~=~(\Setup, \keygen,\verifykeypair,\getsharedkey)$.
 \end{itemize}
 
 The secret and public domains of the \AVSS and NIKE must be the same as that of the target key generation scheme,

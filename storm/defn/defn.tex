@@ -111,7 +111,7 @@ A \defn{target key generation scheme} $\targetkeygen$ is the tuple $\targetkeyge
     \item For correctness, we require that, when all participants follow the protocol:
 \begin{align*}
     \text{if } & \dkg.\keygen(1^\lambda, n, t) \rightarrow \left((\PK, \qual), \langle (\status_i, \sk_i)\rangle_{i \in \set{n}}\right) \\[1mm]
-    \text{then } & \dkg.\recover(\PK, t, \{(i,\SK_i)\}_{i \in \coalition}) \rightarrow \SK \text{ for all } \coalition \subseteq \set{n}, \lvert \coalition \rvert \geq t, \\[1mm]
+    \text{then } & \dkg.\recover(\PK, t, \{(i,\SK_i)\}_{i \in \coalition}) \rightarrow \SK \text{ for all }  \coalition \subseteq \set{n} \cap \qual, \lvert \coalition \rvert \geq t, \\[1mm]
     \text{and } &  \targetkeygen.\verify(\SK, \PK) \rightarrow 1
  \end{align*}
 \end{itemize}

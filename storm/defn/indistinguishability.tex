@@ -12,7 +12,7 @@ we require that a DKG must generate keys that are \emph{indistinguishable} from 
 This property is implied by the notion of secrecy if the underlying
 construction assumes a one-to-one correspondence between secret and public
 keys.
-For example, the Gennaro et al.\ notion of simulatability assume that indistinguishability of the resulting keypair is an implicit consequence of the ability to simulate with respect to a public key.
+For example, the Gennaro et al.\ notion of simulatability assumes that indistinguishability of the resulting keypair is an implicit consequence of the ability to simulate with respect to a public key.
 However, simulatability does not necessarily imply indistinguishability,
 because the zero-knowledge game \emph{only} guarantees the indistinguisahbility of public key material between the real and simulated environments.
 If there is a one-to-one relation between public and secret keys,
@@ -26,7 +26,7 @@ Because our generic construction similarly assumes a one-to-one correspondence
 of secret and public keys, we do not make use of this notion of
 indistinguishability in the proof of security for our generic construction, as
 the proof of zero-knowledge implies indistinguishability.
-Hence, for future reference, we give the notion of indistinguishability more formally next.
+For future reference, we give the notion of indistinguishability more formally next.
 
 The advantage of a distinguishing adversary $\distinguisher$ against a DKG $\dkg$ in the indistinguishability experiment in Figure~\ref{fg:indistinguishability} with respect to the target key generation algorithm $\targetkeygen$ and participating adversary $\adv$ is
 \[
