@@ -14,7 +14,7 @@ We present the concrete construction in Section~\ref{storm-gen}.
 	%\pseudocode[codesize=\scriptsize]{
 \procedure[]{$\dkgkeygen_0[\Hash](\lambda, n, t, i)$} {
     (\secretone_i, A_i) \rgets \enike.\keygen(\lambda) \\
-    \mathsf{in} \gets (\lambda, \secretone_i, n, t) \\
+    \mathsf{in} \gets (\secretone_i, n, t) \\
     \{ (j, \share_{ij}) \}_{j =1}^n, \vsscommit_i \rgets \avss[\Hash_1].\issueshares(\mathsf{in}) \\
     %\text{\algcom The \ENIKE secret key $\secretone_i$ is} \\
     %\text{\algcom secret-shared via the \AVSS.} \\
@@ -134,14 +134,15 @@ Towards this latter point,
 we require Assumption~\ref{ass:avss-enike} to hold.
 
 \begin{assumption} \label{ass:avss-enike}
-  For any $(\sk, \pk) \rgets \enike.\keygen(\lambda)$,
+  For $\pp \gets \enike.\Setup(1^\lambda)$ and $\pp' \gets \avss.\Setup(1^\lambda)$ \\
+  any $(\sk, \pk) \rgets \enike.\keygen()$,
   and any $(n, t) \in \mathbb{N}$ such that $n \geq t$;
   and any $C \subseteq \set{n}, \lvert C \rvert \geq t$,
   Equation~\ref{eq:avss-enike-rel} holds:
   \begin{align} \label{eq:avss-enike-rel}
     \begin{split}
       \enike.\verify(\sk, \pk) = 1, \text{ where} \\
-      (\{ (i, \share_i) \}_{i \in \set{n}}), \vsscommit) \rgets \avss[\Hash].\issueshares(\lambda, \sk, n, t) \text{ and } \\
+      (\{ (i, \share_i) \}_{i \in \set{n}}), \vsscommit) \rgets \avss[\Hash].\issueshares(\sk, n, t) \text{ and } \\
       \pk \gets \avss[\Hash_1].\derivepshare(0, \vsscommit) \text{ and } \\
       \sk \gets \avss[\Hash_1].\recover(t, \{(i, \share_i) \}_{i \in C})
     \end{split}
@@ -149,9 +150,9 @@ we require Assumption~\ref{ass:avss-enike} to hold.
 \end{assumption}
 
 
-\subsubsection{Key Generation Protocol.}
-As shown in Figure~\ref{fg:generic-perfect}, the key generation protocol is
-completed in three network rounds in the optimistic setting and four network
+\subsection{Key Generation Protocol}
+As shown in Figure~\ref{fg:generic-perfect},
+the key generation protocol is completed in three network rounds in the optimistic setting and four network
 rounds in the worst-case setting.
 
 Each $\dkgkeygen_r$ operation is defined with respect to participant $i$.
@@ -189,8 +190,8 @@ In $\dkgkeygen_2$,
 participants receive as input status messages from all other participants via the broadcast channel input $\invecb_2$.
 If any participant received a $\fail$ message,
 that participant immediately exits $\dkgkeygen_2$
-after setting their status to $\abort$\footnote{Because the fail message is sent on a broadcast channel,
-if any participant receives a fail message, then all participants receive that message}.
+after setting their status to $\abort$.\footnote{Because the fail message is sent on a broadcast channel,
+if any participant receives a fail message, then all participants receive that message}
 Otherwise, each participant $i$ broadcasts $\witness_i$ to all other participants (which is the opening
 to the commitment $\commitment_i$ sent in $\dkgkeygen_0$).
 
@@ -234,12 +235,12 @@ some desired outcome, such as being even or odd, for example.
 
 Participants complete $\finalize$ after setting their status to $\accept$ and
 updating their internal state.
-The public output at the end of $\dkgkeygen_3$ is $(\pk, \qual, \auxinfo)$.
+The public output at the end of $\finalize$ is $(\pk, \qual, \auxinfo)$.
 The private output to each participant $i$ is $(\status, \sk_i)$.
 
 
 
-\subsubsection{Recovery Algorithm.}
+\subsection{Recovery Algorithm}
 While most practical DKG applications do not require the participants to actually come together to recover the secret key,
 it is possible that some applications may wish to do so. We define the recovery algorithm now.
 

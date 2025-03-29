@@ -1,10 +1,11 @@
 \subsubsection{Robustness}
 
 \begin{theorem} \label{thm:perfect-robust}
-  The generic construction is weakly robust in the honest majority setting ($t < n/2$) against
+  The generic construction $\dkg$ is weakly robust in the honest majority setting
+  ($t-1 < n/2$) against
   an adversary $\adv$ controlling up to $t-1$ participants in the random oracle model,
-  a zero-indexed and secure \AVSS,
-  a binding \ENIKE.
+  given a zero-indexed and secure \AVSS $\avss$
+  and a binding \ENIKE $\enike$.
 
   Concretely, for every adversary $\adv$ that attacks the scheme,
   there exist adversaries $(\bdv_1, \bdv_2)$ that run in about the same time as $\adv$ such that
@@ -23,7 +24,7 @@ We prove Theorem~\ref{thm:perfect-robust} by a sequence of games.
 
 \noindent \textit{\underline{Game 0.}}
 This is the DKG weak robustness game as in Figure~\ref{fg:robustness},
-applied to construction in Figure~\ref{fg:generic-perfect}.
+applied to the construction in Figure~\ref{fg:generic-perfect}.
 
 Let $W_0$ be the event that $\adv$ wins in Game~0. Then,
 
