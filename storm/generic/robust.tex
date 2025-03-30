@@ -29,7 +29,7 @@ applied to the construction in Figure~\ref{fg:generic-perfect}.
 Let $W_0$ be the event that $\adv$ wins in Game~0. Then,
 
 \[
-    \advant{wk-rbst}{\adv,\dkg}(\lambda) = \Pr[W_0]
+    \advant{wk-rbst}{\dkg,\adv}(\lambda) = \Pr[W_0]
 \]
 
 
@@ -130,8 +130,8 @@ However, if the \AVSS is unique, then Game~1 and Game~2 are indistinguishable.
 \noindent \textit{Reduction to \AVSS Uniqueness.}
 Let $\bdv_2$ be an adversary playing against the \AVSS uniqueness game.
 
-$\bdv_2$ follows the protocol honestly for all parties $i \in \honest$.
-However, in $\dkgkeygen_3$, $\bdv_2$ recovers $\sk$ and tests to see if Equation~\ref{eq:game2-robust-condition} holds.
+$\bdv_2$ follows the protocol as defined in Figure~\ref{fg:generic-perfect} honestly for all parties $i \in \honest$.
+However, in $\finalize$, $\bdv_2$ recovers $\sk$ and tests to see if Equation~\ref{eq:game2-robust-condition} holds.
 $\bdv_2$ can recover $\sk$ without the involvement of $\adv$ because it simulates at least $t$ honest parties.
 
 Recall that
@@ -154,8 +154,8 @@ such that $\avss[\Hash_1].\verify(k, \share_{j,k}, \vsscommit_j) = 1$
 but where Equation~\ref{eq:g2-robust-recovery} holds.
 \begin{align} \label{eq:g2-robust-recovery}
   \begin{split}
-    & \avss[\Hash_1].\recover(t, \{(\ell,\share_{j,\ell}) \}_{\ell \in \honest}) \neq \\
-    & \avss[\Hash_1].\recover(t, \{(\ell,\share_{j,\ell}) \}_{\ell \in \honest,\ell\neq k})
+    & \avss[\Hash_1].\recover(t, \{(\ell,\share_{j,\ell}) \}_{\ell \in \set{n}}) \neq \\
+    & \avss[\Hash_1].\recover(t, \{(\ell,\share_{j,\ell}) \}_{\ell \in \set{n},\ell\neq k})
   \end{split}
 \end{align}
 %\ian{API for $\avss.\recover$ above.  But worse, doesn't the second recovery set only have $t-1$ elements? $\recover$ isn't even defined for such an input?}

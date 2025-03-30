@@ -5,8 +5,8 @@
   The generic construction is zero-knowledge in the honest majority setting ($t < n/2$) in the random oracle model,
   against a PPT adversary $\adv$ controlling up to $t-1$ participants,
   assuming the generic construction itself is weakly robust,
-  the \AVSS achieves aggregated secrecy,
-  and the \ENIKE is unrecoverable.
+  the \AVSS $\avss$ achieves aggregated secrecy,
+  and the \ENIKE $\enike$ is unrecoverable.
 %  \ian{Thm 1 specified an honest majority.  Is that not a requirement here as well?}
   % CK- it says that in the above statement
 
@@ -168,9 +168,9 @@ $\finalize$ to $\dkgkeygen_1$,
 as shown in Figure~\ref{fg:zk-g3},
 which shows code movement.
 In particular, the code that is moved is highlighted,
-moved from $\dkgkeygen_3$ to $\dkgkeygen_2$.
+moved from $\finalize$ to $\dkgkeygen_2$.
 
-Rather than learning corrupted players' blinding factors as input to $\dkgkeygen_3$,
+Rather than learning corrupted players' blinding factors as input to $\finalize$,
 $\cdv$ instead derives blinding factors for all corrupted parties in $\dkgkeygen_2$,
 (importantly, before it reveals the honest players' blinding factors to $\adv$)
 using the shares from all honest players.
