@@ -16,8 +16,10 @@
   such that
   \begin{align} \label{eq:zk-thm}
   \begin{split}
-      \advantzk{\dkg,\adv,\simkeygen_i,\simfin}(\lambda) & \leq \advantsecrecy{\avss[\Hash_1],\bdv_1}(\lambda)\ + \advant{rec}{\enike,\bdv_3}(\lambda) \\
-      & \quad + \advantaggsecrecy{\avss[\Hash_1], \bdv_4, \simshare,\simgettweak}(\lambda) .
+      \advantzk{\dkg,\adv,\simkeygen_i,\simfin}(\lambda) & \leq \advantsecrecy{\avss[\Hash_1],\bdv_1}(\lambda)\ +
+        \advant{rec}{\enike,\bdv_3}(\lambda) \\
+      & \quad + \advantaggsecrecy{\avss[\Hash_1], \bdv_4, \simshare,\simgettweak}(\lambda)
+      + \mathsf{negl}(\lambda)
       \end{split}
   \end{align}
   where $\simshare, \simgettweak$ are as defined for aggregated secrecy of the \AVSS,
@@ -228,7 +230,7 @@ Because it does not know the corresponding $\witness_c$ to $\commitment_c$,
 it instead must guess.
 It looks at all of the queries made to $\Hash_1$ that $\adv$ has made up to that point,
 and randomly selects one of the inputs.
-Let this randomly selected input be $\{\blinding_j \}_{j \in \set{n}}^*, \auxstring^*)$.
+Let this randomly selected input be $(\{\blinding_j \}_{j \in \set{n}}^*, \auxstring^*)$.
 
 $\bdv_3$ then picks the simulated party's element $\blinding_\simid \gets \{\blinding_j \}_{j \in \set{n}}^*$,
 and outputs $\sharedkey' = \blinding_\simid$ as its guess for the \ENIKE unrecoverability game.
@@ -243,8 +245,9 @@ then $\bdv_3$ wins the \ENIKE game with probability $\frac{1}{q}$.
 Let $W_3$ be the event that $\adv$ wins in Game~3.
 The additional ability for $\adv$ to win Game~3 is then bounded by its ability to win the \ENIKE unrecoverability game.
 Hence,
+
 \begin{equation} \label{eq:game3-secrecy}
-  \bigabs{\Pr[W_3] - \Pr[W_2] } \leq  \advant{unpred}{\enike,\bdv_3}(\lambda) \cdot \frac{1}{q}
+  \bigabs{\Pr[W_3] - \Pr[W_2] } \leq  \advant{rec}{\enike,\bdv_3}(\lambda) \cdot \frac{1}{q}
 \end{equation}
 
 \medskip
@@ -318,7 +321,8 @@ $\bdv_4$ wins the \AVSS aggregated secrecy game.
 Let $W_4$ be the event that $\adv$ wins in Game~4.
 The difference between $W_3$ and $W_4$ is bounded by the advantage of $\adv$ in the \AVSS aggregated security game.
 \begin{equation} \label{eq:game4-zk}
-  \bigabs{\Pr[W_4] - \Pr[W_3] } \leq \advant{asec}{\avss, \bdv_4, \simshare}(\lambda)
+  \bigabs{\Pr[W_4] - \Pr[W_3] } \leq
+  \advant{asec}{\avss, \bdv_4, \simshare,\simgettweak}(\lambda)
 \end{equation}
 
 
