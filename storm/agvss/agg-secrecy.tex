@@ -19,13 +19,13 @@ which we formalize in Figure~\ref{fg:avss-secrecy}.
   \begin{pcvstack}
     \procedure[]{$\AggSecrecyExp_{\avss}(\lambda, \secret)$}{
     b \rgets \zo \\
-		\pp \leftarrow  \Setup(1^\secp) \\
+		\pp \leftarrow  \avss.\Setup(1^\secp) \\
     \vsschal \rgets \avss.\vfunc(\secret) \\
     \issuedchal \gets 0 \\
     \auxstring \rgets \avss.\auxdistr \\
     \text{\algcom Pick random auxiliary string} \\
     \simtotal \gets 0  \\
-    Q_1 \gets \emptyset, Q_2 \gets \emptyset \\
+    Q_1 \gets \emptyset, Q_2 \gets \emptyset, Q_3 \gets \emptyset  \\
     (n, t, \corrupt, \advstate) \rgets \adv(\lambda) \\
     % We already said that n,t are natural numbers so we don't need to check their types.
     \pcif t > n \vee \corrupt \not\subseteq \set{n}  \\
@@ -56,7 +56,7 @@ which we formalize in Figure~\ref{fg:avss-secrecy}.
       \pcif \issuedchal = 0 \\
       \pcind \issuedchal \gets 1 \\
       \pcind \pcif b=0 \\
-      \pcind \pcind \{(j,\share_{j})\}_{j =1}^n, \vsscommit \rgets \avss.\issueshares(\lambda, s, n, t) \\
+      \pcind \pcind \{(j,\share_{j})\}_{j =1}^n, \vsscommit \rgets \avss.\issueshares(s, n, t) \\
       \pcind \pcind Q_2 \gets  Q_2 \cup   \{ (\{(j,\share_{j})\}_{j \in \honest},, \vsscommit) \} \\
       \pcind \pcind \pcreturn ( \{(j,\share_j)\}_{j \in \corrupt}, \vsscommit) \\
       \pcind \pcelse \text{\algcom $b=1$ case} \\
@@ -67,18 +67,18 @@ which we formalize in Figure~\ref{fg:avss-secrecy}.
       \pcind \pcreturn ( \{(j,\share_j)\}_{j \in \corrupt}, \vsscommit^*) \\
       \simtotal \gets \simtotal + 1;\
       s_\simtotal \rgets \secretspace \\
-      \{(j,\share_{\simtotal j})\}_{j =1}^n, \vsscommit_\simtotal \rgets \avss.\issueshares(\lambda, s_\simtotal, n, t) \\
+      \{(j,\share_{\simtotal j})\}_{j =1}^n, \vsscommit_\simtotal \rgets \avss.\issueshares(s_\simtotal, n, t) \\
       Q_2 \gets  Q_2 \cup   \{ (\{(j,\share_{\simtotal j})\}_{j \in \honest},, \vsscommit_\simtotal) \} \\
       \pcreturn (\{(j,\share_{\simtotal j})\}_{j \in \corrupt}, \vsscommit_\simtotal)
   }
   \pcvspace
     \procedure[]{$\recvshare(\{ (j, \share_{\simtotal j}) \}_{j \in \honest}, \vsscommit_\simtotal)$}{
     %\text{\algcom Receives shares from $\adv$} \\
-    \simtotal \gets \simtotal + 1 \\
 	  \pcfor j \in \honest \\
     \pcind \pcif \avss.\verify(j, \share_{\simtotal j}, \vsscommit_\simtotal) \neq 1 \\
     \pcind \pcind \pcreturn \bot \\
     Q_2 \gets  Q_2 \cup  \{ (\{(j,\share_{\simtotal j})\}_{j \in \honest}, \vsscommit_\simtotal) \}
+    \simtotal \gets \simtotal + 1 \\
   }
   \pcvspace
   \procedure[]{$\Ogettweak(\pubaggregateset_i, \auxstring_i) $}{
