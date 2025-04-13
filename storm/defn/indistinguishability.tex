@@ -66,7 +66,7 @@ which $\distinguisher$ could trivially distinguish from the output of $\targetke
     \invecp_{11} \gets \emptyset, \ldots, \invecp_{1n} \gets \emptyset \text{\algcom Simulate peer-to-peer channels} \\
     (n, t, \corrupt, \advstate) \gets \adv(\lambda) \\
     \pcif n < t \vee \corrupt \not\subset \set{n} \vee \lvert \corrupt \rvert \geq t
-    \pcthen \randcoin \rgets \zo;\ \pcreturn \randcoin \\
+    \pcthen \pcreturn \randcoin \\
     \honest \gets \set{n} \setminus \corrupt \\
     \pcfor i \in \honest \pcdo \\
     \pcind (\party_i, \outvecp_{0i}, \bmsg_i) \gets \dkgkeygen_0[\Hash](\lambda,n, t, i) \\
@@ -74,6 +74,8 @@ which $\distinguisher$ could trivially distinguish from the output of $\targetke
     \text{\algcom Set party $i$ peer-to-peer messages for all other parties} \\ % Make sure all parties receive peer-to-peer messages
     \adv^{\oraclekg, \oraclefinalize,\RO}(\{ \invecp_{1i} \}_{i \in \corrupt}, \{ \bmsg_i \}_{i \in \honest}, \advstate) \\
     \pcif \roundcounter \neq \numrounds \text{\algcom Prevents trivial win by forcing coordination} \\
+    \pcind \pcreturn \randcoin \\
+    \pcif \{ j : \status_j = \abort \}_{j \in \honest} = \honest \\
     \pcind \pcreturn \randcoin \\
     \pcif \exists i \in \honest : \status_i \neq \accept \\
     \pcind \pcreturn \randcoin \\
@@ -86,6 +88,7 @@ which $\distinguisher$ could trivially distinguish from the output of $\targetke
     %CK- we check this in the robustness experiment. I don't the zk and
     %indistinguishability experiemtns should do all the same checks that
     %robustness do, otherwise what is the point of having separate games.
+    \PK_0 \gets \PK \\
     \SK_0 \gets \dkg[\Hash].\recover(\PK_0, t, \{ (i, \SK_i) \}_{i \in \honest}  ) \\
     \text{\algcom All parties at this point have the same view of $\pk$ and $\qual$} \\
     \pcreturn 1\ \pcif \SK_0 = \fail \\

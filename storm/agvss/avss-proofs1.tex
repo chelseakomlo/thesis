@@ -137,7 +137,7 @@ Without loss of generality, we assume $\lvert \corrupt \rvert = t-1$.
     \pcind \mathsf{in} \gets (t, \{ (j, \share_{kj}) \}_{j \in \honest}) \\
     \pcind s_k \gets \avss[\Hash].\recover(\mathsf{in}) \\
 %
-    \tweak \gets (-1) \cdot (\secretone + \sum_{i \in \set{j}} s_k) \\
+    \tweak \gets (-1) \cdot (\secretone + \sum_{i \in \set{n}, i \neq \simid} s_i) \\
 %
    Q_3[\pubaggregateset_i, \auxstring_i] \gets \tweak \\
    \pcreturn \tweak

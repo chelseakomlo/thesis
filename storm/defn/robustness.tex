@@ -37,7 +37,7 @@ however, introducing a weaker variant allows us to define a more efficient const
     \procedure[]{\protect\fbox{$\StrongRobustnessExp_{\dkg,\adv}(\lambda)$} \protect\dbox{$\WeakRobustnessExp_{\dkg,\adv}(\lambda)$} }{
     \roundcounter \gets 0 \text{\algcom Ensure rounds are queried in order}\\
     \invecp_{11} \gets \emptyset, \ldots, \invecp_{1n} \gets \emptyset \text{\algcom Simulate peer-to-peer channels} \\
-    (n, t, \corrupt, \advstate) \gets \adv(\lambda);\
+    (n, t, \corrupt, \advstate) \gets \adv(1^\lambda);\
     \pcreturn 0\ \pcif n < t \vee \corrupt \not\subset \set{n} \vee \lvert \corrupt \rvert \ge t \\
     \honest \gets \set{n} \setminus \corrupt \\
     \pcreturn 0\ \pcif \lvert \honest \rvert < t \\
@@ -69,6 +69,8 @@ however, introducing a weaker variant allows us to define a more efficient const
   \end{pchstack}
 
 \caption{Robustness experiment for a DKG.
+Weak robustness differences are highlighted in a dashed box;
+strong robustness differences are highlighted in a solid box.
 }
 %\douglas{Line 24 checks that $\sk \ne \fail$.  Should we also be checking that $\sk$ is the (a) secret key corresponding to $\pk$?  Is robustness violated if the adversary the parties can be tricked into recovering a different $\sk$?  Sorry if we've discussed this already and I forgot.}
 % \chelsea{The recover algorithm checks key validity internally}
@@ -152,7 +154,7 @@ the resulting keypair is invalid with respect to the target key generation algor
   {
     %\chelsea{TODO: this needs to be script size for the proceedings version}
   }
-	\pseudocode[codesize=\scriptsize]{
+	\pseudocode{
     \procedure[]{$\oraclekg(\{\{ \pmsg_{i,j}\}_{j \in \honest}, \bmsg_{ri} \}_{i \in \corrupt})
     $}{
       \text{\algcom Executes round  } \\
@@ -192,6 +194,8 @@ the resulting keypair is invalid with respect to the target key generation algor
   \end{pchstack}
   \end{framed}
 \caption{Common oracles used within security experiments for a distributed key generation scheme.
+Boxed algorithms are used by the robustness and indistinguishability games;
+dashed boxed algorithms are used by the zero-knowledge game.
 }
 \label{fg:keygen-o}
 \end{figure}
