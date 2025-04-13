@@ -13,12 +13,13 @@ We present the concrete construction in Section~\ref{storm-gen}.
 \begin{pcvstack}
 	%\pseudocode[codesize=\scriptsize]{
 \procedure[]{$\dkgkeygen_0[\Hash](\lambda, n, t, i)$} {
-    (\secretone_i, A_i) \rgets \enike.\keygen(\lambda) \\
+    \pp \gets \enike.\Setup(1^\lambda);\ \pp' \gets \avss.\Setup(1^\lambda) \\
+    (\secretone_i, A_i) \rgets \enike.\keygen() \\
     \mathsf{in} \gets (\secretone_i, n, t) \\
     \{ (j, \share_{ij}) \}_{j =1}^n, \vsscommit_i \rgets \avss[\Hash_1].\issueshares(\mathsf{in}) \\
     %\text{\algcom The \ENIKE secret key $\secretone_i$ is} \\
     %\text{\algcom secret-shared via the \AVSS.} \\
-    (\witness_i, \commitment_i) \rgets \enike.\keygen(\lambda) \\
+    (\witness_i, \commitment_i) \rgets \enike.\keygen() \\
     %\text{\algcom Broadcast commitments} \\
     \bmsg_{0,i} \gets (A_i, \commitment_i, \vsscommit_i) \\
     \pcfor j \in \set{n}, j \neq i \pcdo \\
@@ -207,6 +208,10 @@ participant $i$ then derives the blinding factor $\blinding_j$ by performing $\b
 the set of participants $\qual$ that followed the protocol honestly cooperate to derive the correct $\blinding_j$ for the cheating participants $\corrupt$.
 They do so by broadcasting their respective shares from the misbehaving parties,
 and then use the set of received shares to recover $\secretone_j$.
+Note that even if an adversary at this stage were to broadcast incorrect shares,
+because we assume an honest majority of players,
+then all honest participants will receive a sufficient number of honest shares to recovery successfully,
+and can verify the correctness of the recovered secret against the commitment sent in earlier rounds.
 
 Each remaining participant then performs $\enike.\getsharedkey(\secretone_j, \commitment_j)$,
 obtaining $\blinding_j$ as the result.

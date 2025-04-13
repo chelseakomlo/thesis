@@ -142,7 +142,8 @@ Then
 \begin{figure}[!ht]
 \begin{pchstack}[boxed,center,space=1em]
 \pcvspace
-\procedure[]{$\dkgkeygen_2(\party_i, \invecp, \invecb)$} {
+\procedure[]{$\dkgkeygen_1(\party_i, \invecp, \invecb)$} {
+  \text{Parse inputs honestly as defined in the protocol} \\
   \pcfor j \in \set{n}, j \neq i \pcdo \\
   \pcind \pcif \avss[\Hash].\verify(i, \share_{ji}, \vsscommit_j) \neq 1 \\
   \pcind \textbf{or }\pcif \avss[\Hash].\derivepshare(0, \vsscommit_j) \neq \pk_j \\
