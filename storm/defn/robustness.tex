@@ -103,13 +103,14 @@ the function $\advantstrrobust{\dkg,\adv}(\lambda)$  is negligible.
 The strong robustness attack game allows $\adv$ to participate in key generation and control up to $t-1$ players,
 the set of which we denote by $\corrupt$.
 We denote the set of honest players as $\honest$.
-The robustness attack game has oracles $\oraclekg, \currentround \in (0, \ldots, \numrounds-1)  $
+The robustness attack game has oracles $\oraclekg, \currentround \in
+\{ 0, \ldots, \numrounds-1 \}  $
 and $\oraclefinalize$ in common with other games,
 so we show these oracles in Figure~\ref{fg:keygen-o}.
 % This requirement doesn't seem necessary in the definition
 % and require that the number of honest players be at least $t$.
 The adversary participates in the protocol by exchanging peer-to-peer and
-broadcast messages with honest players in each round $r$ via the oracle
+broadcast messages with honest players in each round $\currentround$ via the oracle
 $\oraclekg$.
 The experiment is responsible for exchanging messages between parties and enforcing assumptions of the underlying network channels.
 Additionally, the experiment ensures that rounds must be queried in order, and that no round is repeated.
@@ -147,7 +148,7 @@ Otherwise, if all honest players have status $\accept$, then $\adv$ wins
 if the honest players' view of $\pk$ or $\qual$ are not all the same or if
 the resulting keypair is invalid with respect to the target key generation algorithm.
 
-\begin{figure}[t]
+\begin{figure}[p]
   \begin{framed}
   %\begin{pchstack}[boxed,center,space=1em]
   \begin{pchstack}
