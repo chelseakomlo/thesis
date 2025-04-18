@@ -14,8 +14,8 @@ We additionally define a verification algorithm that checks whether a tuple is i
     \item $\Setup(1^\secp) \rightarrow \pp$:
     On input a security parameter $1^\secp$,
     this deterministic algorithm outputs public parameters $\pp$ (which are given implicitly as input to all other algorithms).
-  \item $\keygen() \rightarrow (\sk, \pk)$: On input the security parameter $\lambda$,
-    this probabilistic algorithm generates a secret key $\sk$ and corresponding public key $\pk$.
+  \item $\keygen() \rightarrow (\sk, \pk)$:
+    This probabilistic algorithm generates a secret key $\sk$ and corresponding public key $\pk$.
   \item $\verifykeypair(\sk, \pk) \rightarrow \zo$:
     On input the secret key $\sk$ and public key $\pk$,
     this deterministic algorithm verifies that $(\sk,\PK)$ is a valid output from $\enike.\keygen$.

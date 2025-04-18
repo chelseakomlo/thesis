@@ -3,7 +3,7 @@ protocol to generate key material among all signing participants in an
 untrusted manner;
 such protocols are referred to as \emph{Distributed Key Generation} (DKG) schemes.
 DKG schemes underlie many
-multi-party cryptographic primitives in use today in addition to threshold signature schemes~\cite{KomloG20,BellareCKMTZ22,Lindell22};
+multi-party cryptographic primitives in use today in addition to threshold signature schemes~\cite{KomloG20,BellareCKMTZ22,Lindell22},
 such as distributed randomness beacons~\cite{le19}.
 At a high leevel, a DKG allows a set of $n$ participants to cooperate to generate a keypair,
 such that the public key represents the entire set of participants,
@@ -15,14 +15,14 @@ where $t \leq n$.
 
 Despite widespread interest in DKGs,
 existing constructions fall short in either their complexity or composability.
-Most such example is Pedersen-DKG~\cite{Pedersen91} and variants of Pedersen DKG~\cite{KomloG20,BellareCKMTZ22},
+One example is Pedersen's DKG~\cite{Pedersen91} and variants of Pedersen's DKG~\cite{KomloG20,BellareCKMTZ22},
 discussed in Chapter~\ref{chp:frost}.
-While Pedersen-DKG is appealing because of its simplicity and efficiency,
+While Pedersen's DKG is appealing because of its simplicity and efficiency,
 its security to date has only been proven in the context of specific applications~\cite{GennaroJK02,GurkanJMMST21,BellareCKMTZ22},
 as it cannot be proven secure in a standalone fashion~\cite{GennaroJKR07}.
 More specifically,
-it is possible that the use of Pedersen-DKG may be secure in some settings, but not in others.
-As such, the risk exists that Pedersen-DKG might be misused in contexts for which it cannot been proven secure.
+it is possible that the use of Pedersen's DKG may be secure in some settings, but not in others.
+As such, the risk exists that Pedersen's DKG might be misused in contexts for which it cannot been proven secure.
 While many alternative DKG constructions have been presented in the literature~\cite{GennaroJKR07,Groth21,GurkanJMMST21,BonehS2020,NejiBR16,Lindell22,DasYXMKR21,BachoL22,AbrahamJMMS2022},
 these constructions incur undesirable protocol complexity or require pairings.
 
@@ -152,7 +152,7 @@ Robustness indicates whether the protocol always succeeds assuming some
 number of honest players (strong) or allows non-fatal aborts (weak).
 Bandwidth efficiency denotes the number of group and field elements sent and received by each participant throughout the protocol.
 Computational efficiency denotes the number of exponentiations required (i.e., scalar multiplications in an elliptic curve group).
-$n$ is the total number of participants in the protocol,
+The value $n$ is the total number of participants in the protocol,
 $t$ is the threshold number required to recover the secret key,
 and the number of corrupted parties is assumed to be \emph{at most} $t-1$.
 %$k,r$ are security parameters for their respective schemes~\cite{DasYXMKR21,Lindell22,Fischlin05}.

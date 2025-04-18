@@ -2,18 +2,18 @@
 \label{related}
 
 \noindent\textit{Synchronous VSS-Based Discrete-Logarithm Constructions.}
-Pedersen-DKG~\cite{Pedersen91dkg} is a two-round protocol among $n$ parties,
+Pedersen's DKG~\cite{Pedersen91dkg} is a two-round protocol among $n$ parties,
 such that each party plays the role of the dealer for Feldman Verifiable Secret
 Sharing (VSS)~\cite{Feldman87}.
-Gennaro et al.~\cite{GennaroJKR07} describe an attack against Pedersen-DKG, which we refer to as the \GJKRAttack attack,
+Gennaro et al.~\cite{GennaroJKR07} describe an attack against Pedersen's DKG, which we refer to as the \GJKRAttack attack,
 that considers a \emph{rushing adversary}, who is allowed to speak last.
 In this attack,
 an adversary can influence the distribution of key material
 by adaptively choosing their contribution.
-While the authors later demonstrate unforgeability of a Schnorr threshold signature scheme with Pedersen-DKG employed for key generation~\cite{GennaroJK02},
+While the authors later demonstrate unforgeability of a Schnorr threshold signature scheme with  Pedersen's DKG employed for key generation~\cite{GennaroJK02},
 this proof of security does \emph{not} extend to other applications.
 %
-Gurkan et al.~\cite{GurkanJMMST21} show that Pedersen-DKG can be used securely in any setting where the cryptographic scheme is ``rekeyable''.
+Gurkan et al.~\cite{GurkanJMMST21} show that Pedersen's DKG can be used securely in any setting where the cryptographic scheme is ``rekeyable''.
 In other words,
 if the scheme produces some cryptographic output
 $o_1$ (such as a ciphertext or signature) that is valid with respect to a secret key $\sk_1$,
