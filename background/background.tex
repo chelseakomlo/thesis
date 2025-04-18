@@ -106,7 +106,7 @@ The Schnorr signature scheme consists of polynomial-time algorithms $(\Setup, \K
 
     \item $\Setup(1^\secp) \rightarrow \pp$:
     On input a security parameter $1^\secp$,
-    run $(\Gr, q, g) \gets \GroupGen(\usecp)$ and select a hash function $\Hash: \{0,1\}^* \rightarrow \Zq$.
+    run $(\Gr, q, g) \gets \GroupGen(1^\usecp)$ and select a hash function $\Hash: \{0,1\}^* \rightarrow \Zq$.
     Output public parameters $\pp \gets ((\Gr, q, g), \Hash)$ (which are given implicitly as input to all other algorithms).
 
   \item $\KeyGen() \rightarrow (\pk, \sk)$:
@@ -226,7 +226,7 @@ We now define the scheme more precisely.
 \begin{itemize}
     \item $\Setup(1^\secp) \rightarrow \pp$:
     On input a security parameter $1^\secp$,
-    run $(\Gr, q, g) \gets \GroupGen(\usecp)$ and select a hash function $\Hash: \{0,1\}^* \rightarrow \Zq$.
+    run $(\Gr, q, g) \gets \GroupGen(1^\usecp)$ and select a hash function $\Hash: \{0,1\}^* \rightarrow \Zq$.
     Output public parameters $\pp \gets ((\Gr, q, g), \Hash)$ (which are given implicitly as input to all other algorithms).
 
     \item $\IssueShares(s, n, t) \rightarrow (\{ (1,\share_1), \ldots, (n,\share_n)\}, \vsscommit)$.

@@ -26,7 +26,7 @@ or in a distributed manner via a distributed key generation (DKG) protocol.
 	\begin{pchstack}[boxed,center,space=1em]
 		\begin{pcvstack}[space=1em]
 			\procedure{$\Setup(1^\usecp)$}{
-				(\Gr, q, g) \rgets \GroupGen(\usecp) \\
+				(\Gr, q, g) \rgets \GroupGen(1^\usecp) \\
 				\text{\algcom Select two hash functions} \\
 				\HashNon, \HashSig : \{0,1\}^* \rightarrow \Zq  \\
 				\pp \gets ((\Gr, q, g), \HashNon, \HashSig) \\

@@ -11,7 +11,7 @@ We now define the additional algorithms for this concrete \AVSS.
 \begin{itemize}
     \item $\avss.\Setup(1^\secp) \rightarrow \pp$:
     On input a security parameter $1^\secp$,
-    run $(\Gr, q, g) \gets \GroupGen(\usecp)$.
+    run $(\Gr, q, g) \gets \GroupGen(1^\usecp)$.
     Let $\Hash: \GG^* \times \Zq \rightarrow \Zq$ be a cryptographically secure hash function,
     whose inputs are a tuple consisting of a vector of group elements in $\GG$, and an element in $\Zq$.
     Output public parameters $\pp \gets ((\Gr, q, g), \Hash)$ (which are given implicitly as input to all other algorithms).

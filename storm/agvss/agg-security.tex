@@ -15,7 +15,7 @@ that is chosen by $\adv$.
     \auxstring \rgets \avss.\auxdistr \\
     \total \gets 0 \text{\algcom Total number of non-simulated shares}  \\
     Q_1 \gets \emptyset \\
-    (n, t, \corrupt, \advstate) \rgets \adv(\lambda) \\
+    (n, t, \corrupt, \advstate) \rgets \adv(1^\lambda) \\
     \pcif t > n \vee \corrupt \not\subseteq \set{n} \vee \lvert \corrupt \rvert \geq t \\
     \pcind \randcoin \rgets \zo;\ \pcreturn \randcoin \\
     % CK- we already define t, n to be natural numbers.
