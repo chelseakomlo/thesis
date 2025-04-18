@@ -2,7 +2,8 @@
 \label{appendix:const-zk}
 
 \begin{theorem} \label{thm:zero-knowledge}
-  The generic construction is zero-knowledge in the honest majority setting ($t < n/2$) in the random oracle model,
+  The generic construction is zero-knowledge in the honest majority setting
+  ($\tcor < n/2$) in the random oracle model,
   against a PPT adversary $\adv$ controlling up to $t-1$ participants,
   assuming the generic construction itself is weakly robust,
   the \AVSS $\avss$ achieves aggregated secrecy,
@@ -139,7 +140,7 @@ Then
 
 \medskip
 
-\begin{figure}[!ht]
+\begin{figure}[p]
 \begin{pchstack}[boxed,center,space=1em]
 \pcvspace
 \procedure[]{$\dkgkeygen_1(\party_i, \invecp, \invecb)$} {
@@ -171,7 +172,7 @@ $\finalize$ to $\dkgkeygen_1$,
 as shown in Figure~\ref{fg:zk-g3},
 which shows code movement.
 In particular, the code that is moved is highlighted,
-moved from $\finalize$ to $\dkgkeygen_2$.
+moved from $\finalize$ to $\dkgkeygen_1$.
 
 Rather than learning corrupted players' blinding factors as input to $\finalize$,
 $\cdv$ instead derives blinding factors for all corrupted parties in $\dkgkeygen_2$,

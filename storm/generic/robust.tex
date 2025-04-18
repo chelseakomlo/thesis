@@ -154,16 +154,18 @@ such that $\avss[\Hash_1].\verify(k, \share_{j,k}, \vsscommit_j) = 1$
 but where Equation~\ref{eq:g2-robust-recovery} holds.
 \begin{align} \label{eq:g2-robust-recovery}
   \begin{split}
-    & \avss[\Hash_1].\recover(t, \{(\ell,\share_{j,\ell}) \}_{\ell \in \set{n}}) \neq \\
-    & \avss[\Hash_1].\recover(t, \{(\ell,\share_{j,\ell}) \}_{\ell \in \set{n},\ell\neq k})
+    & \avss[\Hash_1].\recover(t, \{(\ell,\share_{j,\ell}) \}_{\ell \in \honest}) \neq \\
+    & \avss[\Hash_1].\recover(t, \{(\ell,\share_{j,\ell}') \}_{\ell \in \honest,\ell\neq k})
   \end{split}
 \end{align}
 %\ian{API for $\avss.\recover$ above.  But worse, doesn't the second recovery set only have $t-1$ elements? $\recover$ isn't even defined for such an input?}
 %\chelsea{The adversary trivially cannot win if it chooses $\lvert \honest \rvert = t$}
 
 
+where $\share_{j, \ell} = \share_{j, \ell}'$,
+except for $\ell \neq k$.
 Let $\recoveryset_1 = \{(\ell,\share_{j,\ell}) \}_{\ell \in \honest}$ and
-$\recoveryset_2 = \{(\ell,\share_{j,\ell}) \}_{\ell \in \honest,\ell\neq k}$.
+$\recoveryset_2 = \{(\ell,\share_{j,\ell}') \}_{\ell \in \honest,\ell\neq k}$.
 When this event has occurred,
 $\bdv_2$ submits $(t, \recoveryset_1, \recoveryset_2, \vsscommit_j)$ as its output to the \AVSS uniqueness game.
 %\ian{The $t$ and $\ell$ should both be omitted, right? (And check your paren balencing.) And this is the ``uniqueness'' game, not the ``security'' game, right?}

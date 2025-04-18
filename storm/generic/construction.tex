@@ -6,6 +6,9 @@ The DKG initialized with a NIKE $\enike$ as defined in Section~\ref{enike},
 an \AVSS $\avss$ as defined in Section~\ref{asym-vss},
 and a hash function $\Hash$.
 We present the concrete construction in Section~\ref{storm-gen}.
+Recall that setup functions are
+$\pp \gets \enike.\Setup(1^\lambda);\ \pp' \gets \avss.\Setup(1^\lambda)$ are performed at setup,
+not at the time of key generation.
 
 \begin{figure}[p]
     % chelsea- make full size for eprint
@@ -13,7 +16,6 @@ We present the concrete construction in Section~\ref{storm-gen}.
 \begin{pcvstack}
 	%\pseudocode[codesize=\scriptsize]{
 \procedure[]{$\dkgkeygen_0[\Hash](\lambda, n, t, i)$} {
-    \pp \gets \enike.\Setup(1^\lambda);\ \pp' \gets \avss.\Setup(1^\lambda) \\
     (\secretone_i, A_i) \rgets \enike.\keygen() \\
     \mathsf{in} \gets (\secretone_i, n, t) \\
     \{ (j, \share_{ij}) \}_{j =1}^n, \vsscommit_i \rgets \avss[\Hash_1].\issueshares(\mathsf{in}) \\
@@ -143,7 +145,7 @@ we require Assumption~\ref{ass:avss-enike} to hold.
   \begin{align} \label{eq:avss-enike-rel}
     \begin{split}
       \enike.\verify(\sk, \pk) = 1, \text{ where} \\
-      (\{ (i, \share_i) \}_{i \in \set{n}}), \vsscommit) \rgets \avss[\Hash].\issueshares(\sk, n, t) \text{ and } \\
+      (\{ (i, \share_i) \}_{i \in \set{n}}), \vsscommit) \rgets \avss[\Hash_1].\issueshares(\sk, n, t) \text{ and } \\
       \pk \gets \avss[\Hash_1].\derivepshare(0, \vsscommit) \text{ and } \\
       \sk \gets \avss[\Hash_1].\recover(t, \{(i, \share_i) \}_{i \in C})
     \end{split}
@@ -191,7 +193,7 @@ In $\dkgkeygen_2$,
 participants receive as input status messages from all other participants via the broadcast channel input $\invecb_2$.
 If any participant received a $\fail$ message,
 that participant immediately exits $\dkgkeygen_2$
-after setting their status to $\abort$.\footnote{Because the fail message is sent on a broadcast channel,
+after setting their status to $\abort$.\footnote{Because the fail message $\fail$ is sent on a broadcast channel,
 if any participant receives a fail message, then all participants receive that message}
 Otherwise, each participant $i$ broadcasts $\witness_i$ to all other participants (which is the opening
 to the commitment $\commitment_i$ sent in $\dkgkeygen_0$).
@@ -210,7 +212,7 @@ They do so by broadcasting their respective shares from the misbehaving parties,
 and then use the set of received shares to recover $\secretone_j$.
 Note that even if an adversary at this stage were to broadcast incorrect shares,
 because we assume an honest majority of players,
-then all honest participants will receive a sufficient number of honest shares to recovery successfully,
+then all honest participants will receive a sufficient number of honest shares to recover successfully,
 and can verify the correctness of the recovered secret against the commitment sent in earlier rounds.
 
 Each remaining participant then performs $\enike.\getsharedkey(\secretone_j, \commitment_j)$,

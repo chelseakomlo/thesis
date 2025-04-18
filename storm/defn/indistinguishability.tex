@@ -55,7 +55,7 @@ otherwise $\adv$ could force the protocol to output an invalid keypair,
 % Yes, but we need to encode that requirement somewhere in our security games.
 which $\distinguisher$ could trivially distinguish from the output of $\targetkeygen.\keygen$.
 
-\begin{figure}[!hbt]
+\begin{figure}[p]
 
   \begin{pchstack}[boxed,center,space=1em]
   \begin{pcvstack}
@@ -71,7 +71,7 @@ which $\distinguisher$ could trivially distinguish from the output of $\targetke
     \pcfor i \in \honest \pcdo \\
     \pcind (\party_i, \outvecp_{0i}, \bmsg_i) \gets \dkgkeygen_0[\Hash](\lambda,n, t, i) \\
     \pcind \invecp_{1k}[i] \gets \outvecp_{0i}[k],\ \forall\ k \in \set{n} \\
-    \text{\algcom Set party $i$ peer-to-peer messages for all other parties} \\ % Make sure all parties receive peer-to-peer messages
+    %\text{\algcom Set party $i$ peer-to-peer messages for all other parties} \\ % Make sure all parties receive peer-to-peer messages
     \adv^{\oraclekg, \oraclefinalize,\RO}(\{ \invecp_{1i} \}_{i \in \corrupt}, \{ \bmsg_i \}_{i \in \honest}, \advstate) \\
     \pcif \roundcounter \neq \numrounds \text{\algcom Prevents trivial win by forcing coordination} \\
     \pcind \pcreturn \randcoin \\
@@ -79,7 +79,7 @@ which $\distinguisher$ could trivially distinguish from the output of $\targetke
     \pcind \pcreturn \randcoin \\
     \pcif \exists i \in \honest : \status_i \neq \accept \\
     \pcind \pcreturn \randcoin \\
-    \text{\algcom Honest parties must complete successfully}
+    %\text{\algcom Honest parties must complete successfully}
     \\
     \pcfor i,j \in \honest \pcdo  \\
     \pcind \pcreturn 1\ \pcif \PK_i \neq \PK_j  \\
@@ -92,7 +92,7 @@ which $\distinguisher$ could trivially distinguish from the output of $\targetke
     \SK_0 \gets \dkg[\Hash].\recover(\PK_0, t, \{ (i, \SK_i) \}_{i \in \honest}  ) \\
     \text{\algcom All parties at this point have the same view of $\pk$ and $\qual$} \\
     \pcreturn 1\ \pcif \SK_0 = \fail \\
-    \text{\algcom The output DKG keypair given to the distinguisher must be valid} \\
+    %\text{\algcom The output DKG keypair given to the distinguisher must be valid} \\
     (\SK_1, \PK_1) \rgets \targetkeygen.\keygen(\lambda) \\
     b' \gets \distinguisher((\PK_b, \SK_b), (\PK_{1-b}, \SK_{1-b})) \\
     \pcreturn 1\ \pcif b' = b \\
