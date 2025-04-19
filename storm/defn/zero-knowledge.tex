@@ -24,7 +24,7 @@ The oracle $\oraclekg$ is defined in Figure~\ref{fg:keygen-o}.
     (\cdot, \dkgchal) \rgets \targetkeygen.\keygen(1^\lambda)  \\
 %
     \pcfor i \in \honest \pcdo \\
-    \pcind \pcif b=0 \pcthen (\party_i, \outvecp_i, \bmsg_i) \gets \dkgkeygen_0.(\lambda, n, t, i)  \\
+    \pcind \pcif b=0 \pcthen (\party_i, \outvecp_i, \bmsg_i) \gets \dkgkeygen_0(\lambda, n, t, i)  \\
     \pcind \pcelse (\party_i, \outvecp_i, \bmsg_i) \gets \simkeygen_0[\Hash](\lambda, n, t, i, \dkgchal)  \\
     \pcind \invecp_{1k}[i] \gets \outvecp_{0i}[k],\ \forall\ k \in \set{n} \\
     \text{\algcom Set party $i$'s peer-to-peer messages for all other parties} \\ % Make sure all parties receive peer-to-peer messages

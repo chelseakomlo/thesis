@@ -175,7 +175,7 @@ In particular, the code that is moved is highlighted,
 moved from $\finalize$ to $\dkgkeygen_1$.
 
 Rather than learning corrupted players' blinding factors as input to $\finalize$,
-$\cdv$ instead derives blinding factors for all corrupted parties in $\dkgkeygen_2$,
+$\cdv$ instead derives blinding factors for all corrupted parties in $\dkgkeygen_1$,
 (importantly, before it reveals the honest players' blinding factors to $\adv$)
 using the shares from all honest players.
 If $\cdv$ is unable to recover these blinding factors,
@@ -239,7 +239,8 @@ and outputs $\sharedkey' = \blinding_\simid$ as its guess for the \ENIKE unrecov
 %
 If $\adv$ queries $\Hash_1$ with $\blinding_\simid$ before $\bdv_3$ has
 completed $\oraclekg_2$,
-then $\bdv_3$ wins the \ENIKE game with probability $\frac{1}{q}$.
+then $\bdv_3$ wins the \ENIKE game with probability $\frac{1}{\lvert \Hash_1 \rvert}$,
+where $\lvert \Hash_1 \rvert$ denotes the order of the co-domain of $\Hash_1$.
 
 \medskip
 
@@ -249,7 +250,7 @@ The additional ability for $\adv$ to win Game~3 is then bounded by its ability t
 Hence,
 
 \begin{equation} \label{eq:game3-secrecy}
-  \bigabs{\Pr[W_3] - \Pr[W_2] } \leq  \advant{rec}{\enike,\bdv_3}(\lambda) \cdot \frac{1}{q}
+  \bigabs{\Pr[W_3] - \Pr[W_2] } \leq  \advant{rec}{\enike,\bdv_3}(\lambda) \cdot \frac{1}{\lvert \Hash_1 \rvert}
 \end{equation}
 
 \medskip
