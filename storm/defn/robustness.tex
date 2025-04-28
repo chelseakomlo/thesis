@@ -77,6 +77,61 @@ strong robustness differences are highlighted in a solid box.
 \label{fg:robustness}
 \end{figure}
 
+\begin{figure}[p]
+  \begin{framed}
+  %\begin{pchstack}[boxed,center,space=1em]
+  \begin{pchstack}
+  {
+    %\chelsea{TODO: this needs to be script size for the proceedings version}
+  }
+	\pseudocode{
+    \procedure[]{$\oraclekg(\{\{ \pmsg_{i,j}\}_{j \in \honest}, \bmsg_{ri} \}_{i \in \corrupt})
+    $}{
+      \text{\algcom Executes round  } \\
+      \text{\algcom $r \in \set{\numrounds-1}$ } \\
+    \pcreturn \bot\ \pcif r \neq \roundcounter+1 \\
+    \text{\algcom Ensure all prior rounds } \\
+    \text{\algcom have been queried,} \\
+    \text{\algcom and that this round has} \\
+    \text{\algcom not yet been queried.} \\
+    \roundcounter \gets r \\
+    \pcfor i \in \corrupt, j \in \honest \pcdo \\
+      \pcind \invecp_{rj}[i]  \gets \pmsg_i[j] \\
+    \pcfor j \in \honest \pcdo \\
+      \pcind \mathsf{in} \gets (\party_j, \invecp_{rj}, \{\bmsg_{ri} \}_{i \in \set{n}}) \\
+      \pcind \fbox{$\mathsf{out} \gets \dkgkeygen_r(\mathsf{in})$} \\
+      \pcind \dbox{$\mathsf{out} \gets \simkeygen_r(\mathsf{in})$} \\
+      \pcind (\party_j, \outvecp_{r+1,j}, \bmsg_{r+1,j}) \gets \mathsf{out} \\
+      \pcind \pcfor k \in \set{n} \pcdo \\
+      \pcind \pcind \invecp_{r+1,k} \gets \outvecp_{r+1,j}[k] \\
+    \pcreturn (\{  \invecp_{r+1,i} \}_{i \in \corrupt}, \{ \bmsg_j \}_{j \in \honest} )
+  }
+  \pchspace
+  \begin{pcvstack}
+  \procedure[]{$\oraclefinalize(\{\{ \pmsg_{i,j}\}_{j \in \honest}, \bmsg_{ri} \}_{i \in \corrupt})$}{
+    \pcreturn \bot\ \pcif \roundcounter \neq \numrounds - 1 \\
+    \roundcounter \gets \roundcounter + 1 \\
+    \pcfor i \in \corrupt, j \in \honest \pcdo \\
+      \pcind \invecp_{rj}[i]  \gets \pmsg_i[j] \\
+    \pcfor j \in \honest \pcdo \\
+      \pcind \mathsf{in} \gets (\party_j, \invecp_{rj}, \{\bmsg_{ri} \}_{i \in \set{n}}) \\
+      \pcind \fbox{$\mathsf{out} \gets \finalize(\mathsf{in}) $}\\
+      \pcind \dbox{$\mathsf{out} \gets \simfin(\mathsf{in}) $}\\
+      \pcind (\PK_j, \qual_j, \auxinfo_j), (\status_j, \SK_j) \gets \mathsf{out}
+  }
+  \end{pcvstack}
+  }
+  \end{pchstack}
+  \end{framed}
+\caption{Common oracles used within security experiments for a distributed key generation scheme.
+Boxed algorithms are used by the robustness and indistinguishability games;
+dashed boxed algorithms are used by the zero-knowledge game.
+}
+\label{fg:keygen-o}
+\end{figure}
+
+
+
 
 \paragraph{Common Oracles.}
 We define common oracles that are used within the respective security
@@ -147,60 +202,6 @@ First, $\adv$ wins if honest players do not all finish with the same status.
 Otherwise, if all honest players have status $\accept$, then $\adv$ wins
 if the honest players' view of $\pk$ or $\qual$ are not all the same or if
 the resulting keypair is invalid with respect to the target key generation algorithm.
-
-\begin{figure}[p]
-  \begin{framed}
-  %\begin{pchstack}[boxed,center,space=1em]
-  \begin{pchstack}
-  {
-    %\chelsea{TODO: this needs to be script size for the proceedings version}
-  }
-	\pseudocode{
-    \procedure[]{$\oraclekg(\{\{ \pmsg_{i,j}\}_{j \in \honest}, \bmsg_{ri} \}_{i \in \corrupt})
-    $}{
-      \text{\algcom Executes round  } \\
-      \text{\algcom $r \in \set{\numrounds-1}$ } \\
-    \pcreturn \bot\ \pcif r \neq \roundcounter+1 \\
-    \text{\algcom Ensure all prior rounds } \\
-    \text{\algcom have been queried,} \\
-    \text{\algcom and that this round has} \\
-    \text{\algcom not yet been queried.} \\
-    \roundcounter \gets r \\
-    \pcfor i \in \corrupt, j \in \honest \pcdo \\
-      \pcind \invecp_{rj}[i]  \gets \pmsg_i[j] \\
-    \pcfor j \in \honest \pcdo \\
-      \pcind \mathsf{in} \gets (\party_j, \invecp_{rj}, \{\bmsg_{ri} \}_{i \in \set{n}}) \\
-      \pcind \fbox{$\mathsf{out} \gets \dkgkeygen_r(\mathsf{in})$} \\
-      \pcind \dbox{$\mathsf{out} \gets \simkeygen_r(\mathsf{in})$} \\
-      \pcind (\party_j, \outvecp_{r+1,j}, \bmsg_{r+1,j}) \gets \mathsf{out} \\
-      \pcind \pcfor k \in \set{n} \pcdo \\
-      \pcind \pcind \invecp_{r+1,k} \gets \outvecp_{r+1,j}[k] \\
-    \pcreturn (\{  \invecp_{r+1,i} \}_{i \in \corrupt}, \{ \bmsg_j \}_{j \in \honest} )
-  }
-  \pchspace
-  \begin{pcvstack}
-  \procedure[]{$\oraclefinalize(\{\{ \pmsg_{i,j}\}_{j \in \honest}, \bmsg_{ri} \}_{i \in \corrupt})$}{
-    \pcreturn \bot\ \pcif \roundcounter \neq \numrounds - 1 \\
-    \roundcounter \gets \roundcounter + 1 \\
-    \pcfor i \in \corrupt, j \in \honest \pcdo \\
-      \pcind \invecp_{rj}[i]  \gets \pmsg_i[j] \\
-    \pcfor j \in \honest \pcdo \\
-      \pcind \mathsf{in} \gets (\party_j, \invecp_{rj}, \{\bmsg_{ri} \}_{i \in \set{n}}) \\
-      \pcind \fbox{$\mathsf{out} \gets \finalize(\mathsf{in}) $}\\
-      \pcind \dbox{$\mathsf{out} \gets \simfin(\mathsf{in}) $}\\
-      \pcind (\PK_j, \qual_j, \auxinfo_j), (\status_j, \SK_j) \gets \mathsf{out}
-  }
-  \end{pcvstack}
-  }
-  \end{pchstack}
-  \end{framed}
-\caption{Common oracles used within security experiments for a distributed key generation scheme.
-Boxed algorithms are used by the robustness and indistinguishability games;
-dashed boxed algorithms are used by the zero-knowledge game.
-}
-\label{fg:keygen-o}
-\end{figure}
-
 
 
 
