@@ -74,10 +74,10 @@ not at the time of key generation.
     \pcind \pcind \qual \gets \qual \cup \{ j \} \\
     \pcind \pcelse \corrupt \gets \corrupt \cup \{ j \} \\
     \pcif \corrupt \neq \emptyset \\
-    \pcind \textbf{Broadcast } \{ \share_{ij} \}_{j \in \corrupt} \\
+    \pcind \textbf{Broadcast } \{ \share_{ji} \}_{j \in \corrupt} \\
     %\text{\algcom Broadcast shares for corrupt} \\
     %\text{\algcom parties to all other participants} \\
-    \pcind \textbf{Receive } \{ \share_{kj} \}_{j \in \corrupt, k \in \qual} \\
+    \pcind \textbf{Receive } \{ \share_{jk} \}_{j \in \corrupt, k \in \qual} \\
     \text{\algcom All received $\share_{kj}$ must be consistent} \\
     \pcfor j \in \corrupt \pcdo \\
     \pcind \secretone_j \gets \avss[\Hash_1] \\
@@ -215,6 +215,10 @@ Note that even if an adversary at this stage were to broadcast incorrect shares,
 because we assume an honest majority of players,
 then all honest participants will receive a sufficient number of honest shares to recover successfully,
 and can verify the correctness of the recovered secret against the commitment sent in earlier rounds.
+They can do so
+by checking if $\avss[\Hash_1].\verify(i, \share_{jk}, \vsscommit_j) \neq 1$
+for each identifier $j \in \corrupt, k \in \qual$,
+updating $\qual \gets \qual \setminus \{ k\}$ if the check does not hold.
 
 Each remaining participant then performs $\enike.\getsharedkey(\secretone_j, \commitment_j)$,
 obtaining $\blinding_j$ as the result.
