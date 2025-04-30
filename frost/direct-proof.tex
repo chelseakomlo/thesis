@@ -61,7 +61,7 @@ then there exists a PPT AOMDL adversary $\ddv$ that can use $\adv$ as a subrouti
 Concretely,
     \begin{align} \label{eq:ddv-dl}
     \begin{split}
-        \advant{aomdl}{\ddv}(\lambda) & \geq
+      \advant{aomdl}{\ddv^{\SIM}}(\lambda) & \geq
         \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
         - \frac{2\rototal}{q}
         - \frac{3\rototal^2}{q}
@@ -522,7 +522,7 @@ with total probability $q_s/q$.
     \begin{align}
       \label{eq:ddv-fork-acc-frost}
     \begin{split}
-\advant{aomdl}{\ddv}(\secp)
+      \advant{aomdl}{\ddv^{\SIM}}(\secp)
         & \geq
         \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
         - 2 \cdot \frac{\rototal^2}{2q}

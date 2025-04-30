@@ -8,7 +8,7 @@ group operations. Our source code can be found at
 
 We now discuss two topics that may be of interest to implementors.
 
-\textbf{Publishing Commitments.} The preprocessing step for FROST requires some
+\textbf{Publishing commitments.} The preprocessing step for FROST requires some
 agreed-upon location for participants to publish their commitments to, such as
 a commitment server, which is trusted
 to provide the correct (i.e., valid and unused) commitment shares upon request.
@@ -23,7 +23,5 @@ any additional powers.
 While the round complexity of FROST can be optimized using central roles such as the signature
 aggregator,
 some implementations may wish to remain completely decentralized. In this
-setting, participants can simply broadcast commitments to each other, and
-perform signing using a two-round setting (foregoing the preprocessing step) for
-further simplicity.
+setting, participants can simply broadcast the outputs of Round One and Round Two to each other.
 
