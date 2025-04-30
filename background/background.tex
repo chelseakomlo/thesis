@@ -123,8 +123,11 @@ The Schnorr signature scheme consists of polynomial-time algorithms $(\Setup, \K
 
   \item $\Verify(\pk, m, \sigma) \rightarrow 0/1$:
   On input a public key $\pk$,
-    a message $m$, and a purported signature $\sigma = (R, z)$, compute $c
-    \leftarrow \Hash(\pk, m, R)$ and output $1$ (accept) if $R \cdot \pk^c = g^z$; else, output $0$ (reject).
+    a message $m \in \zo^*$,
+    and a purported signature $\sigma = (R, z)$, compute $c
+    \leftarrow \Hash(\pk, m, R)$,
+    where $\Hash(\Gr, \zo^*, \Gr) \rightarrow \Zq$.
+    Output $1$ (accept) if $R \cdot \pk^c = g^z$; else, output $0$ (reject).
 
 \end{itemize}
 \end{definition}
