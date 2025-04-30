@@ -45,7 +45,7 @@ A digital signature scheme consists of polynomial-time algorithms $(\Setup, \Key
 	%\begin{linedgamespec}
 	\begin{pchstack}[boxed,space=1em]
 		\begin{pcvstack}[space=1em]
-			\procedure{$\textsf{Exp}^{\uf}_{\A,\dsig}(\lambda)$}{
+			\procedure{$\textsf{Exp}^{\uf}_{\dsig,\A}(\lambda)$}{
 				\pp \leftarrow \Setup(1^\lambda) \\
 				Q_m \gets \emptyset \\
 				(\pk, \sk) \randpick \KeyGen()\\
@@ -73,7 +73,8 @@ chosen-message attacks (EUF-CMA).
 
 \begin{definition}[Correctness]
 A digital signature scheme $(\Setup, \KeyGen, \Sign, \allowbreak \Verify)$ is \emph{correct}
-if for all security parameters $\pp \leftarrow \Setup(1^\lambda)$,
+if for all security parameters $\lambda \in \mathbb{N}$,
+all public parameters $\pp \leftarrow \Setup(1^\lambda)$,
 all key pairs $(\pk, \sk) \rgets \KeyGen()$, and all messages $m$, we have:
 \[ \Pr[ \Verify(\pk, m, \Sign(\sk, m)) = 1 ] = 1 \]
 \end{definition}
@@ -83,9 +84,11 @@ Let the advantage of an adversary $\A$ playing the Existential Unforgeability un
   $\textsf{Exp}^{\uf}$, as defined in Figure~\ref{fig:euf-cma}, be as follows:
 %
 \[
-  \advant{$\uf$}{\dsig,\adv}(\secp) = \bigabs{\Pr[\textsf{Exp}^{\uf}_{\A,\dsig}(\secp) = 1]}
+  \advant{$\uf$}{\dsig,\adv}(\secp) = \bigabs{\Pr[\textsf{Exp}^{\uf}_{\dsig,\A}(\secp) = 1]}
 \]
-A digital signature scheme $\dsig = (\Setup, \KeyGen, \Sign, \allowbreak \Verify)$ is \emph{existentially unforgeable under chosen-message attacks} if for all PPT adversaries $\A$, $\advant{$\uf$}{\A,\dsig}(\secp)$ is negligible.
+A digital signature scheme $\dsig = (\Setup, \KeyGen, \Sign, \allowbreak
+  \Verify)$ is \emph{existentially unforgeable under chosen-message attacks} if
+  for all PPT adversaries $\A$, $\advant{$\uf$}{\dsig,\A}(\secp)$ is negligible.
 \end{definition}
 
 \subsection{Schnorr Signatures}
