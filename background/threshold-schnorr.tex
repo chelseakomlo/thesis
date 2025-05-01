@@ -11,9 +11,9 @@ A threshold signature scheme should remain unforgeable even if $\tcornew$ signer
 where $\tcornew \leq \tcor$.
 
 Note that our definition of threshold signatures simply assumes that
-participants exchange protocol messages $ \gmsg_{ i, j}$,
-where $i$ represents the $j$\supth signing round,
-and $j$ represents participant $j$.
+participants exchange protocol messages $ \gmsg_{ j, i}$,
+where $j$ represents the $j\supth$ signing round,
+and $i$ represents participant $i$.
 We model threshold signatures assuming a coordinator role,
 and so do not distinguish between peer-to-peer and broadcast messages.
 Our notion of unforgeability assumes that the adversary can play the role of the coordinator,

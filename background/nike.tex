@@ -47,6 +47,7 @@ We present this restricted notion in Figure~\ref{fg:enike-recovery}.
 \begin{figure}[t]
   \begin{pchstack}[boxed,center,space=1em]
   \procedure[]{$\UnrecoverabilityExp_{\enike,\adv}(1^\lambda)$}{
+    \pp \gets \enike.\Setup(1^\lambda) \\
     (\sk_1, \pk_1) \rgets \enike.\keygen() \\
     (\sk_2, \pk_2) \rgets \enike.\keygen() \\
     \sharedkey \gets \enike.\getsharedkey(\sk_1, \pk_2) \\
@@ -85,7 +86,7 @@ We formalize this requirement in Figure~\ref{fg:enike-binding}.
 \begin{figure}[t]
   \begin{pchstack}[boxed,center,space=1em]
     \procedure[]{$\BindingExp_{\enike,\adv}(\lambda)$}{
-    (\sk_1^*, \pk_1^*, \sk_2^*, \pk_2^*) \rgets \adv(\lambda) \\
+    (\sk_1^*, \pk_1^*, \sk_2^*, \pk_2^*) \rgets \adv(1^\lambda) \\
     \pcreturn 0\ \pcif \enike.\verifykeypair(\sk_1^*, \pk_1^*) \neq 1 \\
     \pcreturn 0\ \pcif \enike.\verifykeypair(\sk_2^*, \pk_2^*) \neq 1 \\
     %
@@ -118,6 +119,11 @@ We now describe a concrete \ENIKE which is a non-interactive Diffie--Hellman key
 with additionally a verification check to ensure that $\pk = g^{\sk}$.
 
 \begin{itemize}
+    \item $\Setup(1^\secp) \rightarrow \pp$:
+    On input a security parameter $1^\secp$,
+    run $(\Gr, q, g) \gets \GroupGen(1^\usecp)$.
+    Output public parameters $\pp \gets (\Gr, q, g)$ (which are given implicitly as input to all other algorithms).
+
   \item $\enike.\keygen() \rightarrow (\sk, \pk)$: Sample secret key $\sk \rgets \Zq$; derive public key $\pk\in \GG$ as $\pk = g^\sk$.
 	    Output $(\sk, \pk)$.
   \item $\enike.\verifykeypair(\SK, \PK) \rightarrow \zo$: Output $1$ if $\PK = g^\SK$; otherwise, output $0$.
