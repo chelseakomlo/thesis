@@ -103,12 +103,13 @@ The syntax assumes that the signing set $\coalition$, message $m$, and secret ke
 \end{remark}
 
 \paragraph{Correctness.}
-A threshold signature scheme is \emph{correct} if for all security parameters $\pp \gets \Setup(1^\secp)$,
+A threshold signature scheme is \emph{correct} if for all security parameters $\secp \in \mathbb{N}$,
+public parameters $\pp \gets \Setup(1^\secp)$,
 all $1 \leq \thresh \leq n$,
 all $\coalition \subseteq [n]$ such that $| \coalition | \geq \thresh$,
 all messages $m$ and
 for $(\aggpk, \{ \aggpk_i \}_{i \in \set{n}}, \{ \sk_i \}_{i \in \set{n}}) \allowbreak \randpick \KeyGen(n, \allowbreak \thresh)$,
-the signing algorithms as defined in Equation~\ref{eqn:protocol-messages} returns signature shares that,
+the signing algorithms as defined in Equation~\ref{eqn:protocol-messages} return signature shares that,
 when combined with all other shares,
 produce a signature $\sigma$ such that $\Verify(\pk, m, \sigma) = 1$.
 
@@ -140,13 +141,13 @@ produce a signature $\sigma$ such that $\Verify(\pk, m, \sigma) = 1$.
    		\pcvspace
 		\procedure{$\Init(\ssid, k, \coalition, m)$}{
       \pcif k \notin \honest \cap \coalition\ \vee \\
-      ~~ \pcif \coalition \not\subseteq [n] \vee |\coalition| < \thresh \ \vee \\
-      ~~~~ \pcif \round[\ssid, k] \neq \bot \\
+      ~~ \coalition \not\subseteq [n] \vee |\coalition| < \thresh \ \vee \\
+      ~~~~  \round[\ssid, k] \neq \bot \\
       ~~~~~~ \pcreturn \bot \\
 		\pcif \ssid \not\in \sessions \\
 		~~~\sessions \gets \sessions \cup \{\ssid\} \\
     \allcoalitions[\ssid] \gets \coalition \\
-    \round[\ssid,k] \gets 1 \\
+    %\round[\ssid,k] \gets 1 \\
 	  Q_m \gets Q_m \cup \{ m \}
 		}
 		\end{pcvstack}
@@ -178,7 +179,7 @@ produce a signature $\sigma$ such that $\Verify(\pk, m, \sigma) = 1$.
     \pcvspace
 		\procedure{$\BigO^{\Sign_\numrounds}(\ssid, k, \PM_{\numrounds-1})$}{
 			\pcreturn \bot~\pcif \ssid \notin \sessions \\
-      ~~~\vee k \notin \honest \cap \hat{coalition}[\ssid] \vee \round[\ssid, k] \neq \numrounds-1 \\
+      ~~~\vee k \notin \honest \cap \allcoalitions[\ssid] \vee \round[\ssid, k] \neq \numrounds-1 \\
 			\pcparse \{\PM_{\numrounds-1,i}\}_{i \in \coalition} \gets \PM_{\numrounds-1} \\
 			\pcreturn \bot~\pcif \PM_{\numrounds-1, k} \neq \PM_{\numrounds-1}[\ssid, k] \\
 			%\state_2 \gets \state_2[\ssid, k] \\
@@ -189,9 +190,9 @@ produce a signature $\sigma$ such that $\Verify(\pk, m, \sigma) = 1$.
 		}
 		\end{pcvstack}
 	\end{pchstack}
-\caption[Static unforgeability games for a threshold signature scheme.]
+\caption[Static unforgeability game for a threshold signature scheme.]
 {
-Static unforgeability games for a threshold signature scheme with $\numrounds$ signing rounds.
+Static unforgeability game for a threshold signature scheme with $\numrounds$ signing rounds.
 }
 \label{fig:euf-cma-threshold}
 \end{figure}
@@ -209,8 +210,8 @@ For this reason,
 we focus on proving the security of FROST in Chapter~\ref{chp:frost} and Arctic in Chapter~\ref{chp:arctic} assuming a static adversary.
 
 We provide a game-based definition in Figure~\ref{fig:euf-cma-threshold},
-inspired by the definitions as given by Crites et al~\cite{CritesKM23}.
-and Libert et al~\cite{LibertJY16}.
+inspired by the definitions as given by Crites et al.~\cite{CritesKM23}.
+and Libert et al.~\cite{LibertJY16}.
 The static security game is analogous to existential unforgeability under chosen message attack (EUF-CMA)~\cite{GoldwasserMR88} for standard, single-party signature schemes.
 The public parameters $\pp$ are implicitly given as input to all algorithms, and $\PM_1, \PM_2, \dots, \PM_\numrounds$ represent protocol messages defined within the construction.
 $\ssid$ denotes an execution identifier,
@@ -228,7 +229,7 @@ and $\thresh$ the reconstruction threshold,
 such that $\tcornew \leq \tcor \leq n$.
 
 The environment generates public parameters $\pp$
-and initializes the adversary with $(\pp, n, \thresh)$.
+and initializes the adversary with $(\pp, n, \thresh, \tcornew)$.
 The adversary chooses a set of corrupted parties $\corrupt$,
 and the challenger sets the honest parties $\honest \gets [n] \setminus \corrupt$.
 The challenger then runs $\KeyGen$ to derive the joint public key $\aggpk$ representing all $n$ signers, the individual public key shares $\{ \aggpk_i \}_{i \in \set{n}}$, and the secret key shares $ \{ \sk_i \}_{i \in \set{n}}$.
@@ -255,11 +256,11 @@ We model concurrency explicitly in our definition to ensure that our notion of s
 \begin{definition}[Static Security]
   \label{defn:thresh-static-unforg}
 Let the advantage of an adversary $\A$ playing the static security game against a threshold signature scheme
-$\TUnforgExp_{\A,\threshsig}(\secp, n, \thresh, \tcornew)$, as defined in Figure~\ref{fig:euf-cma-threshold}, be as follows:
+$\TUnforgExp_{\threshsig,\A}(\secp, n, \thresh, \tcornew)$, as defined in Figure~\ref{fig:euf-cma-threshold}, be as follows:
 %
 \[
   \advant{$\tuf$}{\threshsig, \adv}(\secp, n, \thresh, \tcornew) =
-  \bigabs{\Pr[\UnforgExp_{\threshsig,\adv}(\secp, n, \thresh, \tcornew) = 1]}
+  \bigabs{\Pr[\TUnforgExp_{\threshsig,\adv}(\secp, n, \thresh, \tcornew) = 1]}
 \]
 
 A threshold signature scheme $\threshsig$ is \emph{statically secure} if for all PPT adversaries $\A$,
