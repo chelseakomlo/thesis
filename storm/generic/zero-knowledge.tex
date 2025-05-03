@@ -237,10 +237,8 @@ Let this randomly selected input be $(\{\blinding_j \}_{j \in \set{n}}^*, \auxst
 $\bdv_3$ then picks the simulated party's element $\blinding_\simid \gets \{\blinding_j \}_{j \in \set{n}}^*$,
 and outputs $\sharedkey' = \blinding_\simid$ as its guess for the \ENIKE unrecoverability game.
 %
-If $\adv$ queries $\Hash_1$ with $\blinding_\simid$ before $\bdv_3$ has
-completed $\oraclekg_2$,
-then $\bdv_3$ wins the \ENIKE game with probability $\frac{1}{\lvert \Hash_1 \rvert}$,
-where $\lvert \Hash_1 \rvert$ denotes the order of the co-domain of $\Hash_1$.
+If $\adv$ queries $\Hash_1$ with $\blinding_\simid$ before $\bdv_3$ has completed $\oraclekg_2$,
+then $\bdv_3$ wins the \ENIKE game with probability $\frac{1}{q_h}$.
 
 \medskip
 
