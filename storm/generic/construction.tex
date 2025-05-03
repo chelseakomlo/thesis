@@ -78,7 +78,7 @@ not at the time of key generation.
     %\text{\algcom Broadcast shares for corrupt} \\
     %\text{\algcom parties to all other participants} \\
     \pcind \textbf{Receive } \{ \share_{jk} \}_{j \in \corrupt, k \in \qual} \\
-    \text{\algcom All received $\share_{kj}$ must be consistent} \\
+    \text{\algcom All received $\share_{jk}$ must be consistent} \\
     \pcfor j \in \corrupt \pcdo \\
     \pcind \secretone_j \gets \avss[\Hash_1] \\
     \pcind \pcind .\recover(t, \{(k,\share_{jk}) \}_{k \in \qual} ) \\
@@ -92,8 +92,7 @@ not at the time of key generation.
     \sk_i \gets \avss[\Hash_1].\aggregatepriv(i,  \{\share_{ji}\}_{j \in \set{n}}, \tweak) \\
     \avsscommit \gets \avss[\Hash_1].\aggregatepub(\{\vsscommit_j\}_{j \in \set{n}}, \tweak) \\
     \pk \gets \avss[\Hash_1].\derivepshare(0, \avsscommit) \\
-    \text{\algcom Derive public keys for all} \\
-    \text{\algcom remaining participants} \\
+    \text{\algcom Derive public keys} \\
     \pcfor i \in \qual \pcdo \\
     \pcind \pk_i = \avss[\Hash_1].\derivepshare(i, \avsscommit)  \\
     \auxinfo \gets \{ \pk_i \}_{i \in \qual} \\
@@ -102,7 +101,7 @@ not at the time of key generation.
 }
 \end{pcvstack}
 \end{pchstack}
-    \caption{A generic DKG protocol.}
+    \caption{A generic DKG protocol. See corresponding text for full description.}
   \label{fg:generic-perfect}
 \end{figure}
 
@@ -216,7 +215,7 @@ because we assume an honest majority of players,
 then all honest participants will receive a sufficient number of honest shares to recover successfully,
 and can verify the correctness of the recovered secret against the commitment sent in earlier rounds.
 They can do so
-by checking if $\avss[\Hash_1].\verify(i, \share_{jk}, \vsscommit_j) \neq 1$
+by checking if $\avss[\Hash_1].\verify(i, \share_{jk}, \vsscommit_j) = 1$
 for each identifier $j \in \corrupt, k \in \qual$,
 updating $\qual \gets \qual \setminus \{ k\}$ if the check does not hold.
 
