@@ -78,7 +78,8 @@ not at the time of key generation.
     %\text{\algcom Broadcast shares for corrupt} \\
     %\text{\algcom parties to all other participants} \\
     \pcind \textbf{Receive } \{ \share_{jk} \}_{j \in \corrupt, k \in \qual} \\
-    \text{\algcom All received $\share_{jk}$ must be consistent} \\
+    \pcif \exists\ \avss[\Hash_1].\verify(i, \share_{jk}, \vsscommit_j) \neq 1 \\
+    \pcind \qual \gets \qual \setminus \{ k\} \\
     \pcfor j \in \corrupt \pcdo \\
     \pcind \secretone_j \gets \avss[\Hash_1] \\
     \pcind \pcind .\recover(t, \{(k,\share_{jk}) \}_{k \in \qual} ) \\
