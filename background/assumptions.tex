@@ -22,12 +22,12 @@ We next review the various cryptographic assumptions that we will need in the re
   \procedure{$\textsf{Exp}^{\ell\hbox{-}\protect\fbox{$\mathsf{a}$}\omdl}_{\A}(\secp)$ }{
   (\Gr, q , g) \randpick \GroupGen(1^\usecp) \\
   \counter \gets 0 \\
-  \pcfor i \in (0..\ell) \pcdo \\
+  \pcfor i \in \{ 0,..,\ell \} \pcdo \\
   \pcind x_i \randpick \Zq;~X_i \gets g^{x_i} \\
   \vec{x} \gets (x_0, \ldots, x_\ell) \\
   \vec{X} \gets (X_0, X_1, \dots, X_{\ell}) \\
   \vec{x'} \gets \A^{\BigO^{\dl}}((\Gr, q, g), \vec{X})  \\
-  	\pcif \vec{x'} = \vec{x}~\wedge~\counter < \ell \\
+  	\pcif \vec{x'} = \vec{x}~\wedge~\counter \leq \ell \\
 	\pcind \pcreturn 1\\
 	\pcreturn 0
   }
@@ -47,7 +47,7 @@ We next review the various cryptographic assumptions that we will need in the re
 \end{pchstack}
     \caption[The Discrete Logarithm (DL), One-More Discrete Logarithm (OMDL), and Algebraic One-More Discrete Logarithm (AOMDL) games.]
     {The Discrete Logarithm (DL), One-More Discrete Logarithm (OMDL), and Algebraic One-More Discrete Logarithm (AOMDL) games.
-    The boxes indicates the differences in the AOMDL game to the OMDL game.
+    The boxes indicate the differences in the AOMDL game to the OMDL game.
     $\ell$ is the bound on the number of times the adversary $\adv$ is allowed to query the DL oracle.
     }
     \label{fig:dl-omdl}

@@ -109,7 +109,8 @@ The Schnorr signature scheme consists of polynomial-time algorithms $(\Setup, \K
 
     \item $\Setup(1^\secp) \rightarrow \pp$:
     On input a security parameter $1^\secp$,
-    run $(\Gr, q, g) \gets \GroupGen(1^\usecp)$ and select a hash function $\Hash: \{0,1\}^* \rightarrow \Zq$.
+    run $(\Gr, q, g) \gets \GroupGen(1^\usecp)$ and select a hash function
+    $\Hash : \Gr \times \zo^* \times \Gr \rightarrow \Zq$.
     Output public parameters $\pp \gets ((\Gr, q, g), \Hash)$ (which are given implicitly as input to all other algorithms).
 
   \item $\KeyGen() \rightarrow (\pk, \sk)$:
@@ -117,7 +118,8 @@ The Schnorr signature scheme consists of polynomial-time algorithms $(\Setup, \K
     Output key pair $(\pk, \sk)$.
 
   \item $\Sign(\sk, m) \rightarrow \sigma$:
-    On input a secret key $\sk = x$ and a message $m$, sample a nonce $r \randpick \Zq$. Then, compute a
+    On input a secret key $\sk = x$ and a message $m \in \zo^*$,
+    sample a nonce $r \randpick \Zq$. Then, compute a
     nonce commitment $R \gets g^r$, the challenge $c \gets \Hash(\pk, m, R)$, and the
     response $z \gets r + cx$. Output a signature $\sigma \gets (R,z)$.
 
@@ -125,8 +127,7 @@ The Schnorr signature scheme consists of polynomial-time algorithms $(\Setup, \K
   On input a public key $\pk$,
     a message $m \in \zo^*$,
     and a purported signature $\sigma = (R, z)$, compute $c
-    \leftarrow \Hash(\pk, m, R)$,
-    where $\Hash(\Gr, \zo^*, \Gr) \rightarrow \Zq$.
+    \leftarrow \Hash(\pk, m, R)$.
     Output $1$ (accept) if $R \cdot \pk^c = g^z$; else, output $0$ (reject).
 
 \end{itemize}

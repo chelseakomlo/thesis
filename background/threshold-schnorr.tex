@@ -62,8 +62,8 @@ signers and the set $\{ \aggpk_i \}_{i \in \set{n}}$ of public keys for each sig
     \end{split}
   \end{align}
     where $\gmsg_{ 1, i}, \ldots, \gmsg_{\numrounds, i}$ are sets of protocol messages for each signing round,
-     $\PM$ is a set of protocol messages, and
-  $\state_{j,i}$ is the state of signing party $i$ in $\coalition$ in round $j$.
+    $\PM_j = \{ \gmsg_{j, i} \}_{i \in \coalition} $ is a set of protocol messages,
+    and $\state_{j,i}$ is the state of signing party $i$ in $\coalition$ in round $j$.
   The signing set $\coalition$ and message $m$ are shown here as inputs to the first round,
   but they may be deferred to subsequent rounds,
   depending on the scheme.
@@ -209,25 +209,26 @@ or stronger security models~\cite{CritesKM23,BachoL22}.
 For this reason,
 we focus on proving the security of FROST in Chapter~\ref{chp:frost} and Arctic in Chapter~\ref{chp:arctic} assuming a static adversary.
 
-We provide a game-based definition in Figure~\ref{fig:euf-cma-threshold},
+We provide a game-based definition for unforgeability of threshold signatures in Figure~\ref{fig:euf-cma-threshold},
 inspired by the definitions as given by Crites et al.~\cite{CritesKM23}.
 and Libert et al.~\cite{LibertJY16}.
-The static security game is analogous to existential unforgeability under chosen message attack (EUF-CMA)~\cite{GoldwasserMR88} for standard, single-party signature schemes.
+The static security game is analogous to existential unforgeability under chosen message attack (EUF-CMA)~\cite{GoldwasserMR88} for standard, single-party signature schemes,
+as defined in Figure~\ref{fig:euf-cma}.
 The public parameters $\pp$ are implicitly given as input to all algorithms,
 and $\PM_1, \PM_2, \dots, \PM_\numrounds$ represent sets of protocol messages defined within the construction.
 $\ssid$ denotes an execution identifier,
 which is \emph{not} assumed to be consistent among participants.
 
 In the static unforgeability game,
-the environment accepts a security parameter $\secp$,
+the environment accepts as input a security parameter $\secp$,
 total number of players $n$, a reconstruction threshold $\thresh$,
-and a corruption threshold $\tcornew$ as input,
+and a corruption threshold $\tcornew$ that hte adversary may corrupt,
 such that $\tcornew < t \leq n$.
 %The number of parties that the adversary corrupts must stay within the bound $\hmulp \cdot \tcor$.
 %Typically, a static adversary corrupts a full $\tcor$ (i.e., $\hmulp = 1$) signers out of at least $\thresh$ signers in a session.
-The threshold $\tcornew$ specifies the number of signers that the adversary may corrupt,
-and $\thresh$ the reconstruction threshold,
-such that $\tcornew \leq \tcor \leq n$.
+%The threshold $\tcornew$ specifies the number of signers that the adversary may corrupt,
+%and $\thresh$ the reconstruction threshold,
+%such that $\tcornew \leq \tcor \leq n$.
 
 The environment generates public parameters $\pp$
 and initializes the adversary with $(\pp, n, \thresh, \tcornew)$.
