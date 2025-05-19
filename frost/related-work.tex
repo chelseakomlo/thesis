@@ -34,8 +34,8 @@ Gennaro et al.~\cite{GennaroJK02} present a threshold
 Schnorr signature protocol that uses Pedersen's
 DKG~\cite{Pedersen91} to generate both $s$ during key generation
 and the random nonce $k$ for signing operations.
-However, this scheme is insecure against ROS attacks~\cite{DrijversEFKLNS19}
-Pedersen's DKG requires two rounds among participants;
+However, this scheme is insecure against ROS attacks~\cite{DrijversEFKLNS19}.
+Pedersen's DKG requires two rounds among participants,
 and so this construction requires an additional round for signing.
 Each round requires that
 all participants send values to all other participants.
@@ -122,7 +122,7 @@ providing a single-round signing variant with a preprocessing stage that is
 agnostic to the choice of the signing coalition. Further, the number of signing
 participants in FROST is required to be simply some $t\leq n$,
 while remaining secure against the
-Drijvers attack~\cite{DrijversEFKLNS19} and other ROS~\cite{schnorr06}. attacks.
+Drijvers attack~\cite{DrijversEFKLNS19} and other ROS~\cite{schnorr06} attacks.
 
 
 
@@ -150,26 +150,26 @@ to produce a forgery in polynomial time.
 \paragraph{Concurrently Secure Threshold Schnorr Signatures.}
 FROST2~\cite{BellareCKMTZ22} is an optimized version of FROST that reduces the number of exponentiations required for signing from $\thresh$ to one.
 A further optimization of FROST2, called FROST3, is introduced by Ruffing et al.~\cite{RuffingRJSS22},
-and proven secure with a DKG by Chu et al.r~\cite{ChuGRS23}.
+and proven secure with a DKG by Chu et al.~\cite{ChuGRS23}.
 All three of FROST, FROST2, FROST3 are proven statically secure under the algebraic one-more discrete logarithm assumption (AOMDL)~\cite{BellareCKMTZ22}.
 
 Lindell presents a three-round threshold Schnorr signature~\cite{Lindell22} with the goal of
 defining a scheme that is both secure against ROS attacks and
 secure in the random oracle model under the discrete logarithm assumption only.
-Static security is modeled in the the universally composable framework (UC)~\cite{Canetti01} and therefore captures a concurrent adversary.
+Static security is modeled in the universal composability framework (UC)~\cite{Canetti01} and therefore captures a concurrent adversary.
 
 Sparkle~\cite{CritesKM23} is a three-round threshold Schnorr signature scheme
 that is proven secure under $\tcor$ adaptive corruptions.
 In order to achieve full adaptive security,
-the authors rely on a variant of the one-more discrete logarithm assumption (AOMDL) (i.e., interactive) in the AGM and ROM.
+the authors rely on the algebraic one-more discrete logarithm assumption (AOMDL) in the AGM and ROM.
 When the adversary is limited to making $\tcor/2$ corruptions, however,
-it is possible to prove the adaptive security of Sparkle under only AOMDL in the ROM,
+the authors prove the adaptive security of Sparkle under only AOMDL in the ROM,
 by a reduction that rewinds.
 
 Makriyannis~\cite{Makriyannis22} defines a commit-reveal threshold
 Schnorr signature scheme similar to Sparkle,
 called Classic S., and proves security with
-respect to an idealized notion of threshold signatures by CGGMP21~\cite{CanettiGGMP21}.
+respect to an idealized notion of threshold signatures by Canetti et al.~\cite{CanettiGGMP21}.
 They consider adaptive security but employ the guessing argument that incurs exponential tightness loss relative to the number of parties.
 
 

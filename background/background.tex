@@ -120,14 +120,14 @@ The Schnorr signature scheme consists of polynomial-time algorithms $(\Setup, \K
   \item $\Sign(\sk, m) \rightarrow \sigma$:
     On input a secret key $\sk = x$ and a message $m \in \zo^*$,
     sample a nonce $r \randpick \Zq$. Then, compute a
-    nonce commitment $R \gets g^r$, the challenge $c \gets \Hash(\pk, m, R)$, and the
+    nonce commitment $R \gets g^r$, the challenge $c \gets \Hash(R, \pk)$, and the
     response $z \gets r + cx$. Output a signature $\sigma \gets (R,z)$.
 
   \item $\Verify(\pk, m, \sigma) \rightarrow 0/1$:
   On input a public key $\pk$,
     a message $m \in \zo^*$,
     and a purported signature $\sigma = (R, z)$, compute $c
-    \leftarrow \Hash(\pk, m, R)$.
+    \leftarrow \Hash(R, \pk, m)$.
     Output $1$ (accept) if $R \cdot \pk^c = g^z$; else, output $0$ (reject).
 
 \end{itemize}

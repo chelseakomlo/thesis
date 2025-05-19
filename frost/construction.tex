@@ -5,7 +5,8 @@
 We next present the FROST signature scheme,
 which is a threshold Schnorr signature,
 outputting a signature that is valid under the Schnorr signature verification
-algorithm~\cite{Schnorr91}.
+algorithm~\cite{Schnorr91};
+see Section~\ref{background:schnorr}.
 
 
 \subsection{Key Generation}
@@ -27,8 +28,7 @@ or in a distributed manner via a distributed key generation (DKG) protocol.
 		\begin{pcvstack}[space=1em]
 			\procedure{$\Setup(1^\usecp)$}{
 				(\Gr, q, g) \rgets \GroupGen(1^\usecp) \\
-				\text{\algcom Select two hash functions} \\
-				\HashNon, \HashSig : \{0,1\}^* \rightarrow \Zq  \\
+				\text{\algcom Select two hash functions } \HashNon, \HashSig \\
 				\pp \gets ((\Gr, q, g), \HashNon, \HashSig) \\
 				\pcreturn \pp
 			}
@@ -57,9 +57,9 @@ or in a distributed manner via a distributed key generation (DKG) protocol.
         \text{parse}~ \{ D_i, E_i \}_{i \in \coalition} \gets \PM_1 \\
         \pcreturn \bot\ \pcif (D_k, E_k) \not\in \{ D_i,E_i \}_{i \in \coalition} \\
         \pcfor i \in \coalition \pcdo \\
-        \pcind \bindingf_i \gets \HashNon(k, \threshpk, m, \{ (i, D_i, E_i)\}_{i \in \coalition}) \\
+        \pcind \bindingf_i \gets \HashNon(i, \threshpk, m, \{ (i, D_i, E_i)\}_{i \in \coalition}) \\
         \aggR \gets \prod_{i \in \coalition} D_i \cdot {E_i}^{\bindingf_i}\\
-        c \gets \HashSig(\threshpk, m, \aggR) \\
+        c \gets \HashSig(\aggR, \threshpk, m) \\
 				z_k \gets d_k + e_k \bindingf_k + c \lambda_k \sk_k\\
 				\text{\algcom $\lagrange_k$ is the $k^{th}$ Lagrange coefficient for $\coalition$}\\
         \gmsg_{2,k} \gets z_k \\
@@ -69,14 +69,14 @@ or in a distributed manner via a distributed key generation (DKG) protocol.
         \text{parse}~\{ (D_i, E_i) \}_{i \in \coalition}  \gets \PM_1,
         \{ z_i \}_{i \in \coalition} \gets \PM_2 \\
         \pcfor i \in \coalition \pcdo \\
-        \pcind \bindingf_i \gets \HashNon(k, \threshpk, m, \{ (i, D_i, E_i)\}_{i \in \coalition}) \\
+        \pcind \bindingf_i \gets \HashNon(i, \threshpk, m, \{ (i, D_i, E_i)\}_{i \in \coalition}) \\
         \aggR \gets \prod_{i \in \coalition} D_i\cdot{E_i}^{\bindingf_i};~z
         \gets \sum_{i \in \coalition} z_i;~\sigma \gets (\aggR, z)\\
         \pcreturn \sigma
 			}
 			\procedure{$\Verify(\threshpk, m, \sigma)$}{
 				\text{parse}~(\aggR,z) \gets \sigma\\
-				c \gets \HashSig(\threshpk, m, \aggR)\\
+				c \gets \HashSig(\aggR, \threshpk, m)\\
 				\pcif \aggR \cdot \threshpk^c = g^z \\
 				\pcind \pcreturn 1\\
 				\pcelse \pcreturn 0
@@ -84,7 +84,7 @@ or in a distributed manner via a distributed key generation (DKG) protocol.
 		\end{pcvstack}
 	\end{pchstack}
 	%\end{linedgamespec}
-	\caption{The FROST threshold signature scheme.
+	\caption{The FROST threshold signature scheme
   }
 \label{fig:frost}
 \end{figure*}
