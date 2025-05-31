@@ -154,8 +154,8 @@ such that $\avss[\Hash_1].\verify(k, \share_{j,k}, \vsscommit_j) = 1$
 but where Equation~\ref{eq:g2-robust-recovery} holds.
 \begin{align} \label{eq:g2-robust-recovery}
   \begin{split}
-    & \avss[\Hash_1].\recover(t, \{(\ell,\share_{j,\ell}) \}_{\ell \in \honest}) \neq \\
-    & \avss[\Hash_1].\recover(t, \{(\ell,\share_{j,\ell}') \}_{\ell \in \honest,})
+ & \avss[\Hash_1].\recover(t, \{(\ell,\share_{j,\ell}) \}_{\ell \in \honest}) \neq \\
+ & \avss[\Hash_1].\recover(t, \{(\ell,\share_{j,\ell}') \}_{\ell \in \honest})
   \end{split}
 \end{align}
 %\ian{API for $\avss.\recover$ above.  But worse, doesn't the second recovery set only have $t-1$ elements? $\recover$ isn't even defined for such an input?}
