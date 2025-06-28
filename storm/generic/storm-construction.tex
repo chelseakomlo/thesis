@@ -1,10 +1,11 @@
 \section{\RG, a Discrete-Logarithm Based DKG} \label{storm-gen}
-Finally, we instantiate our generic DKG presented in Section~\ref{generic-construction} with a concrete construction \RG.
+Finally, we instantiate our generic DKG presented in Section~\ref{generic-construction},
+with a concrete construction \RG.
 
 \RG is secure under the Computational Diffie-Hellman (CDH) problem in the random oracle model,
  in the honest majority setting.
-\RG can be securely composed with any non-pairing based scheme that relies on these assumptions,
-as the distributed form of the following target key generation scheme
+\RG can be securely composed with any scheme that relies on these assumptions,
+as the distributed form of the following target key generation scheme.
 
 
 
@@ -31,9 +32,11 @@ $\Hash_1$, and $\Hash_2$ are domain-separated instances of $\Hash$.
  These functions are defined as follows:
 \begin{itemize}
   \item $\Hash_1:  (\GG^t)^n  \times \Zq \rightarrow \Zq$: Accepts as input a vector, where the first element is a tuple
-  of $n$ \AVSS commitments $\vsscommit_j \in \GG^t, j \in \set{n}$ which are each a tuple of group elements of size $t$, and the second element is an auxiliary element $\auxstring \in \Zq$.
+  of $n$ \AVSS commitments $\vsscommit_j \in \GG^t, j \in \set{n}$ which are each a tuple of group elements of size $t$,
+  and the second element is an auxiliary element $\auxstring \in \Zq$.
 \item $\Hash_2:  (\GG)^n \rightarrow \Zq$: Accepts as input a vector
-  of $n$ blinding factors such that $\blinding_j \in \GG, j \in \set{n}$, and outputs an auxiliary element $\auxstring \in \Zq$.
+  of $n$ blinding factors $\blinding_j \in \GG, j \in \set{n}$,
+  and outputs an auxiliary element $\auxstring \in \Zq$.
 \end{itemize}
 \end{enumerate}
 
@@ -45,5 +48,9 @@ $\Hash_1$, and $\Hash_2$ are domain-separated instances of $\Hash$.
 
 
 \paragraph{Correctness and Security.}
-Because \RG is an instantiation of the generic construction presented in Section~\ref{generic-construction},
-its correctness and security automatically follow from the proofs for the generic scheme.
+\RG is an instantiation of the generic construction presented in Section~\ref{generic-construction},
+such that Assumption~\ref{ass:avss-enike} holds for the DL-based \AVSS scheme presented in Section~\ref{enike:concrete}
+and the DL-based \AVSS scheme presented in Section~\ref{avss:concrete}.
+For this reason,
+the correctness and security of \RG follows from the proofs for the generic scheme.
+
