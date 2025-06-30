@@ -83,9 +83,8 @@ $\cdv$ performs $\simkeygen_1, \simkeygen_2,\simfin$ as in the real protocol.
 However, one consequence of $\cdv$ simulating secret sharing with respect to $\dkgchal$ is that
 $\cdv$ cannot correctly derive each honest players' $\SK_i$, for all $i \in
 \honest$ when performing $\simfin$.
-This however does not impact the ability of $\cdv$ to perfectly
-simulate all honest players, because $\cdv$ is never required to perform
-operations with respect to $\dkgchal$ directly.
+This however does not impact the ability of $\cdv$ to simulate all honest players,
+in part because $\cdv$ never reveals $\{ \SK_i \}_{i \in \honest}$  directly.
 
 If the \AVSS is secret,
 then Game~0 and Game~1 are indistinguishable to $\adv$.
@@ -93,12 +92,13 @@ then Game~0 and Game~1 are indistinguishable to $\adv$.
 \medskip
 
 \noindent \textit{Reduction to \AVSS (Non-Aggregated) Secrecy.}
-We will construct a reduction $\bdv_1$ which is an adversary against the \AVSS (non-aggregated) secrecy game as defined in Definition~\ref{defn:vss-secrecy},
-such that $\bdv_1$ simulates either Game~0 or Game~1 to $\adv$.
-When the \AVSS hidden bit $b=0$, $\bdv_1$ ends up simulating Game~0;
-when the \AVSS hidden bit $b=1$, $\bdv_1$ ends up simulating Game~1.
+We will construct a reduction $\bdv_1$ which is an adversary against the \AVSS (non-aggregated) secrecy game as defined in Definition~\ref{defn:vss-secrecy}.
+%such that $\bdv_1$ simulates either Game~0 or Game~1 to $\adv$.
+%When the \AVSS hidden bit $b=0$, $\bdv_1$ ends up simulating Game~0;
+%when the \AVSS hidden bit $b=1$, $\bdv_1$ ends up simulating Game~1.
 
-$\bdv_1$ is constructed similar to Game~0, with the following exception.
+$\bdv_1$ is constructed similar to Game~0,
+with the following exception.
 $\bdv_1$ simply performs $\dkgkeygen_1$ for each honest non-simulated party $i \in \honest, i \neq \simid$.
 However, for the simulated honest party $\tau$,
 instead of following the protocol honestly,
@@ -108,7 +108,9 @@ In particular, it sets $\vsscommit_\simid \gets \vsscommit$,
 and $(\{(j, \share_{\simid,j} )\}_{j \in \corrupt}\allowbreak\gets (\{(j, \share_j)\}_{j \in \corrupt}$.
 It then follows the remainder of the protocol honestly.
 While it will not be able to derive the honest player's secret keys in $\dkgkeygen_3$,
-this will not have an impact on its ability to correctly simulate.
+this will not have an impact on its ability to correctly simulate,
+as corrupt parties will receive valid shares (and so can derive their secret keys correctly),
+and honest parties' shares (and secret keys) are never revealed.
 
 %\douglas{This reduction is very thin -- too much of a skevtch in my opinion.  You say that the reduction ``queries its \AVSS secrecy oracle'', but in fact there are three oracles it could be querying -- Oget, Orev, Otweak. Which one?  How does it use the other oracles?}
 % CK- this is a reduction to the non-aggregated game, which we can do because
@@ -161,7 +163,9 @@ Then
   \pcreturn (\party_i,\ \bot,\ \accept)
 }
 \end{pchstack}
-    \caption{Game 2 for the Zero Knowledge Proof for Generic Construction.
+    \caption[Game~2 for the Zero Knowledge Proof for Generic Construction.]
+    {Game~2 for the Zero Knowledge Proof for Generic Construction.
+     The boxes indicate steps that are performed in addition to Game~1.
     }
   \label{fg:zk-g3}
 \end{figure}
@@ -191,7 +195,7 @@ it can perform $\avss.\recover$ without the involvement of corrupted parties.
 Let $W_2$ be the event that $\adv$ wins in Game~2. Then,
 
 \begin{equation} \label{eq:game3-zk}
-  \bigabs{ \Pr[W_2]} = \bigabs{ \Pr[W_1]  }
+  \Pr[W_2] = \Pr[W_1]
 \end{equation}
 
 
