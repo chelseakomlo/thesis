@@ -1,11 +1,12 @@
 \subsubsection{Robustness}
 
 \begin{theorem} \label{thm:perfect-robust}
-  The generic construction $\dkg$ is weakly robust in the honest majority setting
+  The generic construction is weakly robust in the honest majority setting
   ($t-1 < n/2$) against
   an adversary $\adv$ controlling up to $t-1$ participants in the random oracle model,
   given a zero-indexed and secure \AVSS $\avss$
-  and a binding \ENIKE $\enike$.
+  and a binding \ENIKE $\enike$,
+  such that Assumption~\ref{ass:avss-enike} holds.
 
   Concretely, for every adversary $\adv$ that attacks the scheme,
   there exist adversaries $(\bdv_1, \bdv_2)$ that run in about the same time as $\adv$ such that
@@ -64,7 +65,7 @@ The only difference in Game~1 is if $\adv$ outputs a tuple $(\commitment_j, \pk_
 where $(\commitment_j, \pk_j,\vsscommit_j)$ are output in $\dkgkeygen_0$
 and $\witness_j$ is output in $\dkgkeygen_2$
 such that Equation~\ref{eq:game1-robust-condition} holds,
-then the environment aborts.
+then the experiment aborts.
 
 \begin{align} \label{eq:game1-robust-condition}
   \begin{split}
@@ -80,9 +81,15 @@ then Game~1 and Game~0 are indistinguishable to $\adv$.
 \medskip
 
 \noindent \textit{Reduction to \ENIKE Binding.}
-Let $\bdv_1$ be an adversary playing against the \ENIKE binding game.
-%\douglas{The general structure of this proof doesn't seem right at all.  The \ENIKE binding game isn't a distinguishing game, there's no hidden bit $b$.  The \ENIKE binding game is a win/lose game.  Now you can certainly still do a reduction to the binding game, and just observe that when the abort event happens in Game 1 corresponds exactly to when the reduction wins the \ENIKE binding game.}
-% CK- changed it to this, hope it looks right now
+Let $\bdv_1$ be an adversary playing against the \ENIKE binding game,
+as shown in Figure~\ref{fg:enike-binding}.
+Recall that in the binding game,
+the adversary accepts as input only the public security parameters $\pp$,
+and is required to output two pairs $(\sk_1^*, \pk_1^*, \sk_2^*, \pk_2^*)$
+such that $\verifykeypair$ outputs $1$ for both pairs,
+but $\enike.\getsharedkey(\sk_1^*, \pk_2^*) \neq \enike.\getsharedkey(\sk_2^*, \pk_1^*)$.
+
+As such,
 $\bdv_1$ simulates Game~1 to $\adv$ in exactly the same way as Game~0.
 However, in $\finalize$,
 if $\adv$ outputs some $\witness_j$ with respect to the commitments $(\pk_j, \commitment_j, \vsscommit_j)$ output in $\dkgkeygen_0$ such that Equation~\ref{eq:game1-robust-condition} holds,
@@ -115,7 +122,7 @@ Let $W_1$ be the event that $\adv$ wins in Game~1. Then,
 \noindent \textit{\underline{Game 2.}}
 The only difference in Game~2 is that in $\finalize$,
 if Equation~\ref{eq:game2-robust-condition} holds,
-then the environment aborts.
+then the experiment aborts.
 \begin{align} \label{eq:game2-robust-condition}
   \begin{split}
     &\ \sk \gets \avss.\recover(t, \{(i, \sk_i) \}_{i \in \honest}), \text{ but} \\
@@ -162,7 +169,7 @@ but where Equation~\ref{eq:g2-robust-recovery} holds.
 %\chelsea{The adversary trivially cannot win if it chooses $\lvert \honest \rvert = t$}
 
 
-where $\share_{j, \ell} = \share_{j, \ell}'$,
+\noindent where $\share_{j, \ell} = \share_{j, \ell}'$,
 except for $\ell = k$.
 Let $\recoveryset_1 = \{(\ell,\share_{j,\ell}) \}_{\ell \in \honest}$ and
 $\recoveryset_2 = \{(\ell,\share_{j,\ell}') \}_{\ell \in \honest}$.
@@ -228,6 +235,6 @@ we know that $\dkg[\Hash].\recover$ will output a $\sk$ that is valid with respe
 The adversary in Game~2 then has no advantage in winning the DKG weak robustness game.
 Concretely, combining the advantages in
 Equations~\ref{eq:game1-robust} and \ref{eq:game2-robust} gives Equation~\ref{eq:wk-rbt-thm}.
-This completes the proof. \qed
+This completes the proof.
 \end{proof}
 

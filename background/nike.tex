@@ -86,7 +86,8 @@ We formalize this requirement in Figure~\ref{fg:enike-binding}.
 \begin{figure}[t]
   \begin{pchstack}[boxed,center,space=1em]
     \procedure[]{$\BindingExp_{\enike,\adv}(\lambda)$}{
-    (\sk_1^*, \pk_1^*, \sk_2^*, \pk_2^*) \rgets \adv(1^\lambda) \\
+    \pp \gets \enike.\Setup(1^\lambda) \\
+    (\sk_1^*, \pk_1^*, \sk_2^*, \pk_2^*) \rgets \adv(\pp) \\
     \pcreturn 0\ \pcif \enike.\verifykeypair(\sk_1^*, \pk_1^*) \neq 1 \\
     \pcreturn 0\ \pcif \enike.\verifykeypair(\sk_2^*, \pk_2^*) \neq 1 \\
     %

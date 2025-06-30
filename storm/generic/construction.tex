@@ -2,7 +2,7 @@
 
 We now introduce a weakly robust generic DKG construction that assumes an honest majority,
 shown in Figure~\ref{fg:generic-perfect}.
-The DKG initialized with a NIKE $\enike$ as defined in Section~\ref{enike},
+The DKG is initialized with a NIKE $\enike$ as defined in Section~\ref{enike},
 an \AVSS $\avss$ as defined in Section~\ref{asym-vss},
 and a hash function $\Hash$.
 We present the concrete construction in Section~\ref{storm-gen}.
@@ -82,8 +82,7 @@ not at the time of key generation.
     \pcind \pcind \pcif \exists\ j \ : \ \avss[\Hash_1].\verify(i, \share_{jk}, \vsscommit_j) \neq 1 \\
     \pcind \pcind \pcind \qual \gets \qual \setminus \{ k\} \\
     \pcfor j \in \corrupt \pcdo \\
-    \pcind \secretone_j \gets \avss[\Hash_1] \\
-    \pcind \pcind .\recover(t, \{(k,\share_{jk}) \}_{k \in \qual} ) \\
+    \pcind \secretone_j \gets \avss[\Hash_1].\recover(t, \{(k,\share_{jk}) \}_{k \in \qual} ) \\
     \pcind \blinding_j \gets \enike.\getsharedkey(\secretone_j, \commitment_j)  \\
     %
     %\privaggregateset =  \{\share_{ji}\}_{j \in \set{n}} \\

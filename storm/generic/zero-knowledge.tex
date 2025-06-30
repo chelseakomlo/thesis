@@ -41,7 +41,7 @@ applied to the construction in Figure~\ref{fg:generic-perfect}.
 Let $W_0$ be the event that $\adv$ outputs $1$ in Game~0. Then,
 \[ \advant{zk}{\dkg,\adv,\simkeygen_i,\simfin}(\lambda)  = \Pr[W_0]    \]
 
-Let $\cdv$ be the algorithm that simulates the DKG zero-knowledge game to $\adv$.
+Let $\cdv$ be the experiment that implements the DKG zero-knowledge experiment to $\adv$.
 We now describe in further detail how $\cdv$ simulates the game.
 
 \medskip
@@ -54,12 +54,12 @@ $\cdv$ handles $\adv$'s random oracle queries by lazy sampling, as follows:
 
   \begin{itemize}
     \item[$\underline{\Hash_1}$]: When the adversary queries $\Hash_1$ on inputs $(\pubaggregateset_i, \auxstring_i)$,
-      the environment checks if it is in $Q_1$, and if so, returns the corresponding $\tweak_i$.
-      Otherwise, the environment randomly samples $\tweak_i$ from its respective domain,
+      $\cdv$ checks if it is in $Q_1$, and if so, returns the corresponding $\tweak_i$.
+      Otherwise, $\cdv$ randomly samples $\tweak_i$ from its respective domain,
       sets $Q_1[(\pubaggregateset_i, \auxstring_i)] = \tweak_i$, and then returns $\tweak_i$.
     \item[$\underline{\Hash_2}$]: When the adversary queries $\Hash_2$ on inputs $\{\blinding_1,\ldots,\blinding_n \}$,
-      the environment checks if it is in $Q_2$, and if so, returns the corresponding $\auxstring_i$.
-      Otherwise, the environment randomly samples $\auxstring_i$ from its respective domain,
+      $\cdv$ checks if it is in $Q_2$, and if so, returns the corresponding $\auxstring_i$.
+      Otherwise, $\cdv$ randomly samples $\auxstring_i$ from its respective domain,
       sets $Q_2[\{\blinding_1,\ldots,\blinding_n \}] = \auxstring_i$, and then returns $\auxstring_i$.
   \end{itemize}
 
