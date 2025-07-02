@@ -1,10 +1,9 @@
 \section{\RG, a Discrete-Logarithm Based DKG} \label{storm-gen}
-Finally, we instantiate our generic DKG presented in Section~\ref{generic-construction},
-with a concrete construction \RG.
+Finally, we instantiate our generic DKG presented in Section~\ref{generic-construction} with a concrete construction, \RG.
 
 \RG is secure under the Computational Diffie-Hellman (CDH) problem in the random oracle model,
  in the honest majority setting.
-\RG can be securely composed with any scheme that relies on these assumptions,
+\RG can be securely composed with any scheme that relies on these assumptions and satisfies Assumption~\ref{ass:avss-enike},
 as the distributed form of the following target key generation scheme.
 
 
@@ -22,7 +21,7 @@ The secret domain $\secretspace$ is the field $\Zq$ and the public domain $\publ
 \end{itemize}
 
 \paragraph{Building Blocks.}
-We next describe the concrete building blocks required for \RG.
+We next describe the concrete building blocks required for \RG:
 
 \begin{enumerate}
   \item the \ENIKE scheme presented in Section~\ref{enike:concrete},

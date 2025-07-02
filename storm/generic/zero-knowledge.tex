@@ -291,21 +291,21 @@ then the additional advantage to the adversary in Game~4 is negligible.
 \medskip
 
 \noindent \textit{Reduction to \AVSS Aggregated Secrecy.}
-We will construct a reduction $\bdv_4$ which is an adversary against the AVSS aggregated secrecy game,
+We will construct a reduction $\bdv_4$ which is an adversary against the \AVSS aggregated secrecy game,
 such that $\bdv_4$ simulates either Game~3 or Game~4 to $\adv$.
-When the hidden bit $b$ in the AVSS aggregated secrecy game is $b=0$, $\bdv_4$ ends up simulating Game~3;
+When the hidden bit $b$ in the \AVSS aggregated secrecy game is $b=0$, $\bdv_4$ ends up simulating Game~3;
 when $b=1$,  $\bdv_4$ ends up simulating Game~4.
 
 $\bdv_4$ is constructed similar to Game~3, except as follows.
 When $\adv$ queries $\oracle^{\dkgkeygen_1}$,
 for each honest player $k \in \honest$,
-$\bdv_4$ queries the AVSS oracle $\getshare()$,
+$\bdv_4$ queries the \AVSS oracle $\getshare()$,
 receiving $(\{ \share_j \}_{j \in \honest}, \allowbreak \vsscommit^*)$ in return.
 $\bdv_4$ then uses these outputs to simulate participant $\simid$ for $\oracle^{\dkgkeygen_1}$.
 %
 $\bdv_4$ follows the protocol honestly for all other players,
 and  submits all $(\{ \share_{kj} \}_{j \in \honest}, \vsscommit_k), k \in \set{n} \setminus \simid$
-to the AVSS oracle $\recvshare$.
+to the \AVSS oracle $\recvshare$.
 
 Then, $\bdv_4$ receives $\auxstring'$,
 and then queries the \AVSS aggregated secrecy oracle $\Ogettweak$ on inputs $(\pubaggregateset, \auxstring')$,
