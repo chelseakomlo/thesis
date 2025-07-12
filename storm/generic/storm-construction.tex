@@ -53,3 +53,17 @@ and the DL-based \AVSS scheme presented in Section~\ref{avss:concrete}.
 For this reason,
 the correctness and security of \RG follows from the proofs for the generic scheme.
 
+For security,
+by Theorem~\ref{thm:perfect-robust}
+\RG is weakly robust,
+assuming the \AVSS is zero-indexed and secure,
+and the NIKE is binding.
+We establish the security of the zero-indexed DL-based \AVSS scheme in Section~\ref{appendix:avss-proofs},
+and Theorem~\ref{thm:enike-binding} establishes that the concrete NIKE of Section~\ref{enike:concrete} is binding.
+
+By and Theorem~\ref{thm:zero-knowledge},
+\RG is zero-knowledge,
+assuming the \AVSS achieves aggregated secrecy and the NIKE is unrecoverable.
+We establish that the zero-indexed DL-based \AVSS scheme indeed achieves aggregated secrecy in Section~\ref{appendix:avss-proofs}.
+The unrecoverability of the concrete NIKE of Section~\ref{enike:concrete} is a direct reduction to CDH.
+

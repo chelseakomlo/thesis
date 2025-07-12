@@ -95,6 +95,7 @@ However, in $\finalize$,
 if $\adv$ outputs some $\witness_j$ with respect to the commitments $(\pk_j, \commitment_j, \vsscommit_j)$ output in $\dkgkeygen_0$ such that Equation~\ref{eq:game1-robust-condition} holds,
 then $\bdv_1$ recovers $\secretone_j$,
 and outputs $(\secretone_j, \pk_j, \witness_j, \commitment_j)$ as its output to the \ENIKE binding game.
+Recall that the only inputs to $\bdv_1$ from the NIKE binding game are the NIKE public parameters.
 
 $\bdv_1$ recovers $\secretone_j$ by performing $\secretone_j \gets \avss[\Hash_1].\recover(t, \recoveryset_j)$,
 where
