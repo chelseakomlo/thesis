@@ -30,7 +30,9 @@ but it has higher round complexity when parties misbehave.
 While their description of their construction implies that a round to broadcast failure messages is optional,
 their construction is in fact insecure without this round,
 as a malicious party may force a subset of parties to fail,
-and so selectively choose which participant contributions are used towards the creation of the output public key and secret key shares.
+and so selectively choose which participant contributions are used towards the
+creation of the output public key and secret key shares
+(thereby biasing the output key material).
 While requiring higher round complexity,
 their construction offers strong robustness as players negotiate in the second
 and third round which qualified set of players to continue the protocol with.
@@ -88,3 +90,4 @@ with respect to a target trusted secret sharing scheme.
 However, their definition is given in a UC-based approach,
 whereas we present security experiments using a game-based approach to
 explicitly define subtle details such as participation communication patterns and aborts.
+However, our notions do not guarantee security under composition with other schemes.

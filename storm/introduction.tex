@@ -5,7 +5,7 @@ such protocols are referred to as \emph{Distributed Key Generation} (DKG) scheme
 DKG schemes underlie many
 multi-party cryptographic primitives in use today in addition to threshold signature schemes~\cite{KomloG20,BellareCKMTZ22,Lindell22},
 such as distributed randomness beacons~\cite{le19}.
-At a high leevel, a DKG allows a set of $n$ participants to cooperate to generate a keypair,
+At a high level, a DKG allows a set of $n$ participants to cooperate to generate a keypair,
 such that the public key represents the entire set of participants,
 and each participant holds a share of the corresponding secret key.
 DKGs ensure that the public key is agreed upon by all (honest) parties at the end of the protocol,
@@ -60,7 +60,7 @@ implement correctly in practice.
 \section{Our Contributions}
 
 \paragraph{A Composable and Generic DKG.}
-In this work, we present a novel and simple generic DKG construction that is a good candidate for ongoing threshold standardisation efforts.
+In this chapter, we present a novel and simple generic DKG construction that is a good candidate for ongoing threshold standardisation efforts.
 Our construction relies on three simple cryptographic building blocks:
 a secure hash function,
 an \emph{Aggregatable Verifiable Secret Sharing} (AgVSS) scheme,
@@ -137,14 +137,15 @@ a ``tweaked'' key at the end of the protocol, preventing adaptive attacks.
 
 
 \paragraph{Comparing \RG to Related Schemes.}
-We compare in Table~\ref{tbl:intro-comp} the practicality and security of \RG compared to related constructions in the literature that require only standard (i.e., non-pairing based) groups
+We compare in Table~\ref{tbl:intro-comp} the practicality and security of \RG to related constructions in the literature that require only standard (i.e., non-pairing based) groups
 that are secure in the random oracle model,
 and have formal proofs of security.
+
 In the table, composable denotes if the construction has a standalone proof of security
 and can be used in any context that its target (single-party) key generation
-algorithm is used.
+algorithm is used (i.e., the scheme is secure under composition with other schemes).
 %as opposed to requiring a (new) proof of security for each use case.
-
+%
 Optimistic rounds considers only when no participant cheats;
 total rounds includes additional rounds required to recover from players that
 misbehave during the protocol.
@@ -217,8 +218,8 @@ sharing scheme (PVSS)~\cite{Groth21,BonehS2020},
 we explicitly do not,
 due to the tradeoff in increased implementation complexity.
 Furthermore,
-we do not consider the large-scale
-setting~\cite{CannyS04,ZhangXHSZ22,YurekLFKM22}, although such optimizations
+we do not consider scalability for large numbers of parties~\cite{CannyS04,ZhangXHSZ22,YurekLFKM22},
+although such optimizations
 could be employed to define a more efficient instantiation of our
 generic construction.
 
@@ -234,7 +235,7 @@ we expect these techniques to similarly apply to our constructions.
 
 
 \paragraph{Summary of Our Contributions.}
-In this work, we present the following contributions.
+In this chapter, we present the following contributions.
 
 \begin{itemize}
   \item We introduce the notion of an aggregated Verifiable Secret Sharing (AgVSS) scheme,
