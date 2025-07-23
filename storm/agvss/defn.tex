@@ -67,6 +67,10 @@ $n,t,\total \in \N$, $C \subseteq \set{n}$, and $\lvert C \rvert \geq t$,
 \]
 where $\AgVSSCorrectnessExp_{\avss}(\lambda,n,t,C,\total)$ is presented in Figure~\ref{fg:avss-correctness}.
 
+Intuitively, the experiment in Figure~\ref{fg:avss-correctness} ensures that an
+\AVSS is correct if the corresponding secret output from $\avss.\recover$ is valid,
+meaning that $\avss.\verify$ outputs $1$ when checked with respect to the \AVSS commitment $\avsscommit$.
+
 
 \begin{figure}[t]
   \begin{pchstack}[boxed,center,space=1em]

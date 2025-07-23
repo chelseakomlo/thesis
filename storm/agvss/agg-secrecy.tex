@@ -24,7 +24,7 @@ which we formalize in Figure~\ref{fg:avss-secrecy}.
     \vsschal \rgets \avss.\vfunc(\secret) \\
     \issuedchal \gets 0 \\
     \auxstring \rgets \avss.\auxdistr \\
-    \text{\algcom Pick random auxiliary string} \\
+    %\text{\algcom Pick random auxiliary string} \\
     \simtotal \gets 0  \\
     Q_1 \gets \emptyset, Q_2 \gets \emptyset, Q_3 \gets \emptyset  \\
     (n, t, \corrupt, \advstate) \rgets \adv(1^\lambda) \\
@@ -125,7 +125,7 @@ The advantage of an adversary $\adv$ against $\avss$ in the aggregated secrecy e
 \begin{definition}
 \label{defn:aggsecrecy}
 An \AVSS scheme $\avss$ achieves \defn{aggregated secrecy} if
-there exist algorithms $\simshare, \simgettweak$ such that
+there exist efficient algorithms $\simshare, \simgettweak$ such that
 for all probabilistic polynomial-time adversaries $\adv$,
 the function $\advantaggsecrecy{\avss, \adv,\simshare,\simgettweak}(\lambda)$
 is a negligible function of $\lambda$.
