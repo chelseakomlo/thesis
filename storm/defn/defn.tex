@@ -3,7 +3,7 @@
 
 Informally, a \emph{Distributed Key Generation} (DKG) scheme allows a set of $n$ players to jointly generate a public key $\pk$ and a secret key $\sk$,
 such that all parties learn the public key $\pk$ but no single party learns $\sk$.
-Instead, each party $\id_i$ has a share $\sk_i$ of the secret key,
+Instead, each party $i$ has a share $\sk_i$ of the secret key,
 such that a threshold $t$ number of shares are required to recover $\sk$,
 where $t \leq n$.
 A DKG generates secret and public keys that are compatible with some \emph{target} key generation scheme which operates in the centralized (single-party) setting.

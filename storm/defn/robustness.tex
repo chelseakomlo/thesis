@@ -47,12 +47,16 @@ however, introducing a weaker variant allows us to define a more efficient const
     \text{\algcom Set party $i$'s peer-to-peer messages for all other parties} \\
     \adv^{{\oraclekg}, \oraclefinalize}(\advstate, \{ \invecp_{1i} \}_{i \in \corrupt}, \{ \bmsg_i \}_{i \in \honest}) \\
     \pcreturn 0\ \pcif \roundcounter \neq \numrounds \text{\algcom Prevents trivial win by forcing coordination} \\
-    \fbox{$\pcif \honest \neq \{i : \status_i = \accept \}_{i \in \honest}$} \\
+    \fbox{$ \pcif \exists i \in \honest \ : \ \status_i \neq \accept $} \\
+    %\fbox{$\pcif \honest \neq \{i : \status_i = \accept \}_{i \in \honest}$} \\
     \fbox{$\pcind \pcreturn 1$} \\
-    \dbox{$\pcfor i,j \in \honest \pcdo$ } \\
-    \dbox{$\pcind \pcreturn 1\ \pcif \status_i \neq \status_j $} \\
+    \fbox{$ \pcif \exists i, j \in \honest \ : \ \status_i \neq \status_j $} \\
+    \fbox{\pcind \pcreturn 1} \\
+    %\dbox{$\pcfor i,j \in \honest \pcdo$ } \\
+    %\dbox{$\pcind \pcreturn 1\ \pcif \status_i \neq \status_j $} \\
     \dbox{\algcom $\adv$ wins if any honest party ends in a disjoint state} \\
-    \dbox{$\pcif \honest = \{ i : \status_i = \abort \}_{i \in \honest}$} \\
+    \dbox{$ \pcif \status_i = \abort \forall i \in \honest $} \\
+    %\dbox{$\pcif \honest = \{ i : \status_i = \abort \}_{i \in \honest}$} \\
     \dbox{$\pcind \pcreturn 0 $} \\
     \dbox{\algcom $\adv$ loses if all honest parties end in a consistent aborted state } \\
     \pcfor i,j \in \honest \pcdo  \\
@@ -172,7 +176,7 @@ Additionally, the experiment ensures that rounds must be queried in order, and t
 
 $\adv$ wins the strong robustness game under three conditions.
 First, if it causes any honest player to end in a non-accepting state.
-Second, if it causes any honest players' view of $\pk, \qual,$ or $\auxinfo$ to
+Second, if it causes any honest player's view of $\pk, \qual,$ or $\auxinfo$ to
 be different from any other honest player's view.
 Finally, $\adv$ wins if it can cause the resulting keypair to be invalid with
 respect to the target key generation algorithm (recall that $\dkg.\recover$ tests for validity of the keypair, and outputs $\fail$ if $\sk$ is invalid).
