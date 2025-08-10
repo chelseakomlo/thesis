@@ -3,32 +3,34 @@
 In this thesis,
 we have investigated the design of practical threshold key generation and signing schemes.
 We have presented several constructions which minimize barriers to implementation,
-including reducing network latency,
-communication overhead,
+including reducing network latency and communication overhead,
 and limiting state-keeping.
 
 In Chapter~\ref{chp:frost},
-we present FROST,
+we presented FROST,
 a Flexible Round-Optimized Schnorr Threshold Signature.
-We show how FROST can be used either as a two-round protocol,
+We showed how FROST can be used either as a two-round protocol,
 or optimized to a single-round online signing protocol,
 with a batched preprocessing phase.
 In addition,
-we present a two-round distributed key generation scheme,
+we presented a two-round distributed key generation scheme,
 that builds upon Pedersen verifiable secret sharing,
 and Schnorr proofs of knowledge.
+As discussed in
+Section~\ref{intro:impact},
+FROST has already found to be useful in practice,
+and will likely become the scheme of choice in the future for thresholdizing Schnorr signatures in practical applications.
 
 In Chapter~\ref{chp:storm},
-we present new game-based definitions for distributed key generation schemes.
-We then present a generic construction that employs as building blocks a non-interactive key-exchange (NIKE) scheme,
+we presented new game-based definitions for distributed key generation schemes.
+We then presented a generic construction that employs as building blocks a non-interactive key-exchange (NIKE) scheme,
 an aggregated verifiable secret sharing (AgVSS) scheme,
 and a secure hash function.
-Finally,
-we present Storm,
+We then presented Storm,
 a concrete instantiation of our generic construction that is secure assuming the hardness of the Computational Diffie-Hellman (CDH) assumption.
 
 Finally, in Chapter~\ref{chp:arctic},
-we present Arctic,
+we presented Arctic,
 a deterministic and stateless threshold Schnorr signature scheme.
 Arctic builds upon pseudorandom secret sharing as a building block,
 and allows all participants to perform a two-round threshold signing operation,
@@ -87,7 +89,7 @@ However,
 as threshold signatures gain more widespread adoption,
 it will be interesting to see what additional practical requirements emerge.
 In particular,
-using threshold cryptography beyond the core current use case of securing cryptocurriencies is an important next step.
+using threshold cryptography beyond the core current use case of securing cryptocurrencies is an important next step.
 Hopefully,
 threshold cryptography will continue to prove its relevance in the real-world by distributing trust,
 in a wider range of use cases in the future.
