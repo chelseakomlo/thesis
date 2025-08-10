@@ -32,7 +32,7 @@ The oracle $\oraclekg$ is defined in Figure~\ref{fg:keygen-o}.
     b' \gets \adv^{\oraclekg,\oraclefinalize}(\advstate, \{\invecp_{1j} \}_{j \in \corrupt}, \{ \bmsg_i \}_{i \in \honest} ) \\
     \pcif \roundcounter \neq \numrounds \text{\algcom Prevents trivial win by forcing coordination} \\
     \pcind \pcreturn \randcoin \\
-    \pcif \{ j : \status_j = \abort \}_{j \in \honest} = \honest \\
+    \pcif \status_j = \abort \text{ for all } j \in \honest \\
     \pcind \pcreturn \randcoin \\
     \text{\algcom $\adv$ cannot win if all honest parties non-fatally abort} \\
     %
@@ -72,7 +72,7 @@ is
 \]
 
 \begin{definition}
-  A DKG $\dkg$ is \defn{zero-knowledge} if there exist algorithms $(\simkeygen_i, i \in \{0,\ldots,\numrounds-1 \}, \simfin)$ such that
+  A DKG $\dkg$ is \defn{zero-knowledge} if there exists efficient algorithms $(\simkeygen_i, i \in \{0,\ldots,\numrounds-1 \}, \simfin)$ such that
   for all probabilistic polynomial-time adversaries $\adv$,
   $\advantzk{\dkg,\adv,\simkeygen_i,\simfin}(\lambda)$ is negligible.
 \end{definition}
