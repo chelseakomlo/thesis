@@ -97,7 +97,8 @@ signature.
 However, signing operations in FROST additionally leverage a novel binding
 technique to avoid known forgery attacks without limiting concurrency.
 Verification of signatures is identical to (single-party) Schnorr signatures.
-As discussed in Remark~\ref{rem:defer},
+As discussed in Remark~\ref{rem:defer}
+in Section~\ref{threshold-sig-background},
 giving the coalition $\coalition$ and message $\msg$ can be safely deferred to Round~2.
 
 We present FROST signing in two parts: a pre-processing phase and a
@@ -117,17 +118,17 @@ over different messages or participant/commitment pairs results in an invalid
 signature, thwarting ROS-style attacks such as those of Drijvers et al.
 
 \paragraph{Coordinator Role.}
-FROST assumes an external mechanism to choose the set
+Our presentation of FROST assumes a coordinator role to choose the set
 $\coalition \subseteq \{1, \ldots, n \}$ of signers, where $t \leq \abs{\coalition} \leq n$.
 The coordinator is trusted to not perform denial of service attacks,
 but otherwise is untrusted.
-Even if the coordinator were untrusted,
+Even if the coordinator were fully malicious,
 FROST remains unforgeable.
 The coordinator can be a stand-alone entity,
 or may also be a signer as well.
 
 
-\paragraph{Preprocessing Stage.}
+\paragraph{First Signing Round $\Sign_1$.}
 As a reminder, the public parameters $\pp$ are implicitly given as input to all algorithms and protocols.
 The coalition $\coalition$ is required to be ordered to ensure consistency.
 
@@ -149,7 +150,11 @@ $(i, D_{ij}, E_{ij} )_{j=1}^\ell$.
 These sets are then stored by any entity that might perform
 the coordinator role during signing.
 
-\paragraph{Online Signing Protocol.}
+This first signing round can be performed in a batched manner,
+as an optional pre-processing stage,
+as this round is performed both independent of the message to be signed.
+
+\paragraph{Second Signing Round $\Sign_2$.}
 At the beginning of the signing protocol in Figure~\ref{fig:frost},
 the coordinator selects  a coalition of parties $\coalition \subseteq \set{n}, \lvert \coalition \rvert \geq t$ to perform signing.
 The coordinator then selects the next available commitment
@@ -169,7 +174,7 @@ After receiving $(m, B)$ from the coordinator to initialize a signing operation,
 each participant checks that $m$ is a message they are willing to sign.
 Then, using $m$ and $B$,
 all participants derive the ``binding values'' $\bindingf_i, i \in \coalition$ such that
-$\bindingf_i = \HashNon(i, m, B)$, where $\HashNon$ is a hash function whose outputs are in $\mathbb{Z}_q^*$.
+$\bindingf_i = \HashNon(i, \pk, m, B)$, where $\HashNon$ is a hash function whose outputs are in $\mathbb{Z}_q^*$.
 
 Each participant then
 computes the commitment $R_i$ for each participant in $\coalition$ by
@@ -202,13 +207,14 @@ long-term secret shares $\sk_i$, converted to additive form:
   z_i = d_i + (e_i \cdot \bindingf_i) + \lambda_i \cdot \sk_i \cdot c
 \]
 
-The coordinator finally checks the consistency of each participant's reported
+\paragraph{Combine.}
+The coordinator (optionally) checks the consistency of each participant's reported
 $z_i$ with their commitment share $(D_i, E_i)$ and their public key share
 $\pk_i$.
-If every participant issued a correct $z_i$, the group's response is
-$z = \sum_{i \in \coalition} z_i$, and the group signature on $m$ is $\sigma=(R, z)$.
-This signature is
-verifiable to anyone performing a standard Schnorr verification operation
+If every participant issued a correct $z_i$,
+the group's response is $z = \sum_{i \in \coalition} z_i$,
+and the group signature on $m$ is $\sigma=(R, z)$.
+This signature is verifiable to anyone performing a standard Schnorr verification operation
 with $\pk$ as the public key (Section~\ref{background:schnorr}).
 
 
