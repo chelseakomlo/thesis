@@ -250,8 +250,8 @@ such that the secret key shares are $\sk_i = f_1(i)$ and the secret key is $\sk 
 During the signature phase,
 each of the
 participants in the coalition $\coalition$ selected for signing use a pair of nonces $(d_i, e_i)$ to
-define a degree $\lvert\coalition-1 \rvert$ polynomial $f_2(x)$, interpolating the
-values $(i,\frac{d_i + e_i \cdot \HashNon(i, m, B)}{\lambda_i})$,
+define a degree $\lvert\coalition \rvert -1 $ polynomial $f_2(x)$, interpolating the
+values $(i,\frac{d_i + e_i \cdot \HashNon(i, \pk, m, B)}{\lambda_i})$,
 such that $f_2(0) = \sum_{i \in \coalition} d_i + e_i \cdot \bindingf_i$.
 
 Then let $f_3(x) = f_2(x) + c \cdot f_1(x)$, where
