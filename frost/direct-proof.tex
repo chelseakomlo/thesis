@@ -121,7 +121,7 @@ Concretely,
   $\SIM$ then initializes the following values:
   \begin{enumerate}
     \item tables $\QNon \gets \emptyset$, $\QSig \gets \emptyset$ to simulate random oracles $\HashNon, \HashSig$;
-    \item tables $Q_1 \gets \emptyset$ to maintain state during its simulation;
+    \item table $Q_1 \gets \emptyset$ to maintain state during its simulation;
     \item tables $W, W'$ to maintain open and closed sessions,
     \item the table $Q_m \gets \emptyset$ to maintain the set of messages
 queried by $\A$ to honest signers,
@@ -192,7 +192,7 @@ queried by $\A$ to honest signers,
   \end{enumerate}
 
 
-  \item{}\underline{$\HashSig:$} When $\A$ queries $\HashSig$ on $(\threshpk, m, \aggR)$,
+  \item{}\underline{$\HashSig:$} When $\A$ queries $\HashSig$ on $(\aggR, \threshpk, m)$,
   $\SIM$ checks whether $\QSig[(\threshpk, m, \aggR)] \neq \bot$;
   if the check does not hold,
   then
