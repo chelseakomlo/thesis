@@ -125,10 +125,10 @@ Concretely,
     \item tables $W, W'$ to maintain open and closed sessions,
     \item the table $Q_m \gets \emptyset$ to maintain the set of messages
 queried by $\A$ to honest signers,
-    \item the counter $\counter$ to keep track of which AOMDL challenges have yet been used.
+    \item the counter $\counter \gets 1$ to keep track of which AOMDL challenges have yet been used.
   \end{enumerate}
 
-  $\SIM$ runs $\A(\pp)$ on the public parameters $\pp$.
+  $\SIM$ runs $\A(\pp, n, \tcor, \thresh)$ on the public parameters $\pp$.
   $\A$ chooses the initial set of corrupted parties $\corrupt \gets \set{n}, \lvert \corrupt \rvert \leq \tcor$.
   $\SIM$ sets $\honest \gets [n]~\backslash~\corrupt$ and must reveal the secret keys of the corrupted parties to $\A$,
   which it does in the next step.
@@ -156,7 +156,7 @@ queried by $\A$ to honest signers,
 
   Then,
   $\SIM$ runs
-  $\adv^{ \BigO^{\Sign_1} \BigO^{\Sign_2} }(\state_A, \pkgroup, \{ \pkparty_j \}_{j \in \set{n}}, \{ \skparty_i \}_{i \in \corrupt})$,
+  $\adv^{ \BigO^{\Sign_1}, \BigO^{\Sign_2} }(\pkgroup, \{ \pkparty_j \}_{j \in \set{n}}, \{ \skparty_i \}_{i \in \corrupt},\state_A)$,
   and responds to its oracle queries,
   as we describe next.
 
@@ -173,7 +173,7 @@ queried by $\A$ to honest signers,
   $\SIM$ does the following:
   \begin{enumerate}
     \item First, $\SIM$ checks if $\QNon[(k, \threshpk, \allowbreak m,\allowbreak \{ (i, D_i, E_i)\}_{i \in \coalition})] \neq  \bot$.
-      If not, $\SIM$ simply returns $\QNon[(k, \threshpk, \allowbreak m,\allowbreak \{ (i, D_i, E_i)\}_{i \in \coalition})] $,
+      If so, $\SIM$ simply returns $\QNon[(k, \threshpk, \allowbreak m,\allowbreak \{ (i, D_i, E_i)\}_{i \in \coalition})] $,
     \item Otherwise, for all $j \in \coalition$, $\SIM$ does the following:
   \begin{enumerate}
     \item $\SIM$ sets $a_j \gets h_\ell $ and
@@ -182,24 +182,24 @@ queried by $\A$ to honest signers,
   \end{enumerate}
     \item Then, $\SIM$ derives
     $\aggR \gets \prod_{i \in \coalition} D_i \cdot E_i^{a_i}$.
-    \item $\SIM$ checks if $\QSig[(\threshpk, m, \aggR)] = \bot$;
+    \item $\SIM$ checks if $\QSig[(\aggR, \threshpk, m)] = \bot$;
       if the check does not hold,
       $\SIM$ returns $\BadEventOne$.
     \item Otherwise, $\SIM$ sets $c \gets h_{j+1}$,
       where $h_j$ is the next-unused random oracle output,
-      and stores $\QSig[(\pk, m, \aggR)] = c$.
+      and stores $\QSig[(\aggR, \pk, m)] = c$.
     \item Finally, $\SIM$ returns $a_k$.
   \end{enumerate}
 
 
   \item{}\underline{$\HashSig:$} When $\A$ queries $\HashSig$ on $(\aggR, \threshpk, m)$,
-  $\SIM$ checks whether $\QSig[(\threshpk, m, \aggR)] \neq \bot$;
+  $\SIM$ checks whether $\QSig[(\aggR, \threshpk, m)] \neq \bot$;
   if the check does not hold,
   then
-  $\SIM$ returns $\QSig[(\threshpk, m, \aggR)]$.
+  $\SIM$ returns $\QSig[(\aggR, \threshpk, m)]$.
 	Else, $\SIM$ sets $c \gets h_j$,
   where $h_j$ is the next-unused random oracle output,
-  stores $\QSig[(\pk, m, \aggR)] = c$ and returns $c$.
+  stores $\QSig[(\aggR, \pk, m)] = c$ and returns $c$.
   \end{itemize}
 
 
@@ -243,7 +243,7 @@ queried by $\A$ to honest signers,
   \item Otherwise, $\SIM$ follows the protocol honestly to derive each $a_i, i \in \coalition$,
   and then the group commitment
   $\aggR \gets \prod_{i \in \coalition} D_i \cdot {E_i}^{a_i}$
-  and the challenge $c \gets \HashSig(\threshpk, m, \aggR)$.
+  and the challenge $c \gets \HashSig(\aggR, \threshpk, m)$.
   \item $\B$ then sets $Z_k \gets D_k \cdot E_k^{a_k} \cdot {\pk_k}^{c \lambda_k}$,
   and queries the AOMDL oracle $\odlsol$ on $Z_k$ and
   coefficients $(\alpha, ( \beta_i)_{i \in \set{2q_s + 1}})$,
