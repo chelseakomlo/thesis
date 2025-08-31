@@ -20,10 +20,10 @@ Our proof assumes a centralized key generation mechanism.
   The advantage of $\adv$ is bounded by
 
 
-  \begin{equation*} \label{eq:frost-aomdl}
+  \begin{equation} \label{eq:frost-aomdl}
 \advant{$\uf$}{\frost,\A}(\secp, n, \thresh, \tcor)
     \leq \sqrt{\rototal \cdot \advant{aomdl}{\ddv}(\secp) } + \mathsf{negl}(\secp)
-  \end{equation*}
+  \end{equation}
 
 \noindent such that $\rototal = \qnon + \qsigh +  \qsig + 1$ is the number of times $\adv$ is allowed to query the random oracle,
 where $\qnon$ is the number of times $\adv$ is allowed to query $\HashNon$,
@@ -318,7 +318,7 @@ and the adversary's forgery with respect to $\pkgroup=X_0$.
   \paragraph{Finishing the Proof.}
   The advantage of $\adv$ against $\SIM$ is given by Game~2.
   Combining Equations~\ref{eq:game0-frost}, \ref{eq:game1-frost},
-  and \ref{eq:game2-frost}  gives Equation~\ref{eq:simulation}.
+  and \ref{eq:game2-frost}  gives Equation~\ref{eq:frost-aomdl}.
   This completes the proof.
 \end{proof}
 
@@ -335,6 +335,9 @@ and the adversary's forgery with respect to $\pkgroup=X_0$.
 
   $\ddv$ then executes the modified forking algorithm $\modgenfork^{\SIM}(X)$ as described in Section~\ref{mod-fork} and shown in Figure~\ref{fg:gen-fork-mod},
   providing as input the instance $X = (\pp, \{ X_0, \ldots, X_{2q_s}\}, n, t)$.
+  Furthermore, $\ddv$ manages $\SIM$'s queries to the AOMDL oracle.
+  Each instance of $\SIM$ will ``use'' up to $q_s$ queries to $\ddv$'s AOMDL oracle,
+  and so $\modgenfork^{\SIM}(X)$ will ``use'' $2q_s$ AOMDL oracle queries in total.
 
   $\modgenfork^{\SIM}(X)$ then either outputs $\bot$ when it fails or the value $(j, \aux)$ when it accepts.
   Corollary~\ref{cor:modified-fork} upper-bounds the probability that $\modgenfork^{\SIM}(X)$ will output $\bot$
@@ -356,14 +359,14 @@ and the adversary's forgery with respect to $\pkgroup=X_0$.
        & \quad (m^{**}, \sigma^{**})  \gets \auxstring', \\
        (R^*, z^*)  \gets \sigma^*,
        & \quad (R^{**}, z^{**})  \gets \sigma^{**}, \\
-       h_j = c^*, & \quad h_j'=c^{**}
+       h_j \gets c^*, & \quad h_j' \gets c^{**}
      \end{split}
    \end{align*}
 
   Because $h_j, h_j'$ are with respect to the same index $j$ corresponding to
   $\adv$'s random query for $c^*$, $c^{**}$ in its first and second execution,
   then we know that $R^{*}=R^{**}$ and $m^{*}=m^{**}$.
-   $\ddv$ can then solve for the discrete logarithm $y$ to its challenge $\dlchal = g^y$,
+   $\ddv$ can then solve for the discrete logarithm $y$ to its challenge $X_0 = g^y$,
    as follows:
 
    \begin{equation}
@@ -385,7 +388,7 @@ and the adversary's forgery with respect to $\pkgroup=X_0$.
 
  \paragraph{Extracting the Discrete Logarithms of $X_1, \ldots, X_{2q_s}$.}
   Finally, $\ddv$ must solve for all remaining $(D_i=X_i, E_i=X_{i+1})$ AOMDL challenges.
-  $\ddv$ can do so in a same manner as prior reductions to OMDL~\cite{BellareCKMTZ22}.
+  $\ddv$ can do so in a same manner as prior reductions to OMDL~\cite{BellareCKMTZ22},
   since $\ddv$ has already made its AOMDL queries and obtained valid solutions.
   We give these techniques below, for completeness.
 
@@ -407,7 +410,8 @@ and the adversary's forgery with respect to $\pkgroup=X_0$.
 
 
 Because (1) $\SIM$ is deterministic
-(as $\SIM$ is run on the same random tape for each execution)
+(as $\SIM$ is run on the same random tape for each execution, apart from the
+values  $\{h_1, \ldots, h_{\rototal} \}$ to program its random oracles)
 and (2) each commitment pair is associated with exactly one session identifier $\ssid_i$,
 the commitment pairs $(D_{ij}, E_{ij})$  will be issued with the same $\ssid_i$ each time $\SIM$ is executed.
 %
