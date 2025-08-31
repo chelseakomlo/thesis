@@ -478,9 +478,9 @@ leaving one additional query available in the allowed ``budget.''
 
 $\ddv$ can then query $\odlsol$ one additional time on $D_i$ to obtain $d_i=x_i$.
 $\ddv$ can then solve for $x_{i+1} = e_i$ directly, by solving the linear relation in
-Equation~\ref{eq:solve-s_i-2} where the single unknown term $e_i$ is underlined for emphasis:
+Equation~\ref{eq:solve-s_i-3} where the single unknown term $e_i$ is underlined for emphasis:
 
-\begin{equation} \label{eq:solve-s_i-2}
+\begin{equation} \label{eq:solve-s_i-3}
  \underline{e_i} = \frac{ \resp_{i0} - d_i - \SK_k \cdot c_{i0} }{a_{i0}}
 \end{equation}
 
@@ -492,14 +492,14 @@ a_{i0} \neq a_{i1},
 c_{i0} = c_{i1}
 $]
 
-Because $a_i$ is an input to the random oracle when generating $c_i$,
+Because $a_i$ is (indirectly, via $\aggR$) an input to the random oracle when generating $c_i$,
 then this event occurs only when there is a collision in $c_i$.
 If this event occurs,
 then $\ddv$ must abort.
 We refer to this bad event as $\BadEventTwo$,
 which occurs with total probability $\numsignq^2/q$,
-Recall that $\SIM$ programs $\HashSig$ at the same time as it programs $\HashNon$,
-and so this bad event will occur only when the random oracle inputs to $\SIM$ fork in between programming $\HashNon$ and $\HashSig$.
+%Recall that $\SIM$ programs $\HashSig$ at the same time as it programs $\HashNon$,
+%and so this bad event will occur only when the random oracle inputs to $\SIM$ fork in between programming $\HashNon$ and $\HashSig$.
 
 As such, this case occurs with negligible probability $1/q$ for each signing query that $\adv$ makes,
 with total probability $q_s/q$.
