@@ -54,7 +54,7 @@
   \pcif \DVRFOnem[\HashOne].\verify(\mathsf{input}) \neq 1 \\
   \pcind \pcreturn \bot \\
   R \gets \DVRFOnem[\HashOne].\combinepub(\mathsf{input}) \\
-  c \gets \HashTwo(\pkgroup, \msg, R) \\
+  c \gets \HashTwo(R, \pkgroup, \msg) \\
   z_\partyid \gets r_\partyid + c \cdot \sksign_\partyid \\
   \pcreturn z_\partyid
 }
@@ -62,7 +62,7 @@
   \procedure[]{$\combine(\pkgroup, \msg, \coalition, \{(y_j, R_{j}), z_j \}_{j \in \coalition}))$} {
   \mathsf{input} \gets (t, \minsigners, \coalition, \{ R_j\}_{j \in \coalition}) \\
   R \gets \DVRFOnem[\HashOne].\combinepub(\mathsf{input}) \\
-  c \gets \HashTwo(\pkgroup, \msg, R) \\
+  c \gets \HashTwo(R, \pkgroup, \msg) \\
   \text{\algcom $\lambda_j$ are Lagrange} \\
   \text{\algcom coefficients for $\coalition$} \\
   z \gets \sum_{j \in \coalition} z_{j} \lambda_j\\
@@ -186,7 +186,7 @@ they abort the protocol.
 
 Finally, if all of the above checks pass,
 each participant $\partyid \in \coalition$ will then derive the group commitment $R \gets \DVRFOnem.\combinepub(t, \minsigners, \coalition, \{ R_j\}_{j \in \coalition})$,
-and the challenge $c \gets \HashTwo(\pkgroup, \msg, R)$.
+and the challenge $c \gets \HashTwo(R, \pkgroup, \msg)$.
 Finally,
 each participant derives their signature share $z_\partyid \gets r_\partyid + c \cdot \sksign_\partyid$.
 Each participant outputs $z_\partyid$ as its output for $\sign_2$.

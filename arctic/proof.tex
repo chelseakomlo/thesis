@@ -29,7 +29,7 @@ will output the same $(r_\partyid, R_\partyid)$ as derived in the first round of
 After deriving $(r_\partyid, R_\partyid)$,
 all signers in a coalition $\coalition$ output valid signature shares $z_\partyid$
 with respect to $R$
-and challenge $c = \HashTwo(\pkgroup, m, R)$,
+and challenge $c = \HashTwo(R, \pkgroup, m)$,
 where $z_\partyid =  r_\partyid + c \cdot \sksign_\partyid$.
 The aggregated signature is then $\sigma = (R, z)$,
 where $z = \sum_{j \in \coalition} z_j \cdot \lambda_j$.
@@ -741,12 +741,12 @@ $\ddv$ can use the two forgeries output by $\adv$ in its first and second execut
           \end{equation}
 
         \item $\SIM$ sets $\QFour[y] = (\msg, z, c, R, (R_j, z_j)_{j \in \set{n}})$.
-        \item $\SIM$ then checks if $\QTwo[(\pkgroup, R, m)] = \bot$;
+        \item $\SIM$ then checks if $\QTwo[(R, \pkgroup, m)] = \bot$;
           if the check does not hold,
           then a bad event has occurred.
           We refer to this bad event as $\BadEventTwo$.
           In this case, $\SIM$ aborts.
-          Otherwise, $\SIM$ programs $\QTwo[(\pkgroup, R, m)] = c$.
+          Otherwise, $\SIM$ programs $\QTwo[(R, \pkgroup, m)] = c$.
         \item $\SIM$ then outputs $(y, R_\partyid)$.
       \end{enumerate}
 

@@ -67,7 +67,7 @@ a malicious party might deviate from the protocol and pick its nonce at random.
 Recall that for Schnorr signatures,
 the output signature $\sigma = (R,z)$ is a commitment $R$ and response $z$,
 satisfying the relation $g^z = R \cdot \pk^c$ for a challenge
-$c \gets H(\pk,m,R)$.
+$c \gets H(R, \pk,m)$.
 In the setting for threshold Schnorr signatures,
 where $(R,z)$ are contributed to by all signing parties,
 one party deviating from the protocol results in the challenge $c$ likewise changing.
