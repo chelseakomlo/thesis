@@ -497,12 +497,12 @@ then this event occurs only when there is a collision in $c_i$.
 If this event occurs,
 then $\ddv$ must abort.
 We refer to this bad event as $\BadEventTwo$,
-which occurs with total probability $\numsignq^2/q$,
+which occurs with total probability $\numsignq/q$,
 %Recall that $\SIM$ programs $\HashSig$ at the same time as it programs $\HashNon$,
 %and so this bad event will occur only when the random oracle inputs to $\SIM$ fork in between programming $\HashNon$ and $\HashSig$.
 
 As such, this case occurs with negligible probability $1/q$ for each signing query that $\adv$ makes,
-with total probability $q_s/q$.
+with total probability $\numsignq/q$.
 \end{case}
 
 
@@ -530,12 +530,18 @@ with total probability $q_s/q$.
       \label{eq:ddv-fork-acc-frost}
     \begin{split}
       \advant{aomdl}{\ddv^{\SIM}}(\secp)
-        & \geq
+      & \geq \Pr[ \modgenfork^{\SIM}(\pp, \{ X_0, \ldots, X_{2q_s}\}, n, t) \neq \bot ]
+        - \BadEventTwo
+        - \BadEventThree
+      \\
+      & \geq
         \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
         - 2 \cdot \frac{\rototal^2}{2q}
-        - 2 \cdot \BadEventOne
         - \BadEventTwo
-        - \BadEventThree \\
+        - \BadEventThree
+        \\
+        & \qquad \qquad \qquad \qquad \qquad \text{\algcom  Corollary~\ref{cor:modified-fork}, Lemma~\ref{lem:frost-simulation}}
+        \\
         & \geq
         \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
         - \frac{2 \qnon}{q}
