@@ -2,7 +2,7 @@
 
 In this thesis,
 we have investigated the design of practical threshold key generation and signing schemes.
-We have presented several constructions which minimize barriers to implementation,
+We have presented several constructions that minimize barriers to implementation,
 including reducing network latency and communication overhead,
 and limiting state-keeping.
 
@@ -10,15 +10,10 @@ In Chapter~\ref{chp:frost},
 we presented FROST,
 a Flexible Round-Optimized Schnorr Threshold Signature.
 We showed how FROST can be used either as a two-round protocol,
-or optimized to a single-round online signing protocol,
-with a batched preprocessing phase.
-In addition,
-we presented a two-round distributed key generation scheme,
-that builds upon Pedersen verifiable secret sharing,
-and Schnorr proofs of knowledge.
+or optimized to a single-round online signing protocol with a batched preprocessing phase.
 As discussed in
 Section~\ref{intro:impact},
-FROST has already found to be useful in practice,
+FROST has already found use in practice,
 and will likely become the scheme of choice in the future for thresholdizing Schnorr signatures in practical applications.
 
 In Chapter~\ref{chp:storm},
@@ -36,7 +31,7 @@ Arctic builds upon pseudorandom secret sharing as a building block,
 and allows all participants to perform a two-round threshold signing operation,
 without requiring participants to maintain state in between or across signing
 rounds.
-Arctic requires the assumption of an honest minority,
+Arctic requires the assumption of an honest majority,
 and is efficient for small signing groups (i.e., when the total number of
 possible signers is less than $25$).
 
@@ -56,7 +51,7 @@ The real-world deployment of FROST in particular underscores that this thesis st
 While this thesis presents advancements in the design of practical threshold key generation and signatures,
 many problems remain.
 For example, this thesis largely considers the problem of efficient and practical threshold Schnorr signatures.
-However, it is possible that the techniques employed in this work are equally applications in the setting of other signature schemes,
+However, it is possible that the techniques employed in this work are equally applicable in the setting of other signature schemes,
 such as threshold ECDSA.
 While randomized threshold ECDSA signatures under honest-majority assumptions exist that similarly build upon pseudorandom secret sharing~\cite{DamgardJNPO22,DoernerKLS23,DalskovOKSS20},
 the techniques we employ in FROST may likewise potentially be applicable to improving the efficiency of threshold ECDSA signatures.
@@ -80,18 +75,18 @@ including simplicity,
 minimizing round complexity,
 and backwards compatibility with single-party signature schemes,
 such as Schnorr signatures.
-These new requirements in practice have lead to the research presented in this thesis.
+These new requirements in practice have led to the research presented in this thesis.
 
 What does the future hold for threshold signatures and distributed key generation?
 Clearly,
-investigating how to define quantum-secure versions of these schemes is an immediate order of priority.
+investigating how to define quantum-secure (and practical) versions of these schemes is an immediate priority.
 However,
 as threshold signatures gain more widespread adoption,
 it will be interesting to see what additional practical requirements emerge.
 In particular,
 using threshold cryptography beyond the core current use case of securing cryptocurrencies is an important next step.
 Hopefully,
-threshold cryptography will continue to prove its relevance in the real-world by distributing trust,
+threshold cryptography will continue to prove its relevance in the real world by distributing trust,
 in a wider range of use cases in the future.
 
 
