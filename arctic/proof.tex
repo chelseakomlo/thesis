@@ -109,7 +109,7 @@ and a simulating algorithm $\SIM$ which can simulate \glitter,
 then there exists a PPT DL adversary $\ddv$ that can use $\adv$ as a subroutine to solve for its DL challenge.
 
 Concretely, in the honest majority setting with authenticated channels,
-    \begin{align} \label{eq:ddv-dl}
+    \begin{align} \label{eq:ddv-dl-arctic}
     \begin{split}
         \advant{dl}{\ddv}(\lambda) & \geq
         \frac{\advant{uf}{\glitterm,\adv}(\lambda, n, t, \minsigners)^2}{\rototal}
@@ -609,7 +609,7 @@ $\ddv$ can use the two forgeries output by $\adv$ in its first and second execut
     $\SIM$ first picks $t-1$ secret key shares for the corrupt parties $(\sksign_i)_{i \in \corrupt} \rgets \Zq$,
     and defines their corresponding public keys $\pksign_i \gets g^{\sksign_i}$ for all $i \in \corrupt$.
     \item $\SIM$ then derives the public key shares $\pksign_j, j \in \honest$ for the remaining honest parties in the exponent, as follows:
-  \begin{align} \label{eq:keygen-sim}
+  \begin{align} \label{eq:keygen-sim-arctic}
     \pksign_j = (\pksign)^{L_0(j)} \cdot \prod_{i \in \corrupt} g^{\sksign_i L_i(j)}
 	\end{align}
         where $L_i(x)$ is the $i\supth$ Lagrange polynomial defined by $\corrupt \cup \{0\}$.
