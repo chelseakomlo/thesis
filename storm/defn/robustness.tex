@@ -55,7 +55,7 @@ however, introducing a weaker variant allows us to define a more efficient const
     %\dbox{$\pcfor i,j \in \honest \pcdo$ } \\
     %\dbox{$\pcind \pcreturn 1\ \pcif \status_i \neq \status_j $} \\
     \dbox{\algcom $\adv$ wins if any honest party ends in a disjoint state} \\
-    \dbox{$ \pcif \status_i = \abort \forall i \in \honest $} \\
+    \dbox{$ \pcif \forall i \in \honest\ :\ \status_i = \abort $} \\
     %\dbox{$\pcif \honest = \{ i : \status_i = \abort \}_{i \in \honest}$} \\
     \dbox{$\pcind \pcreturn 0 $} \\
     \dbox{\algcom $\adv$ loses if all honest parties end in a consistent aborted state } \\
