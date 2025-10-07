@@ -193,16 +193,22 @@ for cryptosystems that ensure secret and public keys have a unique correspondenc
 zero-knowledge implies indistinguishability.
 %
 
-These notions could be captured by an alternative model such as Universal Composability~\cite{Canetti01}.
 We instead opt for a game-based approach,
 so we can explicitly and independently define each notion.
 %However, because these notions capture
 %perfect simulatability with respect to a target key generation algorithm,
-%DKGs that achieve our notions of security without rewinding achieve UC security~\cite{KushilevitzLR10}.
 
 
 \paragraph{Future Work: Proving Equivalence and Composability.}
-\chelsea{TODO describe how to prove equivalence.}
+We chose to employ a game-based appraoch to defining the security of DKGs,
+with the goal of clearly separating notions and defining how the adversary interacts with honest participants throughout the protocol execution.
+However, our game-based notions do not demonstrate that a DKG is secure even
+when composed with other protocols,
+such as threshold signatures.
+One approach to demonstrating composability is using the Universal Composability (UC) framework~\cite{Canetti01}.
+However, another approach would be to prove equivalence between our game-based
+notions and a simulation-based notion of security for a DKG.
+We discuss this second approach further in Section~\ref{storm:future-work}.
 
 \paragraph{What We Do Not Do.}
 Our definitions and constructions assume a strictly synchronous setting;

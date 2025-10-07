@@ -1,0 +1,21 @@
+\section{Future Work and Composability}
+\label{storm:future-work}
+
+Because we prove the generic construction secure with respect to our game-based
+notions,
+we do not inherently prove that the generic construction is secure with respect
+to any other protocol;
+i.e., we do not prove security under composability.
+One approach to demonstrating composability is using the Universal Composability (UC) framework~\cite{Canetti01}.
+However, a second approach would be to prove that a DKG that is secure under
+these game-based notions is likewise secure under a simulation-based notion.
+Such an approach was taken by Boneh et al.~\cite{BonehHL24} to show equivalence between
+their game-based notions of security for an Exponent Verifiable Random Function (eVRF),
+and a simulation-based notion of security.
+
+To do so, we first must determine which notion of simulation-based security our game-based notions capture.
+Full security defined a DKG whose output keys are indistinguishable from keys
+from the target single-party key generation algorithm,
+whereas security with abort defines a DKG that achieves full security with the
+exception of an adversary that can force honest participants to abort (and
+hence introduce bias).
