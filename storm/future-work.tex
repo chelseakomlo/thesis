@@ -14,8 +14,16 @@ their game-based notions of security for an Exponent Verifiable Random Function 
 and a simulation-based notion of security.
 
 To do so, we first must determine which notion of simulation-based security our game-based notions capture.
-Full security defined a DKG whose output keys are indistinguishable from keys
-from the target single-party key generation algorithm,
-whereas security with abort defines a DKG that achieves full security with the
+Katz~\cite{Katz24} gives several notions of simulation-based security for DKGs,
+defining full security as a DKG whose output keys are indistinguishable from keys
+from the target single-party key generation algorithm.
+He defines security with abort as a DKG that achieves full security with the
 exception of an adversary that can force honest participants to abort (and
 hence introduce bias).
+
+I postulate that it is possible to prove a DKG that is weakly robust,
+zero-knowledge, and indistinguishable under the simulation-based notion of
+security with aborts.
+Furthermore, I postulate that it is possible to prove a DKG that is strongly
+robust, zero-knowledge, and indistinguishable under the simulation-based notion
+of full security.
