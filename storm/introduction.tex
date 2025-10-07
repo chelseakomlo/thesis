@@ -59,8 +59,8 @@ implement correctly in practice.
 
 \section{Our Contributions}
 
-\paragraph{A Composable and Generic DKG.}
-In this chapter, we present a novel and simple generic DKG construction that is a good candidate for ongoing threshold standardisation efforts.
+\paragraph{A Generic DKG.}
+In this chapter, we present a simple generic DKG construction that is a good candidate for ongoing threshold standardisation efforts.
 Our construction relies on three simple cryptographic building blocks:
 a secure hash function,
 an \emph{Aggregatable Verifiable Secret Sharing} (AgVSS) scheme,
@@ -77,11 +77,11 @@ as well as concrete AgVSS and NIKE constructions.
   \small
   \begin{tabular}{c|c|c|c}
 	\hline
-    & \multicolumn{2}{c|}{Composable \& VSS}
-    %& \multicolumn{2}{c|}{Composable \& PVSS} &
-    &
-    Not Composable \\
-	\hline
+  %  & \multicolumn{2}{c|}{Composable \& VSS}
+  %  %& \multicolumn{2}{c|}{Composable \& PVSS} &
+  %  &
+  %  Not Composable \\
+	%\hline
     & \GJKRConstruction~\cite{GennaroJKR07}
     &  \RG
     %& X
@@ -201,6 +201,8 @@ so we can explicitly and independently define each notion.
 %DKGs that achieve our notions of security without rewinding achieve UC security~\cite{KushilevitzLR10}.
 
 
+\paragraph{Future Work: Proving Equivalence and Composability.}
+\chelsea{TODO describe how to prove equivalence.}
 
 \paragraph{What We Do Not Do.}
 Our definitions and constructions assume a strictly synchronous setting;
