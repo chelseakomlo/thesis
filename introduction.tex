@@ -5,25 +5,22 @@
 %======================================================================
 
 While the goal of cryptography can be described in many ways,
-one primary motivation is often \emph{authorization} within a digital environment;
-i.e., the assurance that only a designated party is allowed to perform some pre-determined action.
+one common motivation is often \emph{authorization} within a digital environment;
+i.e., the assurance that only a designated party is allowed to perform some action.
 The goal of authorization is generally accomplished by granting the authorized party \emph{knowledge} of a secret,
 and then later challenging the party to demonstrate knowledge of this secret value.
-This intuition describes the strategy underlying interactive identification protocols and digital signature schemes;
-a common cryptographic building block in secure protocols.
+This intuition describes the strategy underlying interactive identification
+protocols and digital signature schemes--common cryptographic building blocks in secure protocols.
 
 A challenge emerges when considering the possibility that this authorized party may later become compromised by an adversarial party,
 or might simply fail.
 For example,
 a database holding a secret value might become corrupted.
 One real-world example is that of certificate authorities,
-which have been long-documented to fail to perform trusted actions~\cite{SSLMate}
+which have been long-documented to perform untrusted actions~\cite{SSLMate}
 In this setting,
 even if the designated party correctly demonstrates knowledge of a secret key,
-the party may still intuitively violate trust.
-In other words,
-the cryptography may be acted upon correctly,
-but the spirit of trust is still violated.
+the party may still violate trust.
 
 As cryptographers,
 the question then emerges as whether new cryptographic primitives can be designed to better reflect the trust required in a real-world setting.
@@ -33,8 +30,8 @@ one might ask whether is it possible to instead designate multiple parties that 
 
 In this dissertation,
 we address this question by investigating the real-world utility of \emph{threshold} schemes.
-Threshold schemes are a critical cryptographic primitive that allows a set of
-$n$ total parties and at least a threshold $t$ parties to collaborate to perform some function.
+Threshold schemes are a critical cryptographic primitive that
+requires at least a threshold $t$ parties out of a set of $n$ total parties to collaborate to perform some function.
 This function depends on the use case.
 For example,
 the parties might perform threshold signing~\cite{KomloG20,BellareCKMTZ22,Lindell22},
@@ -55,7 +52,7 @@ the scheme remains secure.
 As such,
 threshold schemes offer practical security benefits,
 allowing for dynamic key management and defense in depth against potential adversarial corruptions.
-While threshold schemes can be instantiated by each party simply performing a single-party protocol in parallel,
+While some threshold schemes can be instantiated by each party simply performing a single-party protocol in parallel,
 a practical goal for threshold schemes is to preserve compatibility with existing single-party schemes,
 to minimize implementation complexity and to ensure efficiency.
 
