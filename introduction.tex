@@ -53,13 +53,13 @@ As such,
 threshold schemes offer practical security benefits,
 allowing for dynamic key management and defense in depth against potential adversarial corruptions.
 While some threshold schemes can be instantiated by each party simply performing a single-party protocol in parallel,
-a practical goal for threshold schemes is to preserve compatibility with existing single-party schemes,
+a practical goal for many threshold schemes is to preserve compatibility with existing single-party schemes,
 to minimize implementation complexity and to ensure efficiency.
 
 \paragraph{Motivation.}
 Interest in threshold schemes is growing in practice.
 For example,
-NIST will soon issue a call for threshold schemes ranging from distributed key
+as of early 2025, NIST is expected to issue a call for threshold schemes ranging from distributed key
 generation to threshold zero-knowledge proofs~\cite{NIST22,NIST23}.
 The NIST call specifically requests threshold variants of single-party signature schemes,
 including Schnorr signatures~\cite{Schnorr91},
@@ -94,7 +94,7 @@ Multi-round, multi-entity protocols incur additional performance and complexity 
 These challenges are compounded when considering real-world failures,
 such as network failures and timeouts.
 As such, even though efficient threshold schemes might possibly incur stronger security assumptions,
-these tradeoffs are often practically worthwhile when considering the positive tradeoffs in reduced complexity and increased performance.
+these tradeoffs are often practically worthwhile when considering improvements in reduced complexity and increased performance.
 
 With the goals of efficiency, simplicity, and security in mind,
 in this work,
@@ -102,19 +102,15 @@ we investigate how to design efficient threshold schemes,
 and propose a range of constructions that provide improved efficiency over
 prior works in the literature.
 In particular,
-the research question we wish to address is as follows:
+our thesis statement is as follows:
 
-\section{Thesis Statement}
-\label{thesis-statement}
-
-This thesis establishes the following:
 
 \begin{quote}
   \it
 It is possible to construct efficient threshold key generation and signature schemes that are practically useful,
 with reasonable security assumptions.
 By practical utility,
-we refer to the properties that implementations often require;
+we refer to the properties that implementations often require,
 such as the simplicity of the scheme,
 low number of communication rounds among parties,
 and computational and bandwidth efficiency.
@@ -122,10 +118,10 @@ and computational and bandwidth efficiency.
 
 \section{Overview of Results}
 
-This dissertation presents new techniques to simplify and improve practicality of threshold Schnorr signatures and discrete-logarithm based distributed key generation.
-The first part gives an efficient randomized threshold Schnorr signature scheme,
-The second part gives a generic construction for a distributed key generation (DKG) scheme.
-The third part gives an efficient deterministic threshold Schnorr signature scheme.
+This dissertation presents new techniques to simplify and improve the practicality of threshold Schnorr signatures and discrete-logarithm based distributed key generation.
+Chapter~\ref{chp:frost} gives an efficient randomized threshold Schnorr signature scheme,
+Chapter~\ref{chp:storm} gives a generic construction for a distributed key generation (DKG) scheme.
+Chapter~\ref{chp:arctic} gives an efficient deterministic threshold Schnorr signature scheme.
 
 \subsection{Part 1: An Efficient Randomized Threshold Schnorr Signature Scheme}
 
@@ -165,7 +161,7 @@ in that any deviation from the protocol requires aborting and re-running.
 
 We prove the security of FROST with respect to the Algebraic One-More Discrete
 Logarithm  (AOMDL) assumption,
-formalized by Jonas, Ruffing, and Seurin~\cite{NickRS21}.
+formalized by Nick et al.~\cite{NickRS21}.
 which is a weaker variant of the One-More Discrete Logarithm (OMDL) assumption~\cite{BellareNPS03,BauerFP21}.
 While FROST was proven secure with respect to OMDL~\cite{BellareCKMTZ22},
 we additionally show how this proof extends to AOMDL.
@@ -173,8 +169,9 @@ OMDL defines an interactive discrete-logarithm assumption,
 in which the adversary is given $\ell+1$ discrete logarithm challenges,
 and is required to output $\ell+1$ solutions,
 while being given $\ell$ queries to a discrete-logarithm solution oracle.
-OMDL is a stronger security assumption the OMDL oracle must output solutions to arbitrary group elements,
-and so is guaranteed to run in polynomial time.
+OMDL is a stronger security assumption,
+as the OMDL oracle must output solutions to arbitrary group elements,
+and so the oracle is not guaranteed to run in polynomial time.
 AOMDL additionally requires the adversary to give as input the representation of the input group element with respect to all challenge group elements.
 As such, the AOMDL solution oracle is guaranteed to run in polynomial time,
 therefore making AOMDL a weaker assumption than OMDL.
@@ -191,7 +188,7 @@ Our generic DKG construction relies on three cryptographic building blocks:
 a secure hash function,
 an \emph{Aggregatable Verifiable Secret Sharing} (AgVSS) scheme,
 and a \emph{Non-Interactive Key Exchange} (NIKE) scheme.
-We show how Feldman's VSS~\cite{Feldman87}  can be augmented to by used as an AgVSS.
+We show how Feldman's VSS~\cite{Feldman87}  can be augmented to be used as an AgVSS.
 
 The goal for presenting a generic DKG is to enable flexibility for implementations and standardization efforts.
 Future implementations may wish to opt for different building blocks,
