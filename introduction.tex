@@ -217,9 +217,10 @@ Towards this goal, we present Arctic,
 a deterministic and stateless threshold Schnorr signature scheme.
 The primary goal of Arctic is simplicity.
 While prior deterministic threshold Schnorr signature schemes have been defined~\cite{NickRSW20,GarillotKMN21,KondiOR23} in the literature,
-these prior schemes rely on generic multi-party computation techniques,
+these prior schemes rely on either generic multi-party computation techniques,
+or generic non-interactive zero-knowledge proof systems,
 and therefore incur complexity and performance overhead.
-The observation underlying Arctic is that in settings where the expected number of honest parties far outnumbers the expected number of corrupt parties,
+The observation underlying Arctic is that in settings where the expected number of honest parties outnumbers the number of corrupt parties,
 we can define a simpler and more efficient deterministic threshold Schnorr signature scheme.
 
 In particular,
@@ -253,8 +254,8 @@ on the other hand,
 simply concatenates $t$ signatures into one joint signature,
 where the public key is the set of $n$ public keys.
 
-FROST has been defined as an informational RFC for the Crypto Forum Research Group (CFRG) within the IETF~\cite{Connolly22}.
-FROST is the first threshold signature scheme to be defined within an IETF RFC.
+FROST has been defined as an informational RFC for the Crypto Forum Research Group (CFRG) within the IRTF~\cite{Connolly22}.
+FROST is the first threshold signature scheme to be defined within an IRTF RFC.
 The scheme is defined to be agnostic to any particular choice of parameters,
 and supports a range of parameter choices.
 Furthermore,
