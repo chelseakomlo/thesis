@@ -123,7 +123,7 @@ Chapter~\ref{chp:frost} gives an efficient randomized threshold Schnorr signatur
 Chapter~\ref{chp:storm} gives a generic construction for a distributed key generation (DKG) scheme.
 Chapter~\ref{chp:arctic} gives an efficient deterministic threshold Schnorr signature scheme.
 
-\subsection{Part 1: An Efficient Randomized Threshold Schnorr Signature Scheme}
+\subsection{Chapter~\ref{chp:frost}: An Efficient Randomized Threshold Schnorr Signature Scheme}
 
 The first contribution of this dissertation is to define FROST,
 a Flexible Round-Optimized Schnorr Threshold Signature scheme.
@@ -176,9 +176,9 @@ AOMDL additionally requires the adversary to give as input the representation of
 As such, the AOMDL solution oracle is guaranteed to run in polynomial time,
 therefore making AOMDL a weaker assumption than OMDL.
 
-\subsection{Part 2: A Generic Distributed Key Generation (DKG) Construction}
+\subsection{Chapter~\ref{chp:storm}: A Generic Distributed Key Generation (DKG) Construction}
 
-The second contribution of this dissertation is to define a simple generic distributed key generation (DKG) construction that is composable with existing discrete-logarithm based threshold signature schemes such as FROST.
+The second contribution of this dissertation is to define a simple generic distributed key generation (DKG) construction.
 While key generation for threshold signature schemes can be performed in a centralized manner using a trusted dealer,
 often distribution of trust is likewise required during the generation of key material.
 As such,
@@ -202,7 +202,7 @@ We give a concrete construction of our generic DKG which we call Storm,
 which builds upon Feldman's VSS~\cite{Feldman87}  and a straightforward discrete-logarithm NIKE,
 which we define in Section~\ref{concrete-nike}.
 
-\subsection{Part 3: An Efficient Deterministic Threshold Schnorr Signature Scheme}
+\subsection{Chapter~\ref{chp:arctic}: An Efficient Deterministic Threshold Schnorr Signature Scheme}
 
 The third contribution of this dissertation is to define a \emph{deterministic} threshold Schnorr signature scheme.
 While FROST is desirable in practice,
