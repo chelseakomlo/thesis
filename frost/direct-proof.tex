@@ -80,7 +80,7 @@ Concretely,
   $\A$ is allowed to query $\HashNon$ $\qnon$ number of times,
   $\HashSig$ $\qsigh$ number of times,
   and is allowed to make $q_s$ signing queries.
-  Without loss of generality, we assume $\A$ queries $\HashSig$ on its forgery $(\threshpk, m^*, R^*)$.
+  Without loss of generality, we assume $\A$ queries $\HashSig$ on its forgery $(\aggR^*, \threshpk, m^*)$.
   Finally, let $\rototal = \qnon + \qsigh + q_s + 1$.
 
   Let $W_0$ be the event that $\adv$ wins Game~0.
@@ -234,8 +234,8 @@ queried by $\A$ to honest signers,
   and set of nonce commitments $\{ (D_i, E_i) \}_{i \in \coalition}$,
   $\SIM$ does as follows:
   \begin{enumerate}
-  \item Checks if this signing session has already closed by checking if $(k, \ssid) \in W'$,
-    if the check holds,
+  \item Checks if this signing session has already closed by checking if $(k, \ssid) \in W'$.
+    If the check holds,
     return $\bot$ to $\adv$.
 
   \item Checks if this signing session has not yet been opened, by if $(k, \ssid) \not\in W$,
@@ -430,7 +430,7 @@ Because
   $a_{i0} \neq a_{i1}$,
   and $c_{i0} \neq c_{i1}$,
 then
-$\resp_{i0} \neq \resp_{i1}$.
+$\resp_{i0} \neq \resp_{i1}$ with overwhelming probability.
 Hence,  $\odlsol$ will have been queried twice during the two executions of $\SIM$ to obtain $\resp_{i0} $ and $\resp_{i1}$
 However,
 $\ddv$ can solve for both  $x_i=d_i$ and $x_{i+1} = e_i$ without making any additional $\odlsol$ queries, by performing the following steps:
@@ -440,13 +440,13 @@ $\ddv$ can solve for both  $x_i=d_i$ and $x_{i+1} = e_i$ without making any addi
     resulting in Equation~\ref{eq:s_i-solve-1}, after cancelling out the $d_i$ term:
 
        \begin{equation} \label{eq:s_i-solve-1}
-       \resp_{i0} - \resp_{i1} = \underline{e_i}\cdot a_{i0} + \SK \cdot c_{i0} - \underline{e_i}\cdot a_{i1} - \SK \cdot c_{i1}
+       \resp_{i0} - \resp_{i1} = \underline{e_i}\cdot a_{i0} + \SK_i \lambda_i \cdot c_{i0} - \underline{e_i}\cdot a_{i1} - \SK_i \lambda_i \cdot c_{i1}
    \end{equation}
 
     \item \textbf{Step Two.} $\ddv$ can then solve efficiently for $e_i$, by Equation~\ref{eq:solve-s_i-2}
 
     \begin{equation} \label{eq:solve-s_i-2}
-        \underline{e_i} = \frac{ \resp_{i0} - \resp_{i1} + \SK ( c_{i1} - c_{i0})}{a_{i0}  - a_{i1}}
+        \underline{e_i} = \frac{ \resp_{i0} - \resp_{i1} + \SK_i \lambda_i ( c_{i1} - c_{i0})}{a_{i0}  - a_{i1}}
     \end{equation}
 
     Because $a_{i0} \neq a_{i1}$,
@@ -481,7 +481,7 @@ $\ddv$ can then solve for $x_{i+1} = e_i$ directly, by solving the linear relati
 Equation~\ref{eq:solve-s_i-3} where the single unknown term $e_i$ is underlined for emphasis:
 
 \begin{equation} \label{eq:solve-s_i-3}
- \underline{e_i} = \frac{ \resp_{i0} - d_i - \SK_k \cdot c_{i0} }{a_{i0}}
+ \underline{e_i} = \frac{ \resp_{i0} - d_i - \SK_i \lambda_i \cdot c_{i0} }{a_{i0}}
 \end{equation}
 
 So, again, in this case,  exactly two $\odlsol$ queries were made for the two challenges  $(X_i = D_i, X_{i+1} = E_i)$, and $\ddv$ has solved for $y_i=d_i$ and $y_{i+1} = e_i$.
@@ -516,8 +516,8 @@ when $\HashSig$ forks,
 then subsequent queries to $\HashNon$ will also fork,
 because $\SIM$ always programs its random oracle with the next-available value $h_i$.
 We refer to this bad event as $\BadEventThree$,
-
-As such, this case occurs with negligible probability $1/q$ for each signing query that $\adv$ makes,
+%
+This case occurs with negligible probability $1/q$ for each signing query that $\adv$ makes,
 with total probability $q_s/q$.
 \end{case}
 
@@ -531,23 +531,34 @@ with total probability $q_s/q$.
     \begin{split}
       \advant{aomdl}{\ddv^{\SIM}}(\secp)
       & \geq \Pr[ \modgenfork^{\SIM}(\pp, \{ X_0, \ldots, X_{2q_s}\}, n, t) \neq \bot ]
-        - \BadEventTwo
-        - \BadEventThree
+        - \Pr[ \BadEventTwo ]
+        - \Pr[ \BadEventThree ]
       \\
       & \geq
         \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
         - 2 \cdot \frac{\rototal^2}{2q}
-        - \BadEventTwo
-        - \BadEventThree
+        - \Pr[ \BadEventTwo ]
+        - \Pr[ \BadEventThree ]
         \\
-        & \qquad \qquad \qquad \qquad \qquad \text{\algcom  Corollary~\ref{cor:modified-fork}, Lemma~\ref{lem:frost-simulation}}
+        & \qquad \qquad \qquad \qquad \text{\algcom  Corollary~\ref{cor:modified-fork}}
         \\
         & \geq
         \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
-        - \frac{2 \qnon}{q}
+        - \frac{2 q_s}{q}
         - \frac{3\rototal^2}{q}
     \end{split}
     \end{align}
+
+    First, because $\ddv$ runs the forking algorithm on $\SIM$,
+    then
+    Corollary~\ref{cor:modified-fork}
+    and Lemma~\ref{lem:frost-simulation} gives
+    $\Pr[ \modgenfork^{\SIM}(\pp, \{ X_0, \ldots, X_{2q_s}\}, n, t) \neq \bot ]
+    \geq
+    \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
+    - 2 \cdot \frac{\rototal^2}{2q} $.
+
+
 
    This completes the proof.
 \end{proof}
