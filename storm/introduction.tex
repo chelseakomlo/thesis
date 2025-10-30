@@ -14,21 +14,22 @@ However, this secret key can be recovered given a threshold $t$ number of cooper
 where $t \leq n$.
 
 Despite widespread interest in DKGs,
-existing constructions fall short in either their complexity or composability.
+existing constructions fall short in their complexity or security guarantees.
 One example is Pedersen's DKG~\cite{Pedersen91} and variants of Pedersen's DKG~\cite{KomloG20,BellareCKMTZ22},
 discussed in Chapter~\ref{chp:frost}.
 While Pedersen's DKG is appealing because of its simplicity and efficiency,
-its security to date has only been proven in the context of specific applications~\cite{GennaroJK02,GurkanJMMST21,BellareCKMTZ22},
-as it cannot be proven secure in a standalone fashion~\cite{GennaroJKR07}.
+its security to date has only been proven in the context of specific applications~\cite{GennaroJK02,GurkanJMMST21,BellareCKMTZ22}.
 More specifically,
 it is possible that the use of Pedersen's DKG may be secure in some settings, but not in others.
-As such, the risk exists that Pedersen's DKG might be misused in contexts for which it cannot been proven secure.
+It has been speculated that Pedersen's DKG can be proven secure under the
+UC-definition of idealized idealized discrete-logarithm key generation with additive bias,
+where the bias is chosen by the adversary~\cite{Katz24}.
+However, no such proof yet exists.
 While many alternative DKG constructions have been presented in the literature~\cite{GennaroJKR07,Groth21,GurkanJMMST21,BonehS2020,NejiBR16,Lindell22,DasYXMKR21,BachoL22,AbrahamJMMS2022},
 these constructions incur undesirable protocol complexity or require pairings.
 
 Conversely, growing interest in threshold schemes points
-towards the need for DKGs that are friendly to standardization efforts~\cite{NIST22,NIST23} and
-composable across a range of use cases.
+towards the need for alternative discrete-logarithm DKGs that are friendly to standardization efforts~\cite{NIST22,NIST23}.
 For example, the FROST Schnorr threshold signature scheme~\cite{KomloG20,BellareCKMTZ22},
 introduced in Chapter~\ref{chp:frost},
 for which an IETF specification exists~\cite{Connolly22},
@@ -126,9 +127,8 @@ We then describe a concrete instantiation of our generic construction that we ca
 \underline{O}ptimized gene\underline{R}ation of key \underline{M}aterial).
 
 The security of \RG reduces to the Computational Diffie-Hellman (CDH) problem in the random oracle model.
-\RG is composable with existing threshold cryptosystems such
-as threshold Schnorr signatures~\cite{KomloG20,Connolly22} and similar
-discrete-log based systems.
+\RG is compatible with existing threshold cryptosystems such
+as threshold Schnorr signatures~\cite{KomloG20,Connolly22} and similar discrete-log based systems.
 \RG is simpler and therefore (slightly) more efficient than related synchronous  DKGs in the discrete-logarithm setting with similar
 security guarantees~\cite{GennaroJK02}.
 Its efficiency improvement is due to the use of a NIKE,
@@ -141,10 +141,6 @@ We compare in Table~\ref{tbl:intro-comp} the practicality and security of \RG to
 that are secure in the random oracle model,
 and have formal proofs of security.
 
-In the table, composable denotes if the construction has a standalone proof of security
-and can be used in any context that its target (single-party) key generation
-algorithm is used (i.e., the scheme is secure under composition with other schemes).
-%as opposed to requiring a (new) proof of security for each use case.
 %
 Optimistic rounds considers only when no participant cheats;
 total rounds includes additional rounds required to recover from players that
