@@ -556,13 +556,13 @@ with total probability $\qsig/q$.
     \end{align}
 
     First,
-    Lemma~\ref{lem:frost-simulation} gives
+    Lemma~\ref{lem:frost-simulation} gives the relation
     $\Pr[ \SIM(\pp, \{ X_0, \ldots, X_{2\qsig}\}, n, t) \neq \bot ]
     \geq
     \advant{uf}{\frost,\adv}(\lambda, n, t, t-1) -
         \frac{\rototal}{q}
         - \frac{\rototal^2}{2q} $.
-
+%
     Then, because $\ddv$ runs the forking algorithm $\modgenfork$ on $\SIM$,
     and $\modgenfork$ runs $\SIM$ twice,
     then
@@ -570,21 +570,22 @@ with total probability $\qsig/q$.
     gives
     $
     \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
-    - 2 \cdot \frac{\rototal^2}{q}
-    - 2 \cdot \frac{\rototal^2}{2q}
+    - \frac{2\rototal}{q}
+    - \frac{2\rototal^2}{q}
+    - \frac{2\rototal^2}{2q}
     $,
     or, simplified, gives
     $
     \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
-    -  \cdot \frac{2\rototal}{q}
-    -  \cdot \frac{3\rototal^2}{q}
+    -  \frac{2\rototal}{q}
+    -  \frac{3\rototal^2}{q}
     $.
-
-    This bound quantifies the probability that
+%
+    This bound quantifies the probability that:
     \begin{enumerate}
       \item $\SIM$ will not abort across its two executions,
       \item $\SIM$ outputs the same index across its two executions, and
-      \item none of the inputs $\{ X_0, \ldots, X_{2\qsig}\}$ collide.
+      \item none of the random oracle inputs collide.
     \end{enumerate}
 
     Then, we have to account for the probability that $\BadEventTwo$ and $\BadEventThree$ occur,
