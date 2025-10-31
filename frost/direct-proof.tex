@@ -65,6 +65,7 @@ Concretely,
         \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
         - \frac{2\rototal}{q}
         - \frac{3\rototal^2}{q}
+        - \frac{2\qsig}{q}
     \end{split}
     \end{align}
 \end{lemma}
@@ -79,9 +80,9 @@ Concretely,
   Let $\A$ be an adversary playing the static unforgeability game.
   $\A$ is allowed to query $\HashNon$ $\qnon$ number of times,
   $\HashSig$ $\qsigh$ number of times,
-  and is allowed to make $q_s$ signing queries.
+  and is allowed to make $\qsig$ signing queries.
   Without loss of generality, we assume $\A$ queries $\HashSig$ on its forgery $(\aggR^*, \threshpk, m^*)$.
-  Finally, let $\rototal = \qnon + \qsigh + q_s + 1$.
+  Finally, let $\rototal = \qnon + \qsigh + \qsig + 1$.
 
   Let $W_0$ be the event that $\adv$ wins Game~0.
   Then, the advantage of $\adv$ is simply
@@ -111,10 +112,10 @@ Concretely,
 
   \noindent\textit{Setup.}
   $\SIM$ is initialized with public parameters $\pp = (\Gr, q, g)$,
-  a set  of $2q_s+1$ AOMDL challenges $\{ X_0, \ldots, X_{2q_s}\}$,
+  a set  of $2\qsig+1$ AOMDL challenges $\{ X_0, \ldots, X_{2\qsig}\}$,
   and a set of values
   $\{h_1, \ldots, h_{\rototal} \}$ to program its random oracles.
-  $\SIM$ can query the AOMDL solution oracle $\odlsol$ up to $q_s$ times.
+  $\SIM$ can query the AOMDL solution oracle $\odlsol$ up to $\qsig$ times.
 
   \medskip
 
@@ -249,7 +250,7 @@ queried by $\A$ to honest signers,
   and the challenge $c \gets \HashSig(\aggR, \threshpk, m)$.
   \item $\B$ then sets $Z_k \gets D_k \cdot E_k^{a_k} \cdot {\pk_k}^{c \lambda_k}$,
   and queries the AOMDL oracle $\odlsol$ on $Z_k$ and
-  coefficients $(\alpha, ( \beta_i)_{i \in \set{2q_s + 1}})$,
+  coefficients $(\alpha, ( \beta_i)_{i \in \set{2\qsig + 1}})$,
   where each coefficient is set to zero,
   with the exception of
   $\alpha = c \lambda_k \cdot \sum_{i \in \corrupt} \sk_i L_i'(k)$,
@@ -330,14 +331,15 @@ and the adversary's forgery with respect to $\pkgroup=X_0$.
   as described in Lemma~\ref{lem:frost-simulation} that simulates FROST to $\adv$,
   then we can define a PPT adversary $\ddv$ that can efficiently solve for an AOMDL challenge instance.
 
-  $\ddv$ begins by accepting parameters $\pp = (\Gr, q, g)$ and a set  of $2q_s+1$ AOMDL challenges $\{ X_0, \ldots, X_{2q_s}\}$.
+  $\ddv$ begins by accepting parameters $\pp = (\Gr, q, g)$ and a set  of $2\qsig+1$ AOMDL challenges
+  $\{ X_0, \ldots, X_{2\qsig}\}$.
   It then chooses a $(t, n)$ such that $n \geq t$.
 
   $\ddv$ then executes the modified forking algorithm $\modgenfork^{\SIM}(X)$ as described in Section~\ref{mod-fork} and shown in Figure~\ref{fg:gen-fork-mod},
-  providing as input the instance $X = (\pp, \{ X_0, \ldots, X_{2q_s}\}, n, t)$.
+  providing as input the instance $X = (\pp, \{ X_0, \ldots, X_{2\qsig}\}, n, t)$.
   Furthermore, $\ddv$ manages $\SIM$'s queries to the AOMDL oracle.
-  Each instance of $\SIM$ will ``use'' up to $q_s$ queries to $\ddv$'s AOMDL oracle,
-  and so $\modgenfork^{\SIM}(X)$ will ``use'' $2q_s$ AOMDL oracle queries in total.
+  Each instance of $\SIM$ will ``use'' up to $\qsig$ queries to $\ddv$'s AOMDL oracle,
+  and so $\modgenfork^{\SIM}(X)$ will ``use'' $2\qsig$ AOMDL oracle queries in total.
 
   $\modgenfork^{\SIM}(X)$ then either outputs $\bot$ when it fails or the value $(j, \aux)$ when it accepts.
   Corollary~\ref{cor:modified-fork} upper-bounds the probability that $\modgenfork^{\SIM}(X)$ will output $\bot$
@@ -377,7 +379,8 @@ and the adversary's forgery with respect to $\pkgroup=X_0$.
    then we know that this equation is solveable.
 
  \paragraph{Solving for Honest Parties' Secret Keys $\SK_k, k \in \honest$.}
- In order to perform the next step of solving for the remaining AOMDL challenges $X_1, \ldots, X_{2q_s}$.
+ In order to perform the next step of solving for the remaining AOMDL challenges
+  $X_1, \ldots, X_{2\qsig}$.
  $\ddv$ needs to be able to derive the secret keys of each honest party.
   However, it can do so by using $\{ \sk_i \}_{i \in \corrupt}$ and $x_0$,
   simply by deriving
@@ -386,7 +389,7 @@ and the adversary's forgery with respect to $\pkgroup=X_0$.
   where $\lambda_i'$ is the Lagrange coefficient associated with the set $\{ 0\} \cup \corrupt$.
 
 
- \paragraph{Extracting the Discrete Logarithms of $X_1, \ldots, X_{2q_s}$.}
+ \paragraph{Extracting the Discrete Logarithms of $X_1, \ldots, X_{2\qsig}$.}
   Finally, $\ddv$ must solve for all remaining $(D_i=X_i, E_i=X_{i+1})$ AOMDL challenges.
   $\ddv$ can do so in a same manner as prior reductions to OMDL~\cite{BellareCKMTZ22},
   since $\ddv$ has already made its AOMDL queries and obtained valid solutions.
@@ -518,7 +521,7 @@ because $\SIM$ always programs its random oracle with the next-available value $
 We refer to this bad event as $\BadEventThree$,
 %
 This case occurs with negligible probability $1/q$ for each signing query that $\adv$ makes,
-with total probability $q_s/q$.
+with total probability $\qsig/q$.
 \end{case}
 
 
@@ -530,35 +533,67 @@ with total probability $q_s/q$.
       \label{eq:ddv-fork-acc-frost}
     \begin{split}
       \advant{aomdl}{\ddv^{\SIM}}(\secp)
-      & \geq \Pr[ \modgenfork^{\SIM}(\pp, \{ X_0, \ldots, X_{2q_s}\}, n, t) \neq \bot ]
+      & \geq \Pr[ \modgenfork^{\SIM}(\pp, \{ X_0, \ldots, X_{2\qsig}\}, n, t) \neq \bot ]
         - \Pr[ \BadEventTwo ]
         - \Pr[ \BadEventThree ]
       \\
       & \geq
         \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
-        - 2 \cdot \frac{\rototal^2}{2q}
+        - \frac{2\rototal}{q}
+        - \frac{3\rototal^2}{q}
         - \Pr[ \BadEventTwo ]
         - \Pr[ \BadEventThree ]
         \\
-        & \qquad \qquad \qquad \qquad \text{\algcom  Corollary~\ref{cor:modified-fork}}
+        & \qquad \qquad \qquad \qquad \text{\algcom  Combining Corollary~\ref{cor:modified-fork}
+        and Lemma~\ref{lem:frost-simulation} }
         \\
         & \geq
         \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
-        - \frac{2 q_s}{q}
+        - \frac{2\rototal}{q}
         - \frac{3\rototal^2}{q}
+        - \frac{2 \qsig}{q}
     \end{split}
     \end{align}
 
-    First, because $\ddv$ runs the forking algorithm on $\SIM$,
-    then
-    Corollary~\ref{cor:modified-fork}
-    and Lemma~\ref{lem:frost-simulation} gives
-    $\Pr[ \modgenfork^{\SIM}(\pp, \{ X_0, \ldots, X_{2q_s}\}, n, t) \neq \bot ]
+    First,
+    Lemma~\ref{lem:frost-simulation} gives
+    $\Pr[ \SIM(\pp, \{ X_0, \ldots, X_{2\qsig}\}, n, t) \neq \bot ]
     \geq
+    \advant{uf}{\frost,\adv}(\lambda, n, t, t-1) -
+        \frac{\rototal}{q}
+        - \frac{\rototal^2}{2q} $.
+
+    Then, because $\ddv$ runs the forking algorithm $\modgenfork$ on $\SIM$,
+    and $\modgenfork$ runs $\SIM$ twice,
+    then
+    $\Pr[ \modgenfork^{\SIM}(\pp, \{ X_0, \ldots, X_{2\qsig}\}, n, t) \neq \bot ]$
+    gives
+    $
     \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
-    - 2 \cdot \frac{\rototal^2}{2q} $.
+    - 2 \cdot \frac{\rototal^2}{q}
+    - 2 \cdot \frac{\rototal^2}{2q}
+    $,
+    or, simplified, gives
+    $
+    \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
+    -  \cdot \frac{2\rototal}{q}
+    -  \cdot \frac{3\rototal^2}{q}
+    $.
 
+    This bound quantifies the probability that
+    \begin{enumerate}
+      \item $\SIM$ will not abort across its two executions,
+      \item $\SIM$ outputs the same index across its two executions, and
+      \item none of the inputs $\{ X_0, \ldots, X_{2\qsig}\}$ collide.
+    \end{enumerate}
 
+    Then, we have to account for the probability that $\BadEventTwo$ and $\BadEventThree$ occur,
+    which causes the reduction $\ddv$ to abort.
+    Recall that
+    $\Pr[\BadEvent_2] = \Pr[\BadEvent_2] = \qsig/q$,
+    and each of these events occurs when $\ddv$ attempts to extract its AOMDL solution
+    (i.e., these events occur after $\modgenfork^\SIM$ has finished its execution).
+    Hence, the probability of these bad events adds an additional $2\qsig/q$ term to the statement given in Equation~\ref{eq:ddv-fork-acc-frost}.
 
-   This completes the proof.
+    This completes the proof.
 \end{proof}
