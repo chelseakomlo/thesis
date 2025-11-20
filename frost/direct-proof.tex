@@ -439,8 +439,15 @@ Because
   $a_{i0} \neq a_{i1}$,
   and $c_{i0} \neq c_{i1}$,
 then
-$\resp_{i0} \neq \resp_{i1}$ with overwhelming probability.
-Hence,  $\odlsol$ will have been queried twice during the two executions of $\SIM$ to obtain $\resp_{i0} $ and $\resp_{i1}$
+$\resp_{i0} \neq \resp_{i1}$ with overwhelming probability
+(note that if
+$a_{i0} \neq a_{i1}$ and $c_{i0} \neq c_{i1}$
+but $\resp_{i0} = \resp_{i1}$,
+$\odlsol$ will have been queried only once and so $\ddv$ can query the oracle directly
+to solve,
+similarly to what is described in the case below).
+
+Hence,  in this case, $\odlsol$ will have been queried twice during the two executions of $\SIM$ to obtain $\resp_{i0} $ and $\resp_{i1}$
 However,
 $\ddv$ can solve for both  $x_i=d_i$ and $x_{i+1} = e_i$ without making any additional $\odlsol$ queries, by performing the following steps:
 
