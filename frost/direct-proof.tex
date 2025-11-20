@@ -46,7 +46,7 @@ Concretely, in the setting where $\adv$ is allowed up to $\tcor$ corruptions, th
 \begin{align} \label{eq:simulation-frost}
   \begin{split}
 \advant{$\uf$}{\frost,\A}(\secp, n, \thresh, \tcor)  & \leq
-        \Pr [\ \SIM^\adv(\lambda, n, t, t-1) \neq \bot \ ]
+        \Pr [\ \SIM^\adv(\pp, n, t, t-1, \Inst) \neq \bot \ ]
         + \frac{\rototal}{q}
         + \frac{\rototal^2}{2q}
   \end{split}
@@ -61,7 +61,7 @@ then there exists a PPT AOMDL adversary $\ddv$ that can use $\adv$ as a subrouti
 Concretely,
     \begin{align} \label{eq:ddv-dl}
     \begin{split}
-      \advant{aomdl}{\ddv^{\SIM}}(\lambda) & \geq
+      \advant{aomdl}{\ddv^{\SIM}}(\pp, n, t, t-1, \Inst) & \geq
         \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
         - \frac{2\rototal}{q}
         - \frac{3\rototal^2}{q}
@@ -112,6 +112,12 @@ Concretely,
 
   \noindent\textit{Setup.}
   $\SIM$ is initialized with public parameters $\pp = (\Gr, q, g)$,
+  threshold parameters the total number of parties $n$,
+  threshold $t$,
+  and corruption threshold $t-1$.
+  Additionally,
+  $\SIM$ is initialized with the instance $\Inst$,
+  which is comprised of
   a set  of $2\qsig+1$ AOMDL challenges $\{ X_0, \ldots, X_{2\qsig}\}$,
   and a set of values
   $\{h_1, \ldots, h_{\rototal} \}$ to program its random oracles.
@@ -499,8 +505,8 @@ Because $a_i$ is (indirectly, via $\aggR$) an input to the random oracle when ge
 then this event occurs only when there is a collision in $c_i$.
 If this event occurs,
 then $\ddv$ must abort.
-We refer to this bad event as $\BadEventTwo$,
-which occurs with total probability $\numsignq/q$,
+We refer to this bad event as $\BadEventTwo$.
+This case occurs with total probability $\numsignq/q$,
 %Recall that $\SIM$ programs $\HashSig$ at the same time as it programs $\HashNon$,
 %and so this bad event will occur only when the random oracle inputs to $\SIM$ fork in between programming $\HashNon$ and $\HashSig$.
 
@@ -518,7 +524,7 @@ for similar reasons as in the case above,
 when $\HashSig$ forks,
 then subsequent queries to $\HashNon$ will also fork,
 because $\SIM$ always programs its random oracle with the next-available value $h_i$.
-We refer to this bad event as $\BadEventThree$,
+We refer to this bad event as $\BadEventThree$.
 %
 This case occurs with negligible probability $1/q$ for each signing query that $\adv$ makes,
 with total probability $\qsig/q$.
@@ -530,7 +536,6 @@ with total probability $\qsig/q$.
   $\ddv$ will hence succeed with advantage
 
     \begin{align}
-      \label{eq:ddv-fork-acc-frost}
     \begin{split}
       \advant{aomdl}{\ddv^{\SIM}}(\secp)
       & \geq \Pr[ \modgenfork^{\SIM}(\pp, \{ X_0, \ldots, X_{2\qsig}\}, n, t) \neq \bot ]
@@ -557,7 +562,7 @@ with total probability $\qsig/q$.
 
     First,
     Lemma~\ref{lem:frost-simulation} gives the relation
-    $\Pr[ \SIM(\pp, \{ X_0, \ldots, X_{2\qsig}\}, n, t) \neq \bot ]
+    $\Pr[ \SIM(\pp, n, t, t-1, \Inst) \neq \bot ]
     \geq
     \advant{uf}{\frost,\adv}(\lambda, n, t, t-1) -
         \frac{\rototal}{q}
@@ -565,16 +570,16 @@ with total probability $\qsig/q$.
 %
     Then, because $\ddv$ runs the forking algorithm $\modgenfork$ on $\SIM$,
     and $\modgenfork$ runs $\SIM$ twice,
-    then
-    $\Pr[ \modgenfork^{\SIM}(\pp, \{ X_0, \ldots, X_{2\qsig}\}, n, t) \neq \bot ]$
-    gives
+    then by Corollary~\ref{cor:modified-fork},
+    $\Pr[ \modgenfork^{\SIM}(\pp, n, t, t-1, \Inst) \neq \bot ]$
+    is greater than or equal to
     $
     \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
     - \frac{2\rototal}{q}
     - \frac{2\rototal^2}{q}
     - \frac{2\rototal^2}{2q}
     $,
-    or, simplified, gives
+    or, simplified,
     $
     \frac{\advant{uf}{\frost,\adv}(\lambda, n, t, t-1)^2}{\rototal}
     -  \frac{2\rototal}{q}
@@ -594,7 +599,7 @@ with total probability $\qsig/q$.
     $\Pr[\BadEvent_2] = \Pr[\BadEvent_2] = \qsig/q$,
     and each of these events occurs when $\ddv$ attempts to extract its AOMDL solution
     (i.e., these events occur after $\modgenfork^\SIM$ has finished its execution).
-    Hence, the probability of these bad events adds an additional $2\qsig/q$ term to the statement given in Equation~\ref{eq:ddv-fork-acc-frost}.
+    Hence, the probability of these bad events adds an additional $2\qsig/q$ term to yield the bound.
 
     This completes the proof.
 \end{proof}
