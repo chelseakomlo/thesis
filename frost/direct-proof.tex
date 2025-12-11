@@ -513,11 +513,7 @@ then this event occurs only when there is a collision in $c_i$.
 If this event occurs,
 then $\ddv$ must abort.
 We refer to this bad event as $\BadEventTwo$.
-This case occurs with total probability $\numsignq/q$,
-%Recall that $\SIM$ programs $\HashSig$ at the same time as it programs $\HashNon$,
-%and so this bad event will occur only when the random oracle inputs to $\SIM$ fork in between programming $\HashNon$ and $\HashSig$.
-
-As such, this case occurs with negligible probability $1/q$ for each signing query that $\adv$ makes,
+This case occurs /Users/chelseakomlo/Documents/thesis with negligible probability $1/q$ for each signing query that $\adv$ makes,
 with total probability $\numsignq/q$.
 \end{case}
 
@@ -542,7 +538,7 @@ with total probability $\qsig/q$.
 
   $\ddv$ will hence succeed with advantage
 
-    \begin{align}
+    \begin{align*}
     \begin{split}
       \advant{aomdl}{\ddv^{\SIM}}(\secp)
       & \geq \Pr[ \modgenfork^{\SIM}(\pp, \{ X_0, \ldots, X_{2\qsig}\}, n, t) \neq \bot ]
@@ -565,7 +561,7 @@ with total probability $\qsig/q$.
         - \frac{3\rototal^2}{q}
         - \frac{2 \qsig}{q}
     \end{split}
-    \end{align}
+    \end{align*}
 
     First,
     Lemma~\ref{lem:frost-simulation} gives the relation
