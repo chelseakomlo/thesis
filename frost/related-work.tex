@@ -33,7 +33,7 @@ and one
 round to distribute signature shares and compute the group signature.
 Each round requires participants to send values to every other participant.
 
-Gennaro et al.~\cite{GennaroJK02} present a threshold
+Gennaro et al.~\cite{GennaroJKR03} present a threshold
 Schnorr signature protocol that uses Pedersen's
 DKG~\cite{Pedersen91} to generate both $s$ during key generation
 and the random nonce $k$ for signing operations.
@@ -56,7 +56,7 @@ random nonces. The signers can then store these pre-processed values to later pe
 $\ell$ single-round signing operations.
 
 Importantly, the signing operation defined by FROST \emph{does not} perform a DKG
-during signing operations as is done in both of the above schemes~\cite{StinsonR01,GennaroJK02},
+during signing operations as is done in both of the above schemes~\cite{StinsonR01,GennaroJKR03},
 but instead make use of additive secret sharing and share conversion.
 Consequently, FROST trades off robustness for more efficient signing
 operations,
@@ -92,7 +92,7 @@ participants can ``mix'' preprocessed values across different signing
 coalitions, as FROST requires that the choice for the signing coalition be made
 only during the second and final round of signing.
 
-Recent work by Damg\aa{}rd et al.~\cite{fast-threshold-ecdsa} defines an efficient
+Recent work by Damg\aa{}rd et al.~\cite{DamgardJNPO22} defines an efficient
 threshold ECDSA construction that similarly to FROST requires aborting in the case of misbehaviour.
 %Their design relies on generating a blinding factor
 %$d + m \cdot e$ where
@@ -172,7 +172,7 @@ by a reduction that rewinds.
 Makriyannis~\cite{Makriyannis22} defines a commit-reveal threshold
 Schnorr signature scheme similar to Sparkle,
 called Classic S., and proves security with
-respect to an idealized notion of threshold signatures by Canetti et al.~\cite{CanettiGGMP21}.
+respect to an idealized notion of threshold signatures by Canetti et al.~\cite{CanettiGGMP20}.
 They consider adaptive security but employ the guessing argument that incurs exponential tightness loss relative to the number of parties.
 
 

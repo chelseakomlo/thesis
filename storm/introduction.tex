@@ -18,7 +18,7 @@ existing constructions fall short in their complexity or security guarantees.
 One example is Pedersen's DKG~\cite{Pedersen91} and variants of Pedersen's DKG~\cite{KomloG20,BellareCKMTZ22},
 discussed in Chapter~\ref{chp:frost}.
 While Pedersen's DKG is appealing because of its simplicity and efficiency,
-its security to date has only been proven in the context of specific applications~\cite{GennaroJK02,GurkanJMMST21,BellareCKMTZ22}.
+its security to date has only been proven in the context of specific applications~\cite{GennaroJKR03,GurkanJMMST21,BellareCKMTZ22}.
 More specifically,
 it is possible that the use of Pedersen's DKG may be secure in some settings, but not in others.
 It has been speculated that Pedersen's DKG can be proven secure under the
@@ -130,7 +130,7 @@ The security of \RG reduces to the Computational Diffie-Hellman (CDH) problem in
 \RG is compatible with existing threshold cryptosystems such
 as threshold Schnorr signatures~\cite{KomloG20,Connolly22} and similar discrete-log based systems.
 \RG is simpler and therefore (slightly) more efficient than related synchronous  DKGs in the discrete-logarithm setting with similar
-security guarantees~\cite{GennaroJK02}.
+security guarantees~\cite{GennaroJKR03}.
 Its efficiency improvement is due to the use of a NIKE,
 which allows the parties to derive
 a ``tweaked'' key at the end of the protocol, preventing adaptive attacks.
