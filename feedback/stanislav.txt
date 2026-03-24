@@ -1,0 +1,93 @@
+ - Definition 2.6.1 assumes that the partial key space and the
+ `regular' key space are the same \hat{P} and \hat{S} sets for resp.
+ public and private keys.  This is a somewhat artificial constraint
+ that will make only certain schemes fit.  This is OK but please (1)
+ make a note of that, (2) reference more general definitions, (3) add
+ an explanation why you restrict yourself to this form.
+
+ - In same definition, I'm not sure if |C| \geq t is right, or it
+ should be |C|=t.  In Figure 3.1, Frost, I think you assume |C|=t, and
+ I'm not sure it would work if e.g. C=t+1, unless perhaps if you
+ generalized the notion of \lambda_k's for C s.t. |C|>t?.  This
+ ambiguity, whether |C| \geq t or |C|=t appears elsewhere in the text
+ so please handle it uniformly.
+
+ X - Combine, page 28, should output only \sigma, not (m,\sigma)?
+
+ - Fig 2.8, the Unforgeability game:
+ *)  \hat{C} and rnd are arrays, so can you initialize them as arrays,
+ e.g. \hat{C}[eid] <- \empty for all eid, etc?
+ *)  It seems that \hat{C}[eid] should not be the same for all k's, but
+ it should be separated into \hat{C}[eid,k] variables for each k.  The
+ reason is that if O^{Sign1} is called several times on the same eid
+ and different party identifiers k, but using different C value for
+ each k, then the "joined" \hat{C}[eid] variable will get overwritten.
+ E.g. adversary sends to O^{Sign1} queries (eid,1,C1,m) and the
+ (eid,2,C2,m), but for C2 \neq C1, then the fact that player P1 ran
+ this eid instance under the impression that it will work with party
+ set C1 became overwritten in your game.
+ *)  However, the way you use \hat{C}[eid] seems to me to suggest that
+ perhaps that variable is not needed, i.e. it seems that if the call
+ (eid,k,PM) to e.g. O^{Sign2} checks only that k is honest and that
+ rnd[eid,k]=1, I think that would suffice, i.e. maybe this game doesn't
+ need to keep this \hat{C}[eid] or \hat{C}[eid,k] variable(s) at all?
+ As I believe Florian said in the defense discussion, if the code
+ wants/needs to keep track of the initial set C which a given party was
+ started on, the code can do so, and it doesn't seem like the game
+ needs to keep track of this variable as well?
+
+X - Unforgeability game once more:  As we said during the defense
+ discussion, please make a note that the definition captures "weak
+ unforgeability" (single honest party attempting to sign a message
+ means that the message is fair game to forge on) and add a reference
+ to works which explain the difference and have some results on strong
+ unforgeability of some threshold signature schemes.
+
+ - Fig 3.1, Frost:
+ *) I wonder if k-th party's message \rho_{1,k} should not include
+ index k, i.e. shouldn't it be (k,E_k,D_k) instead of just (E_k,D_k).
+ I'm not sure there's something in your syntax which allows parties to
+ tell which message comes from which party.  (Do you assume
+ authenticated channels?)
+ *) This is related to the fact that in the Sign2 code you have a
+ condition to reject if (D_k,E_k) is not inside the set {D_i,E_i}_{i in
+ C}, but this is informal, because i think you meant here to say that
+ the (D_k,E_k) has to be in the k-th position in the ordered sequence
+ which is these PM_1 messages.  The set vs. sequence syntactic
+ ambiguities are often a bit painful but I believe it'd be better to
+ dot the i's here
+ *) If you really mean that |C| can be greater than t, then please
+ specify this in the code, and in particular explain how \lambda_k's
+ are computed for |C|>k
+
+ - Regarding DKG, because you define security via two games and not a
+ single functionality, I have some difficulty understanding the
+ properties of the DKG you create:
+
+ *)  Firstly, you say its "weakly robust" but I'm not sure I understand
+ this notion.  Does it imply "identifiable abort", i.e. that if parties
+ output an abort then they also output an identifier of some corrupt
+ party who caused the abort to happen (and the honest parties agree on
+ this identifier)?  Also, I assume it doesn't imply that perhaps under
+ some conditions, e.g. t<n/2, the honest parties create a DKG instance
+ no matter what the corrupt parties do.  But if that's so then what
+ does "weak robustness" offer beyond "identifiable abort" (if that's
+ implied by weak robustness).
+
+ *) Secondly, for zero-knowledge / indistinguishability, does your
+ security notion that a real DKG instance cannot be distinguished from
+ simulated one where the simulator gets a uniform random key pk as an
+ input?   And if so, then does the adversary get an ability to cause
+ abort after seeing this target key pk, or does it have to abort "in
+ the darkness", i.e. before seeing pk.  These two options have
+ different security implications:  In the first protocol a malicious
+ adversary can skew the produced keys s.t. e.g. lsb(pk)=0 with low
+ probability for pk that is actually output by DKG (as opposed to
+ attempted to output by a DKG which ends up aborting).
+
+ -  In Section 4.6, it would be very helpful for readers if you
+ actually showed a figure which shows the scheme instantiated for the
+ DL setting which you describe in this section.  This mapping *could*
+ be done by the reader, very slowly, but it would be much easier for
+ everyone to understand and reference your work if you actually showed
+ this instantiation yourself and included it here.

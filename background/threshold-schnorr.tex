@@ -68,7 +68,7 @@ signers and the set $\{ \aggpk_i \}_{i \in \set{n}}$ of public keys for each sig
   but they may be deferred to subsequent rounds,
   depending on the scheme.
 
-\item $\Combine(\coalition, m, \PM_1, \PM_2, \dots, \PM_\numrounds) \rightarrow (m, \sigma)$:
+\item $\Combine(\coalition, m, \PM_1, \PM_2, \dots, \PM_\numrounds) \rightarrow \sigma$:
   A deterministic algorithm that takes as input the signing set $\coalition$, the message $m$, and a set of protocol messages
   $\PM_1, \PM_2, \dots, \PM_\numrounds$ from all $\numrounds$ signing rounds
   and outputs a signature $\sigma$. (Note that this algorithm is separate from the signing rounds and may be performed by one of the signers or an external party.)
@@ -193,6 +193,9 @@ produce a signature $\sigma$ such that $\Verify(\pk, m, \sigma) = 1$.
 \caption[Static unforgeability game for a threshold signature scheme.]
 {
 Static unforgeability game for a threshold signature scheme with $\numrounds$ signing rounds.
+Note this definition captures ``weak'' unforgeabiilty,
+as compared to static security for strong unforgeability of threshold
+signatures~\cite{TODO}.
 }
 \label{fig:euf-cma-threshold}
 \end{figure}
@@ -219,7 +222,7 @@ and $\PM_1, \PM_2, \dots, \PM_\numrounds$ represent sets of protocol messages de
 $\ssid$ denotes an execution identifier,
 which is \emph{not} assumed to be consistent among participants.
 
-In the static unforgeability game,
+In the static (weak) unforgeability game,
 the environment accepts as input a security parameter $\secp$,
 total number of players $n$, a reconstruction threshold $\thresh$,
 and a corruption threshold $\tcornew$ that the adversary may corrupt,
@@ -247,6 +250,11 @@ Each of these checks is carried out with respect to the execution identifier, de
 %
 The adversary wins if it can produce a valid forgery $\sigma^* = (R^*, z^*)$ with
 respect to the joint public key $\aggpk$ on a message $m^*$ that has not been previously queried.
+
+Note that notions of strong static unforgeability also existy for threshold signatures~\cite{BellareCKMTZ22},
+which also assert that the signature is unique.
+We do not consider this notion of security in this thesis,
+but FROST has been proven to achieve strong static unforgeability in external work~\cite{BellareCKMTZ22}.
 %
 We model the adversary as \emph{rushing},
 as it may wait to produce its outputs after having seen honest protocol messages in each round.
