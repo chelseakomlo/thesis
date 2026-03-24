@@ -5,12 +5,14 @@
  make a note of that, (2) reference more general definitions, (3) add
  an explanation why you restrict yourself to this form.
 
- - In same definition, I'm not sure if |C| \geq t is right, or it
+ X - In same definition, I'm not sure if |C| \geq t is right, or it
  should be |C|=t.  In Figure 3.1, Frost, I think you assume |C|=t, and
  I'm not sure it would work if e.g. C=t+1, unless perhaps if you
  generalized the notion of \lambda_k's for C s.t. |C|>t?.  This
  ambiguity, whether |C| \geq t or |C|=t appears elsewhere in the text
  so please handle it uniformly.
+
+I think it is ok for the definition to say |C| \geq t but have the construction specify further.
 
  X - Combine, page 28, should output only \sigma, not (m,\sigma)?
 
