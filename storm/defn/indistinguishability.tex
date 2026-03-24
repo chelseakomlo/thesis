@@ -28,6 +28,9 @@ indistinguishability in the proof of security for our generic construction, as
 the proof of zero-knowledge implies indistinguishability.
 For future reference, we give the notion of indistinguishability more formally next.
 
+Note that we implicitly assume weak robustness,
+as the adversary cannot win if it causes all participants to non-fatally abort.
+
 The advantage of a distinguishing adversary $\distinguisher$ against a DKG $\dkg$ in the indistinguishability experiment in Figure~\ref{fg:indistinguishability} with respect to the target key generation algorithm $\targetkeygen$ and participating adversary $\adv$ is
 \[
   \advantind{\dkg,\targetkeygen,\adv,\distinguisher}(\lambda) = \bigabs{ \Pr[\IndistinguishabilityExp_{\dkg,\targetkeygen,\adv,\distinguisher}(\lambda) = 1] - 1/2  }

@@ -15,9 +15,12 @@
  X - Combine, page 28, should output only \sigma, not (m,\sigma)?
 
  - Fig 2.8, the Unforgeability game:
- *)  \hat{C} and rnd are arrays, so can you initialize them as arrays,
+ X *)  \hat{C} and rnd are arrays, so can you initialize them as arrays,
  e.g. \hat{C}[eid] <- \empty for all eid, etc?
- *)  It seems that \hat{C}[eid] should not be the same for all k's, but
+
+Removed \hat{C} as recommended below.
+
+ X *)  It seems that \hat{C}[eid] should not be the same for all k's, but
  it should be separated into \hat{C}[eid,k] variables for each k.  The
  reason is that if O^{Sign1} is called several times on the same eid
  and different party identifiers k, but using different C value for
@@ -26,7 +29,9 @@
  (eid,2,C2,m), but for C2 \neq C1, then the fact that player P1 ran
  this eid instance under the impression that it will work with party
  set C1 became overwritten in your game.
- *)  However, the way you use \hat{C}[eid] seems to me to suggest that
+
+
+ X *)  However, the way you use \hat{C}[eid] seems to me to suggest that
  perhaps that variable is not needed, i.e. it seems that if the call
  (eid,k,PM) to e.g. O^{Sign2} checks only that k is honest and that
  rnd[eid,k]=1, I think that would suffice, i.e. maybe this game doesn't
@@ -35,6 +40,8 @@
  wants/needs to keep track of the initial set C which a given party was
  started on, the code can do so, and it doesn't seem like the game
  needs to keep track of this variable as well?
+
+Yes, this is true- this indeed can be removed. I did this.
 
 X - Unforgeability game once more:  As we said during the defense
  discussion, please make a note that the definition captures "weak
@@ -50,7 +57,7 @@ X - Unforgeability game once more:  As we said during the defense
  tell which message comes from which party.  (Do you assume
  authenticated channels?)
 
- *) This is related to the fact that in the Sign2 code you have a
+ X *) This is related to the fact that in the Sign2 code you have a
  condition to reject if (D_k,E_k) is not inside the set {D_i,E_i}_{i in
  C}, but this is informal, because i think you meant here to say that
  the (D_k,E_k) has to be in the k-th position in the ordered sequence
@@ -71,7 +78,7 @@ Added a comment this can be generalized
  single functionality, I have some difficulty understanding the
  properties of the DKG you create:
 
- *)  Firstly, you say its "weakly robust" but I'm not sure I understand
+ X *)  Firstly, you say its "weakly robust" but I'm not sure I understand
  this notion.  Does it imply "identifiable abort", i.e. that if parties
  output an abort then they also output an identifier of some corrupt
  party who caused the abort to happen (and the honest parties agree on
@@ -81,7 +88,9 @@ Added a comment this can be generalized
  does "weak robustness" offer beyond "identifiable abort" (if that's
  implied by weak robustness).
 
- *) Secondly, for zero-knowledge / indistinguishability, does your
+Added a comment to compare with simulation-based definitions with abort.
+
+ X *) Secondly, for zero-knowledge / indistinguishability, does your
  security notion that a real DKG instance cannot be distinguished from
  simulated one where the simulator gets a uniform random key pk as an
  input?   And if so, then does the adversary get an ability to cause
@@ -92,9 +101,14 @@ Added a comment this can be generalized
  probability for pk that is actually output by DKG (as opposed to
  attempted to output by a DKG which ends up aborting).
 
+We assume weak robustness which means there is no skew.
+I added this sentence to clarify to each notion.
+
  -  In Section 4.6, it would be very helpful for readers if you
  actually showed a figure which shows the scheme instantiated for the
  DL setting which you describe in this section.  This mapping *could*
  be done by the reader, very slowly, but it would be much easier for
  everyone to understand and reference your work if you actually showed
  this instantiation yourself and included it here.
+
+I won't have enough time to add this; this can go into the full paper.

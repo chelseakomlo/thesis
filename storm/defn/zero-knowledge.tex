@@ -9,6 +9,9 @@ where $\dkgchal$ is a valid public key for the target key generation algorithm.
 We formalize this notion in Figure~\ref{fg:zk}.
 The oracle $\oraclekg$ is defined in Figure~\ref{fg:keygen-o}.
 
+Note that we implicitly assume weak robustness,
+as the adversary cannot win if it causes all participants to non-fatally abort.
+
 \begin{figure}[!ht]
   \begin{pchstack}[boxed,center,space=1em]
   \begin{pcvstack}
