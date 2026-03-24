@@ -46,7 +46,7 @@ or in a distributed manner via a distributed key generation (DKG) protocol.
 				d_k, e_k \randpick \Zq^2 \\
         D_k \gets g^{d_k};\ E_k \gets g^{e_k};\\
 				\state_k \gets (D_k, d_k, E_k, e_k) \\
-        \gmsg_{1,k} \gets (D_k, E_k) \\
+        \gmsg_{1,k} \gets (k, D_k, E_k) \\
         \pcreturn (\gmsg_{1,k}, \state_k)
 			}
 		\end{pcvstack}
@@ -54,8 +54,8 @@ or in a distributed manner via a distributed key generation (DKG) protocol.
 			\procedure{$\Sign_2(\state_k, \sk_k,  m, \coalition, \PM_1)$ \algcom For party $k$ }{
         \text{\algcom $\Sign_2$ must be called at most once per $\state_k$} \\
         \text{parse}~(  D_k, d_k, E_k, e_k )  \gets \state_k \\
-        \text{parse}~ \{ D_i, E_i \}_{i \in \coalition} \gets \PM_1 \\
-        \pcreturn \bot\ \pcif (D_k, E_k) \not\in \{ D_i,E_i \}_{i \in \coalition} \\
+        \text{parse}~ \{ i, D_i, E_i \}_{i \in \coalition} \gets \PM_1 \\
+        \pcreturn \bot\ \pcif (k, D_k, E_k) \not\in \{ i, D_i,E_i \}_{i \in \coalition} \\
         \pcfor i \in \coalition \pcdo \\
         \pcind \bindingf_i \gets \HashNon(i, \threshpk, m, \{ (i, D_i, E_i)\}_{i \in \coalition}) \\
         \aggR \gets \prod_{i \in \coalition} D_i \cdot {E_i}^{\bindingf_i}\\
@@ -119,7 +119,13 @@ signature, thwarting ROS-style attacks such as those of Drijvers et al.
 
 \paragraph{Coordinator Role.}
 Our presentation of FROST assumes a coordinator role to choose the set
-$\coalition \subseteq \{1, \ldots, n \}$ of signers, where $t \leq \abs{\coalition} \leq n$.
+$\coalition \subseteq \{1, \ldots, n \}$ of signers,
+where  $t \leq \abs{\coalition} \leq n$.
+Note that in Figure~\ref{fig:frost} and in this description,
+we assume $\lvert \coalition \rvert = t$,
+for how each $\lambda_i$ is defined,
+per Section~\ref{notation}.
+However, Lagrange coefficients can be defined to assume the more general case of $t \leq \lvert \coalition \rvert$.
 The coordinator is trusted to not perform denial of service attacks,
 but otherwise is untrusted.
 Even if the coordinator were fully malicious,
