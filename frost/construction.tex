@@ -46,16 +46,16 @@ or in a distributed manner via a distributed key generation (DKG) protocol.
 				d_k, e_k \randpick \Zq^2 \\
         D_k \gets g^{d_k};\ E_k \gets g^{e_k};\\
 				\state_k \gets (D_k, d_k, E_k, e_k) \\
-        \gmsg_{1,k} \gets (k, D_k, E_k) \\
+        \gmsg_{1,k} \gets (D_k, E_k) \\
         \pcreturn (\gmsg_{1,k}, \state_k)
 			}
 		\end{pcvstack}
 		\begin{pcvstack}[space=1em]
 			\procedure{$\Sign_2(\state_k, \sk_k,  m, \coalition, \PM_1)$ \algcom For party $k$ }{
         \text{\algcom $\Sign_2$ must be called at most once per $\state_k$} \\
-        \text{parse}~(  D_k, d_k, E_k, e_k )  \gets \state_k \\
-        \text{parse}~ \{ i, D_i, E_i \}_{i \in \coalition} \gets \PM_1 \\
-        \pcreturn \bot\ \pcif (k, D_k, E_k) \not\in \{ i, D_i,E_i \}_{i \in \coalition} \\
+        \text{parse}~(  D_k', d_k, E_k', e_k )  \gets \state_k \\
+        \text{parse}~ \{ D_i, E_i \}_{i \in \coalition} \gets \PM_1 \\
+        \pcreturn \bot\ \pcif (D_k', E_k') \not\in \{ ( D_i,E_i ) \}_{i \in \coalition} \\
         \pcfor i \in \coalition \pcdo \\
         \pcind \bindingf_i \gets \HashNon(i, \threshpk, m, \{ (i, D_i, E_i)\}_{i \in \coalition}) \\
         \aggR \gets \prod_{i \in \coalition} D_i \cdot {E_i}^{\bindingf_i}\\
@@ -125,7 +125,9 @@ Note that in Figure~\ref{fig:frost} and in this description,
 we assume $\lvert \coalition \rvert = t$,
 for how each $\lambda_i$ is defined,
 per Section~\ref{notation}.
-However, Lagrange coefficients can be defined to assume the more general case of $t \leq \lvert \coalition \rvert$.
+However, the protocol can be defined for the the more general case of $t \leq \lvert \coalition \rvert$,
+such as by changing how Lagrange coefficients are defined,
+or requiring the coordinator to pick a subset of $t$ partial signatures.
 The coordinator is trusted to not perform denial of service attacks,
 but otherwise is untrusted.
 Even if the coordinator were fully malicious,
@@ -152,7 +154,7 @@ where
 $j$ is a counter that identifies the next nonce/commitment share pair available
 to use for signing.
 Each participant $i \in \coalition$ then publishes its set of commitments
-$(i, D_{ij}, E_{ij} )_{j=1}^\ell$.
+$(D_{ij}, E_{ij} )_{j=1}^\ell$.
 These sets are then stored by any entity that might perform
 the coordinator role during signing.
 
@@ -165,7 +167,7 @@ as the message to be signed is required as input only in the second (online) sig
 At the beginning of the signing protocol in Figure~\ref{fig:frost},
 the coordinator selects  a coalition of parties $\coalition \subseteq \set{n}, \lvert \coalition \rvert \geq t$ to perform signing.
 The coordinator then selects the next available commitment
-$(i, D_i, E_i) : i \in \coalition$,
+$(D_i, E_i) : i \in \coalition$,
 which are later used to generate a secret share to a random commitment $R$ for
 the signing group.\footnote{Each participant
 contributes to the group commitment $R$, which corresponds to the
@@ -174,7 +176,7 @@ in step 1 of the single-party Schnorr signature scheme in
 Section~\ref{background:schnorr}.}
 %
 The coordinator then creates the set $B$, where
-$B$ is the ordered list of tuples $\langle(i, D_i, E_i)\rangle_{i \in \coalition}$.
+$B$ is the ordered list of tuples $\langle(D_i, E_i)\rangle_{i \in \coalition}$.
 The coordinator then sends $(m, B)$ to every participant $i \in \coalition$.
 
 After receiving $(m, B)$ from the coordinator to initialize a signing operation,
