@@ -1,11 +1,13 @@
 \section{Security of FROST}
 \label{frost:direct-proof}
 
-We now present a direct proof for the FROST signature construction given in Figure~\ref{fig:frost}.
+We now present a direct proof of static (weak) unforgeability for the FROST signature construction given in Figure~\ref{fig:frost}.
 This proof builds on prior proofs of security for FROST~\cite{BellareCKMTZ22},
 but gives a reduction to AOMDL, as opposed to OMDL.
 As discussed in Section~\ref{assumptions},
 AOMDL is a falsifiable and hence weaker assumption than OMDL.
+Note that prior work also established strong unforgeabiity of FROST~\cite{BellareCKMTZ22},
+but with respect to OMDL.
 
 Our proof assumes a centralized key generation mechanism.
 

@@ -30,7 +30,9 @@ or in a distributed manner via a distributed key generation (DKG) protocol.
 				(\Gr, q, g) \rgets \GroupGen(1^\usecp) \\
 				\text{\algcom Select two hash functions } \HashNon, \HashSig \\
 				\pp \gets ((\Gr, q, g), \HashNon, \HashSig) \\
-				\pcreturn \pp
+				\pcreturn \pp \\
+				\text{\algcom $\pp$ is given implicitly} \\
+				\text{\algcom as input to all other algorithms}
 			}
 			\procedure{${\KeyGen}(n, t)$}{
         \text{\algcom Shown in the centralized setting,} \\
