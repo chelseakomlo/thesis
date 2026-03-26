@@ -195,8 +195,8 @@ the definition either considers a scheme that is strongly robust,
 or where the adversary can abort the protocol at any point during the protocol execution,
 even after seeing the output key material.
 However, weak robustness allows the adversary to abort the protocol execution,
-but only before some critical state;i
-i.e., before the adversary has learned the output key material.
+but only before some critical state;
+i.e., before the adversary has learned any information about the output key.
 As such, it is a more fine-grained notion of tolerated aborts than a simulation-based notion of abort,
 as weak robustness considers where in the protocol execution the adversary is
 allowed to abort.

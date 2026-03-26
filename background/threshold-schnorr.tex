@@ -88,6 +88,12 @@ The syntax assumes that the signing set $\coalition$, message $m$, and secret ke
   if the proof of security so allows.
 \end{remark}
 
+\begin{remark}
+  The key generation algorithm assumes that the public key shares and public keys are from the same domain $\pubkeydomain$,
+  and likewise the secret key shares and secret keys from the domain $\seckeydomain$.
+  Note however that some constructions may have different domains for key shares and the joint keys.
+\end{remark}
+
 %\begin{remark}[On the Inclusion of an Explicit Recovery Algorithm]
 %  We define a threshold signature scheme with an explicit recovery algorithm.
 %  While this recovery algorithm is defined explicitly for centralized and decentralized threshold secret sharing schemes~\cite{BonehS2020,GennaroJKR07},
@@ -194,7 +200,7 @@ produce a signature $\sigma$ such that $\Verify(\pk, m, \sigma) = 1$.
 Static unforgeability game for a threshold signature scheme with $\numrounds$ signing rounds.
 Note this definition captures ``weak'' unforgeabiilty,
 as compared to static security for strong unforgeability of threshold
-signatures~\cite{TODO}.
+signatures~\cite{BellareCKMTZ22}.
 }
 \label{fig:euf-cma-threshold}
 \end{figure}
@@ -250,8 +256,10 @@ Each of these checks is carried out with respect to the execution identifier, de
 The adversary wins if it can produce a valid forgery $\sigma^* = (R^*, z^*)$ with
 respect to the joint public key $\aggpk$ on a message $m^*$ that has not been previously queried.
 
-Note that notions of strong static unforgeability also existy for threshold signatures~\cite{BellareCKMTZ22},
-which also assert that the signature is unique.
+Note that notions of strong static unforgeability also exists for threshold signatures \cite{BellareCKMTZ22},
+and requires that the tuple $(m^*, \sigma^*)$ was not output from a valid run of the protocol (involving honest parties),
+a stronger condition than weaker unforgeability,
+which requires only that $m^*$ was not queried to honest signers.
 We do not consider this notion of security in this thesis,
 but FROST has been proven to achieve strong static unforgeability in external work~\cite{BellareCKMTZ22}.
 %
