@@ -1,0 +1,9 @@
+> These are the main notes about changes I took during the defence:
+>
+>    Mohammad: p.30: clarify that the adversary can actively participate in the signing protocol
+>
+>    Does FROST satisfy strong unforgeability?  (Stanislaw:) At least say something about it.
+>
+>    p.44: grammar for "in the ROM" in Theorem 3
+>
+>    for preprocessing, specify that it's one-time usage
