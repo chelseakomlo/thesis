@@ -38,7 +38,6 @@ which we formalize in Figure~\ref{fg:avss-secrecy}.
     \pcif \issuedchal = 0 \\
     \pcind \randcoin \rgets \zo;\ \pcreturn \randcoin \\
     \pcif b=1 \text{ and } \text{issued} = 0 \\
-    \pcind \text{issued} = 1 \\
     %\pcind (\secretone^*,\vsscommit^*) \gets Q_1 \\
     %\pcind \{(\{(i,\share_{ji})\}_{i \in \honest},\vsscommit_j) \}_{j \in \set{\simtotal}} \gets Q_2 \\
     \pcind \mathsf{in} \gets ( \{\vsscommit_j \}_{j \in \set{\simtotal}} \cup \{\vsscommit^* \}, \auxstring) \\

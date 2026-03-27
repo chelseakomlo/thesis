@@ -17,9 +17,9 @@ However, simulatability does not necessarily imply indistinguishability,
 because the zero-knowledge game \emph{only} guarantees the indistinguisahbility of public key material between the real and simulated environments.
 If there is a one-to-one relation between public and secret keys,
 proving zero-knowledge implies indistinguishability.
-For cryptosystems where a one-to-many relation exists between public and private keys,
-such as in lattice-based cryptosystems,
-proving that a DKG is zero-knowledge does \emph{not} imply indistinguishability from its target key generation scheme.
+For cryptosystems where a one-to-many relation can exist between public and private keys,
+such as in some lattice-based cryptosystems,
+proving that a DKG is zero-knowledge may not necessarily imply indistinguishability from its target key generation scheme.
 
 
 Because our generic construction similarly assumes a one-to-one correspondence

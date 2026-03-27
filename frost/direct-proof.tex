@@ -234,7 +234,7 @@ queried by $\A$ to honest signers,
   It then increments $\counter \gets \counter + 2$.
   \item $\SIM$ then sets $\state_{k,\ssid} \gets (k, \ssid, D_k, E_k)$,
   and stores $Q_1[(k, \ssid)] = (D_k, E_k)$,
-  \item Finally, $\B$ returns $(D_k, E_k)$ to $\A$.
+  \item Finally, $\SIM$ returns $(D_k, E_k)$ to $\A$.
   \end{enumerate}
 
 \item{Round 2 ($\BigO^{\Sign_2}(k, \ssid, m, \coalition, \{ (D_i, E_i) \}_{i \in \coalition})$):}
@@ -256,14 +256,14 @@ queried by $\A$ to honest signers,
   and then the group commitment
   $\aggR \gets \prod_{i \in \coalition} D_i \cdot {E_i}^{a_i}$
   and the challenge $c \gets \HashSig(\aggR, \threshpk, m)$.
-  \item $\B$ then sets $Z_k \gets D_k \cdot E_k^{a_k} \cdot {\pk_k}^{c \lambda_k}$,
+  \item $\SIM$ then sets $Z_k \gets D_k \cdot E_k^{a_k} \cdot {\pk_k}^{c \lambda_k}$,
   and queries the \AOMDL oracle $\odlsol$ on $Z_k$ and
   coefficients $(\alpha, ( \beta_i)_{i \in \set{2\qsig + 1}})$,
-  where each coefficient is set to zero,
-  with the exception of
+  where each coefficient is zero,
+  with these exceptions;
   $\alpha = c \lambda_k \cdot \sum_{i \in \corrupt} \sk_i L_i'(k)$,
-  and $(\beta_0 = c \lambda_k \cdot L_0'(k), \beta_i = 1, \beta_{i+1} = a_i)$.
-  Here, $(i, i+1)$ corresponds to the \AOMDL challenges $(D_k=X_i, E_k=X_{i+1})$ for this signing query,
+  and $(\beta_0 = c \lambda_k \cdot L_0'(k), \beta_\gamma = 1, \beta_{\gamma+1} = a_i)$.
+  Here, $(\gamma, \gamma+1)$ corresponds to the \AOMDL challenges $(D_k=X_\gamma, E_k=X_{\gamma+1})$ for this signing query,
   where $L_i'$ is the Lagrange polynomial for $i \in \corrupt$ associated with the set $\{ 0\} \cup \corrupt$,
       such that $\pk_k^c = \pk^{L_0'(k) c} \cdot g^{c \alpha}$.
   \item $\SIM$ then receives $z_k$ in return from its \AOMDL oracle,
@@ -312,7 +312,7 @@ the set of signature shares in $Q_1$ output by $\SIM$ on behalf of honest partie
 and the adversary's forgery with respect to $\pkgroup=X_0$.
 
   \paragraph{Difference between Game~1 and Game~2.}
-  The only additional advantage introduced in Game~5 is that $\SIM$ aborts on   $\BadEventOne$
+  The only additional advantage introduced in Game~2 is that $\SIM$ aborts on   $\BadEventOne$
   with probability $\rototal/q$ total probability.
   Let $W_2$ be the event that $\adv$ wins in Game~2.
   Then
