@@ -154,7 +154,7 @@ to produce a forgery in polynomial time.
 FROST2~\cite{BellareCKMTZ22} is an optimized version of FROST that reduces the number of exponentiations required for signing from $\thresh$ to one.
 A further optimization of FROST2, called FROST3, is introduced by Ruffing et al.~\cite{RuffingRJSS22},
 and proven secure with a DKG by Chu et al.~\cite{ChuGRS23}.
-All three of FROST, FROST2, FROST3 are proven statically secure under the algebraic one-more discrete logarithm assumption (AOMDL)~\cite{BellareCKMTZ22}.
+All three of FROST, FROST2, FROST3 are proven statically secure under the algebraic one-more discrete logarithm assumption (\AOMDL)~\cite{BellareCKMTZ22}.
 
 Lindell presents a three-round threshold Schnorr signature~\cite{Lindell22} with the goal of
 defining a scheme that is both secure against ROS attacks and
@@ -164,9 +164,9 @@ Static security is modeled in the universal composability framework (UC)~\cite{C
 Sparkle~\cite{CritesKM23} is a three-round threshold Schnorr signature scheme
 that is proven secure under $\tcor$ adaptive corruptions.
 In order to achieve full adaptive security,
-the authors rely on the algebraic one-more discrete logarithm assumption (AOMDL) in the AGM and ROM.
+the authors rely on the algebraic one-more discrete logarithm assumption (\AOMDL) in the AGM and ROM.
 When the adversary is limited to making $\tcor/2$ corruptions, however,
-the authors prove the adaptive security of Sparkle under only AOMDL in the ROM,
+the authors prove the adaptive security of Sparkle under only \AOMDL in the ROM,
 by a reduction that rewinds.
 
 Makriyannis~\cite{Makriyannis22} defines a commit-reveal threshold

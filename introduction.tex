@@ -161,21 +161,21 @@ but is not robust,
 in that any deviation from the protocol requires aborting and re-running.
 
 We prove the security of FROST with respect to the Algebraic One-More Discrete
-Logarithm  (AOMDL) assumption,
+Logarithm  (\AOMDL) assumption,
 formalized by Nick et al.~\cite{NickRS21}.
-which is a weaker variant of the One-More Discrete Logarithm (OMDL) assumption~\cite{BellareNPS03,BauerFP21}.
-While FROST was proven secure with respect to OMDL~\cite{BellareCKMTZ22},
-we additionally show how this proof extends to AOMDL.
-OMDL defines an interactive discrete-logarithm assumption,
+which is a weaker variant of the One-More Discrete Logarithm (\OMDL) assumption~\cite{BellareNPS03,BauerFP21}.
+While FROST was proven secure with respect to \OMDL~\cite{BellareCKMTZ22},
+we additionally show how this proof extends to \AOMDL.
+\OMDL defines an interactive discrete-logarithm assumption,
 in which the adversary is given $\ell+1$ discrete logarithm challenges,
 and is required to output $\ell+1$ solutions,
 while being given $\ell$ queries to a discrete-logarithm solution oracle.
-OMDL is a stronger security assumption,
-as the OMDL oracle must output solutions to arbitrary group elements,
+\OMDL is a stronger security assumption,
+as the \OMDL oracle must output solutions to arbitrary group elements,
 and so the oracle is not guaranteed to run in polynomial time.
-AOMDL additionally requires the adversary to give as input the representation of the input group element with respect to all challenge group elements.
-As such, the AOMDL solution oracle is guaranteed to run in polynomial time,
-therefore making AOMDL a weaker assumption than OMDL.
+\AOMDL additionally requires the adversary to give as input the representation of the input group element with respect to all challenge group elements.
+As such, the \AOMDL solution oracle is guaranteed to run in polynomial time,
+therefore making \AOMDL a weaker assumption than \OMDL.
 
 \subsection{Chapter~\ref{chp:storm}: A Generic Distributed Key Generation (DKG) Construction}
 
@@ -275,8 +275,8 @@ The security of FROST has also been discussed within the Ethereum community~\cit
 There is additionally a team working to define a FROST submission for the NIST threshold signature scheme call for proposals~\cite{NIST22,NIST23}.
 Portions of this dissertation will be employed towards this effort;
 namely,
-the proof for AOMDL security of FROST,
-which is a weaker assumption than OMDL,
+the proof for \AOMDL security of FROST,
+which is a weaker assumption than \OMDL,
 which prior proofs of security rely upon~\cite{BellareCKMTZ22}.
 We hope that the submission of FROST to the NIST call for threshold schemes allows for more widespread adoption of threshold signatures beyond the cryptocurrency space,
 into domains such as banking and digital certificate management.

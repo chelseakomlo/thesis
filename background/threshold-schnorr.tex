@@ -132,7 +132,7 @@ produce a signature $\sigma$ such that $\Verify(\pk, m, \sigma) = 1$.
       			%Q \gets \emptyset \pccomment{set of queried messages} \\ Liz: Do all or none?
  	    		(\corrupt, \state_\A) \randpick \A(\pp, n, \thresh, \tcornew)   \\
 			\pcreturn \bot~\pcif \corrupt \not\subset [n] \vee |\corrupt| > \tcornew \\
-			%\text{\algcom or \dbox{$\vert \corrupt \rvert \geq t/2$ (Theorem~\ref{thm:OMDL+ROM})} } \\
+			%\text{\algcom or \dbox{$\vert \corrupt \rvert \geq t/2$ (Theorem~\ref{thm:\OMDL+ROM})} } \\
         			\honest \gets \set{n} \setminus \corrupt  \\
 			%\state_{k,\ssid} \gets ( )  \text{\algcom state vectors for honest signers} \\
 			% CK- these are created as the output from Sign

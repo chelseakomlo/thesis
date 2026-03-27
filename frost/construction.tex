@@ -148,6 +148,8 @@ published in a single preprocessing step.
 Implementations that do not wish to cache commitments can instead
 use a two-round signing protocol, where participants publish a single
 commitment in the first round.
+Note that preprocessing for FROST is \emph{not} reusable,
+meaning that each commitment generated in the preprocessing stage must be used at most once during an online signing stage.
 
 Each participant $i \in \coalition$ begins by generating a list of
 \emph{single-use} private nonce pairs and corresponding public commitment shares
