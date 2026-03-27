@@ -1,0 +1,21 @@
+Pg. 80: I don’t think there is a one-to-many relationship in the lattice setting. Not always, anyway: Under most LWE parameters the map (s,e) -> (A,As+e) is injective. So that can’t be exactly the reason that ZK and indistinguishability are not equivalent; it seems more to do with the fact that there is no good distribution S of secrets which is invariant under contributions from the adversary (like how a uniform distribution is invariant in this way for DLOG).
+
+3.1.2: says Benhamouda et al give a poly-time algorithm. But 2.7 says it's subexponential.
+
+Page 34: "GroupGen" is not defined at this point, and is also unnecessary for just Shamir.
+
+Step 5 on page 61: uses B instead of SIM
+Same step: "each coefficient is set to 0" but then most are set to be non-zero; this could be written more clearly.
+Same step: i is overloaded (it's an index for both queries and players).
+
+Page 62: "Game 5" should be "Game 2"
+
+Figure 4.2: In Exp^{asec}, if b=1 and issued=0, it sets issued=1 but this does not seem to be used at any point afterwards.
+
+Figure 4.4: should the top dashed box (the commment) be solid?
+
+Figure 4.8: should it be j notin corrupt in Finalize?
+
+Page 54: "idealized idealized"
+
+Page 101: "pseudoradnom"

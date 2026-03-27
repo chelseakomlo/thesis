@@ -1,0 +1,33 @@
+X - Capitalization style in subsection headers: make sure you are consistent. For example, in Section 2.2.1 you only capitalize the first letter of the first word, while in other places you do it for every word.
+
+- In a number of cryptographic algorithms, you write the algorithm as if it takes no input. For example, $\mathsf{KGen}$ in Definition 2.3.1. For this particular definition, it must take in $\mathsf{par}$. This issue propagates to other $\mathsf{KGen}$ instances throughout (e.g., $\mathsf{KGen}$ of NIKE). For other instances, the algorithm must take in the security parameter if there is no other input. For example, $\mathsf{Sign}_1$ in Figure 3.1.
+
+The Setup algorithms say that public parameters are implicitly given as input to all other algorithms.
+
+X - Definition of static security in Section 2.6.1: initially, it was unclear to me whether adversarially corrupted parties may engage in interactive signing sessions. The paragraph that caused confusion is the one before Definition 2.6.2:
+
+  ``After key generation has concluded, the adversary can then query signing oracles $\mathcal{O}^{\mathsf{Sign}_1}, \ldots, \mathcal{O}^{\mathsf{Sign}_\kappa}$ for honest signers to engage in subsequent signing rounds, across different sessions.''
+
+  Please clarify that the adversary can participate in signing sessions. Figure 2.8 does not make this explicit enough, and I initially interpreted all indices in $PM_i$ as corresponding to honest parties. You do not need to change Figure 2.8; instead, add a paragraph after the table to explain this.
+
+X - Can you achieve strong unforgeability? If not, explain why. If yes, you may want to revise the proofs to account for it.
+
+I added a citation for FROST showing strong unforgeability, and a comment for
+Arctic that strong unforgeability is likely but a topic for future work.
+
+X - Clarify the preprocessing assumption (reusable or not).
+
+Added a sentence about this to FROST
+
+- The assumptions $\mathsf{AOMDL}$ or $\mathsf{OMDL}$ should be parameterized as $\ell$-$\mathsf{AOMDL}$. In Figure 2.1, you refer to $\ell$-$\mathsf{AOMDL}$, but otherwise the parameter $\ell$ appears without introduction. Making this explicit improves clarity. For example, in Theorem 3, instead of stating
+
+ ``there exists a PPT adversary $\mathcal{D}$ that wins the $\mathsf{AOMDL}$ game,''
+
+ you can then write
+
+ ``there exists a PPT adversary $\mathcal{D}$ that wins the $\ell$-$\mathsf{AOMDL}$ game,''
+
+ where $\ell$ is specified concretely in terms of the other parameters.
+
+If giving a concrete bound is too cumbersome, it suffices to write ``for some polynomial $\ell$.'' :)
+
