@@ -6,7 +6,7 @@ This proof builds on prior proofs of security for FROST~\cite{BellareCKMTZ22},
 but gives a reduction to \AOMDL, as opposed to \OMDL.
 As discussed in Section~\ref{assumptions},
 \AOMDL is a falsifiable and hence weaker assumption than \OMDL.
-Note that prior work also established strong unforgeabiity of FROST~\cite{BellareCKMTZ22},
+Note that prior work also established strong unforgeability of FROST~\cite{BellareCKMTZ22},
 but with respect to \OMDL.
 
 Our proof assumes a centralized key generation mechanism.
@@ -399,7 +399,7 @@ and the adversary's forgery with respect to $\pkgroup=X_0$.
 
  \paragraph{Extracting the Discrete Logarithms of $X_1, \ldots, X_{2\qsig}$.}
   Finally, $\ddv$ must solve for all remaining $(D_i=X_i, E_i=X_{i+1})$ \AOMDL challenges.
-  $\ddv$ can do so in a same manner as prior reductions to \OMDL~\cite{BellareCKMTZ22},
+  $\ddv$ can do so in the same manner as prior reductions to \OMDL~\cite{BellareCKMTZ22},
   since $\ddv$ has already made its \AOMDL queries and obtained valid solutions.
   We give these techniques below, for completeness.
 
