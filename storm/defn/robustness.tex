@@ -84,12 +84,16 @@ strong robustness differences are highlighted in a solid box.
 \begin{figure}[p]
   \begin{framed}
   %\begin{pchstack}[boxed,center,space=1em]
-  \begin{pchstack}
+  \footnotesize
+  \begingroup
+  \renewcommand{\sloppy}{\tolerance 9999\emergencystretch 3em\hfuzz 30pt\vfuzz 30pt}%
+  \makeatletter\renewcommand*\@pseudocodecodesize{\scriptsize}\makeatother
+  \begin{pchstack}[space=0.5em]
   {
     %\chelsea{TODO: this needs to be script size for the proceedings version}
   }
 	\pseudocode{
-    \procedure[]{$\oraclekg(\{\{ \pmsg_{i,j}\}_{j \in \honest}, \bmsg_{ri} \}_{i \in \corrupt})
+    \procedure[]{$\oraclekg(\{\allowbreak\{ \pmsg_{i,j}\}_{j \in \honest},\allowbreak \bmsg_{ri} \}_{i \in \corrupt})
     $}{
       \text{\algcom Executes round  } \\
       \text{\algcom $r \in \set{\numrounds-1}$ } \\
@@ -112,7 +116,7 @@ strong robustness differences are highlighted in a solid box.
   }
   \pchspace
   \begin{pcvstack}
-  \procedure[]{$\oraclefinalize(\{\{ \pmsg_{i,j}\}_{j \in \honest}, \bmsg_{ri} \}_{i \in \corrupt})$}{
+  \procedure[]{$\oraclefinalize(\{\allowbreak\{ \pmsg_{i,j}\}_{j \in \honest},\allowbreak \bmsg_{ri} \}_{i \in \corrupt})$}{
     \pcreturn \bot\ \pcif \roundcounter \neq \numrounds - 1 \\
     \roundcounter \gets \roundcounter + 1 \\
     \pcfor i \in \corrupt, j \in \honest \pcdo \\
@@ -126,6 +130,7 @@ strong robustness differences are highlighted in a solid box.
   \end{pcvstack}
   }
   \end{pchstack}
+  \endgroup
   \end{framed}
 \caption[Common oracles for DKG security experiemnts.]{Common oracles used within security experiments for a distributed key generation scheme.
 Boxed algorithms are used by the robustness and indistinguishability games;

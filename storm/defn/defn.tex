@@ -9,15 +9,22 @@ where $t \leq n$.
 A DKG generates secret and public keys that are compatible with some \emph{target} key generation scheme which operates in the centralized (single-party) setting.
 
 We now formalize the definition of a DKG.
-We begin by defining a target single-party key generation scheme $\targetkeygen$ that the DKG implements in a distributed manner.
+We begin by defining a target single-party key generation scheme $\targetkeygen$
+that the DKG implements in a distributed manner.
 
 \begin{definition}
-A \defn{target key generation scheme} $\targetkeygen$ is the tuple $\targetkeygen = (\keygen, \verify)$, where:
+A \defn{target key generation scheme} $\targetkeygen$
+is the tuple $\targetkeygen = (\keygen,$\allowbreak$\verify)$, where:
 \begin{itemize}
-    \item $\keygen(1^\lambda) \rightarrow (\SK, \PK)$: A probabilistic algorithm that
-      accepts as input a security parameter $\lambda$ and outputs a secret and public keypair $(\SK, \PK)$, where $\SK$ is an element of a secret domain $\secretspace$ and $\PK$ is an element of the public domain $\publicspace$.
-    \item $\verify(\SK, \PK) \rightarrow \zo$: A deterministic algorithm that accepts as input a secret and public keypair $(\SK, \PK)$,
-  and outputs $0$ if the keypair is invalid; otherwise, outputs~$1$.
+    \item $\keygen(1^\lambda) \rightarrow (\SK, \PK)$:
+      A probabilistic algorithm that
+      accepts as input a security parameter $\lambda$
+      and outputs a secret and public keypair $(\SK, \PK)$,
+      where $\SK \in \secretspace$ and $\PK \in \publicspace$.
+    \item $\verify(\SK, \PK) \rightarrow \zo$:
+      A deterministic algorithm that accepts as input
+      a secret and public keypair $(\SK, \PK)$,
+      and outputs $0$ if the keypair is invalid; otherwise, outputs~$1$.
     \item For correctness, we require that for all $(\SK, \PK) \gets \targetkeygen.\keygen(\lambda)$, we have
       \[
         \targetkeygen.\verify(\SK, \PK) = 1
@@ -95,9 +102,12 @@ A \defn{target key generation scheme} $\targetkeygen$ is the tuple $\targetkeyge
           the vector $\invecp$ of any peer-to-peer messages sent by other participants in the previous round,
           and the set $\invecb$ of any broadcast messages sent by other participants in the previous round.
           Outputs the tuple $(\party_i, \outvecp, \bmsg_i)$.
-        \item $\finalize(\party_i, \invecp, \invecb) \rightarrow \langle(\PK, \qual,\auxinfo), (\status_i, \sk_i)_{i \in \set{n}}\rangle$:
-          Accepts participant state $\party_i$, peer-to-peer messages $\outvecp$, and broadcast messages $\invecb$.
-          Outputs a public output $(\PK, \qual,\auxinfo)$ and a private output $(\status_i, \SK_i)$.
+        \item {\sloppy $\finalize(\party_i, \invecp, \invecb) \rightarrow$
+          $\langle(\PK, \qual,\auxinfo),$\allowbreak$(\status_i, \sk_i)_{i \in \set{n}}\rangle$:
+          Accepts participant state $\party_i$,
+          peer-to-peer messages $\outvecp$, and broadcast messages $\invecb$.
+          Outputs a public output $(\PK, \qual,\auxinfo)$
+          and a private output $(\status_i, \SK_i)$.\par}
       \end{itemize}
 
     \item $\recover(\PK, t, \{ (i, \SK_i) \}_{i \in \coalition}) \rightarrow \SK/\fail$:

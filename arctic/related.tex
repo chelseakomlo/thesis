@@ -18,9 +18,10 @@ The challenge of deterministic threshold Schnorr signatures is that of \emph{ver
 because if even one participant deviates from the protocol and chooses its nonce randomly,
 a complete key-recovery attack is possible.
 
+\begin{sloppypar}
 Nick et al.~\cite{NickRSW20} define a threshold Schnorr $n$-of-$n$ multisignature
-that uses SNARKs to demonstrate in zero-knowledge that
-a participant generated its nonce using a PRF correctly with respect to a pre-established keypair.
+that uses SNARKs to demonstrate in zero-knowledge that a participant
+generated its nonce correctly using a PRF with respect to a pre-established keypair.
 However, the authors report the computational overhead of at least 943\,ms for a single execution,
 % \ian{The 943\,ms figure is just for ZKP creation; there's more for verification, and all the non-ZKP bits.}
 independent of the number of signers,
@@ -30,7 +31,9 @@ a non-algebraic cryptographic hash function $H : \zo \rightarrow \GG$ must be us
 along with a regular function $f : \GG \rightarrow \Zq$.
 The complete PRF $F_\sk$ is defined by $F_\sk(x) = f( \sk \cdot H(x))$,
 where $\sk$ is a PRF key.
-Then, signers generate a Bulletproof~\cite{BunzBBPWM18} to prove in zero-knowledge that the nonce was derived with respect to $F$, $\sk$, and some input $H(x)$.
+Then, signers generate a Bulletproof~\cite{BunzBBPWM18} to prove in zero-knowledge
+that the nonce was derived with respect to $F$, $\sk$, and some input $H(x)$.
+\end{sloppypar}
 
 Bronte et al.~\cite{BonteST21} define an MPC protocol to partition the functionality of EdDSA,
 which itself is deterministic.

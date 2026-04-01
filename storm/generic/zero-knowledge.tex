@@ -204,8 +204,11 @@ Let $W_2$ be the event that $\adv$ wins in Game~2. Then,
 \medskip
 
 \noindent \textit{\underline{Game 3.}}
-The only difference between Game~3 and Game~2 is that if the adversary queries
-the random oracle $\Hash_1$ with respect to any of the honest parties' blinding values $\{\blinding_i \}_{i \in \honest}$ before the adversary is provided with the witness values $\{ \witness_i\}_{i \in \honest}$ as input to $\dkgkeygen_3$,
+The only difference between Game~3 and Game~2 is that if the adversary
+queries the random oracle $\Hash_1$ with respect to any of the honest
+parties' blinding values $\{\blinding_i \}_{i \in \honest}$
+before being provided with the witness values
+$\{ \witness_i\}_{i \in \honest}$ as input to $\dkgkeygen_3$,
 then the game aborts.
 
 If the \ENIKE is session-key unrecoverable,
@@ -298,13 +301,15 @@ when $b=1$,  $\bdv_4$ ends up simulating Game~4.
 
 $\bdv_4$ is constructed similar to Game~3, except as follows.
 When $\adv$ queries $\oracle^{\dkgkeygen_1}$,
-for each honest player $k \in \honest$,
+for each honest player $k \in \honest$:\linebreak[4]
 $\bdv_4$ queries the \AVSS oracle $\getshare()$,
-receiving $(\{ \share_j \}_{j \in \honest}, \allowbreak \vsscommit^*)$ in return.
-$\bdv_4$ then uses these outputs to simulate participant $\simid$ for $\oracle^{\dkgkeygen_1}$.
-%
+receiving $(\{ \share_j \}_{j \in \honest}, \vsscommit^*)$.
+$\bdv_4$ then uses these outputs to simulate participant $\simid$
+for $\oracle^{\dkgkeygen_1}$.
+
 $\bdv_4$ follows the protocol honestly for all other players,
-and  submits all $(\{ \share_{kj} \}_{j \in \honest}, \vsscommit_k), k \in \set{n} \setminus \simid$
+and submits all $(\{ \share_{kj} \}_{j \in \honest}, \vsscommit_k)$
+for $k \in \set{n} \setminus \simid$
 to the \AVSS oracle $\recvshare$.
 
 Then, $\bdv_4$ receives $\auxstring'$,

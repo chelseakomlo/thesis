@@ -68,12 +68,17 @@ signers and the set $\{ \aggpk_i \}_{i \in \set{n}}$ of public keys for each sig
   but they may be deferred to subsequent rounds,
   depending on the scheme.
 
-\item $\Combine(\coalition, m, \PM_1, \PM_2, \dots, \PM_\numrounds) \rightarrow \sigma$:
-  A deterministic algorithm that takes as input the signing set $\coalition$, the message $m$, and a set of protocol messages
-  $\PM_1, \PM_2, \dots, \PM_\numrounds$ from all $\numrounds$ signing rounds
-  and outputs a signature $\sigma$. (Note that this algorithm is separate from the signing rounds and may be performed by one of the signers or an external party.)
+\item $\Combine(\coalition, m, \PM_1, \PM_2, \dots, \PM_\numrounds)$ $\rightarrow \sigma$:\newline
+  A deterministic algorithm that takes as input the signing set $\coalition$, the message $m$,
+  and a set of protocol messages $\PM_1, \PM_2, \dots, \PM_\numrounds$ from all $\numrounds$ signing rounds,
+  and outputs a signature $\sigma$.
+  (Note that this algorithm is separate from the signing rounds
+  and may be performed by one of the signers or an external party.)
 
-  \item $\Verify(\threshpk, m, \sigma) \rightarrow 0/1$: A deterministic algorithm that takes as input the public key $\threshpk$, a message $m$, and a purported signature $\sigma$ and outputs $1$ (accept) if the signature verifies; else, it outputs $0$ (reject).
+  \item $\Verify(\threshpk, m, \sigma) \rightarrow 0/1$:
+  A deterministic algorithm that takes as input the public key $\threshpk$,
+  a message $m$, and a purported signature $\sigma$,
+  and outputs $1$ (accept) if the signature verifies; else, $0$ (reject).
 
   %\item $\Recover(\thresh, \{ (i, \sk_i)\}_{ i \in \coalition}) \rightarrow \bot / \sk$:
   %  A deterministic algorithm that takes as input a threshold $\thresh$ and a set of secret key shares $\{(i, \sk_i) \}_{i \in \coalition}$.

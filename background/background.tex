@@ -186,9 +186,10 @@ We now define Shamir secret sharing as one concrete instantiation of a threshold
 The Shamir secret sharing scheme is a concrete instantiation of a threshold secret sharing scheme that consists of the following algorithms:
 
 \begin{itemize}
-    \item  $\shamir.\Setup(1^\secp) \rightarrow \pp$: On input the security parameter,
-      run $(\Gr, q, g) \gets \GroupGen(1^\secp)$.
-      Output public parameters $\pp = (\Gr, q, g)$ which are given implicitly as input to all other algorithms.
+    \item  $\shamir.\Setup(1^\secp) \rightarrow \pp$:\newline
+      On input the security parameter, run $(\Gr, q, g) \gets \GroupGen(1^\secp)$.
+      Output public parameters $\pp = (\Gr, q, g)$,
+      given implicitly as input to all other algorithms.
 
     \item $\shamir.\IssueShares(s, n, \thresh) \rightarrow \{ (1, \share_1), \ldots, (n, \share_n)\}$:
       On input a secret $s$,
@@ -264,9 +265,10 @@ We now define the scheme more precisely.
           \end{equation}
     \end{enumerate}
 
-  \item $\recover(t, \recoveryset) \rightarrow s/\fail$:
+  \item {\sloppy $\recover(t, \recoveryset) \rightarrow s/\fail$:
     Accepts as input the threshold $t$,
-    a recovery set $\recoveryset = \{ (j, \share_j) \}_{j \in C}$ consisting of secret shares for a coalition $C \subseteq \set{n}$
+    a recovery set $\recoveryset = \{ (j, \share_j) \}_{j \in C}$
+    consisting of secret shares for a coalition $C \subseteq \set{n}$
     where $\lvert C \rvert \geq t$.
     If $\lvert C \rvert < t$,
     output $\fail$.
@@ -277,7 +279,7 @@ We now define the scheme more precisely.
         % CK: I added verification as a step, which prohibits this case. Same in the definition.
         \item Derive $\secret \gets \sum_{j \in C} \share_j \cdot L_j(0)$.
         \item Output $\secret$.
-    \end{enumerate}
+    \end{enumerate}}
 
     \item $\derivepshare(i, \vsscommit) \rightarrow \pshare_i$:
       Accepts as input a participant identifier $i$ and a VSS commitment.

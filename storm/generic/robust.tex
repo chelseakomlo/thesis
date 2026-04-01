@@ -203,16 +203,16 @@ and third, if any honest party has a disjoint view of $\auxinfo$.
 Finally, the adversary wins if the $\sk$ that is recovered from the honest parties' shares is invalid.
 
 Because we assume a broadcast channel,
-if any honest party aborts in either $\dkgkeygen_1$ or $\dkgkeygen_2$,
-then all honest parties will abort in $\dkgkeygen_2$.
+if any honest party aborts in $\dkgkeygen_1$ or $\dkgkeygen_2$,
+then all honest parties will likewise abort.
 And so if any honest party proceeds to $\finalize$,
 then all honest parties will proceed to $\finalize$,
 and all honest parties will set their status to $\accept$.
-While honest parties might abort (meaning that strong robustness cannot be fulfilled),
+While honest parties might abort (meaning strong robustness cannot be met),
 honest parties will consistently either end in an aborted or accepting status,
-meaning that the weak robustness game can be fulfilled.
-And so the only opportunity for the adversary to win against the generic
-construction in the weak robustness game is to disrupt consistency of $\pk,\qual,\auxinfo$,
+meaning the weak robustness game can be fulfilled.
+The only remaining opportunity for $\adv$ to win the weak robustness game
+is to disrupt consistency of $\pk$, $\qual$, $\auxinfo$,
 or to make $\dkg[\Hash].\recover$ output $\fail$.
 
 Again, because we assume a broadcast channel,

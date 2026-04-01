@@ -302,10 +302,12 @@ Without loss of generality, we assume $\lvert \corrupt \rvert = t-1$.
   that is input to $\avss.\aggregatepub$
   will include a contribution with respect to the discrete logarithm of $\vsschal$.
 
-  Equation~\ref{eq:avss-sim-chal} demonstrates that the commitment to the constant term of $\avsscommit = \{\hat{A}_0, \ldots, \hat{A}_{t-1} \}$
-  evaluates to $\vsschal$;
-  and so, because the concrete \AVSS is zero-indexed,
-  then $\avss.\derivepshare(0, \avsscommit)$ evaluates to $\vsschal$.
+  \begin{sloppypar}
+  Equation~\ref{eq:avss-sim-chal} shows that the commitment to the constant term of $\avsscommit$
+  (where $\avsscommit = \{\hat{A}_0, \ldots, \hat{A}_{t-1} \}$) evaluates to $\vsschal$.
+  Because the concrete \AVSS is zero-indexed,
+  $\avss.\derivepshare(0, \avsscommit)$ also evaluates to $\vsschal$.
+  \end{sloppypar}
 
 \begin{equation}\label{eq:avss-sim-chal}
  \begin{split}

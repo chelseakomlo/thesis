@@ -137,7 +137,9 @@ where $\Hash: \Zq \times \zo^* \rightarrow \Zq$ is a cryptographically secure ha
         \end{equation}
     Output $\vrfpubout$.
 
-  \item $\shinem[\Hash].\recover(t, \minparticipants, \coalition, \{ \vrfprivout_j \}_{j \in \coalition}) \rightarrow  \bot/(\vrfprivout, \vrfpubout)$:
+  \item $\shinem[\Hash].\recover(t, \minparticipants, \coalition,$
+    $\{ \vrfprivout_j \}_{j \in \coalition})$
+    $\rightarrow  \bot/(\vrfprivout, \vrfpubout)$:
     Receives as input the corruption threshold $t$,
     the minimum number of participants $\minparticipants$,
     the coalition $\coalition$,
@@ -382,11 +384,16 @@ where $\hgenerictotal$ is the number of times $\adv$ is allowed to query $\Hash$
   $\vrfpubout \gets  \DVRFOnem.\combine(t, \minparticipants, \{ \vrfpubout_i\}_{i \in \coalition^*})$.
   Hence, the simulation by $\SIMEval$ is perfect.
 
+  \begin{sloppypar}
   \paragraph{Difference between Game~2 and Game~1.}
   In Game~1, $\oracle^{\generate}(\partyid, \coalition, \vrfin)$ returns
-  $(f(k), g^{f(k)})$ where $f(x) = \sum_{i \in \set{\delta}} \Hash(\share_i, \vrfin) \cdot L'_{a_i}(x)$ defined as in Equation~\ref{eq:vrf-out-eval}.
+  $(f(k), g^{f(k)})$ where
+  $f(x) = \sum_{i \in \set{\delta}} \Hash(\share_i, \vrfin) \cdot L'_{a_i}(x)$,
+  as defined in Equation~\ref{eq:vrf-out-eval}.
   Since $\Hash(\targetshinekey, \vrfin)$ is unknown to $\adv$,
-  $f(x)$ is a random degree-$(t-1)$ polynomial that passes through $(j,y_j)_{j \in \corrupt}$.
+  $f(x)$ is a random degree-$(t-1)$ polynomial
+  that passes through $(j,y_j)_{j \in \corrupt}$.
+  \end{sloppypar}
 
   In Game~2, $\oracle^{\generate}(\partyid, \coalition, \vrfin)$ returns $(f(k), g^{f(k)})$,
   where $f(x) =  \vrfprivout \cdot L_0(x) + \sum_{j \in \corrupt} \vrfprivout_j \cdot L_j(x)$.

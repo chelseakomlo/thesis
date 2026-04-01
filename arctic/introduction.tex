@@ -57,9 +57,10 @@ such careful management of secret state becomes even more challenging.
 %\ian{I'm not doing a careful read over the intro, as requested, but I wanted to leave a note for later that the checkpointing-and-restoring-VMs problem is also a good example of where deterministic signatures are useful.}
 
 
+\begin{sloppypar}
 \paragraph{\bf The Challenge of Efficient Deterministic Multi-Party Schnorr Signatures.}
-While the goal of efficient and deterministic multi-party Schnorr signature schemes is desirable,
-producing such schemes has proven difficult.
+While the goal of efficient and deterministic multi-party Schnorr signature schemes
+is desirable, producing such schemes has proven difficult.
 The challenge can be summarized as follows.
 While honest participants can certainly  pick their nonces deterministically
 (say, by hashing their secret signing share and the message),
@@ -71,6 +72,7 @@ $c \gets H(R, \pk,m)$.
 In the setting for threshold Schnorr signatures,
 where $(R,z)$ are contributed to by all signing parties,
 one party deviating from the protocol results in the challenge $c$ likewise changing.
+\end{sloppypar}
 
 If honest parties cannot verify that other parties followed the protocol,
 such a deviation would allow an adversary to perform a key recovery attack with as little as two signing queries.
@@ -118,9 +120,12 @@ we address the following question:
 
 \begin{quote}
   \it
-Can we design a simple, deterministic, and stateless two-round threshold Schnorr signature scheme,
-with similar efficiency to existing randomized schemes,
+  \begin{sloppypar}
+Can we design a simple, deterministic, and stateless
+two-round threshold Schnorr signature scheme,
+with similar efficiency to existing randomized schemes
 and acceptable security assumptions in practice?
+  \end{sloppypar}
 \end{quote}
 
 \section{Our Results}
@@ -233,7 +238,7 @@ at the benefit of improved simplicity and performance.
 
 \begin{table}[t]
 	\centering
-%		\resizebox{\textwidth}{!}{
+		\resizebox{\textwidth}{!}{
 		\begin{tabular}{ c | c | c | c | c | c  }
 		 \hline
       %& \rot{Deterministic?} & \rot{Stateless?}
@@ -260,7 +265,7 @@ at the benefit of improved simplicity and performance.
       (this work) &  $2{n-1 \choose t-1}$ field,  $2{n-1 \choose t-1}$ hash &  & &   \\
       \hline
 	\end{tabular}
-%}
+}
   \medskip
 	\caption{ Comparison of multi-party deterministic Schnorr signature schemes
   in the ROM that support general choices of $n$.
