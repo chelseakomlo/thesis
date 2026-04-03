@@ -27,7 +27,9 @@ Our proof assumes a centralized key generation mechanism.
     \leq \sqrt{\rototal \cdot \advant{aomdl}{\ddv}(\secp) } + \mathsf{negl}(\secp)
   \end{equation}
 
-\noindent such that $\rototal = \qnon + \qsigh +  \qsig + 1$ is the number of times $\adv$ is allowed to query the random oracle,
+\noindent
+where $\ell = 2\qsig$,
+such that $\rototal = \qnon + \qsigh +  \qsig + 1$ is the number of times $\adv$ is allowed to query the random oracle,
 where $\qnon$ is the number of times $\adv$ is allowed to query $\HashNon$,
 $\qsigh$ is the number of times $\adv$ is allowed to query $\HashSig$,
 and $\qsig$ is the number of times $\adv$ is allowed to query its signing oracle.

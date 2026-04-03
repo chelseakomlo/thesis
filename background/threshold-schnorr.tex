@@ -264,9 +264,9 @@ Each of these checks is carried out with respect to the execution identifier, de
 The adversary wins if it can produce a valid forgery $\sigma^* = (R^*, z^*)$ with
 respect to the joint public key $\aggpk$ on a message $m^*$ that has not been previously queried.
 
-Note that notions of strong static unforgeability also exists for threshold signatures \cite{BellareCKMTZ22},
+Note that notions of strong static unforgeability also exist for threshold signatures \cite{BellareCKMTZ22},
 and requires that the tuple $(m^*, \sigma^*)$ was not output from a valid run of the protocol (involving honest parties),
-a stronger condition than weaker unforgeability,
+a stronger condition than weak unforgeability,
 which requires only that $m^*$ was not queried to honest signers.
 We do not consider this notion of security in this thesis,
 but FROST has been proven to achieve strong static unforgeability in external work~\cite{BellareCKMTZ22}.
