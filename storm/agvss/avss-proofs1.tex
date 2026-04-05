@@ -293,7 +293,9 @@ Without loss of generality, we assume $\lvert \corrupt \rvert = t-1$.
   Recall that the concrete \AVSS is zero-indexed,
   per Definition~\ref{defn:zero-vss}.
   By Lemma~\ref{lem:avss-simshare}, the environment can embed $\vsschal$ in the first query of the adversary to $\getshare$ in a way that is indistinguishable to $\adv$.
-  $\adv$ must query $\getshare$ at least once (i.e., if $\issuedchal=0$ at the end of the experiment, then the experiment returns $0$).
+  $\adv$ must query $\getshare$ at least once
+  (i.e., if $\issuedchal=0$ at the end of the experiment,
+  then the experiment returns a random bit and $\adv$ has no advantage).
   %\ian{I noted earlier that this is only true if $b=1$; you added a test for $b=1$ to line 12 of the main experiment in Fig 5, but that doesn't change this statement; in fact, now the adversary trivially has perfect advantage by always guessing $b'=0$ and never calling $\getshare$ (though this may depend on the buggy definition of advantage, as earlier). (Separately, I wonder: is it a problem if the adversary never calls $\getauxstring$?)}
   % CK: I changed the definition to always check if a challenge were issued
   % CK: It is not a problem if the adversary did not call getaux; it has negligible chance in winning in that case.
